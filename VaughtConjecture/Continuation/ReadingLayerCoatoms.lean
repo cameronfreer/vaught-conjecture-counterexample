@@ -266,6 +266,44 @@ theorem grade_le_of_mem_visibleCells {n k : ℕ} {t' : StageType.{u} α k} {h : 
     _ ≤ #(univ.map h) := card_le_card hsub
     _ = n := by simp
 
+/-- **The tie-keeping marker of an acquired context**: the fields of `TowerProfile.LeftTie` from
+an acquired marked-cap context and the residual hypotheses of
+`TowerProfile.isLegalBelowFullGrade_readingTop_of_acquired`. -/
+theorem leftTie_of_acquired {t' : StageType.{u} α 4} {n : ℕ} {h : Fin n ↪ Fin 4}
+    {c r : Fin t'.card} (hctx : t'.IsMarkedCapContextAt h c r)
+    (hoff : t'.RootOffsetsBelow h (t'.toCellScheme.grade c))
+    (hbot : t'.RootBottomRespected h c)
+    (hN : t'.toCellScheme.grade c = 4)
+    (huniq : ∀ z, t'.toCellScheme.gradedIndex z = (univ, 4) → z = c)
+    (hbotoff : ∀ z ∉ t'.visibleCells h, t'.label z = ⊥ → t'.toScheme.rowAt c z = ⊥)
+    (hface : ∀ z, Fin.last 3 ∉ t'.toCellScheme.scope z → t'.label z = ⊥)
+    {z₁ z₂ : Fin t'.card} (hz₁ : z₁ ∈ t'.visibleCells h) (hz₂ : z₂ ∈ t'.visibleCells h)
+    (hg₁ : t'.toCellScheme.grade z₁ = 1) (hg₂ : t'.toCellScheme.grade z₂ = 2)
+    (hlab : t'.label z₂ = ⊥ ∨
+      (t'.label z₂ = t'.label z₁ ∧ IsProper (t'.label z₂)))
+    (htie : ∀ p : Fin t'.card → Label.{u}, t'.rows.IsLawful p → ∀ z,
+      t'.toCellScheme.grade z = 1 → t'.label z ≠ ⊥ → p z = p z₁)
+    (htwo : ∀ p : Fin t'.card → Label.{u}, t'.rows.IsLawful p → ∀ z,
+      t'.toCellScheme.grade z = 2 → t'.label z ≠ ⊥ → p z = p z₂)
+    (hthree : ∀ z, t'.toCellScheme.grade z = 3 → t'.label z = ⊥) :
+    LeftTie t' h c z₁ z₂ := by
+  obtain ⟨⟨hcs, hct, -⟩, -, -, -⟩ := hctx
+  exact
+    { gradedIndex_apex := Prod.ext hcs hN
+      eq_apex := huniq
+      label_apex := hct
+      rootBottom := hbot
+      rowAt_apex_off := hbotoff
+      face_bot := hface
+      grade_one := hg₁
+      grade_two := hg₂
+      row_tie := hlab.elim (fun h0 ↦ (le_of_eq (hbot z₂ hz₂ h0)).trans bot_le)
+        fun ⟨hl, hp⟩ ↦ rowTie_of_rootOffsetsBelow hct hcs
+          (by have := Fintype.card_le_of_embedding h; simp at this; omega) hoff hz₁ hz₂ hl hp
+      tie_one := htie
+      tie_two := htwo
+      label_three := hthree }
+
 /-- **Legality of the restricted reading layer at an acquired context.**  Let the left coatom type
 of a seed on five points be an acquired marked-cap context along a root `h`
 (`TiedRootCapRelabel.MarkedCapContextBelow'`, unpacked: top cap `c`, marker `r`, root offsets below
@@ -306,24 +344,10 @@ theorem isLegalBelowFullGrade_readingTop_of_acquired {n : ℕ} {h : Fin n ↪ Fi
       I.left.toCellScheme.grade z = 2 → I.left.label z ≠ ⊥ → p z = p z₂)
     (hthree : ∀ z, I.left.toCellScheme.grade z = 3 → I.left.label z = ⊥)
     {x₀ : Fin I.right.card} (hR : RightNewTop I.right x₀) :
-    (readingTop I (leftCell I c) (newTops I x₀)).IsLegalBelowFullGrade := by
-  obtain ⟨⟨hcs, hct, -⟩, -, -, -⟩ := hctx
-  refine isLegalBelowFullGrade_readingTop_of_coatoms (ι := h) (z₁ := z₁) (z₂ := z₂) ?_ hR
-  exact
-    { gradedIndex_apex := Prod.ext hcs hN
-      eq_apex := huniq
-      label_apex := hct
-      rootBottom := hbot
-      rowAt_apex_off := hbotoff
-      face_bot := hface
-      grade_one := hg₁
-      grade_two := hg₂
-      row_tie := hlab.elim (fun h0 ↦ (le_of_eq (hbot z₂ hz₂ h0)).trans bot_le)
-        fun ⟨hl, hp⟩ ↦ rowTie_of_rootOffsetsBelow hct hcs
-          (by have := Fintype.card_le_of_embedding h; simp at this; omega) hoff hz₁ hz₂ hl hp
-      tie_one := htie
-      tie_two := htwo
-      label_three := hthree }
+    (readingTop I (leftCell I c) (newTops I x₀)).IsLegalBelowFullGrade :=
+  isLegalBelowFullGrade_readingTop_of_coatoms
+    (leftTie_of_acquired hctx hoff hbot hN huniq hbotoff hface hz₁ hz₂ hg₁ hg₂ hlab htie htwo
+      hthree) hR
 
 /-- **Legality of the restricted reading layer at an acquired context, with the tied cells off the
 root.**  As `TowerProfile.isLegalBelowFullGrade_readingTop_of_acquired`, with the tied cells `z₁`,

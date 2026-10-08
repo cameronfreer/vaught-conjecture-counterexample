@@ -144,4 +144,91 @@ theorem isLegalBelowFullGrade_readingTop_of_rightNewTops {a z₁ z₂ : Fin I.le
 
 end TowerProfile
 
+/-! ### Several new tops of `rightType` at `seedOne` -/
+
+namespace TopReadingApexExample
+
+open TwoFaceLiftExistsCounterexample CaseSplitCounterexample TowerProfile StageType
+
+variable {α : Ordinal.{u}} (hα : Order.IsSuccLimit α)
+
+theorem gradedIndex_rightType_castSucc (a : Fin CaseSplitCounterexample.S.{u}.card) :
+    (rightType α).toCellScheme.gradedIndex (Fin.castSucc a) =
+      (TwoFaceLiftCounterexample.cellScope a, TwoFaceLiftCounterexample.cellGrade a) :=
+  Scheme.appendFullCellScheme_gradedIndex_castSucc CaseSplitCounterexample.S 4 a
+
+theorem label_rightType_castSucc (a : Fin CaseSplitCounterexample.S.{u}.card) :
+    (rightType α).label (Fin.castSucc a) = CaseSplitCounterexample.labelling ⊤ ⊤ ⊥ a :=
+  StageType.addApex_label_castSucc (t := rightBase α) isLegalBelowFullGrade_S (by omega) a
+
+/-- The live cells of grade `1` are labelled `⊤` by `labelling ⊤ ⊤ ⊥`. -/
+theorem labelling_top_of_live {a : Fin 19} (hl : CaseSplitCounterexample.live a = true)
+    (hg : TwoFaceLiftCounterexample.cellGrade a = 1) :
+    CaseSplitCounterexample.labelling (⊤ : Label.{u}) ⊤ ⊥ a = ⊤ := by
+  simp [CaseSplitCounterexample.labelling, hl, hg]
+
+/-- **Sets of new tops of `rightType`**: live cells of grade `1` of `S` (so through the point `3`
+and labelled `⊤`) whose scopes lie in that of one of them, `a₀`. -/
+theorem rightNewTops_rightType {A : Finset (Fin CaseSplitCounterexample.S.{u}.card)}
+    {a₀ : Fin CaseSplitCounterexample.S.{u}.card} (ha₀ : a₀ ∈ A)
+    (hA : ∀ a ∈ A, CaseSplitCounterexample.live a = true ∧
+      TwoFaceLiftCounterexample.cellGrade a = 1 ∧
+      TwoFaceLiftCounterexample.cellScope a ⊆ TwoFaceLiftCounterexample.cellScope a₀) :
+    RightNewTops (rightType α) (A.image Fin.castSucc) (Fin.castSucc a₀) where
+  rowsRaiseAt := rowsRaiseAt_rightType
+  mem := mem_image_of_mem _ ha₀
+  mem_scope z hz := by
+    obtain ⟨a, ha, rfl⟩ := mem_image.mp hz
+    exact Eq.mpr (congrArg ((3 : Fin 4) ∈ ·) (congrArg Prod.fst (gradedIndex_rightType_castSucc a)))
+      ((live_iff_three_mem a (hA a ha).2.1).mp (hA a ha).1)
+  grade_eq := (congrArg Prod.snd (gradedIndex_rightType_castSucc a₀)).trans (hA a₀ ha₀).2.1
+  label_eq z hz := by
+    obtain ⟨a, ha, rfl⟩ := mem_image.mp hz
+    exact (label_rightType_castSucc a).trans (labelling_top_of_live (hA a ha).1 (hA a ha).2.1)
+  le z hz := by
+    obtain ⟨a, ha, rfl⟩ := mem_image.mp hz
+    exact (gradedIndex_rightType_castSucc a).trans_le (le_of_le_of_eq
+      (Prod.mk_le_mk.mpr ⟨(hA a ha).2.2, by rw [(hA a ha).2.1, (hA a₀ ha₀).2.1]⟩)
+      (gradedIndex_rightType_castSucc a₀).symm)
+
+/-- The new tops through `{2, 3}`: the cells `{3}` and `{2, 3}` of `rightType`. -/
+noncomputable abbrev topsTwo : Finset (Fin (rightType α).card) :=
+  ({⟨3, by decide⟩, ⟨6, by decide⟩} : Finset (Fin CaseSplitCounterexample.S.{u}.card)).image
+    Fin.castSucc
+
+/-- The new tops through `{1, 2, 3}`: the cells `{3}`, `{2, 3}` and `{1, 2, 3}` of
+`rightType`. -/
+noncomputable abbrev topsOneTwo : Finset (Fin (rightType α).card) :=
+  ({⟨3, by decide⟩, ⟨6, by decide⟩, ⟨8, by decide⟩} :
+    Finset (Fin CaseSplitCounterexample.S.{u}.card)).image Fin.castSucc
+
+theorem rightNewTops_topsTwo :
+    RightNewTops (rightType α) (topsTwo (α := α))
+      (Fin.castSucc (⟨6, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) :=
+  rightNewTops_rightType (by decide) fun a ha ↦ by
+    simp only [mem_insert, mem_singleton] at ha
+    rcases ha with rfl | rfl | rfl <;> decide
+
+theorem rightNewTops_topsOneTwo :
+    RightNewTops (rightType α) (topsOneTwo (α := α))
+      (Fin.castSucc (⟨8, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) :=
+  rightNewTops_rightType (by decide) fun a ha ↦ by
+    simp only [mem_insert, mem_singleton] at ha
+    rcases ha with rfl | rfl | rfl <;> decide
+
+/-- **The restricted reading layer at the new tops `{3}`, `{2, 3}` is legal at `seedOne`.** -/
+theorem isLegalBelowFullGrade_readingTop_seedOne_two :
+    (readingTop (seedOne hα) (leftCell (seedOne hα) (Fin.last _))
+      (newTopsOf (seedOne hα) (topsTwo (α := α)))).IsLegalBelowFullGrade :=
+  isLegalBelowFullGrade_readingTop_of_rightNewTops (leftTie_seedOne hα) rightNewTops_topsTwo
+
+/-- **The restricted reading layer at the new tops `{3}`, `{2, 3}`, `{1, 2, 3}` is legal at
+`seedOne`.** -/
+theorem isLegalBelowFullGrade_readingTop_seedOne_oneTwo :
+    (readingTop (seedOne hα) (leftCell (seedOne hα) (Fin.last _))
+      (newTopsOf (seedOne hα) (topsOneTwo (α := α)))).IsLegalBelowFullGrade :=
+  isLegalBelowFullGrade_readingTop_of_rightNewTops (leftTie_seedOne hα) rightNewTops_topsOneTwo
+
+end TopReadingApexExample
+
 end VaughtConjecture

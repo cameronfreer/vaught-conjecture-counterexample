@@ -253,17 +253,16 @@ theorem markedCapContextBelow'_oneType :
         omega
       · exact absurd (h0.symm.trans hy').symm WithBot.coe_ne_bot
 
-/-- **The restricted reading layer is legal at the acquired context `oneType`**
-(`TowerProfile.isLegalBelowFullGrade_readingTop_of_acquired`, root form): the seed `seedOne` of
+/-- **The tie-keeping marker at the acquired context `oneType`**
+(`TowerProfile.leftTie_of_acquired`, root form): the seed `seedOne` of
 `oneType` and `rightType`, the marker the apex of `oneType` (a top cap whose row reads the root
 cells `{3}` and `{2, 3}`, both labelled `3`, at one code strictly between `⊥` and itself), the new
 top the cell `{3}` of `rightType`.  The tied cells are the root cells `z₁ = {3}` (grade `1`) and
 `z₂ = ({2, 3}, 2)` (grade `2`, labelled `⊥`, read as `⊥` by the root bottoms). -/
-theorem isLegalBelowFullGrade_readingTop_seedOne :
-    (readingTop (seedOne hα) (leftCell (seedOne hα) (Fin.last _))
-      (newTops (seedOne hα)
-        (Fin.castSucc (⟨3, by decide⟩ :
-          Fin CaseSplitCounterexample.S.{u}.card)))).IsLegalBelowFullGrade := by
+theorem leftTie_seedOne :
+    LeftTie (seedOne hα).left rootTwoThree (Fin.last _)
+      (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
+      (Fin.castSucc (⟨12, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) := by
   obtain ⟨c, r, hctx, hoff, hbot⟩ := markedCapContextBelow'_oneType hα
   obtain rfl := eq_last_of_label_top_one hα hctx.1.2.1
   have hgrade (a : Fin CaseSplitCounterexample.S.{u}.card)
@@ -272,7 +271,7 @@ theorem isLegalBelowFullGrade_readingTop_seedOne :
     rcases labelling_one_cases a with ⟨-, -, h⟩ | h0
     · exact h
     · exact absurd ((label_oneType_castSucc hα a).trans h0) hl
-  refine isLegalBelowFullGrade_readingTop_of_acquired (I := seedOne hα) hctx hoff hbot
+  refine leftTie_of_acquired (t' := (seedOne hα).left) hctx hoff hbot
     (grade_oneType_last hα)
     (fun _ hz ↦ StageType.eq_last_of_gradedIndex_addApex (t := oneBase hα)
       isLegalBelowFullGrade_S (by omega) hz)
@@ -287,7 +286,6 @@ theorem isLegalBelowFullGrade_readingTop_seedOne :
       ((congrArg Prod.fst (gradedIndex_oneType_castSucc hα _)).le.trans (by decide)))
     ((grade_oneType_castSucc hα _).trans rfl) ((grade_oneType_castSucc hα _).trans rfl)
     (.inl ?_) (fun p hp z hz hl ↦ ?_) (fun p _ z hz hl ↦ ?_) (fun z hz ↦ ?_)
-    (rightNewTop_rightType α)
   · -- the face off the point `3` is labelled `⊥`
     rcases cases_oneType hα z with rfl | ⟨a, rfl⟩
     · exact absurd (Eq.mpr (congrArg (Fin.last 3 ∈ ·)
@@ -316,6 +314,16 @@ theorem isLegalBelowFullGrade_readingTop_seedOne :
     · exact absurd ((grade_oneType_last hα).symm.trans hz) (by decide)
     · by_contra hl
       exact absurd ((grade_oneType_castSucc hα a).symm.trans hz) (by rw [hgrade a hl]; decide)
+
+/-- **The restricted reading layer is legal at the acquired context `oneType`**
+(`TowerProfile.isLegalBelowFullGrade_readingTop_of_coatoms` at
+`TopReadingApexExample.leftTie_seedOne`), the new top the cell `{3}` of `rightType`. -/
+theorem isLegalBelowFullGrade_readingTop_seedOne :
+    (readingTop (seedOne hα) (leftCell (seedOne hα) (Fin.last _))
+      (newTops (seedOne hα)
+        (Fin.castSucc (⟨3, by decide⟩ :
+          Fin CaseSplitCounterexample.S.{u}.card)))).IsLegalBelowFullGrade :=
+  isLegalBelowFullGrade_readingTop_of_coatoms (leftTie_seedOne hα) (rightNewTop_rightType α)
 
 end TopReadingApexExample
 
