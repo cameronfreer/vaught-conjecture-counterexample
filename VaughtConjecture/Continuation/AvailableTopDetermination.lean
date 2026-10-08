@@ -119,7 +119,8 @@ any predicate `H`, follow from (R1) for every model at every limit stage, the co
 property at every limit stage, and cutoff determination with a donor for the graded predicate.  (R1)
 is assumed in the universes of the conclusion, stronger in stage range than
 `Expansion.FiniteCutReceiving` (limit stages below `ω₁`, universe `0`), which does not supply it;
-the coatom extension property is still to be proved; determination for the graded predicate is
+the coatom extension property is compiled (`StageType.hasCoatomExtensions`); determination for the
+graded predicate is
 open.  These are templates, not reductions: the acquisitions are proved under the coatom extension
 property; the other hypotheses are not.
 

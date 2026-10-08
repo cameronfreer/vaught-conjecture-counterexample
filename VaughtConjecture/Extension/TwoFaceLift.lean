@@ -120,7 +120,8 @@ extension properties `StageType.HasApexCoatomExtensions` and `StageType.HasCoato
 the stages that are zero or a limit quantify over the seeds of every arity
 (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they remain to be proved, and
 they are not refuted, nor is a completion below the full grade of `seedL` by another
-construction.  Whether `seedL` has a completion below the full grade at all is open.
+construction.  `seedL` has a completion below the full grade by other constructions
+(`ThinCompletion.nonempty_completionBelowFullGrade_seedL`, `ProfileTowerExamples.seedL_completion`).
 
 No hypothesis on the stage enters, no union fill (module
 `VaughtConjecture.Extension.UnionFillCounterexample`) and no completion is assumed, and neither

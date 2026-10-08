@@ -594,7 +594,8 @@ has the scatteredness form: `D_η` lies in one back-and-forth class at `η` and 
 complement, so the codes of models meet countably many classes of `bfEquivSetoid Φ η`, and
 InfinitaryLogic's `isThinOn_of_bfScattered` applies, with no López–Escobar.  This application is
 compiled conditional on the cap-to-model theorem, (R1), forcing donors at every countable block
-index, the continuation criterion, (R2) and (R3), each still to be proved
+index, the continuation criterion, (R2) and (R3); the first and third are compiled
+(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`), the others still to be proved
 (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`,
 `MainTheorem/ScatteredDomains`): `bfScattered_of_countable_compl` (`MainTheorem/Scatteredness`;
 cocountable sets of back-and-forth equivalent classes give `BFScattered`, through
@@ -774,8 +775,9 @@ age and not recognized afterwards in a model constructed otherwise.
    (`isModel_reconstruct_of_hasApexCoatomExtensions`); infinitude under
    `StageType.HasCoatomExtensions` (`infinite_of_age_eq_of_hasCoatomExtensions`); and terminality
    with no hypothesis beyond top-free chart coverage (`reduce_ne_reconstruct`).  The existence of
-   the limit rests on `StageType.HasCoatomExtensions`, and both coatom extension properties are
-   still to be proved.
+   the limit rests on `StageType.HasCoatomExtensions`; both coatom extension properties are
+   compiled at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+   `StageType.hasCoatomExtensions`).
 
 **Dependency boundaries.** The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
 ComputableModelTheory (its entry module `ComputableModelTheory.Classical`), layers 0–2, and the
@@ -1594,7 +1596,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 13. The fidelity theorem,
 `baseLanguage.realize_densitySentence_iff_fourFamilySentence_of_hasFiniteCutReceiving_of_capToModel`
     (`Language/Density`), compiled in this repository (theorem named), conditional on (R1) and the
-    cap-to-model theorem, both still to be proved; the four-family side rests on row 12.
+    cap-to-model theorem, the first still to be proved, the second compiled
+    (`MainTheorem.capToModel`); the four-family side rests on row 12.
 14. Definition-level identification (`Correspondence/InvariantSystem`, with the comparison of the
     clauses recorded there): Convention 2.3 as `GeometrySignature`, Definitions 2.1 and 2.2 as
     `IsGeometry` and `IsStructuredGeometry`, Definition 2.4 as `InvarianceDiagram`, Definition 2.5
@@ -1812,7 +1815,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     `Realization.IsModel.isNice_toStructure_reduce` (condition (c) of [AFK26, Definition 2.23]),
     compiled conditional on `HasTerminalRefinement.{w}` (row 38) and
     `Expansion.NextBlockUniqueness.{w}`; at `w = 0`, the refinement is derived from (R1),
-    next-block uniqueness, and the countable-block apex property, each still to be proved.
+    next-block uniqueness, and the countable-block apex property, the first two still to be
+    proved, the last compiled (`StageType.hasApexCoatomExtensions_blockStage`).
     Status S: the hypotheses and the identification of the lifts with those of [AFK26] are still
     to be proved (the first row of the table of item 5); the closed-tuples comparison is recorded
     in row 29.  No declaration of this repository names
@@ -1912,8 +1916,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     `η`.  Its raw form at one block, in the raw base encoding, is `ModelExpansion.subsingleton`
     (`Expansion/Uniqueness`), compiled in this repository (theorem named), conditional on
     `Expansion.NextBlockUniqueness`, still to be proved, which is derived from (R1) and
-    `ForcingDonors` by `Expansion.NextBlockUniqueness.of_forcingDonors`
-    (`Expansion/UniquenessOfForcing`), compiled in this repository (theorem named); its limit
+    `ForcingDonors` (compiled, `forcingDonors_of_blockStage`) by
+    `Expansion.NextBlockUniqueness.of_forcingDonors` (`Expansion/UniquenessOfForcing`), compiled in
+    this repository (theorem named); its limit
     step is `Realization.eq_of_forall_reduce_eq` (`Realization/Limit`).  That theorem compares two
     expansions at one block; it bounds no index and supplies no terminal presentation.  The
     terminality of the reconstructed top-free realization, `reduce_ne_reconstruct`
@@ -1989,7 +1994,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     for codes or `Expansion.realize_iff_of_modelExpansions` for any carriers, each conditional on
     `Expansion.FiniteExtensionReceiving`.  Losses: `hasNonemptyLosses_of_hasApexCoatomExtensions`,
     conditional on `CapToModel`, `StageType.HasApexCoatomExtensions`, and
-    `Expansion.NextBlockUniqueness`.  From the base to a code on `ℕ`: the conversion between the
+    `Expansion.NextBlockUniqueness` (the first two compiled; from the last alone,
+    `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`).  From the base to a code on `ℕ`: the
+    conversion between the
     two encodings (still to be proved), the density sentence for the base structure
     (`realize_toStructure_densitySentence_iff`, with (R1)), `CapToModel.infinite` and
     `exists_mem_modelsOf_densitySentence_equiv_of_capToModel` (`MainTheorem/Assembly`,
@@ -3398,10 +3405,11 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Realization.eq_of_reduce_eq_of_forcingDonors`), conditional on finite-extension receiving (from
    (R1)) and on forcing donors (`ForcingDonors`). Next-block uniqueness is derived from (R1)
    (checkpoint 4) and forcing donors (`Expansion.NextBlockUniqueness.of_forcingDonors`). Forcing
-   donors is still to be proved; it is compiled conditional on the coatom extension property at
+   donors is compiled conditional on the coatom extension property at
    `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), by a finite
-   construction without (R1) and without a completion, so it waits for checkpoint 2.7; one- and
-   two-point inputs up to the threshold `4` are compiled unconditionally
+   construction without (R1) and without a completion, and with checkpoint 2.7 compiled it holds
+   at every block index with no hypothesis (`forcingDonors_of_blockStage`); before that, one- and
+   two-point inputs up to the threshold `4` were compiled unconditionally
    (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`). The structural candidate
    (output 1) is compiled (`Realization.stableCandidate`, `Continuation/Candidate`), with exact
    consistency, covering, the order law, and locality from exact consistency and covering, and
@@ -3409,8 +3417,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    that every model at a block stage is stably lawful (`Realization.IsModel.isStablyLawful`); two
    hypotheses on single types are refuted (section 4 above). Output 3 (stated as the hypothesis
    `ContinuationCriterion`) is compiled conditionally on (R4) and the coface instances at the next
-   block (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension
-   property with apex at `λ_{ξ+1}` are still to be proved. Under (R1), forcing donors and the coface
+   block (`ContinuationCriterion.of_stableCappedReceiving`); the coatom extension property with
+   apex at `λ_{ξ+1}` is compiled, so output 3 rests on (R4) alone
+   (`ContinuationCriterion.of_stableCappedReceiving'`), and (R4) is still to be proved. Under (R1),
+   forcing donors and the coface
    instances, (R4) is equivalent to `ContinuationCriterion`
    (`Expansion.stableCappedReceiving_iff_continuationCriterion`, `Expansion/StableReceiving`), so it
    is a reformulation of output 3, not a weaker step. For `λ_ξ ≤ γ`, (R4) at one occurrence
@@ -3535,11 +3545,12 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`MainTheorem/AllCarriers`), with the domain hypotheses of the expansion-domain route, or
    `FullPresentations` with its comparison and lower-bound hypotheses, as hypotheses, and, for the
    statements about countable models on arbitrary carriers, the cap-to-model theorem `CapToModel`
-   (still to be proved).  The absence of finite models used by the reduction to `ℕ` comes from
+   (compiled, `MainTheorem.capToModel`).  The absence of finite models used by the reduction to `ℕ`
+   comes from
    `CapToModel`, or from the coatom extension property at `ω`
    (`infinite_of_realize_densitySentence_of_hasCoatomExtensions`, with hypothesis
-   `StageType.HasCoatomExtensions` at `ω`, still to be proved); once that property is proved, the
-   reduction to `ℕ` for the density sentence no longer needs `CapToModel`.
+   `StageType.HasCoatomExtensions` at `ω`, compiled, `StageType.hasCoatomExtensions`); so the
+   reduction to `ℕ` for the density sentence needs no hypothesis for the absence of finite models.
 
    **The main theorem: three forms.**
    `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
@@ -4021,10 +4032,82 @@ ones split):
   never the mirror rows (argued, not formalized); the mirror rows meet every orientation compiled
   at `seedHG`, `seedL`, `seedLM` (argued, not formalized). The condition also allows `d₂` on the
   common face, where the mirror rows read both cells unshifted, as the own original does; there it
-  is a condition on that original's row, not excluded by this argument. Open: copy rows giving the
-  step of the family for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed),
-  meeting the orientations forced on the copies, with the mirror rows the next test; and the
-  completion at `m ≥ 3` for every seed.
+  is a condition on that original's row, not excluded by this argument. Open, as a question about
+  the family only: copy rows giving the step of the family for every seed on five points
+  (`Seed.HasCanonicalMultiStep` for every seed), meeting the orientations forced on the copies,
+  with the mirror rows the next test.
+  Profile catalogues (`Extension/ProfileCatalogue`, `Extension/ProfileCatalogueExamples`; compiled
+  in this repository (theorem named) unless marked otherwise). A profile is a labelling of all the
+  cells of the amalgam, normalized into the bounded value set `Label.grid k N` at the cells of grade
+  `k`; the catalogue at the grade `j` (`ProfileCatalogue.catalogue`) is the set of normalized
+  profiles lawful below `(C, j)` and `(D, j)`; the profile scheme `ProfileCatalogue.profileScheme I
+  N J` is literally the multi-layer scheme with one new cell per entry at each `(univ, j)`, `j ≤ J`,
+  whose rows read the old cells by the profile and the new cells by agreement heights of whole
+  profiles in `Label.grid 3 (N + 1)`; field labellings are lawful below `(univ, 3)`
+  (`ProfileCatalogue.isLawfulBelow_fieldLabelling`). It departs from the intended construction in
+  two ways (agreement heights instead of a selected section on lower new cells; a fixed grid instead
+  of the rank-normalized patterns of 2.5), so it does not test that construction as intended. At the
+  seeds of `TL` and `T5`: a capped lift from `(C, 3)` at `(A, ⊤, ⊤)` reaches its cap at a cell at
+  `(univ, 2)` reading `({3}, 1)` strictly below `({4}, 1)`
+  (`ProfileCatalogue.exists_separating_of_lift`); for `J = 2` the lift fails at the tie profile with
+  the cap `4` at `({0, 1, 2}, 3)` (`ProfileCatalogue.not_exists_lift_two`,
+  `ProfileCatalogue.not_cappedLift_two`; refuted, negative special case named); for `J = 3` that
+  ambient labelling is excluded (`ProfileCatalogue.not_isLawfulBelow_three`; that the rows at the
+  grade 3 see the cap in general is argued, not formalized), and the lift fails at the top of the
+  bounded value set (`ProfileCatalogue.not_exists_lift_top`,
+  `ProfileCatalogue.not_cappedLift_three`; refuted, negative special case named). A configured lift
+  at the tie profile with its own cap `3` exists for every `J ≤ 3` and `N ≥ 3`
+  (`ProfileCatalogue.exists_lift_tie`), fails at `N = 1`, `J = 3`
+  (`ProfileCatalogue.not_exists_lift_tie_one`; for every `J ≥ 2`,
+  `ProfileCatalogue.not_exists_lift_tie_one_of_two_le`), and is open at `N = 2`; it is not the
+  refuted configuration and not the lift at every ambient labelling. The fields of
+  `Seed.MultiLayerStep` for the profile scheme: `pos` fails for every `J ≤ 3`
+  (`mult I N J 3 = 0`), `row_lt`, `isLawfulBelow_row` and `exists_isLawful` are not proved,
+  `cappedLift_left` at `k = 3` is refuted for `J = 2, 3` and every other lift is not proved; so
+  neither scheme is a completion as it stands.
+  At the seeds of `TH` and `TG` the grade-1 catalogue has two cells separating `({3}, 1)` and `({4},
+  1)` in the two orders (`ProfileCatalogue.exists_separating_cells_of`,
+  `ProfileCatalogue.exists_separating_cells_seedHG`). Normalization by rank and the
+  selected-section rows are compiled in the construction below; for this scheme itself the lift at
+  every ambient and the other fields are not proved.
+  **The completion at every arity** (compiled in this repository (theorem named); no hypothesis on
+  the seed; the stage zero or a limit for the coatom extension property).  Every seed has a
+  completion below the full grade (`Seed.nonempty_completionBelowFullGrade`), so
+  `StageType.HasApexCoatomExtensions` holds at every stage that is zero or a limit
+  (`StageType.hasApexCoatomExtensions`; hypothesis 8 of `DASHBOARD.md`).  Modules, in order:
+  - `Extension/ProfileScheme`: profile schemes over an arbitrary family of catalogues and a block
+    bound (the construction of `Extension/ProfileCatalogue` with these as parameters);
+  - `Extension/RankProfileScheme`: the rank-normalized catalogue at `m = 3` (`RankProfile.rankCat`,
+    profiles lawful on the cut and fixed by the orbit code) and its profile scheme;
+  - `Extension/UpperDecoder`: the upper decoder at the cap grade `3`, an orbit decoder that reads
+    the gaps between codes upward, with capped agreement at the caps self-visible and short at `3`
+    and readable labels;
+  - `Extension/TowerSection`: the tower section `Seed.towerSection` (one labelling of `T j` for each
+    profile, decoded upward), lawful, literal, in the code grid, capped-agreeing, readable;
+  - `Extension/SectionInterface`: the clauses of a section operator through `T 2` read by a layer
+    of profiles at `m = 3`; for every lawful literal section operator, capped agreement at every
+    cap short at `3` (not only self-visible and short at `3`) is refuted at a collision
+    (`SectionInterface.not_isCapAgreeingAt_of_collision`,
+    `SectionInterface.not_isCapAgreeingAt_one_seedL`),
+    and the tower section meets the clauses with the caps self-visible and short at `3`;
+  - `Extension/TowerProfileScheme`, `Extension/TowerProfileCompletion`: at `m = 3`, the layer of
+    rank-normalized profiles over `T 2` and the canonical field layer at the grade `4`
+    (`TowerProfile.completion`; `StageType.hasApexCoatomExtensions_of_le_three`);
+  - `Extension/UpperDecoderAt`: the upper decoder with the cap grade a parameter `K`, with
+    `Label.min_upperDecoderAt_comp_eq` (capped agreement through any construction on the codes);
+  - `Extension/ProfileTower`: the levels at every arity (`ProfileTower.lvl`), the invariant
+    `ProfileTower.Lvl.Good` and its preservation (`ProfileTower.Lvl.Good.next`);
+  - `Extension/ProfileTowerCompletion`: the canonical field layer at the top grade over the level
+    at `m` (`ProfileTower.Lvl.Good.completion`),
+    `ProfileTower.nonempty_completionBelowFullGrade_of_three_le`,
+    `Seed.nonempty_completionBelowFullGrade`, `StageType.hasApexCoatomExtensions`;
+  - `Extension/ProfileTowerExamples`: the tests at `seedL` and at a seed on six points;
+  - `MainTheorem/CoatomExtensionTheorem`: the consequences with hypothesis 8 discharged
+    (`StageType.hasCoatomExtensions`, `StageType.exists_pinned_extension_of_isSuccPrelimit`,
+    `forcingDonors_of_blockStage`, `MainTheorem.capToModel`,
+    `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`, `exists_sameLevelMaximal_covers'`,
+    `ContinuationCriterion.of_stableCappedReceiving'`); the four-hypothesis form is in
+    `MainTheorem/Composition`.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
@@ -4223,10 +4306,10 @@ form gives nothing at the per-block route's refuting context (item 5).
 **The first clause that does not close.**  A general proof of `StageType.HasPrescribedFullRows`
 constructs, at the empty prescription, coatom extensions at every input where the empty
 prescription is compatible.  The completion results of checkpoints 2.1–2.7 give coatom extensions
-only from completions below the full grade
-(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), open as a statement about every
-seed at `m ≥ 3`;
-that is the first clause of a general proof that does not close.
+from completions below the full grade
+(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), now compiled for every seed
+(`Seed.nonempty_completionBelowFullGrade`, `StageType.hasCoatomExtensions`); so this clause closes,
+through that construction and not through the core.
 
 **No clause of a model prescribes full rows** (argued, not compiled): no clause of
 `Realization.IsModel` prescribes the row of a cell of full scope; generalized saturation only
@@ -4299,7 +4382,7 @@ theorem does not depend on it.
 
 ## Targets from the unconditional route
 
-This section states, as contracts, one prospective target for each open hypothesis of the
+This section states, as contracts, one target for each hypothesis that was open in the
 five-hypothesis form of the main theorem
 (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`):
 (R1), the continuation criterion (through (R4)), (R2), (R3), and the coatom extension property with
@@ -4331,7 +4414,7 @@ The hypotheses closed are numbered as in `DASHBOARD.md`, "The named hypotheses o
 | U1 | `R.IsModel → R.HasFiniteCutReceiving`, every limit `α` | 2 | gated scheme, recovery |
 | U2 | `StableCappedReceiving`, then `ContinuationCriterion` | 4 | calibrated receiving in `R` |
 | U3 | `Realization.HollowReceiving`, `Realization.ResidualReceiving` | 6, 5 | exact recovery |
-| U4 | `StageType.HasApexCoatomExtensions α`, `α` zero or a limit | 8 | completion, whole boundary |
+| U4 | `StageType.HasApexCoatomExtensions α`, `α` zero or a limit | 8 | none: compiled (`StageType.hasApexCoatomExtensions`) |
 
 In the U1 row, `Expansion.FiniteCutReceiving` (countable limit stages) is a corollary.  In the U4
 row, hypothesis 8 uses the apex property at every `λ_η`; the other targets use it, or its plain
@@ -4560,6 +4643,15 @@ form, at arbitrary limit stages.
 
 **U4.  The coatom extension property with apex, by a completion over the whole boundary.**
 
+- *Status.*  Complete: compiled in this repository (theorem named),
+  `StageType.hasApexCoatomExtensions`,
+  with `CompletionBelowFullGrade` for every seed at every `m`
+  (`Seed.nonempty_completionBelowFullGrade`),
+  by a route other than the missing steps recorded below: levels of rank-normalized profiles over
+  `T 2`, each read through the upper decoder at its grade, with the canonical field layer at the
+  top grade (checkpoint 2.7, "The completion at every arity").  The acceptance test below is met;
+  the steps below are kept as the plan recorded before, not used.
+
 - *Conclusion.*  `StageType.HasApexCoatomExtensions α` at every stage `α` that is zero or a limit
   ([Kni26, Corollary 4.3.22]), through `CompletionBelowFullGrade` for every seed of two legal coatom
   types at every `m` and `StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`
@@ -4612,9 +4704,9 @@ U1's finite-cut receiving together with those forcing donors gives next-block un
 (`Expansion.NextBlockUniqueness.of_forcingDonors`).  The existing loss theorems then apply.
 U4 alone is not asserted to give next-block uniqueness or nonempty losses.
 
-**Order.**  U1 first, beginning with its tests (a)–(c) and (f); then U2; U4 continues alongside,
-and U1, step 2, and U3, step 5, use it; U3 after U1 for (R2).  With U1–U4 compiled, the
-five-hypothesis form has no hypothesis left.
+**Order.**  U1 first, beginning with its tests (a)–(c) and (f); then U2; U4 is compiled, and U1,
+step 2, and U3, step 5, use it; U3 after U1 for (R2).  With U1–U3 compiled, the four-hypothesis
+form has no hypothesis left.
 
 ## Placement record
 

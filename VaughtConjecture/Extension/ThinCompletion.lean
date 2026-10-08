@@ -69,7 +69,7 @@ at `(univ, 2)` separates (`ThinCompletionExamples.row_newCell_two_lt`).
 property with apex at `m = 3` (`ThinCompletionExamples.exists_coatomExtension_seedL`, at every stage
 since the labels `⊥` and `⊤` lie at every stage; at the stages that are zero or a limit, this is
 also `CompletionBelowFullGrade.exists_coatomExtension` applied to the thin completion).
-`StageType.HasApexCoatomExtensions` is still to be proved in general.
+In general it is compiled by another construction (`StageType.hasApexCoatomExtensions`).
 
 **Special cases.**  The thin pattern also completes the seeds of `T4` and of `T5` with themselves,
 which the tower already completes

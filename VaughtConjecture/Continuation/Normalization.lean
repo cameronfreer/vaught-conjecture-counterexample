@@ -165,7 +165,8 @@ variable {η : Ordinal.{u}} {R : Realization.{u, v} (blockStage (η + 1)) M}
   {t : StageType.{u} (blockStage (η + 1)) k} {c : Fin k → M}
 
 /-- **The threshold lemma**, conditional on finite-extension receiving (from (R1), still to be
-proved) and on forcing donors at `η` (still to be proved): if `c` covers `t` in `R` and the cell
+proved) and on forcing donors at `η` (compiled at every block index, `forcingDonors_of_blockStage`):
+if `c` covers `t` in `R` and the cell
 `d` of `t` reduces to the formal top at `λ_η`, then the label of `d` is at least `λ_η + n` exactly
 when some rooted cover of `c` in the reduction of `R` to `λ_η` forces `n` at `d`.  Hypotheses by
 use: `hR` (soundness, from right to left); `hl`, `hd` and `hF` (the donor, from left to right);
@@ -249,7 +250,8 @@ variable {η : Ordinal.{u}} {R : Realization.{u, v} (blockStage (η + 1)) M}
   {t : StageType.{u} (blockStage (η + 1)) k} {c : Fin k → M}
 
 /-- **Normalization of labels**, conditional on finite-extension receiving (from (R1), still to be
-proved) and on forcing donors at `η` (still to be proved): at a cover `c` of `t` in `R`, the label
+proved) and on forcing donors at `η` (compiled at every block index, `forcingDonors_of_blockStage`):
+at a cover `c` of `t` in `R`, the label
 of a cell of `t` reducing to the formal top at `λ_η` is its stable label, computed in the reduction
 of `R` to `λ_η` from the root `t↓λ_η`. -/
 theorem label_eq_stableLabel (hR : R.IsConsistent) (hl : R.HasLegalTypes)
@@ -263,7 +265,8 @@ theorem label_eq_stableLabel (hR : R.IsConsistent) (hl : R.HasLegalTypes)
         (coe_add_le_stableLabel_iff (hc.reduce _) hd).symm
 
 /-- **Determination by the reduction**, conditional on finite-extension receiving of both
-realizations (from (R1), still to be proved) and on forcing donors at `η` (still to be proved): two
+realizations (from (R1), still to be proved) and on forcing donors at `η` (compiled at every block
+index, `forcingDonors_of_blockStage`): two
 exactly consistent realizations at `λ_{η+1}` with legal types and equal reductions to `λ_η` are
 equal.  No uniqueness or coherence of expansions is assumed. -/
 theorem eq_of_reduce_eq_of_forcingDonors (hF : ForcingDonors.{u} η)

@@ -67,8 +67,9 @@ theorem FiniteExtensionReceiving.eq_of_reduce_eq_of_forcingDonors
     hR.hasLegalTypes hR'.hasLegalTypes (hrec.receive hα hαω R hR) (hrec.receive hα hαω R' hR') h
 
 /-- **Next-block uniqueness from finite-cut receiving and forcing donors**: (R1) of the table of
-Layer 3 (`hrec`, still to be proved) and forcing donors at every countable block index (`hF`,
-still to be proved) give next-block uniqueness of models on the carriers in the universe `w`. -/
+Layer 3 (`hrec`, still to be proved) and forcing donors at every countable block index (`hF`;
+compiled, `forcingDonors_of_blockStage`) give next-block uniqueness of models on the carriers in the
+universe `w`. -/
 theorem NextBlockUniqueness.of_forcingDonors (hrec : FiniteCutReceiving.{w})
     (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ) : NextBlockUniqueness.{w} :=
   ⟨fun hξ _ _ hR hR' h ↦

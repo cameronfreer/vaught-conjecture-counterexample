@@ -73,7 +73,10 @@ extension property with apex at every countable block stage
 (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  So departure and the last stage hold for them
 (`expansionDomain_core_eq_empty`, `mem_expansionDomain_iff_le_lastStage`,
 `mem_expansionDomain_loss_iff_lastStage_eq`, `lastStage_modelExpansionDomains_lt_qrank`)
-conditional on the following hypotheses, each still to be proved:
+conditional on the following hypotheses, each still to be proved except the cap-to-model theorem,
+forcing donors and the coatom extension property with apex where listed, which are compiled
+(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`):
 * the cap-to-model theorem at `ω` on `ℕ` (`hcap`; Layer 3, 3.4): the first domain is every class;
   it follows from `hext` at `0` (`CapToModel.of_hasApexCoatomExtensions`), so it is derived, not
   assumed, in `expansionDomain_core_eq_empty`, whose statement does not mention it, and kept in
@@ -83,7 +86,7 @@ conditional on the following hypotheses, each still to be proved:
   `Expansion.NextBlockUniqueness.of_forcingDonors`);
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3): the agreement;
 * the coatom extension property with apex at every countable block stage (`hext`; Layer 3, 3.1,
-  the open part of (R6)): the nonempty losses.
+  (R6), compiled as `StageType.hasApexCoatomExtensions_blockStage`): the nonempty losses.
 Countable losses (condition 2) are not used.
 
 ## Placement
@@ -391,7 +394,8 @@ include hnext hrec hext in
 /-- **Eventual departure for the expansion domains of the density sentence**: no class has a
 model expansion of a coded representative to every countable block stage, conditional on
 next-block uniqueness of models (`hnext`), finite-cut receiving of models (`hrec`) and the coatom
-extension property with apex at every countable block stage (`hext`), each still to be proved.
+extension property with apex at every countable block stage (`hext`; compiled,
+`StageType.hasApexCoatomExtensions_blockStage`), the others still to be proved.
 The cap-to-model theorem is not assumed: it follows from `hext` at `0`
 (`CapToModel.of_hasApexCoatomExtensions`). -/
 theorem expansionDomain_core_eq_empty : (⋂ ξ < ω₁, expansionDomain ξ) = ∅ :=
