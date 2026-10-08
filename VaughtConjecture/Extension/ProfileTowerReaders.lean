@@ -52,6 +52,19 @@ theorem agreementHeight_lt_of_lt (hG : ⊥ ∈ G) {d : ι} (h : b d < a d) :
   rw [min_eq_left hle] at hspec
   exact not_le.mpr h (hspec.trans_le (min_le_left _ _))
 
+/-- **Agreement below a value where two labellings disagree capped**: if `a` and `b` do not agree
+capped at `a e`, their agreement height lies strictly below `a e`. -/
+theorem agreementHeight_lt_of_not_agree (hG : ⊥ ∈ G) {e : ι}
+    (h : ¬ ∀ d, min (a d) (a e) = min (b d) (a e)) : agreementHeight G a b < a e := by
+  by_contra hle
+  rw [not_lt] at hle
+  refine h fun d ↦ ?_
+  have hspec := (agreementHeight_spec hG a b).2 d
+  calc min (a d) (a e) = min (min (a d) (agreementHeight G a b)) (a e) := by
+        rw [min_assoc, min_eq_right hle]
+    _ = min (min (b d) (agreementHeight G a b)) (a e) := by rw [hspec]
+    _ = min (b d) (a e) := by rw [min_assoc, min_eq_right hle]
+
 end Label
 
 namespace ProfileTower
@@ -102,6 +115,38 @@ theorem Lvl.Good.exists_reader_lt (hL : L.Good) (i' : Fin (cat I (g + 1)).card)
   obtain ⟨i, rfl⟩ := exists_entry_eq hR
   exact ⟨Fin.natAdd _ i, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i,
     hL.rowAt_nextS_natAdd_lt i i' hd hlt⟩
+
+/-- **A reader above a cell of its layer, at a separating profile**: if the profile of a cell `i`
+of the layer does not agree with that of a cell `i'` capped at its own value at an old cell `d` of
+grade at most `g + 1`, the cell `i` reads the cell `i'` strictly below `d`. -/
+theorem Lvl.Good.rowAt_nextS_natAdd_lt_of_not_agree (hL : L.Good)
+    (i i' : Fin (cat I (g + 1)).card) {d : Fin I.amalgam.card}
+    (hd : I.amalgam.toCellScheme.grade d ≤ g + 1)
+    (h : ¬ ∀ e, min (entry I (g + 1) i e) (entry I (g + 1) i d) =
+      min (entry I (g + 1) i' e) (entry I (g + 1) i d)) :
+    L.nextS.rowAt (Fin.natAdd _ i) (Fin.natAdd _ i') <
+      L.nextS.rowAt (Fin.natAdd _ i) (Fin.castAdd _ (L.embed d)) := by
+  have hi' : Fin.natAdd L.S.card i' ∈ L.nextS.toCellScheme.below
+      (L.nextS.toCellScheme.gradedIndex (Fin.natAdd L.S.card i)) := by
+    rw [CellScheme.mem_below]
+    change (L.S.appendFullCellsScheme (g + 1) (cat I (g + 1)).card).gradedIndex _ ≤
+      (L.S.appendFullCellsScheme (g + 1) (cat I (g + 1)).card).gradedIndex _
+    rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd,
+      Scheme.appendFullCellsScheme_gradedIndex_natAdd]
+  have hd' : Fin.castAdd (cat I (g + 1)).card (L.embed d) ∈ L.nextS.toCellScheme.below
+      (L.nextS.toCellScheme.gradedIndex (Fin.natAdd L.S.card i)) := by
+    rw [CellScheme.mem_below]
+    change (L.S.appendFullCellsScheme (g + 1) (cat I (g + 1)).card).gradedIndex _ ≤
+      (L.S.appendFullCellsScheme (g + 1) (cat I (g + 1)).card).gradedIndex _
+    rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd,
+      Scheme.appendFullCellsScheme_gradedIndex_natAdd, hL.gradedIndex_embed]
+    exact ⟨subset_univ _, hd⟩
+  rw [Scheme.rowAt_of_mem hi', Scheme.rowAt_of_mem hd', Scheme.appendFullCells_row_natAdd,
+    Scheme.appendFullCells_row_natAdd]
+  change L.Φ (entry I (g + 1) i) (Fin.natAdd _ i') <
+    L.Φ (entry I (g + 1) i) (Fin.castAdd _ (L.embed d))
+  rw [Lvl.Φ_natAdd, hL.Φ_old]
+  exact agreementHeight_lt_of_not_agree (bot_mem_grid _ _) h
 
 end ProfileTower
 
