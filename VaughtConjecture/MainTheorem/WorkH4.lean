@@ -94,8 +94,8 @@ def ApexCapCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1))
       ((blockStage ξ + m : Ordinal.{u}) : Label.{u}) ≤ Tp.label b
 
 /-- The root offsets below a grade lie below every larger grade. -/
-theorem RootOffsetsBelow.mono {n : ℕ} {t : StageType.{u} α n} {h : Fin k ↪ Fin n} {N N' : ℕ}
-    (hr : t.RootOffsetsBelow h N) (hNN : N ≤ N') : t.RootOffsetsBelow h N' :=
+theorem RootOffsetsBelow.mono {α : Ordinal.{u}} {n : ℕ} {t : StageType.{u} α n} {h : Fin k ↪ Fin n}
+    {N N' : ℕ} (hr : t.RootOffsetsBelow h N) (hNN : N ≤ N') : t.RootOffsetsBelow h N' :=
   fun y hy μ f hμ hl ↦ (hr y hy μ f hμ hl).trans_le hNN
 
 /-- **The apex calibration gives cap data with a floor at the top grade.** -/
