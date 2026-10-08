@@ -528,6 +528,55 @@ theorem IsSourceGapContextAt.serve_of_lowered {u v : Fin t'.card → Label.{u}}
   refine ⟨w, hw, hvs ▸ hsw.trans (hvu w), lt_of_not_ge fun hle ↦ ?_⟩
   exact (hcs.trans_le (hvs ▸ hsw)).not_ge (hlow w hwK hle)
 
+variable (t' K l o r) in
+/-- **The unserved case of the private frontier** (open): in a legal source-gap context of grade `K`
+with lost point `l`, owner `o` and lost top `r`, every section `u` lawful below `(univ, K)` with the
+proper cells avoiding `l` at most a cap `c` (self-visible at `K`, `⊥ < c`), with
+`c < u o ≤ R_K (u r)`, and with a cell read by the owner above the threshold and by `u` above the
+owner that is served only by cells read at most the threshold, has a section `v` lawful below
+`(univ, K)` agreeing with `u` capped at `c`, equal to `u` at the cells of grade at most `K`
+avoiding `l`, with frontier at most `c`. -/
+def LowStepUnserved : Prop :=
+  ∀ u : Fin t'.card → Label.{u}, t'.rows.IsLawfulBelow (univ, K) (fun d ↦ u d) →
+    ∀ c : Label.{u}, IsSelfVisible K c → ⊥ < c →
+    (∀ d, t'.toCellScheme.grade d ≤ K → l ∉ t'.toCellScheme.scope d → t'.label d ≠ ⊤ →
+      u d ≤ c) →
+    c < u o → u o ≤ visibilityReplace K K (u r) →
+    ¬ (∀ s t, t'.toCellScheme.scope s ⊆ t'.toCellScheme.scope t →
+        t'.toCellScheme.grade s = t'.toCellScheme.grade t → t'.toCellScheme.grade t ≤ K →
+        visibilityReplace K K (t'.rowAt o r) < t'.rowAt o s → u o < u s →
+        ∃ w, t'.toCellScheme.gradedIndex w = t'.toCellScheme.gradedIndex t ∧ u s ≤ u w ∧
+          visibilityReplace K K (t'.rowAt o r) < t'.rowAt o w) →
+    ∃ v : Fin t'.card → Label.{u}, t'.rows.IsLawfulBelow (univ, K) (fun d ↦ v d) ∧
+      (∀ d, t'.toCellScheme.grade d ≤ K → min (v d) c = min (u d) c) ∧
+      (∀ d, t'.toCellScheme.grade d ≤ K → l ∉ t'.toCellScheme.scope d → v d = u d) ∧
+      min (v o) (visibilityReplace K K (v r)) ≤ c
+
+/-- **The private frontier at most the cap, from the unserved case**: the conclusion of
+`IsSourceGapContextAt.exists_frontier_le` for every section, given `LowStepUnserved`: a frontier
+above the cap with `R_K (u r) < u o` is served (`IsSourceGapContextAt.serve_of_lt`). -/
+theorem IsSourceGapContextAt.exists_frontier_le_of_unserved (ht' : t'.IsLegal)
+    (hs : t'.IsSourceGapContextAt K h l o r) (hU : LowStepUnserved K t' l o r)
+    {u : Fin t'.card → Label.{u}} (hu : t'.rows.IsLawfulBelow (univ, K) fun d ↦ u d)
+    {c : Label.{u}} (hcv : IsSelfVisible K c) (hc : ⊥ < c)
+    (hroot : ∀ d, t'.toCellScheme.grade d ≤ K → l ∉ t'.toCellScheme.scope d → t'.label d ≠ ⊤ →
+      u d ≤ c) :
+    ∃ v : Fin t'.card → Label.{u}, t'.rows.IsLawfulBelow (univ, K) (fun d ↦ v d) ∧
+      (∀ d, t'.toCellScheme.grade d ≤ K → min (v d) c = min (u d) c) ∧
+      (∀ d, t'.toCellScheme.grade d ≤ K → l ∉ t'.toCellScheme.scope d → v d = u d) ∧
+      min (v o) (visibilityReplace K K (v r)) ≤ c := by
+  by_cases hfr : min (u o) (visibilityReplace K K (u r)) ≤ c
+  · exact hs.exists_frontier_le ht' hu hcv hc hroot (.inl hfr)
+  by_cases hserve : ∀ s t, t'.toCellScheme.scope s ⊆ t'.toCellScheme.scope t →
+      t'.toCellScheme.grade s = t'.toCellScheme.grade t → t'.toCellScheme.grade t ≤ K →
+      visibilityReplace K K (t'.rowAt o r) < t'.rowAt o s → u o < u s →
+      ∃ w, t'.toCellScheme.gradedIndex w = t'.toCellScheme.gradedIndex t ∧ u s ≤ u w ∧
+        visibilityReplace K K (t'.rowAt o r) < t'.rowAt o w
+  · exact hs.exists_frontier_le ht' hu hcv hc hroot (.inr hserve)
+  have hco : c < u o := (not_le.mp hfr).trans_le (min_le_left _ _)
+  have hor : u o ≤ visibilityReplace K K (u r) := not_lt.mp fun hlt ↦ hserve (hs.serve_of_lt hu hlt)
+  exact hU u hu c hcv hc hroot hco hor hserve
+
 end StageType
 
 end VaughtConjecture
