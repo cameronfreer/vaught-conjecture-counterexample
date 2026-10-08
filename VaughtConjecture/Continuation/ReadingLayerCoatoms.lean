@@ -36,6 +36,17 @@ from conditions on its two coatom types.
   `TopReadingApexExample.tie_one_threeType`), and `rightType` has a new top (its cell `{3}`;
   `TowerProfile.rowsRaiseAt_rightType`).
 
+* **Acquired contexts** (`TowerProfile.isLegalBelowFullGrade_readingTop_of_acquired`,
+  `TowerProfile.arity_le_two_of_isMarkedCapContextAt`, `TowerProfile.arity_eq_two_of_acquired`,
+  `TopReadingApexExample.not_isMarkedCapContextAt_threeType`, compiled): when the left coatom type
+  is an acquired marked-cap context along a root `h` (`TiedRootCapRelabel.MarkedCapContextBelow'`
+  unpacked), the top cap gives the label `⊤` and the full scope of the apex, the root offsets and
+  the root bottoms; the residual hypotheses are the top grade `4` of the cap, its uniqueness at
+  `(univ, 4)`, the cells off the root labelled `⊥` read as `⊥` (of the kind of the root bottoms,
+  not given by `Realization.IsModel`), the common face labelled `⊥`, the tied root cells with the
+  structure of this family, and the right coatom condition.  The root then has exactly two
+  points; `seedThree` is not such a context (its tie is along the identity root).
+
 The conditions are explicit predicates on the coatom types; the marker condition is the
 acquisition condition (root offsets below the grade of the cap), from which the tie of the marker
 follows (`StageType.keepsProperRootTies_of_rootOffsetsBelow`).
@@ -214,6 +225,92 @@ theorem isLegalBelowFullGrade_readingTop_of_coatoms {a z₁ z₂ : Fin I.left.ca
     · exact readingFillPos_left_of_coatoms hL hR
     · rw [mem_singleton.mp hz]
       exact readingFillPos_right_of_unique hgr hrC huniq hX3
+
+/-! ### Acquired contexts -/
+
+/-- **The root of an acquired context on four points has at most two points**: the top cap of a
+marked-cap context has grade above `n + 1` and at most `4`. -/
+theorem arity_le_two_of_isMarkedCapContextAt {n : ℕ} {t' : StageType.{u} α 4} {h : Fin n ↪ Fin 4}
+    {c r : Fin t'.card} (hctx : t'.IsMarkedCapContextAt h c r) : n ≤ 2 := by
+  have h1 := hctx.2.2.1
+  have h2 := t'.grade_le c
+  omega
+
+/-- A cell visible through a root of `n` points has grade at most `n`. -/
+theorem grade_le_of_mem_visibleCells {n k : ℕ} {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    {z : Fin t'.card} (hz : z ∈ t'.visibleCells h) : t'.toCellScheme.grade z ≤ n := by
+  have hsub : t'.toCellScheme.scope z ⊆ univ.map h := (mem_filter.mp hz).2
+  calc t'.toCellScheme.grade z ≤ #(t'.toCellScheme.scope z) :=
+        t'.isWellFormed.isWellFormed.grade_le_card z
+    _ ≤ #(univ.map h) := card_le_card hsub
+    _ = n := by simp
+
+/-- **Legality of the restricted reading layer at an acquired context.**  Let the left coatom type
+of a seed on five points be an acquired marked-cap context along a root `h`
+(`TiedRootCapRelabel.MarkedCapContextBelow'`, unpacked: top cap `c`, marker `r`, root offsets below
+the grade of `c`, root bottoms respected).  These give: `c` labelled `⊤` and of full scope
+(`StageType.IsTopCap`), the root offsets and the root bottoms of `TowerProfile.LeftTie`.  The
+residual hypotheses are:
+
+* `hN`: the cap has the top grade `4` (so the root has two points, `n + 1 < 4` with a root cell of
+  grade `2`) — a shape restriction of seeds on five points;
+* `huniq`: the cap is the only cell at `(univ, 4)` — a shape restriction;
+* `hbotoff`: the cap reads the cells off the root labelled `⊥` as `⊥` — of the kind of
+  `StageType.RootBottomRespected` (an acquisition property, not given by `Realization.IsModel`),
+  off the root;
+* `hface`: the cells off the point `3` (the common face with the right coatom) are labelled `⊥` —
+  a shape restriction;
+* `z₁`, `z₂`: root cells of grades `1`, `2` with one proper label, with `htie`, `htwo`, `hthree`
+  (one value at the cells of grade `1` not labelled `⊥`, one cell of grade `2` not labelled `⊥`,
+  the cells of grade `3` labelled `⊥`) — the shape of this family;
+* `hR`: the right coatom type raises at the point `3` and has a new top `x₀`
+  (`TowerProfile.RightNewTop`) — a shape restriction on the donor side. -/
+theorem isLegalBelowFullGrade_readingTop_of_acquired {n : ℕ} {h : Fin n ↪ Fin 4}
+    {c r : Fin I.left.card} (hctx : I.left.IsMarkedCapContextAt h c r)
+    (hoff : I.left.RootOffsetsBelow h (I.left.toCellScheme.grade c))
+    (hbot : I.left.RootBottomRespected h c)
+    (hN : I.left.toCellScheme.grade c = 4)
+    (huniq : ∀ z, I.left.toCellScheme.gradedIndex z = (univ, 4) → z = c)
+    (hbotoff : ∀ z ∉ I.left.visibleCells h, I.left.label z = ⊥ → I.left.toScheme.rowAt c z = ⊥)
+    (hface : ∀ z, Fin.last 3 ∉ I.left.toCellScheme.scope z → I.left.label z = ⊥)
+    {z₁ z₂ : Fin I.left.card} (hz₁ : z₁ ∈ I.left.visibleCells h) (hz₂ : z₂ ∈ I.left.visibleCells h)
+    (hg₁ : I.left.toCellScheme.grade z₁ = 1) (hg₂ : I.left.toCellScheme.grade z₂ = 2)
+    (hlab : I.left.label z₂ = I.left.label z₁) (hprop : IsProper (I.left.label z₂))
+    (htie : ∀ p : Fin I.left.card → Label.{u}, I.left.rows.IsLawful p → ∀ z,
+      I.left.toCellScheme.grade z = 1 → I.left.label z ≠ ⊥ → p z = p z₁)
+    (htwo : ∀ z, I.left.toCellScheme.grade z = 2 → I.left.label z ≠ ⊥ → z = z₂)
+    (hthree : ∀ z, I.left.toCellScheme.grade z = 3 → I.left.label z = ⊥)
+    {x₀ : Fin I.right.card} (hR : RightNewTop I.right x₀) :
+    (readingTop I (leftCell I c) (newTops I x₀)).IsLegalBelowFullGrade := by
+  obtain ⟨⟨hcs, hct, -⟩, -, -, -⟩ := hctx
+  have hoff4 : I.left.RootOffsetsBelow h 4 := by rw [← hN]; exact hoff
+  refine isLegalBelowFullGrade_readingTop_of_coatoms (ι := h) (z₁ := z₁) (z₂ := z₂) ?_ hR
+  exact
+    { gradedIndex_apex := Prod.ext hcs hN
+      eq_apex := huniq
+      label_apex := hct
+      rootBottom := hbot
+      rowAt_apex_off := hbotoff
+      face_bot := hface
+      rootOffsetsBelow := hoff4
+      mem_one := hz₁
+      mem_two := hz₂
+      grade_one := hg₁
+      grade_two := hg₂
+      label_eq := hlab
+      isProper_label := hprop
+      tie_one := htie
+      eq_two := htwo
+      label_three := hthree }
+
+/-- **The root of an acquired context carrying the two tied cells has exactly two points**
+(`arity_le_two_of_isMarkedCapContextAt`, and a root cell of grade `2`). -/
+theorem arity_eq_two_of_acquired {n : ℕ} {h : Fin n ↪ Fin 4} {c r : Fin I.left.card}
+    (hctx : I.left.IsMarkedCapContextAt h c r) {z₂ : Fin I.left.card}
+    (hz₂ : z₂ ∈ I.left.visibleCells h) (hg₂ : I.left.toCellScheme.grade z₂ = 2) : n = 2 := by
+  have h1 := arity_le_two_of_isMarkedCapContextAt hctx
+  have h2 := grade_le_of_mem_visibleCells hz₂
+  omega
 
 end TowerProfile
 
@@ -421,6 +518,13 @@ theorem isLegalBelowFullGrade_readingTop_seedThree :
         (Fin.castSucc (⟨3, by decide⟩ :
           Fin CaseSplitCounterexample.S.{u}.card)))).IsLegalBelowFullGrade :=
   isLegalBelowFullGrade_readingTop_of_coatoms (leftTie_threeType hα) (rightNewTop_rightType α)
+
+/-- **`seedThree` is not an acquired context along the identity**: an acquired context on four
+points has a root of at most two points (`TowerProfile.arity_le_two_of_isMarkedCapContextAt`); the
+tie at `threeType` is along the identity root. -/
+theorem not_isMarkedCapContextAt_threeType (c r : Fin (threeType hα).card) :
+    ¬ (threeType hα).IsMarkedCapContextAt (Function.Embedding.refl (Fin 4)) c r := fun h ↦
+  absurd (arity_le_two_of_isMarkedCapContextAt h) (by omega)
 
 end TopReadingApexExample
 
