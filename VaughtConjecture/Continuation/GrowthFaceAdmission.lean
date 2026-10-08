@@ -39,6 +39,53 @@ namespace VaughtConjecture
 
 open Finset Label
 
+namespace StageType.GrowthRequests
+
+variable {α : Ordinal.{u}} {J n : ℕ} {t' : StageType.{u} α J} {D : Scheme.{u} (n + 1)}
+  {Q : StageType.GrowthRequests t' D}
+
+/-- **Admission transfers under capped agreement above the cap value**: if `(s, v)` is admitted
+on the exact class and `(s', v')` agrees with it capped at `c > ⊥`, strictly above the cap value
+of `s` (self-visible at the threshold), then `(s', v')` is admitted on the exact class.  The reads
+of the requests are capped at the cap value, below `c`. -/
+theorem AdmitsOnClass.of_min_eq {s s' : Fin t'.card → Label.{u}} {v v' : Fin D.card → Label.{u}}
+    (h : Q.AdmitsOnClass s v) {c : Label.{u}} (hc0 : c ≠ ⊥)
+    (hss : ∀ x, min (s' x) c = min (s x) c) (hvv : ∀ j, min (v' j) c = min (v j) c)
+    (hcap : s Q.cap < c) (hvis : IsSelfVisible Q.threshold (s Q.cap))
+    (hoff : ∀ j ∈ Q.exacts, Q.offset j ≤ Q.threshold) (hR : Q.markerOffset ≤ Q.threshold) :
+    Q.AdmitsOnClass s' v' := by
+  intro hcls hcap0
+  have hcap' : s' Q.cap = s Q.cap := by
+    have h1 := hss Q.cap
+    rw [min_eq_left hcap.le] at h1
+    rcases le_total (s' Q.cap) c with hle | hle
+    · rwa [min_eq_left hle] at h1
+    · rw [min_eq_right hle] at h1
+      exact absurd h1.symm hcap.ne
+  have hS (a a' : Label.{u}) (haa : min a' c = min a c) :
+      min a' (s Q.cap) = min a (s Q.cap) := Label.min_eq_min_of_le haa hcap.le
+  have hV (a a' : Label.{u}) (haa : min a' c = min a c) {i : ℕ} (hi : i ≤ Q.threshold) :
+      min (visibilityReplace Q.threshold i a') (s Q.cap) =
+        min (visibilityReplace Q.threshold i a) (s Q.cap) := by
+    rw [← visibilityReplace_min_of_isSelfVisible hi hvis,
+      ← visibilityReplace_min_of_isSelfVisible hi hvis, hS a a' haa]
+  have hcls' : ∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
+      s x = ⊥ ↔ t'.label x = ⊥ := fun x hx ↦
+    (Label.eq_bot_iff_of_min_eq (hss x) hc0).symm.trans (hcls x hx)
+  have hcap0' : s Q.cap ≠ ⊥ := hcap' ▸ hcap0
+  intro j
+  obtain ⟨h1, h2, h3⟩ := h hcls' hcap0' j
+  refine ⟨fun hj ↦ ?_, fun hj ↦ ?_, fun hj ↦ ?_⟩
+  · rw [hcap', hS _ _ (hvv j)]; exact h1 hj
+  · rw [hcap', hS _ _ (hvv j), h2 hj, readExact, readExact, hcap',
+      hV _ _ (hss (Q.ref j)) (hoff j hj)]
+  · have h3' := h3 hj
+    rw [readMarker] at h3' ⊢
+    rw [hcap', hV _ _ (hss Q.marker) hR, hS _ _ (hvv j)]
+    exact h3'
+
+end StageType.GrowthRequests
+
 namespace GrowthCarrier
 
 variable {α : Ordinal.{u}} {J n : ℕ} {t' : StageType.{u} α J} {D : Scheme.{u} (n + 1)}

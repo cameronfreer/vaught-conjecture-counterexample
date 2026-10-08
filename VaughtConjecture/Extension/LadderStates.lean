@@ -185,6 +185,34 @@ theorem isLawful_ladderExtend {hS : S.NoFullOne} (hwf : S.IsWellFormed) (hH : 0 
 
 end Scheme
 
+namespace Scheme
+
+variable {n : ℕ} {S : Scheme.{u} n} {Q : Type} [Fintype Q] {H : ℕ} {prof : Q → Fin S.card → ℕ}
+
+/-- **A ladder point reads another** through the code, at its ceiling, of the base index of its
+member. -/
+theorem rowAt_ladderBase_ladder {hS : S.NoFullOne} (hwf : S.IsWellFormed)
+    (p q : LadderPt S Q H) :
+    (ladderBase H prof hS).rowAt (Fin.natAdd _ (ladderEquiv S Q H p))
+      (Fin.natAdd _ (ladderEquiv S Q H q)) =
+    ladderSource (ladderCeil prof p)
+      (baseIndex H prof p.1 (Fin.natAdd _ (ladderEquiv S Q H q))) := by
+  have hq : Fin.natAdd S.card (ladderEquiv S Q H q) ∈
+      (ladderBase H prof hS).toCellScheme.below ((univ : Finset (Fin n)), 1) := by
+    rw [CellScheme.mem_below, appendFullCellsScheme_gradedIndex_natAdd]
+  have hmem : Fin.natAdd S.card (ladderEquiv S Q H q) ∈
+      (ladderBase H prof hS).toCellScheme.below
+        ((ladderBase H prof hS).toCellScheme.gradedIndex
+          (Fin.natAdd S.card (ladderEquiv S Q H p))) := by
+    change (S.appendFullCellsScheme 1 _).gradedIndex _ ≤ (S.appendFullCellsScheme 1 _).gradedIndex _
+    rw [appendFullCellsScheme_gradedIndex_natAdd, appendFullCellsScheme_gradedIndex_natAdd]
+  rw [rowAt_of_mem hmem]
+  have h1 := appendFullCells_row_natAdd (S := S) (k := 1) (M := ladderCard S Q H)
+    (r := baseRow H prof) (h := hS) (ladderEquiv S Q H p) ⟨_, hmem⟩
+  rw [h1, baseRow_of_mem hwf _ hq, Equiv.symm_apply_apply]
+
+end Scheme
+
 namespace Seed
 
 variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) (H : ℕ)
