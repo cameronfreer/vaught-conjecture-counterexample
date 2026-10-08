@@ -28,8 +28,10 @@ item below is compiled in this repository (theorem named), unless marked otherwi
   `ω · c + n` with `i, n < k` have one orbit key, keep their finite parts and move to one code block
   (`Label.orbitCode_omega0_mul_add`, in `VaughtConjecture.Extension.OrbitCode`); equal values have
   equal codes, and `⊥` is coded as `⊥`.
-* **Splicing with `⊥` above the grade keeps the reading** (`StageType.ReadsThroughCapAt.splice`):
-  the reading involves cells of grade at most `N ≤ k` only.
+* **Splicing with `⊥` above the grade keeps the reading** (`StageType.ReadsThroughCapAt.splice`),
+  when both the cap and the read cell `e` have grade at most `k` (two premises:
+  `StageType.ReadsThroughCapAt` bounds the grades of the reference cells by that of the cap, but
+  not the grade of `e`): the reading then involves cells of grade at most `k` only.
 * **Capped agreement keeps the reading above every value**
   (`StageType.ReadsThroughCapAt.of_min_eq`): a labelling agreeing with `r` capped at a cap strictly
   above every value of `r` is `r`.  **Not below a value**
@@ -82,8 +84,10 @@ theorem ReadsThroughCapAt.orbitCode (h : Tp.ReadsThroughCapAt E r b e ℓ) {k : 
     (hn.trans_le hk) hra hre
   exact ⟨hn, a, a₀, i, c', haa₀, ha₀, hi, hag, hra', hre'⟩
 
-/-- **Splicing with `⊥` above the grade keeps the reading**: the reading involves the cap, the
-reference cells (of grade at most that of the cap) and `e`, all of grade at most `k`. -/
+/-- **Splicing with `⊥` above the grade keeps the reading**, when the cap and `e` both have grade
+at most `k` (`hk` and `he`; the reading bounds the grades of the reference cells by that of the cap,
+not the grade of `e`): the reading involves the cap, the reference cells and `e`, all of grade at
+most `k`. -/
 theorem ReadsThroughCapAt.splice (h : Tp.ReadsThroughCapAt E r b e ℓ) {k : ℕ}
     (hk : E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b) ≤ k)
     (he : E.toCellScheme.grade e ≤ k) :

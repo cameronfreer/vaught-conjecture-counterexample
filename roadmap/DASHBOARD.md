@@ -982,8 +982,9 @@ except as a named hypothesis.
    **The reading along the catalogue operations** (`Continuation/StableRecoveryReadingInvariants`,
    compiled in this repository (theorem named)): a labelling reading a new cell through a cap of
    grade `N ≤ k` keeps the reading under the orbit code at `k`
-   (`StageType.ReadsThroughCapAt.orbitCode`) and under the splice with `⊥` above `k`
-   (`StageType.ReadsThroughCapAt.splice`), and under capped agreement at a cap above every value
+   (`StageType.ReadsThroughCapAt.orbitCode`), under the splice with `⊥` above `k` when the read
+   cell also has grade at most `k` (a separate premise: the reading does not bound it;
+   `StageType.ReadsThroughCapAt.splice`), and under capped agreement at a cap above every value
    (`StageType.ReadsThroughCapAt.of_min_eq`); at a cap at most the value at the cell, some labelling
    with the same capped values does not read it (`StageType.ReadsThroughCapAt.exists_not_of_le`).
    **Two refuted designs** (compiled in this repository (theorem named)); each refutes the named
