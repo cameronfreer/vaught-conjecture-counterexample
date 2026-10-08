@@ -36,6 +36,9 @@ Compiled in this repository (theorem named):
   the (R4) hypothesis here (`StageType.HasCutoffFirstCoatomCompletions.ex_nd`); no converse is
   claimed.
 
+The calibration with the clause restricted to the grade of the cap, whose acquisition needs no
+hypothesis, and its route are in `VaughtConjecture.MainTheorem.SameLayerRoute`.
+
 ## Placement
 
 This file belongs to Layer 6 of `roadmap/README.md`.
