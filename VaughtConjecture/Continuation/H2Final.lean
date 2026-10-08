@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.H2GeneralZero
+import VaughtConjecture.Continuation.H2GeneralRaised
 import VaughtConjecture.Continuation.H2OwnerOneFace
 
 /-!
@@ -21,8 +21,11 @@ the owner's graded index.
 and the extension above `K` (`H2.ExtAboveAt`).  The cases `k = 0` (one point) and `k = 1` (two
 points) are compiled.  The second input is false at `k = 2`
 (`H2.not_extAboveAt_two`, module `VaughtConjecture.Continuation.H2ExtAboveCounterexample`), so
-at three points and above this statement is vacuous as it stands; the extension above `K` is to
-be replaced by a raised form.
+at three points and above this statement is vacuous as it stands.
+
+**With the raised extensions** (`H2.coatomCutoffDeterminationLast_of_raised`): the extension above
+`K` replaced by the raised extension on the donor side (`H2.ExtAboveRaisedAt`) and the extension
+keeping the frontier on the context side (`H2.ExtFrontierAt`).
 -/
 
 universe u
@@ -88,6 +91,23 @@ theorem coatomCutoffDeterminationLast_of (hOL : ∀ k, 2 ≤ k → OwnerLowering
   · exact exists_coface_last (hasRecCompletions_of_below (hOL _ (by omega))
       (admittedCompletionsAt_of_below (by omega)
         (admittedCompletionsBelowAt_of_ext (by omega) (hext _ (by omega)))))
+      hα hleg hs hp htbleg htbp hd hdK
+
+/-- **h2 with the lost point last from owner lowering below the designated tops below the full
+grade and the two raised extensions, at `k ≥ 2`**: the raised extension above `K` on the donor side
+(`H2.ExtAboveRaisedAt`) and the extension keeping the frontier on the context side
+(`H2.ExtFrontierAt`). -/
+theorem coatomCutoffDeterminationLast_of_raised (hOL : ∀ k, 2 ≤ k → OwnerLoweringBelowAt.{u} k)
+    (hR : ∀ k, 2 ≤ k → ExtAboveRaisedAt.{u} k) (hF : ∀ k, 2 ≤ k → ExtFrontierAt.{u} k) :
+    CoatomCutoffDeterminationLast.{u} := by
+  intro α K n k t' g p hα hleg ⟨o, r, hs⟩ hp tb ⟨htbleg, htbp⟩ d hd hdK
+  rcases k with _ | _ | k
+  · exact exists_coface_last (hasRecCompletions_of_below ownerLoweringBelowAt_zero
+      admittedCompletionsAt_zero) hα hleg hs hp htbleg htbp hd hdK
+  · exact exists_coface_two_last hα hleg hs hp htbleg htbp hd hdK
+  · exact exists_coface_last (hasRecCompletions_of_below (hOL _ (by omega))
+      (admittedCompletionsAt_of_below (by omega)
+        (admittedCompletionsBelowAt_of_raised (by omega) (hR _ (by omega)) (hF _ (by omega)))))
       hα hleg hs hp htbleg htbp hd hdK
 
 end VaughtConjecture.H2
