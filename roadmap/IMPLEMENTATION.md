@@ -4207,7 +4207,7 @@ argued, not formalized):
   `c < λ_δ`, choose an earlier block `ξ` with `c < λ_ξ` (`lt_blockStage_iff`); reduce the
   request (`StageType.reduce_mem_cofaces`); receive in the reduction; the received point is on
   the same carrier and extends the occurrence at `λ_δ`; agreement below `c` survives reduction
-  (`Label.min_reduce_of_le`).  The first test of the route: proved before any reorganization.
+  (`Label.min_reduce_of_le`).  The first test of the route.
   Acceptance: the statement at every limit `δ`, with no hypothesis beyond the receiving of the
   reductions.  Status: compiled in a separate open change, not yet reviewed; prospective here.
 - **8b. Reduction and uniqueness for `𝒞`.**  Reduction from item 2 above; next-block
@@ -4216,11 +4216,12 @@ argued, not formalized):
   with 8a.
 - **8c. Logical comparison.**  The counterpart of `Expansion.bfEquiv_of_modelExpansions` for
   receiving expansions, the receiving of each expansion and of its reductions in place of
-  `Expansion.FiniteExtensionReceiving`.  `Expansion.exists_extend_covers`, its `_back` form, and
-  `Expansion.exists_reduce_covers` state their output expansions existentially (only their
-  proofs use `ModelExpansion.reduceBlock`), so a receiving version needs these steps restated
-  with the reductions as outputs (`Expansion.exists_extend_covers_reduceBlock` and its `_back`
-  form, compiled in a separate open change).
+  `Expansion.FiniteExtensionReceiving`.  `Expansion.exists_extend_covers`,
+  `Expansion.exists_extend_covers_back`, and `Expansion.exists_reduce_covers` state their output
+  expansions existentially (only their proofs use `ModelExpansion.reduceBlock`), so a receiving
+  version needs these steps restated with the reductions as outputs
+  (`Expansion.exists_extend_covers_reduceBlock` and
+  `Expansion.exists_extend_covers_back_reduceBlock`, compiled in a separate open change).
 - **8d. The receiving continuation criterion.**  A receiving model at `λ_ξ`, not cover-hollow,
   with top-grade supremum `⊤`, has a receiving successor; the conclusion gives receiving as well
   as modelhood.  Conditionally on (R4), the stable candidate has finite-cut receiving
@@ -4236,8 +4237,12 @@ argued, not formalized):
   implication holds, so `Realization.IsCoverHollow.isTerminalAt` gives receiving-terminality.
 - **8f. Classification and the count.**  The terminal comparisons for receiving models, countable
   and nonempty receiving losses, and the count through the endpoint of item 5, unchanged.
-  Status: a form of the main theorem through receiving models, without (R1) as a hypothesis, is
-  compiled in a separate open change, not yet reviewed; prospective here.
+  Status: a form of the main theorem through receiving models is compiled in a separate open
+  change, not yet reviewed, without (R1) as a hypothesis; its remaining hypotheses are the coatom
+  extension property with apex at every countable block stage and (R4), (R2) and (R3) for
+  receiving models (`Expansion.ReceivingStableCappedReceiving`,
+  `Realization.ReceivingResidualReceiving`, and `Realization.HollowReceiving` for
+  `Realization.IsReceivingCoverHollowAtBlock`); prospective here.
 
 **The three finite reading constructions** (open; the warnings for (R2)–(R4) below are compiled
 in separate open changes, not in the library).  Completion yields a lawful extension
@@ -4555,9 +4560,9 @@ In the U1 row, `Expansion.FiniteCutReceiving` (countable limit stages) is a coro
 row, hypothesis 8 uses the apex property at every `λ_η`; the other targets use it, or its plain
 form, at arbitrary limit stages.
 
-**U1.  (R1) through an attached gated scheme** (first priority).  Under the receiving-models
-route (checkpoint 8), (R1) is postponed to a later fidelity theorem and U1 is no longer first;
-this departs intentionally from the ordering of 2026-10-07 recorded in this section.
+**U1.  (R1) through an attached gated scheme** (first in the order of this section).  Under the
+receiving-models route (checkpoint 8), (R1) is postponed to a later fidelity theorem and U1 is no
+longer first; this departs from the order of this section.
 
 - *Conclusion.*  The per-model form at every limit stage, as
   `Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions` is stated: for

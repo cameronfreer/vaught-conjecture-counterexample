@@ -267,14 +267,14 @@ continuation criterion; U3, (R3) and (R2) by exact recovery; U4, the apex proper
 through the completion below the full grade at every arity.  The known failures (the gated and
 coupled inputs, the twin donors, the grade of private tops) are the tests of U1–U3.
 Under the receiving-models route (below), (R1) is postponed to a later fidelity theorem and U1
-is no longer first; this departs intentionally from the ordering of 2026-10-07 recorded here.
+is no longer first; this departs from the order of this section.
 
 ## The receiving-models route
 
 The route adopted for a first complete proof (`README.md`, "The receiving models", after
 Layer 6; `IMPLEMENTATION.md`, checkpoint 8).  It changes no status, no percentage, and no entry
-of the table of named hypotheses below.  An item that names no compiled theorem is
-*prospective*; an argument that names none is argued, not formalized.
+of the table of named hypotheses below.  An item is *prospective*, and an argument is argued,
+not formalized, unless a theorem is named for it.
 
 **The class.**  At a block stage `α = λ_ξ`, `ξ < ω₁`, the class `𝒞_α` of realizations on
 countable carriers that are models (`Realization.IsModel`, the stage-model axioms) **and** have
@@ -315,16 +315,19 @@ not formalized):
 | (e) | receiving terminal and expansion interfaces | new interfaces, not renamings |
 | (f) | classification and the count | through the endpoint above, unchanged |
 
-Item (a) is the receiving counterpart of `Realization.IsModel.of_forall_reduce`; it is to be
-proved before any reorganization.  Item (c) is the counterpart of
-`Expansion.bfEquiv_of_modelExpansions`; `Expansion.exists_extend_covers`, its `_back` form, and
+Item (a) is the receiving counterpart of `Realization.IsModel.of_forall_reduce` and the first
+test of the route.  Item (c) is the counterpart of `Expansion.bfEquiv_of_modelExpansions`;
+`Expansion.exists_extend_covers`, `Expansion.exists_extend_covers_back`, and
 `Expansion.exists_reduce_covers` state their output expansions existentially, so a receiving
 version needs them restated with the reductions as outputs
-(`Expansion.exists_extend_covers_reduceBlock` and its `_back` form, compiled in a separate open
-change).  For item (e): "no receiving
-successor" does not imply "no successor that is a model" (`Realization.IsTerminalAt`).  Items (a)
-and (f), the latter as a form of the main theorem without (R1), are compiled in a separate open
-change, not yet reviewed; their status here stays prospective.
+(`Expansion.exists_extend_covers_reduceBlock` and `Expansion.exists_extend_covers_back_reduceBlock`,
+compiled in a separate open change).  For item (e): "no receiving successor" does not imply "no
+successor that is a model" (`Realization.IsTerminalAt`).  Items (a) and (f) are compiled in a
+separate open change, not yet reviewed, (f) as a form of the main theorem without (R1) whose
+remaining hypotheses are the coatom extension property with apex at every countable block stage
+and (R4), (R2) and (R3) for receiving models (`Expansion.ReceivingStableCappedReceiving`,
+`Realization.ReceivingResidualReceiving`, and `Realization.HollowReceiving` for
+`Realization.IsReceivingCoverHollowAtBlock`); their status here stays prospective.
 
 **The three finite reading constructions** (the remaining hard mathematics; open).  Completion
 yields a lawful extension (`Seed.nonempty_completionBelowFullGrade`); classification and
