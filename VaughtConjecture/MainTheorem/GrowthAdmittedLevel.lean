@@ -30,6 +30,17 @@ hypothesis left at each grade is the lift from the two coatoms (the catalogue st
 is good on the admitted profiles (`ProfileTower.Lvl.Good.goodOn`), so the first admitted layer may
 sit on the canonical levels below the threshold.
 
+**Limits of these levels for recognition.**  The levels built here cannot carry the field ladder of
+`Continuation/GrowthLadderRecognition.lean`: (1) a controller at the threshold `N` reads every old
+cell through the section of the level at grade `N - 1`, which sees a profile only through its
+values at the cells of grade at most `N - 1` (`ProfileTower.Lvl.catσ_eq_of_hat_eq`, compiled), so a
+ladder installed in the base cannot carry the values at the cells of grade `N`; (2) overriding the
+controllers' rows at the ladder cells with the member's table conflicts with locality at the old
+cells of full scope of grades `2, …, N - 1`, which read the ladder (argued); (3) copies of cells of
+full scope at the mixed faces are cells of proper scope that are not amalgam cells, against the
+invariant `ProfileTower.Lvl.GoodOn.mem_range` (argued).  The recognizing carrier is therefore built
+as its own construction (`VaughtConjecture.Extension.LadderBase` for its first layer).
+
 ## References
 
 The controllers of the growth step are those of [Kni26, §4].
