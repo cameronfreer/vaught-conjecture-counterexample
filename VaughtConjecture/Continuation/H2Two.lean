@@ -11,12 +11,12 @@ import VaughtConjecture.Continuation.TwoCoatomLift
 # h2 at two points: the assembly (work file)
 
 WORK FILE (branch `research/work-h2`).  `H2.coatomCutoffDeterminationTwo` from two SCAFFOLD
-statements (each with `sorry`): `H2.donorRaising_two_lostZero` (lost point `0`, root on no point)
-and `H2.exists_completion_recProp_one` (top grade `1`).  Donor raising with the gap
-`H2.donorRaising_two` is proved at lost point `1` from capped lifts and the band raise
-(`H2.donorRaisingGap_of_cappedLift`), with every top cell not on the root and not determined by the
-root designated.  The two-coatom lift `H2.hasTwoCoatomLift_two` is proved
-(`Seed.hasTwoCoatomLift`).
+statements (each with `sorry`): `H2.donorRaising_two_lostZero` (lost point `0`, root on no point,
+coatom face with a top) and `H2.exists_completion_recProp_one` (top grade `1`).  Donor raising
+with the gap `H2.donorRaising_two` is proved at lost point `1`, and at lost point `0` with a
+top-free coatom face, from capped lifts and the band raise (`H2.donorRaisingGap_of_cappedLift`),
+with every top cell not on the root and not determined by the root designated.  The two-coatom
+lift `H2.hasTwoCoatomLift_two` is proved (`Seed.hasTwoCoatomLift`).
 -/
 
 universe u
@@ -53,9 +53,11 @@ theorem stateAdmission_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : �
   · exact hs.frontier_le hf ((StageType.label_faceCell hp a).trans ha.1) ha.2
 
 set_option warningAsError false in
-/-- **SCAFFOLD (contains `sorry`): donor raising at lost point `0`.**  The root is then on no
-point (`n = 0`: the lost point is not on the root), and the root cells labelled `⊤` with scope the
-point `0` are not designated root tops, so the band raise need not fix them. -/
+/-- **SCAFFOLD (contains `sorry`): donor raising at lost point `0`, coatom face with a top.**  The
+root is then on no point (`n = 0`: the lost point is not on the root), and the cells of the coatom
+face labelled `⊤` (scope the point `0`, through the lost point) are not designated root tops: the
+context gives no frontier bound at them, so the band raise need not fix them.  (A top-free coatom
+face is proved: `H2.donorRaising_two`.) -/
 theorem donorRaising_two_lostZero {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
     {g : Fin n ↪ Fin 1} {o r : Fin t'.card}
     (hs : t'.IsSourceGapContextAt 2 (g.trans Fin.castSuccEmb) 0 o r) {p : StageType.{u} α 1}
@@ -63,34 +65,24 @@ theorem donorRaising_two_lostZero {t' : StageType.{u} α 2} (hleg : t'.IsLegal) 
     (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
     {Lo Tops : Finset (Fin tb.card)} (hLo : ∀ x, tb.label x ≠ ⊤ → x ∈ Lo)
     (hTops : ∀ x, tb.label x = ⊤ → x ∉ tb.toScheme.visibleCells Fin.castSuccEmb →
-      ¬ RootDet tb x → x ∈ Tops) :
+      ¬ RootDet tb x → x ∈ Tops) (hpt : ∃ x, p.label x = ⊤) :
     DonorRaisingGap (StageType.faceCell hp) (StageType.faceCell htbp) 2 t'.rows.IsLawful
       tb.rows.IsLawful (rootTops hp 0) Lo Tops := by
   sorry
 
-/-- **Donor raising with the gap at two points** (`H2.DonorRaisingGap`): at lost point `1`, from
-capped lifts into `tb` and the band raise (`H2.donorRaisingGap_of_cappedLift`), every top cell of
-`tb` off the root and not determined by the root being designated; at lost point `0`,
-`H2.donorRaising_two_lostZero`. -/
-theorem donorRaising_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
-    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
-    (hs : t'.IsSourceGapContextAt 2 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
+/-- **Donor raising with the gap at two points, from the root cells**: when every root cell is
+low or a designated root top, from capped lifts into `tb` and the band raise
+(`H2.donorRaisingGap_of_cappedLift`), every top cell of `tb` off the root and not determined by
+the root being designated. -/
+theorem donorRaising_two_of_root {t' : StageType.{u} α 2} {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
-    (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
+    (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p) {A : Set (Fin p.card)}
     {Lo Tops : Finset (Fin tb.card)} (hLo : ∀ x, tb.label x ≠ ⊤ → x ∈ Lo)
     (hTops : ∀ x, tb.label x = ⊤ → x ∉ tb.toScheme.visibleCells Fin.castSuccEmb →
-      ¬ RootDet tb x → x ∈ Tops) :
+      ¬ RootDet tb x → x ∈ Tops) (hroot : ∀ x, StageType.faceCell htbp x ∈ Lo ∨ x ∈ A) :
     DonorRaisingGap (StageType.faceCell hp) (StageType.faceCell htbp) 2 t'.rows.IsLawful
-      tb.rows.IsLawful (rootTops hp l) Lo Tops := by
-  obtain rfl | rfl : l = 0 ∨ l = 1 := by omega
-  · exact donorRaising_two_lostZero hleg hs hp htbleg htbp hLo hTops
+      tb.rows.IsLawful A Lo Tops := by
   have he := comap_toScheme_of_restrictFace htbp
-  have hroot : ∀ x, StageType.faceCell htbp x ∈ Lo ∨ x ∈ rootTops hp 1 := by
-    intro x
-    by_cases hx : p.label x = ⊤
-    · refine .inr ⟨hx, ?_⟩
-      simp [StageType.scope_faceCell, Fin.ext_iff]
-    · exact .inl (hLo _ (by rwa [StageType.label_faceCell]))
   have hcls : ∀ d, d ∈ Lo ∨ d ∈ Tops ∨ (∃ x, StageType.faceCell htbp x = d) ∨
       IsRootDet (StageType.faceCell htbp) tb.rows.IsLawful d := by
     intro d
@@ -111,6 +103,32 @@ theorem donorRaising_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
   exact @donorRaisingGap_of_cappedLift _ _ _ _ _ _ _ _ _ _ _
     (hasCappedLifts_of_isLegal hp htbleg htbp Nat.one_pos one_lt_two le_rfl tb.grade_le) hmap
     hroot hcls
+
+/-- **Donor raising with the gap at two points** (`H2.DonorRaisingGap`): at lost point `1`, from
+capped lifts into `tb` and the band raise (`H2.donorRaisingGap_of_cappedLift`), every top cell of
+`tb` off the root and not determined by the root being designated; at lost point `0` with a
+top-free coatom face, the same; at lost point `0` otherwise, `H2.donorRaising_two_lostZero`. -/
+theorem donorRaising_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
+    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt 2 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
+    (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
+    (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
+    {Lo Tops : Finset (Fin tb.card)} (hLo : ∀ x, tb.label x ≠ ⊤ → x ∈ Lo)
+    (hTops : ∀ x, tb.label x = ⊤ → x ∉ tb.toScheme.visibleCells Fin.castSuccEmb →
+      ¬ RootDet tb x → x ∈ Tops) :
+    DonorRaisingGap (StageType.faceCell hp) (StageType.faceCell htbp) 2 t'.rows.IsLawful
+      tb.rows.IsLawful (rootTops hp l) Lo Tops := by
+  obtain rfl | rfl : l = 0 ∨ l = 1 := by omega
+  · by_cases hpt : ∃ x, p.label x = ⊤
+    · exact donorRaising_two_lostZero hleg hs hp htbleg htbp hLo hTops hpt
+    push Not at hpt
+    exact donorRaising_two_of_root hp htbleg htbp hLo hTops fun x ↦
+      .inl (hLo _ (by rw [StageType.label_faceCell]; exact hpt x))
+  refine donorRaising_two_of_root hp htbleg htbp hLo hTops fun x ↦ ?_
+  by_cases hx : p.label x = ⊤
+  · refine .inr ⟨hx, ?_⟩
+    simp [StageType.scope_faceCell, Fin.ext_iff]
+  · exact .inl (hLo _ (by rwa [StageType.label_faceCell]))
 
 /-- **The two-coatom lift** on the canonical lower layer of the seed of two legal stage types on
 two points with one common face (`Seed.HasTwoCoatomLift`; every seed on three points has it,
