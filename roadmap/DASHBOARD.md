@@ -121,13 +121,19 @@ Notes on the rows, each with its marker:
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
   (`StageType.GatedExtension.recover`) and with the twin–gate coupling
   (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`); (R1) conditional on
-  `StageType.HasCoupledGatedPinnedExtensions`, which is open
-  (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`); the refutation
-  of the first form `StageType.HasGatedPinnedExtensions`
-  (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the refuting
-  input (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`); the cap-to-model
-  theorem at a limit stage, conditional on the nonemptiness of the instances of uniformity and
-  dominance (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
+  `StageType.HasCoupledGatedPinnedExtensions`
+  (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`), vacuous at every
+  stage above `1`, where that hypothesis is refuted
+  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`); the bottom transport
+  condition that every coupled gated extension forces
+  (`StageType.CoupledGatedExtension.carriesBottoms`); the refutation of the first form
+  `StageType.HasGatedPinnedExtensions`
+  (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the inputs on
+  `GatedExtensionCounterexample.P α` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
+  `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
+  donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`); the cap-to-model theorem at a
+  limit stage, conditional on the nonemptiness of the instances of uniformity and dominance
+  (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
   conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under
   `StageType.HasApexCoatomExtensions` at `λ_η` and the uniqueness of model expansions at `λ_η`
   (`nonempty_loss_of_hasApexCoatomExtensions`); both coatom extension properties are compiled at
@@ -343,13 +349,14 @@ the status of each hypothesis are unchanged.
 `HasThinAlephOneSpectrum densitySentence` (`MainTheorem/SourceGapMarkedCapRoute`), and the form
 `…_margin` with `h4` at `StageType.GradedCapMarginCalibration`, implied by the graded cap form
 (`StageType.HasCutoffFirstCoatomCompletions.gradedCapMargin`).  The three hypotheses are finite
-statements about stage types and are open: (R4) cutoff completions at the first coatom, (R2) coatom
-cutoff determination for the source-gap context, and (R3) hollow coatom cutoff determination for the
-marked-cap context.  The coatom forms are stronger than the full forms
-(`Realization.CutoffDetermination`, `Realization.HollowCutoffDetermination`,
-`StageType.HasCutoffStableRecoverySchemes`): they imply them, and no converse is claimed; the (R2)
-form ranges over every intermediate coface, also of top grade above `K`.  Every side condition is
-compiled: the acquisitions (`Realization.residualAcquisition_isSourceGapContext`,
+statements about stage types and are open: (R4) cutoff completions at the first coatom (the coatom
+`Fin.castSuccEmb`, which omits the last point), (R2) coatom cutoff determination for the source-gap
+context, and (R3) hollow coatom cutoff determination for the marked-cap context.  The coatom forms
+are stronger than the full forms (`Realization.CutoffDetermination`,
+`Realization.HollowCutoffDetermination`, `StageType.HasCutoffStableRecoverySchemes`): they imply
+them, and no converse is claimed; the (R2) form ranges over every intermediate coface, also of top
+grade above `K`.  Every side condition is compiled: the acquisitions
+(`Realization.residualAcquisition_isSourceGapContext`,
 `Realization.hollowAcquisition_isMarkedCapContext`,
 `Realization.IsModel.acquiresCalibratedContexts_gradedCap` and `…_gradedCapMargin`); roots not onto
 (`StageType.not_isSourceGapContext_of_surjective`, `StageType.IsMarkedCapContext.not_surjective`);
@@ -412,9 +419,9 @@ Status of each:
    item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
    (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
    contexts: the reduction is a template.  One predicate is defined, the source-gap context below,
-   with acquisition compiled and determination open; no other predicate for (R2) is defined, and determination
-   is proved for no `P` beyond the rigid-core instance.  For `P` always true, acquisition is
-   immediate and determination fails (compiled; top-free roots,
+   with acquisition compiled and determination open; no other predicate for (R2) is defined, and
+   determination is proved for no `P` beyond the rigid-core instance.  For `P` always true,
+   acquisition is immediate and determination fails (compiled; top-free roots,
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
    The cofaces in which the root is a rigid core need only (R1) in the same form
    (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).  Templates with the donor, compiled
@@ -469,24 +476,28 @@ Status of each:
    (`Realization.residualReceiving_of_forall_not_isSourceGapContext`), so either some legal type
    is a source-gap context or (R2) holds; neither side is claimed.  No type built with
    `StageType.addApex` is a source-gap context, the compiled completions included
-   (`StageType.not_isSourceGapContext_addApex`); nothing compiled exhibits an instance.  The predicate excludes the compiled
-   determination counterexamples (not top-free, root not surjective).  An admissible top support
-   is separated (`StageType.IsAdmissibleTopSupport.isSeparatedTopSupport`), so the residual
-   hypothesis holds for separated supports (`Realization.not_exists_isGloballySeparatedRigidCore`);
-   the converse is not formalized.
+   (`StageType.not_isSourceGapContext_addApex`); nothing compiled exhibits an instance.  The
+   predicate excludes the compiled determination counterexamples (not top-free, root not
+   surjective).  An admissible top support is separated
+   (`StageType.IsAdmissibleTopSupport.isSeparatedTopSupport`), so the residual hypothesis holds for
+   separated supports (`Realization.not_exists_isGloballySeparatedRigidCore`); the converse is not
+   formalized.
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).  Exactly reformulated as exact receiving of all legal types
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
    `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P` with
    `H := Realization.IsCoverHollowAtBlock` (`Realization.hollowReceiving_of_schemeDetermination`,
-   no receiving used), for a predicate `P` not yet defined: a template, as in item 5 (for `P`
-   always true, acquisition is immediate and determination fails, compiled).  With item 6, the
+   no receiving used), for a predicate `P`: a template, as in item 5.  One predicate for (R3) is
+   defined (the marked-cap context, below), with acquisition compiled
+   (`Realization.hollowAcquisition_isMarkedCapContext`) and determination open; for `P` always
+   true, acquisition is immediate and determination fails (compiled).  With item 6, the
    count uses (R3) at every cover-hollow model with unbounded growth, a globally rigid core
    included (item 6′ below excludes it).  (R3) forces a globally rigid core of a cover-hollow
    model with unbounded growth to be rigid in every legal donor over its type
    (`Realization.HollowReceiving.isRigidCoreIn`).
    *A candidate predicate* (`Stage/MarkedCap`, `Continuation/MarkedCap`): the marked-cap context
-   `StageType.IsMarkedCapContext` (defined in this repository; acquisition and determination open),
+   `StageType.IsMarkedCapContext` (defined in this repository; determination open; acquisition
+   compiled in this repository (theorem named), `Realization.hollowAcquisition_isMarkedCapContext`),
    a context with a top cap `c` (full scope, labelled `⊤`, at the top grade `N > n + 1`), a marker
    `r` (least entry of the row of `c` at the cells labelled `⊤`), and `visibilityReplace N (n + 1)
    (row c r) ≤ row c a` at every cell `a` of the root labelled `⊤`; with reference cells for a
@@ -504,9 +515,12 @@ Status of each:
    Layer 3, 3.1 (`Label.TransformsTo.splice_bandMap`, compiled in this repository (theorem
    named)).  `GatedExtensionCounterexample.P α` is a marked-cap context over the empty root
    (compiled).  The finite step of acquisition is compiled
-   (`StageType.isMarkedCapContext_of_forcesThreshold`); one cover of top grade above `n + 1` forcing
-   `n + 1` at every top of a root at once is prospective, and `Realization.HollowAcquisition` and
-   `Realization.SchemeDetermination` for the predicate are open, so item 6 is not reduced.  The
+   (`StageType.isMarkedCapContext_of_forcesThreshold`), and so is `Realization.HollowAcquisition`
+   for the predicate (`Realization.hollowAcquisition_isMarkedCapContext`, compiled in this
+   repository (theorem named), through the synchronization
+   `Realization.IsModel.exists_synchronized`: one occurrence of top grade above `n + 1` in whose
+   top caps the rows read the thresholds forced at every top of the root);
+   `Realization.SchemeDetermination` for the predicate is open, so item 6 is not reduced.  The
    three refuted determination statements are excluded: the empty root of the apex point and the
    capped two-point context refuting the anchored context (`StageType.IsAnchoredContext`) are
    top-free (compiled in this repository (theorem named)), and the context refuting the anchored
@@ -747,8 +761,18 @@ except as a named hypothesis.
    special cases:
    `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage` (with two variants)
    and `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`.
-3. **4b-ii** (open): the gated construction as data, that is,
-   `StageType.HasCoupledGatedPinnedExtensions`.  Its first form,
+3. **4b-ii** (refuted): the gated construction as data, that is,
+   `StageType.HasCoupledGatedPinnedExtensions`, is false at every stage above `1`
+   (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`, compiled in this
+   repository (theorem named)).  The input: a legal private type on two points with a proper anchor
+   below the cap (a cell of grade `1` labelled `1`), the empty root, and a legal donor on one point
+   with two cells.  Every coupled gated extension forces the bottom transport condition
+   `StageType.CarriesBottoms` (`StageType.CoupledGatedExtension.carriesBottoms`): a lawful private
+   labelling is the private face of a lawful labelling of the display (bountifulness at the cap
+   `⊥`), and the one witness at the gate carries its values at the anchors, through `vr_n`, to the
+   donor face.  The private labelling that drops the anchor and keeps the cap is carried to a donor
+   labelling that the donor's rows forbid.  Only the clauses of a coupled gated extension are used,
+   not cap lowering (CL), so the refutation holds whatever the display.  Its first form,
    `StageType.HasGatedPinnedExtensions`, is refuted at every stage
    (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  The coupled form is compiled at
    inputs without a proper anchor, on `GatedExtensionCounterexample.P α`, whose labels are `⊥` and
@@ -959,11 +983,13 @@ except as a named hypothesis.
    extension), implies parts of the routes' finite hypotheses at inputs where the route's
    prescription is compatible with the faces (`Extension/PrescribedFullRowsRoutes`, compiled in
    this repository (theorems named)); route by route:
-   - (R2)/(R3), the reading context of the route to determination with a private top (that route
-     is not on `main`): the core with a compatible reading prescription gives a reading context
+   - (R2)/(R3), the reading context of the route to determination with a private top
+     (`StageType.IsReadingContext`, `Continuation/AvailableTopDetermination`): the core with a
+     compatible reading prescription gives a reading context in its prescribed-row interface
      (`StageType.HasPrescribedFullRows.isReadingContext`); conversely a reading context makes some
      reading prescription compatible
      (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`).
+     The composition of that interface with the determination templates is not compiled here.
      So, under the core and at a legal input, the reading-context property is equivalent to a
      choice of private tops with a compatible reading prescription.  Obtaining a reading context
      from a graded context with a top, the route's open step, is not derived from the core.
