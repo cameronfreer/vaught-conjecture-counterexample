@@ -489,8 +489,8 @@ coatom off the lost point closed (`StageType.IsSourceGapContextOff`,
 `Realization.residualAcquisition_isSourceGapContextOff`, `Continuation/SourceGapContext`), and
 coatom cutoff determination for `IsSourceGapContextLast` gives cutoff determination for them by
 the transposition of the lost point with the last point
-(`Realization.CoatomCutoffDetermination.cutoffDetermination_off`).  Coatom cutoff determination
-for `IsSourceGapContextLast` is open.  The coatom off the lost point is closed by hypothesis;
+(`Realization.CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`).  Coatom
+cutoff determination for `IsSourceGapContextLast` is open.  The coatom off the lost point is closed by hypothesis;
 the transposition only moves it to the coordinate first coatom.  The source-gap form does not
 reduce to it by a transposition: the closed coatoms of a context are the complements of the
 extreme points of its plan, at most two (`Geometry.IsPlan.card_extremes_le_two`), and a

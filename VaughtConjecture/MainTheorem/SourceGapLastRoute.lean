@@ -20,7 +20,8 @@ determination also at contexts whose lost point lies on the first coatom.  This 
 at the source-gap contexts whose lost point is the last point (`StageType.IsSourceGapContextLast`).
 Each item is compiled in this repository (theorem named).
 
-* **The reduction** (`Realization.CoatomCutoffDetermination.cutoffDetermination_off`): coatom
+* **The reduction**
+  (`Realization.CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`): coatom
   cutoff determination for `IsSourceGapContextLast` gives cutoff determination for the source-gap
   contexts with the coatom off the lost point closed (`StageType.IsSourceGapContextOff`).  That
   coatom is closed by hypothesis; the transposition of the lost point with the last point only
@@ -74,7 +75,7 @@ last point.  The relabelled context has the lost point last, its root avoids the
 its coordinate first coatom is the image of the complement of `l`, which is closed by the
 hypothesis (`IsSourceGapContextOff`); the transposition only moves it to the coordinate position.
 The coatom form applies there (`CoatomCutoffDetermination.exists_coface_reindex`). -/
-theorem CoatomCutoffDetermination.cutoffDetermination_off
+theorem CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff
     (hdet : CoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
     CutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextOff K h where
   exists_coface α K n k t' h hα ht' hP t ht d hd hdK := by
@@ -129,7 +130,7 @@ nonisomorphic ones, conditional on exactly three finite statements about stage t
 As `densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap`, whose
 (R2) hypothesis implies `h2` (`Realization.CoatomCutoffDetermination.isSourceGapContextLast`).
 The acquisition `Realization.residualAcquisition_isSourceGapContextOff` and the reduction
-`Realization.CoatomCutoffDetermination.cutoffDetermination_off` are compiled. -/
+`Realization.CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff` are compiled. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGapLast_markedCap
     (h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions.{0} ξ (GradedCapCalibration.{0} ξ))
     (h2 : CoatomCutoffDetermination.{0} fun K t' h ↦ t'.IsSourceGapContextLast K h)
@@ -137,7 +138,7 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGa
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_determinations
     (fun ξ hξ ↦ (h4 ξ hξ).hasCutoffStableRecoverySchemes_gradedCap)
-    residualAcquisition_isSourceGapContextOff h2.cutoffDetermination_off
+    residualAcquisition_isSourceGapContextOff h2.cutoffDetermination_isSourceGapContextOff
     hollowAcquisition_isMarkedCapContext
     (h3.hollowCutoffDetermination (fun _ _ _ _ _ ht ↦ ht.not_surjective)
       fun _ _ _ _ _ σ ht ↦ ht.reindex σ)
