@@ -494,6 +494,40 @@ for `IsSourceGapContextLast` is open.  The source-gap form does not reduce to it
 transposition: the closed coatoms of a context are the complements of the extreme points of its
 plan, at most two (`Geometry.IsPlan.card_extremes_le_two`).
 
+**Bounded pinned extensions and the bounded (R2) form.**  Compiled in this repository (theorem
+named): capping above a grade, `StageType.capAbove` (`Stage/CapGrade`), lawful with no side
+condition (the cells of grade above `K` form an upper set, `StageType.lt_grade_upper`, and
+availability relates cells of equal grades only); its cells labelled `⊤` are those of the type of
+grade at most `K` (`StageType.capAbove_label_eq_top_iff`), and when the cap lies above every label
+other than `⊤` every face whose cells labelled `⊤` have grade at most `K` is kept literally, labels
+above `K` included (`StageType.restrictFace_capAbove`); such a cap exists at a limit stage
+(`StageType.exists_cap_ne_top`).  The bounded pinned extension
+`StageType.exists_pinned_extension_topGrade_le (hα : Order.IsSuccLimit α) (hP : P.IsLegal)`
+`(hPf : restrictFace f P = some p) (hd : d.IsLegal) (hdp : restrictFace Fin.castSuccEmb d = some p)`
+`(hPK : P.topGrade ≤ K) (hdK : d.topGrade ≤ K) : ∃ Q, Q.IsLegal ∧`
+`restrictFace Fin.castSuccEmb Q = some P ∧ restrictFace (extendByLast f) Q = some d ∧ Q.topGrade ≤ K`
+(`MainTheorem/BoundedCoatomDetermination`) truncates the exact pinned extension above `K`.  The
+bounded coatom form `Realization.BoundedCoatomCutoffDetermination` asks (R2) only at the
+intermediate cofaces `tb` of the coatom face of top grade at most `K`; the coatom form implies it
+(`Realization.CoatomCutoffDetermination.boundedCoatom`), and no converse is claimed.  It gives
+cutoff determination at the first coatom (`Realization.FirstCoatomCutoffDetermination`) for every
+predicate whose contexts of grade `K` have top grade at most `K`
+(`Realization.BoundedCoatomCutoffDetermination.firstCoatom`, hypothesis `hK`), and cutoff
+determination under `hK`, roots not onto and invariance under relabelling
+(`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination`); for source-gap contexts `hK`
+is compiled (`StageType.IsSourceGapContext.topGrade_eq`), giving
+`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_off`,
+`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_sourceGap`,
+`Realization.receivingResidualReceiving_of_boundedCoatom_sourceGapLast`
+`(hdet : BoundedCoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h) :`
+`ReceivingResidualReceiving`, and
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_boundedCoatom_sourceGapLast_markedCap`
+`(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
+`(h2 : BoundedCoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h)`
+`(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
+`HasThinAlephOneSpectrum densitySentence`.  The bounded (R2) form for source-gap contexts remains
+open; no (R2) closure is claimed.
+
 Each hypothesis is a separate statement with its own status.  Hypothesis 8 is compiled
 (`StageType.hasApexCoatomExtensions`).  Hypotheses 1 and 3 are derived from it and so compiled
 with no hypothesis (`MainTheorem.capToModel`, `forcingDonors_blockStage`); hypothesis 7 is

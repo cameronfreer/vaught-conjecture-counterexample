@@ -3889,6 +3889,40 @@ Each checkpoint needs both its abstract API and a concrete application:
    transposition: the closed coatoms of a context are the complements of the extreme points of its
    plan, at most two (`Geometry.IsPlan.card_extremes_le_two`).
 
+   **Bounded pinned extensions and the bounded (R2) form.**  Compiled in this repository (theorem
+   named): capping above a grade, `StageType.capAbove` (`Stage/CapGrade`), lawful with no side
+   condition (the cells of grade above `K` form an upper set, `StageType.lt_grade_upper`, and
+   availability relates cells of equal grades only); its cells labelled `⊤` are those of the type of
+   grade at most `K` (`StageType.capAbove_label_eq_top_iff`), and when the cap lies above every
+   label other than `⊤` every face whose cells labelled `⊤` have grade at most `K` is kept
+   literally, labels above `K` included (`StageType.restrictFace_capAbove`); such a cap exists at a
+   limit stage (`StageType.exists_cap_ne_top`).  The bounded pinned extension
+   `StageType.exists_pinned_extension_topGrade_le (hα : Order.IsSuccLimit α) (hP : P.IsLegal)`
+   `(hPf : restrictFace f P = some p) (hd : d.IsLegal) (hdp : restrictFace Fin.castSuccEmb d = some p)`
+   `(hPK : P.topGrade ≤ K) (hdK : d.topGrade ≤ K) : ∃ Q, Q.IsLegal ∧`
+   `restrictFace Fin.castSuccEmb Q = some P ∧ restrictFace (extendByLast f) Q = some d ∧ Q.topGrade ≤ K`
+   (`MainTheorem/BoundedCoatomDetermination`) truncates the exact pinned extension above `K`.  The
+   bounded coatom form `Realization.BoundedCoatomCutoffDetermination` asks (R2) only at the
+   intermediate cofaces `tb` of the coatom face of top grade at most `K`; the coatom form implies it
+   (`Realization.CoatomCutoffDetermination.boundedCoatom`), and no converse is claimed.  It gives
+   cutoff determination at the first coatom (`Realization.FirstCoatomCutoffDetermination`) for every
+   predicate whose contexts of grade `K` have top grade at most `K`
+   (`Realization.BoundedCoatomCutoffDetermination.firstCoatom`, hypothesis `hK`), and cutoff
+   determination under `hK`, roots not onto and invariance under relabelling
+   (`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination`); for source-gap contexts
+   `hK` is compiled (`StageType.IsSourceGapContext.topGrade_eq`), giving
+   `Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_off`,
+   `Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_sourceGap`,
+   `Realization.receivingResidualReceiving_of_boundedCoatom_sourceGapLast`
+   `(hdet : BoundedCoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h) :`
+   `ReceivingResidualReceiving`, and
+   `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_boundedCoatom_sourceGapLast_markedCap`
+   `(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
+   `(h2 : BoundedCoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h)`
+   `(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
+   `HasThinAlephOneSpectrum densitySentence`.  The bounded (R2) form for source-gap contexts remains
+   open; no (R2) closure is claimed.
+
 7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
    presentations"): for a countable `β`, on every countably infinite carrier, a model at
    `λ_β = blockStage β` that realizes every legal stage type at `λ_β`, receives every legal donor
@@ -5757,6 +5791,13 @@ witnesses).**
   `StageType.IsSourceGapContextLast`) and `Realization.residualAcquisition_isSourceGapContextOff`;
   the reduction to the coatom form with the lost point last and the main theorem with it are in
   `MainTheorem/SourceGapLastRoute` (Layer 6).
+- `Stage/CapGrade`: Layer 1, in place.  It holds `StageType.restrictFace_capOn'` (faces whose
+  visible cells in the capped set are already below the cap) beside capping above a grade
+  (`StageType.capAbove`); it is a separate module so that `Stage/Cap` is unchanged.
+- `MainTheorem/BoundedCoatomDetermination`: Layer 3, beside `MainTheorem/CoatomDetermination`.
+  `StageType.topGrade_capAbove_le`, `StageType.exists_truncation_topGrade_le` and
+  `StageType.exists_pinned_extension_topGrade_le` concern stage types only and go to `Stage/` and
+  `Extension/` when `StageType.topGrade` (`Continuation/Terminal`) moves to `Stage/`.
 - `Continuation/RestrictedHollow` and its examples module: Layer 4, in place; it holds
   `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the restricted
   terminal properties with their cover, and `Realization.HollowReceiving.withoutRigidCore`.  It
