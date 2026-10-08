@@ -41,6 +41,16 @@ owner `o`; the designated tops `z'`, `o'`; the designated cells below the top `e
   by recognition at a reader (`Scheme.exists_admitted_image`).  The full-catalogue completion fails
   this (`TwistedDonor.not_forall_lowAdmitted`).
 
+**For an admission.**  The construction and its legality use of the admission only that it holds
+at `⊥` and at the labels of the input on both faces, passes to images under monotone maps, and has
+the lift provisions from both coatoms at every cap (`MixedSeed.IsLowAdmission`); the completion
+`MixedSeed.admittedBy α Adm` is legal below the full grade for every admission
+(`MixedSeed.isLegalBelowFullGrade_admittedBy`), and `MixedSeed.admittedT α` is the case of the
+owner-as-partner clause (`MixedSeed.isLowAdmission_lowVia`).  **The self seed**: the clause
+`SeparationObstruction.LowViaSelf` (the designated tops `z'`, `o'`, `r'`; the designated cell below
+the top `e'`) is an admission (`MixedSeed.isLowAdmission_lowViaSelf`), and in its completion `o` at
+`⊤` puts `z'`, `o'`, `r'` at `⊤` (`MixedSeed.eq_top_of_admittedSelf`).
+
 Not here: the apex and the truncation to the stage (the stage type with the faces `T` and the
 twisted donor), and the passage from the scheme of the input with itself to that of the twisted
 seed for `CompletionBelowFullGrade` (the schemes are equal, `TwistedDonor.amalgam_seedU`).
@@ -402,36 +412,41 @@ theorem cappedLift_lowerT_right :
   rw [Coatom.univ_map_right] at h
   exact h
 
-/-! ### The LOW admission on the lower layer -/
+/-! ### Admissions of states on the lower layer -/
 
-variable (α) in
-/-- **The LOW admission at the twisted seed** on labellings of the lower layer: the context and
-donor copies satisfy `SeparationObstruction.LowVia` (the partner the owner; the designated tops
-`z'`, `o'`, the designated cells below the top `e'`, `r'`). -/
-def AdmU (e : Fin (lowerT α).card → Label.{u}) : Prop := LowVia (privT e) (donT e)
+/-- **An admission of states at the seed of the input with itself**: a relation `Adm L R` between
+labellings of the context face `L` and of the donor face `R`, holding at `⊥` and at the labels of
+the input on both faces, passing to images under monotone maps, with **the lift provisions from
+both coatoms at every cap** self-visible at `2` (`⊥` included): from an admitted state of lawful
+faces sharing `y` and a lawful face agreeing with one of them capped at `h`, a lawful other face
+with the same root, agreeing with the other face of the state capped at `h` and admitted with it.
+The owner-as-partner clause `SeparationObstruction.LowVia` (`MixedSeed.isLowAdmission_lowVia`) and
+its self-seed form `SeparationObstruction.LowViaSelf` (`MixedSeed.isLowAdmission_lowViaSelf`) are
+admissions. -/
+structure IsLowAdmission (Adm : (Fin 5 → Label.{u}) → (Fin 5 → Label.{u}) → Prop) : Prop where
+  bot : Adm (fun _ ↦ ⊥) (fun _ ↦ ⊥)
+  top : Adm (lab ⊤ ⊤ ⊤) (lab ⊤ ⊤ ⊤)
+  comp {σ : Label.{u} → Label.{u}} (hσ : Monotone σ) {L R : Fin 5 → Label.{u}} (h : Adm L R) :
+    Adm (fun z ↦ σ (L z)) (fun z ↦ σ (R z))
+  context {h : Label.{u}} (hh : IsSelfVisible 2 h) {L R f : Fin 5 → Label.{u}}
+    (hL : S.{u}.rows.IsLawful L) (hR : S.{u}.rows.IsLawful R) (hy : L 0 = R 0) (hadm : Adm L R)
+    (hf : S.{u}.rows.IsLawful f) (hfL : ∀ d, min (f d) h = min (L d) h) :
+    ∃ W : Fin 5 → Label.{u}, S.{u}.rows.IsLawful W ∧ W 0 = f 0 ∧
+      (∀ d, min (W d) h = min (R d) h) ∧ Adm f W
+  donor {h : Label.{u}} (hh : IsSelfVisible 2 h) {L R f : Fin 5 → Label.{u}}
+    (hL : S.{u}.rows.IsLawful L) (hR : S.{u}.rows.IsLawful R) (hy : L 0 = R 0) (hadm : Adm L R)
+    (hf : S.{u}.rows.IsLawful f) (hfR : ∀ d, min (f d) h = min (R d) h) :
+    ∃ W : Fin 5 → Label.{u}, S.{u}.rows.IsLawful W ∧ W 0 = f 0 ∧
+      (∀ d, min (W d) h = min (L d) h) ∧ Adm W f
 
-/-- The LOW clause passes to the image under a monotone map. -/
-theorem lowVia_comp {σ : Label.{u} → Label.{u}} (hσ : Monotone σ) {L R : Fin 5 → Label.{u}}
-    (h : LowVia L R) : LowVia (fun z ↦ σ (L z)) (fun z ↦ σ (R z)) := by
-  rw [lowVia_iff] at h ⊢
-  intro hlt
-  have hlt' : max (R 1) (R 4) < L 3 := lt_of_not_ge fun hle ↦ hlt.not_ge (by
-    rw [← hσ.map_max]; exact hσ hle)
-  exact ⟨hσ (h hlt').1, hσ (h hlt').2⟩
+variable {Adm : (Fin 5 → Label.{u}) → (Fin 5 → Label.{u}) → Prop}
 
-/-- A lawful labelling of the input, as both faces, is admitted. -/
-theorem lowVia_self {s : Fin 5 → Label.{u}} (hs : S.{u}.rows.IsLawful s) : LowVia s s := by
-  obtain ⟨hse, hwa, -⟩ := eq_lab_of_isLawful hs
-  rw [lowVia_iff]
-  intro _
-  refine ⟨?_, le_rfl⟩
-  rw [show s 2 = s 0 by rw [hse]; rfl]
-  exact hwa
+variable (α Adm) in
+/-- **The admission on labellings of the lower layer**: the context and donor copies are
+admitted. -/
+def AdmBy (e : Fin (lowerT α).card → Label.{u}) : Prop := Adm (privT e) (donT e)
 
-theorem admU_bot : AdmU α (fun _ ↦ (⊥ : Label.{u})) := by
-  rw [AdmU, lowVia_iff]
-  intro hlt
-  exact absurd hlt (by simp [privT, donT])
+theorem admBy_bot (hA : IsLowAdmission Adm) : AdmBy α Adm (fun _ ↦ (⊥ : Label.{u})) := hA.bot
 
 theorem grade_lowerT_le (d : Fin (lowerT α).card) : (lowerT α).toCellScheme.grade d ≤ 2 := by
   induction d using Fin.addCases with
@@ -442,12 +457,13 @@ theorem grade_lowerT_le (d : Fin (lowerT α).card) : (lowerT α).toCellScheme.gr
 
 /-- **The admission passes to the orbit code**: the orbit code of the splice is the orbit map of the
 labelling (every cell of the lower layer has grade at most `2`), a monotone map. -/
-theorem admU_code {W : Fin (lowerT α).card → Label.{u}} (hW : AdmU α W) :
-    AdmU α (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
+theorem admBy_code (hA : IsLowAdmission Adm) {W : Fin (lowerT α).card → Label.{u}}
+    (hW : AdmBy α Adm W) :
+    AdmBy α Adm (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
   have hsp : (lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W = W :=
     funext fun d ↦ CellScheme.splice_of_le (grade_lowerT_le d)
   rw [hsp]
-  exact lowVia_comp (isWitness_orbitMap 2 W).monotone hW
+  exact hA.comp (isWitness_orbitMap 2 W).monotone hW
 
 /-- Agreement capped at `h` at every cell, from agreement on the two copies and at the copies of
 `z`. -/
@@ -465,40 +481,47 @@ theorem min_eq_of_copies {W a : Fin (lowerT α).card → Label.{u}} {h : Label.{
 
 /-! ### The lift provisions on the lower layer -/
 
-/-- **The provision at the cap `⊥` from the context coatom**: the context copy of the prescription,
-mirrored on the donor copy. -/
-theorem botProvision_left {f : Fin (lowerT α).card → Label.{u}}
+theorem isLawful_lab_top : S.{u}.rows.IsLawful (lab ⊤ ⊤ ⊤) :=
+  isLawful_lab (isSelfVisible_top 1) (isSelfVisible_top 2) (isSelfVisible_top 2) le_rfl rfl
+
+/-- **The provision at the cap `⊥` from the context coatom**: the provision of the admission at the
+cap `⊥`, from the labels of the input on both faces. -/
+theorem botProvision_left (hA : IsLowAdmission Adm) {f : Fin (lowerT α).card → Label.{u}}
     (hf : (lowerT α).rows.IsLawfulBelow pairL (fun d ↦ f d)) :
     ∃ W : Fin (lowerT α).card → Label.{u},
       (lowerT α).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) (fun d ↦ W d) ∧
       (∀ d ∈ (lowerT α).toCellScheme.below pairL, W d = f d) ∧
-      AdmU α (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
+      AdmBy α Adm (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
   have hs := isLawful_privT hf
-  obtain ⟨g, hg, hgL, hgR, -⟩ := exists_glue_lowerT hs hs rfl
-  refine ⟨g, hg.isLawfulBelow _, fun d hd ↦ ?_, admU_code ?_⟩
+  obtain ⟨WR, hWR, hWR0, -, hadm⟩ := hA.context (isSelfVisible_bot 2) isLawful_lab_top
+    isLawful_lab_top rfl hA.top hs (fun _ ↦ by simp)
+  obtain ⟨g, hg, hgL, hgR, -⟩ := exists_glue_lowerT hs hWR hWR0.symm
+  refine ⟨g, hg.isLawfulBelow _, fun d hd ↦ ?_, admBy_code hA ?_⟩
   · obtain ⟨z, rfl⟩ := exists_left_of_mem_below hd
     exact congrFun hgL z
-  · rw [AdmU, hgL, hgR]; exact lowVia_self hs
+  · rw [AdmBy, hgL, hgR]; exact hadm
 
-/-- **The provision at the cap `⊥` from the donor coatom**: the donor copy of the prescription,
-mirrored on the context copy. -/
-theorem botProvision_right {f : Fin (lowerT α).card → Label.{u}}
+/-- **The provision at the cap `⊥` from the donor coatom**: the provision of the admission at the
+cap `⊥`, from the labels of the input on both faces. -/
+theorem botProvision_right (hA : IsLowAdmission Adm) {f : Fin (lowerT α).card → Label.{u}}
     (hf : (lowerT α).rows.IsLawfulBelow pairR (fun d ↦ f d)) :
     ∃ W : Fin (lowerT α).card → Label.{u},
       (lowerT α).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) (fun d ↦ W d) ∧
       (∀ d ∈ (lowerT α).toCellScheme.below pairR, W d = f d) ∧
-      AdmU α (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
+      AdmBy α Adm (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
   have hs := isLawful_donT hf
-  obtain ⟨g, hg, hgL, hgR, -⟩ := exists_glue_lowerT hs hs rfl
-  refine ⟨g, hg.isLawfulBelow _, fun d hd ↦ ?_, admU_code ?_⟩
+  obtain ⟨WL, hWL, hWL0, -, hadm⟩ := hA.donor (isSelfVisible_bot 2) isLawful_lab_top
+    isLawful_lab_top rfl hA.top hs (fun _ ↦ by simp)
+  obtain ⟨g, hg, hgL, hgR, -⟩ := exists_glue_lowerT hWL hs hWL0
+  refine ⟨g, hg.isLawfulBelow _, fun d hd ↦ ?_, admBy_code hA ?_⟩
   · obtain ⟨z, rfl⟩ := exists_right_of_mem_below hd
     exact congrFun hgR z
-  · rw [AdmU, hgL, hgR]; exact lowVia_self hs
+  · rw [AdmBy, hgL, hgR]; exact hadm
 
-/-- **The provision at a cap from the context coatom** (`SeparationObstruction.capProvision_context`
-on the two copies, glued). -/
-theorem capProvision_left {h : Label.{u}} (hh : IsSelfVisible 2 h)
-    {a : Fin (lowerT α).card → Label.{u}} (ha : (lowerT α).rows.IsLawful a) (hA : AdmU α a)
+/-- **The provision at a cap from the context coatom** (the provision of the admission on the two
+copies, glued). -/
+theorem capProvision_left (hA : IsLowAdmission Adm) {h : Label.{u}} (hh : IsSelfVisible 2 h)
+    {a : Fin (lowerT α).card → Label.{u}} (ha : (lowerT α).rows.IsLawful a) (hAa : AdmBy α Adm a)
     {f : Fin (lowerT α).card → Label.{u}}
     (hf : (lowerT α).rows.IsLawfulBelow pairL (fun d ↦ f d))
     (hfa : ∀ d ∈ (lowerT α).toCellScheme.below pairL, min (f d) h = min (a d) h) :
@@ -506,25 +529,25 @@ theorem capProvision_left {h : Label.{u}} (hh : IsSelfVisible 2 h)
       (lowerT α).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) (fun d ↦ W d) ∧
       (∀ d ∈ (lowerT α).toCellScheme.below pairL, W d = f d) ∧
       (∀ d, (lowerT α).toCellScheme.grade d ≤ 2 → min (W d) h = min (a d) h) ∧
-      AdmU α (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
+      AdmBy α Adm (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
   have hL := isLawful_privT (ha.isLawfulBelow pairL)
   have hR := isLawful_donT (ha.isLawfulBelow pairR)
   have hy : privT a 0 = donT a 0 := by rw [privT, donT, lc_zero]
   have hs := isLawful_privT hf
   have hfL (z : Fin 5) : min (privT f z) h = min (privT a z) h := hfa _ (left_mem_below z)
-  obtain ⟨WR, hWR, hWR0, hWRa, hadm⟩ := capProvision_context hh hL hR hy hA hs hfL
+  obtain ⟨WR, hWR, hWR0, hWRa, hadm⟩ := hA.context hh hL hR hy hAa hs hfL
   obtain ⟨g, hg, hgL, hgR, hgN⟩ := exists_glue_lowerT hs hWR hWR0.symm
   refine ⟨g, hg.isLawfulBelow _, fun d hd ↦ ?_, fun d _ ↦ min_eq_of_copies
     (fun z ↦ by rw [hgL]; exact hfL z) (fun z ↦ by rw [hgR]; exact hWRa z)
-    (fun i ↦ by rw [hgN, natAdd_eq_privT ha]; exact hfL 0) d, admU_code ?_⟩
+    (fun i ↦ by rw [hgN, natAdd_eq_privT ha]; exact hfL 0) d, admBy_code hA ?_⟩
   · obtain ⟨z, rfl⟩ := exists_left_of_mem_below hd
     exact congrFun hgL z
-  · rw [AdmU, hgL, hgR]; exact hadm
+  · rw [AdmBy, hgL, hgR]; exact hadm
 
-/-- **The provision at a cap from the donor coatom** (`SeparationObstruction.capProvision_donor`
-on the two copies, glued): the context copy capped at `h` at `o` and `r`. -/
-theorem capProvision_right {h : Label.{u}} (hh : IsSelfVisible 2 h)
-    {a : Fin (lowerT α).card → Label.{u}} (ha : (lowerT α).rows.IsLawful a) (hA : AdmU α a)
+/-- **The provision at a cap from the donor coatom** (the provision of the admission on the two
+copies, glued). -/
+theorem capProvision_right (hA : IsLowAdmission Adm) {h : Label.{u}} (hh : IsSelfVisible 2 h)
+    {a : Fin (lowerT α).card → Label.{u}} (ha : (lowerT α).rows.IsLawful a) (hAa : AdmBy α Adm a)
     {f : Fin (lowerT α).card → Label.{u}}
     (hf : (lowerT α).rows.IsLawfulBelow pairR (fun d ↦ f d))
     (hfa : ∀ d ∈ (lowerT α).toCellScheme.below pairR, min (f d) h = min (a d) h) :
@@ -532,28 +555,28 @@ theorem capProvision_right {h : Label.{u}} (hh : IsSelfVisible 2 h)
       (lowerT α).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) (fun d ↦ W d) ∧
       (∀ d ∈ (lowerT α).toCellScheme.below pairR, W d = f d) ∧
       (∀ d, (lowerT α).toCellScheme.grade d ≤ 2 → min (W d) h = min (a d) h) ∧
-      AdmU α (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
+      AdmBy α Adm (orbitCode 2 ((lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W)) := by
   have hL := isLawful_privT (ha.isLawfulBelow pairL)
   have hR := isLawful_donT (ha.isLawfulBelow pairR)
   have hy : privT a 0 = donT a 0 := by rw [privT, donT, lc_zero]
   have hs := isLawful_donT hf
   have hfR (z : Fin 5) : min (donT f z) h = min (donT a z) h := hfa _ (right_mem_below z)
-  obtain ⟨WL, hWL, hWL0, hWLa, hadm⟩ := capProvision_donor hh hL hR hy hA hs hfR
+  obtain ⟨WL, hWL, hWL0, hWLa, hadm⟩ := hA.donor hh hL hR hy hAa hs hfR
   obtain ⟨g, hg, hgL, hgR, hgN⟩ := exists_glue_lowerT hWL hs hWL0
   refine ⟨g, hg.isLawfulBelow _, fun d hd ↦ ?_, fun d _ ↦ min_eq_of_copies
     (fun z ↦ by rw [hgL]; exact hWLa z) (fun z ↦ by rw [hgR]; exact hfR z)
-    (fun i ↦ by rw [hgN, natAdd_eq_privT ha, hWL0, hy]; exact hfR 0) d, admU_code ?_⟩
+    (fun i ↦ by rw [hgN, natAdd_eq_privT ha, hWL0, hy]; exact hfR 0) d, admBy_code hA ?_⟩
   · obtain ⟨z, rfl⟩ := exists_right_of_mem_below hd
     exact congrFun hgR z
-  · rw [AdmU, hgL, hgR]; exact hadm
+  · rw [AdmBy, hgL, hgR]; exact hadm
 
-/-! ### The LOW-admitted completion: bountiful and legal below the full grade -/
+/-! ### The admitted completion: bountiful and legal below the full grade -/
 
-variable (α) in
-/-- **The LOW-admitted layer at the twisted seed**: the field layer at the grade `2` over the lower
-layer, on the catalogue entries satisfying the LOW admission `MixedSeed.AdmU`. -/
-noncomputable abbrev admittedT : Scheme.{u} 3 :=
-  (lowerT α).admittedFieldLayer 2 (AdmU α) ((I α).not_univ_two_le_doubledLower (hLR α))
+variable (α Adm) in
+/-- **The admitted layer at the seed**: the field layer at the grade `2` over the lower layer, on
+the catalogue entries satisfying the admission `MixedSeed.AdmBy α Adm`. -/
+noncomputable abbrev admittedBy : Scheme.{u} 3 :=
+  (lowerT α).admittedFieldLayer 2 (AdmBy α Adm) ((I α).not_univ_two_le_doubledLower (hLR α))
 
 private theorem erase_ne_univ (x : Fin 3) : univ.erase x ≠ univ :=
   fun he ↦ Finset.notMem_erase x univ (he.symm ▸ mem_univ x)
@@ -570,60 +593,105 @@ theorem gradedIndex_right_three :
     show cells.scope 3 = univ by decide, Coatom.univ_map_right]
   rfl
 
-/-- **The lift from the context coatom into the LOW-admitted layer.** -/
-theorem cappedLift_admittedT_left :
-    (admittedT α).rows.CappedLift (X := pairL) (Y := ((univ : Finset (Fin 3)), 2))
+/-- **The lift from the context coatom into the admitted layer.** -/
+theorem cappedLift_admittedBy_left (hA : IsLowAdmission Adm) :
+    (admittedBy α Adm).rows.CappedLift (X := pairL) (Y := ((univ : Finset (Fin 3)), 2))
       ⟨erase_subset _ _, le_rfl⟩ :=
   Scheme.cappedLift_admittedFieldLayer (j := 1) (hS := (I α).not_univ_two_le_doubledLower (hLR α))
-    ((I α).isConsistent_doubledLower (hLR α) (isLegal_T α)) admU_bot (erase_ne_univ _)
-    ⟨_, gradedIndex_left_three⟩ cappedLift_lowerT_left (fun _ hf ↦ botProvision_left hf)
-    (fun _ hh _ _ _ ha hA _ hf hfa ↦ capProvision_left hh ha hA hf hfa)
+    ((I α).isConsistent_doubledLower (hLR α) (isLegal_T α)) (admBy_bot hA) (erase_ne_univ _)
+    ⟨_, gradedIndex_left_three⟩ cappedLift_lowerT_left (fun _ hf ↦ botProvision_left hA hf)
+    (fun _ hh _ _ _ ha hAa _ hf hfa ↦ capProvision_left hA hh ha hAa hf hfa)
 
-/-- **The lift from the donor coatom into the LOW-admitted layer**: the lift at which the
-full-catalogue completion used the twisted entry. -/
-theorem cappedLift_admittedT_right :
-    (admittedT α).rows.CappedLift (X := pairR) (Y := ((univ : Finset (Fin 3)), 2))
+/-- **The lift from the donor coatom into the admitted layer.** -/
+theorem cappedLift_admittedBy_right (hA : IsLowAdmission Adm) :
+    (admittedBy α Adm).rows.CappedLift (X := pairR) (Y := ((univ : Finset (Fin 3)), 2))
       ⟨erase_subset _ _, le_rfl⟩ :=
   Scheme.cappedLift_admittedFieldLayer (j := 1) (hS := (I α).not_univ_two_le_doubledLower (hLR α))
-    ((I α).isConsistent_doubledLower (hLR α) (isLegal_T α)) admU_bot (erase_ne_univ _)
-    ⟨_, gradedIndex_right_three⟩ cappedLift_lowerT_right (fun _ hf ↦ botProvision_right hf)
-    (fun _ hh _ _ _ ha hA _ hf hfa ↦ capProvision_right hh ha hA hf hfa)
+    ((I α).isConsistent_doubledLower (hLR α) (isLegal_T α)) (admBy_bot hA) (erase_ne_univ _)
+    ⟨_, gradedIndex_right_three⟩ cappedLift_lowerT_right (fun _ hf ↦ botProvision_right hA hf)
+    (fun _ hh _ _ _ ha hAa _ hf hfa ↦ capProvision_right hA hh ha hAa hf hfa)
 
-/-- **The LOW-admitted layer is bountiful.** -/
-theorem isBountiful_admittedT : (admittedT α).rows.IsBountiful :=
-  (I α).isBountiful_admittedDoubledLower (hLR α) (A := AdmU α)
+/-- **The admitted layer is bountiful.** -/
+theorem isBountiful_admittedBy (hA : IsLowAdmission Adm) : (admittedBy α Adm).rows.IsBountiful :=
+  (I α).isBountiful_admittedDoubledLower (hLR α) (A := AdmBy α Adm)
     (fun z hz ↦ by
       rcases hz with rfl | rfl
       exacts [cappedLift_lowerT_left, cappedLift_lowerT_right])
-    cappedLift_admittedT_left cappedLift_admittedT_right
+    (cappedLift_admittedBy_left hA) (cappedLift_admittedBy_right hA)
 
-/-- **The LOW-admitted completion at the twisted seed is legal below the full grade.** -/
-theorem isLegalBelowFullGrade_admittedT : (admittedT α).IsLegalBelowFullGrade :=
-  (I α).isLegalBelowFullGrade_admittedDoubledLower (hLR α) (isLegal_T α) admU_bot
-    isBountiful_admittedT
+/-- **The admitted completion at the seed is legal below the full grade.** -/
+theorem isLegalBelowFullGrade_admittedBy (hA : IsLowAdmission Adm) :
+    (admittedBy α Adm).IsLegalBelowFullGrade :=
+  (I α).isLegalBelowFullGrade_admittedDoubledLower (hLR α) (isLegal_T α) (admBy_bot hA)
+    (isBountiful_admittedBy hA)
 
-/-- **The labels of the twisted seed on the LOW-admitted completion**: the input `T` on the context
-copy and the twisted donor `(⊤, ⊥, ⊤, ⊤, v)` on the donor copy glue to a lawful labelling of the
-lower layer whose orbit code is admitted, so they extend to a labelling of the LOW-admitted
-completion lawful below `(univ, 2)` (every cell of the completion lies below it). -/
-theorem exists_isLawful_admittedT {v : Label.{u}} (hv : IsSelfVisible 2 v) :
-    ∃ q : Fin (admittedT α).card → Label.{u},
-      (admittedT α).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) (fun x ↦ q x) ∧
+/-- **Admitted states extend to the admitted completion**: the input on the context copy and
+`(⊤, ⊥, ⊤, ⊤, v)` on the donor copy, when admitted, glue to a lawful labelling of the lower layer
+whose orbit code is admitted, so they extend to a labelling of the admitted completion lawful below
+`(univ, 2)` (every cell of the completion lies below it). -/
+theorem exists_isLawful_admittedBy (hA : IsLowAdmission Adm) {v : Label.{u}}
+    (hv : IsSelfVisible 2 v) (hst : Adm (lab ⊤ ⊤ ⊤) (lab ⊤ ⊤ v)) :
+    ∃ q : Fin (admittedBy α Adm).card → Label.{u},
+      (admittedBy α Adm).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) (fun x ↦ q x) ∧
       (∀ z, q (Fin.castAdd _ (Fin.castAdd _ (lc α z))) = lab ⊤ ⊤ ⊤ z) ∧
       ∀ z, q (Fin.castAdd _ (Fin.castAdd _ (rc α z))) = lab ⊤ ⊤ v z := by
-  have hL : S.{u}.rows.IsLawful (lab ⊤ ⊤ ⊤) :=
-    isLawful_lab (isSelfVisible_top 1) (isSelfVisible_top 2) (isSelfVisible_top 2) le_rfl rfl
   have hR : S.{u}.rows.IsLawful (lab ⊤ ⊤ v) :=
     isLawful_lab (isSelfVisible_top 1) (isSelfVisible_top 2) hv le_rfl (by simp)
-  obtain ⟨g, hg, hgL, hgR, -⟩ := exists_glue_lowerT hL hR rfl
-  have hA : AdmU α g := by
-    rw [AdmU, hgL, hgR, lowVia_iff]
-    exact fun _ ↦ ⟨le_rfl, le_rfl⟩
+  obtain ⟨g, hg, hgL, hgR, -⟩ := exists_glue_lowerT isLawful_lab_top hR rfl
+  have hAg : AdmBy α Adm g := by
+    rw [AdmBy, hgL, hgR]
+    exact hst
   obtain ⟨q, hq, hqe⟩ := Scheme.exists_lift_bot_admittedFieldLayer
-    (hS := (I α).not_univ_two_le_doubledLower (hLR α)) (hg.isLawfulBelow _) (admU_code hA)
+    (hS := (I α).not_univ_two_le_doubledLower (hLR α)) (hg.isLawfulBelow _) (admBy_code hA hAg)
   refine ⟨q, hq, fun z ↦ ?_, fun z ↦ ?_⟩
   · rw [hqe _ (grade_lowerT_le _)]; exact congrFun hgL z
   · rw [hqe _ (grade_lowerT_le _)]; exact congrFun hgR z
+
+/-! ### The owner-as-partner admission at the twisted seed -/
+
+/-- The LOW clause passes to the image under a monotone map. -/
+theorem lowVia_comp {σ : Label.{u} → Label.{u}} (hσ : Monotone σ) {L R : Fin 5 → Label.{u}}
+    (h : LowVia L R) : LowVia (fun z ↦ σ (L z)) (fun z ↦ σ (R z)) := by
+  rw [lowVia_iff] at h ⊢
+  intro hlt
+  have hlt' : max (R 1) (R 4) < L 3 := lt_of_not_ge fun hle ↦ hlt.not_ge (by
+    rw [← hσ.map_max]; exact hσ hle)
+  exact ⟨hσ (h hlt').1, hσ (h hlt').2⟩
+
+/-- **The owner-as-partner clause is an admission** (`SeparationObstruction.capProvision_context`,
+`SeparationObstruction.capProvision_donor`). -/
+theorem isLowAdmission_lowVia : IsLowAdmission LowVia.{u} where
+  bot := by
+    rw [lowVia_iff]
+    intro hlt
+    exact absurd hlt (by simp)
+  top := by
+    rw [lowVia_iff]
+    exact fun _ ↦ ⟨le_top, le_top⟩
+  comp := lowVia_comp
+  context := capProvision_context
+  donor := capProvision_donor
+
+/-- The state of the twisted seed is admitted by the owner-as-partner clause. -/
+theorem lowVia_Utop (v : Label.{u}) : LowVia (lab ⊤ ⊤ ⊤) (lab ⊤ ⊤ v) := by
+  rw [lowVia_iff]
+  exact fun _ ↦ ⟨le_top, le_top⟩
+
+variable (α) in
+/-- **The LOW admission at the twisted seed** on labellings of the lower layer: the context and
+donor copies satisfy `SeparationObstruction.LowVia` (the partner the owner; the designated tops
+`z'`, `o'`, the designated cells below the top `e'`, `r'`). -/
+abbrev AdmU : (Fin (lowerT α).card → Label.{u}) → Prop := AdmBy α LowVia
+
+theorem admU_bot : AdmU α (fun _ ↦ (⊥ : Label.{u})) := admBy_bot isLowAdmission_lowVia
+
+variable (α) in
+/-- **The LOW-admitted layer at the twisted seed**. -/
+noncomputable abbrev admittedT : Scheme.{u} 3 := admittedBy α LowVia
+
+/-- **The LOW-admitted completion at the twisted seed is legal below the full grade.** -/
+theorem isLegalBelowFullGrade_admittedT : (admittedT α).IsLegalBelowFullGrade :=
+  isLegalBelowFullGrade_admittedBy isLowAdmission_lowVia
 
 /-! ### Determination of `o'` in the LOW-admitted completion -/
 
@@ -656,5 +724,61 @@ theorem eq_top_of_admittedT {q : Fin (admittedT α).card → Label.{u}}
   change σ (a (Fin.castAdd _ (lc α 3))) ≤ σ (a (Fin.castAdd _ (rc α 3))) at h3
   rw [← hold, ← hold, ho, top_le_iff] at h3
   exact h3
+
+/-! ### The self-seed admission -/
+
+/-- The self-seed clause passes to the image under a monotone map. -/
+theorem lowViaSelf_comp {σ : Label.{u} → Label.{u}} (hσ : Monotone σ) {L R : Fin 5 → Label.{u}}
+    (h : LowViaSelf L R) : LowViaSelf (fun z ↦ σ (L z)) (fun z ↦ σ (R z)) := by
+  rw [lowViaSelf_iff] at h ⊢
+  intro hlt
+  have hlt' : R 1 < L 3 := lt_of_not_ge fun hle ↦ hlt.not_ge (hσ hle)
+  exact ⟨hσ (h hlt').1, hσ (h hlt').2.1, hσ (h hlt').2.2⟩
+
+/-- **The self-seed clause is an admission** (`SeparationObstruction.capProvisionSelf_context`,
+`SeparationObstruction.capProvisionSelf_donor`). -/
+theorem isLowAdmission_lowViaSelf : IsLowAdmission LowViaSelf.{u} where
+  bot := by
+    rw [lowViaSelf_iff]
+    intro hlt
+    exact absurd hlt (lt_irrefl _)
+  top := lowViaSelf_T
+  comp := lowViaSelf_comp
+  context := capProvisionSelf_context
+  donor := capProvisionSelf_donor
+
+/-- **Determination of the donor's tops in the self-admitted completion.**  In every labelling `q`
+of the completion admitted by `SeparationObstruction.LowViaSelf`, lawful below `(univ, 2)`, with the
+owner `o` at `⊤`, the donor's `z'`, `o'`, `r'` are `⊤`: by recognition at a reader, `q` on the old
+cells is the image of an admitted entry under a monotone map fixing `⊥`, whose antecedent holds
+(`e'` is `⊥`, below `⊤ = o`). -/
+theorem eq_top_of_admittedSelf {q : Fin (admittedBy α LowViaSelf.{u}).card → Label.{u}}
+    (hq : (admittedBy α LowViaSelf.{u}).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2)
+      (fun x ↦ q x))
+    (ho : q (Fin.castAdd _ (Fin.castAdd _ (lc α 3))) = ⊤) :
+    q (Fin.castAdd _ (Fin.castAdd _ (rc α 2))) = ⊤ ∧
+      q (Fin.castAdd _ (Fin.castAdd _ (rc α 3))) = ⊤ ∧
+      q (Fin.castAdd _ (Fin.castAdd _ (rc α 4))) = ⊤ := by
+  have hx₀ : (lowerT α).toCellScheme.grade (Fin.castAdd _ (lc α 3)) = 2 :=
+    congrArg Prod.snd gradedIndex_left_three
+  obtain ⟨a, ha, hA, σ, hσ, hσ0, hold⟩ :=
+    Scheme.exists_admitted_image (hS := (I α).not_univ_two_le_doubledLower (hLR α))
+      (admBy_bot (α := α) isLowAdmission_lowViaSelf) grade_lowerT_le hq hx₀ ho
+  have hadm := lowViaSelf_comp hσ hA
+  rw [lowViaSelf_iff] at hadm
+  have hab : (lowerT α).rows.IsLawfulBelow pairR (fun d ↦ a d) := ha.isLawfulBelow pairR
+  have hae : donT a 1 = ⊥ := by
+    obtain ⟨hde, -, -⟩ := eq_lab_of_isLawful (isLawful_donT hab)
+    rw [hde]; rfl
+  obtain ⟨h2, h3, h4⟩ := hadm (by
+    rw [hae, hσ0]
+    change ⊥ < σ (a (Fin.castAdd _ (lc α 3)))
+    rw [← hold, ho]
+    exact bot_lt_top)
+  change σ (a (Fin.castAdd _ (lc α 3))) ≤ σ (a (Fin.castAdd _ (rc α 2))) at h2
+  change σ (a (Fin.castAdd _ (lc α 3))) ≤ σ (a (Fin.castAdd _ (rc α 3))) at h3
+  change σ (a (Fin.castAdd _ (lc α 3))) ≤ σ (a (Fin.castAdd _ (rc α 4))) at h4
+  rw [← hold, ← hold, ho, top_le_iff] at h2 h3 h4
+  exact ⟨h2, h3, h4⟩
 
 end VaughtConjecture.MixedSeed
