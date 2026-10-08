@@ -311,6 +311,23 @@ and hypothesis 7 from next-block uniqueness alone.  Hypotheses 2 and 4–6 are s
   five-hypothesis form with hypothesis 8 given by its proof at every block stage
   (`StageType.hasApexCoatomExtensions_blockStage`).  Each of the four is still to be proved.
 
+**Receiving-models route.**  A separate form of the main theorem on `ℕ`, for the class `𝒞_α` of
+receiving models (`Realization.IsReceivingModel`: models with finite-cut receiving), is compiled
+in this repository (theorem named):
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'`
+(`MainTheorem/ReceivingRoute`; on all countable carriers,
+`MainTheorem.vaughtCounterexample_allCarriers_of_receivingModels'`), conditional on exactly three
+hypotheses: (R4) for receiving models (`hR4 : Expansion.ReceivingStableCappedReceiving`), (R2) for
+receiving models (`hres : Realization.ReceivingResidualReceiving`), and (R3) for receiving models
+(`hhol : Realization.HollowReceiving` with `Realization.IsReceivingCoverHollowAtBlock`).  Each is
+the original statement asked only of models with finite-cut receiving, and each follows from the
+original (`MainTheorem.receivingForms_of_stableCappedReceiving`).  The three are open.  (R1) is
+not a hypothesis of it and is not proved by it: receiving is a clause of the class, and (R1)
+stays a later fidelity theorem relating models and receiving models.  The form with the coatom
+extension property with apex as a fourth hypothesis is kept
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`).  The table below and
+the status of each hypothesis are unchanged.
+
 Each hypothesis is a separate statement with its own status.  Hypothesis 8 is compiled
 (`StageType.hasApexCoatomExtensions`).  Hypotheses 1 and 3 are derived from it and so compiled
 with no hypothesis (`MainTheorem.capToModel`, `forcingDonors_blockStage`); hypothesis 7 is

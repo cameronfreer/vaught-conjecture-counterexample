@@ -3586,6 +3586,22 @@ Each checkpoint needs both its abstract API and a concrete application:
    is a separate
    statement (prospective).
 
+   *Receiving-models route.*  For the class of receiving models (`Realization.IsReceivingModel`:
+   models with finite-cut receiving), the thin `ℵ₁` spectrum is compiled in this repository
+   (theorem named), `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'`,
+   with its form on all countable carriers
+   `MainTheorem.vaughtCounterexample_allCarriers_of_receivingModels'`
+   (`MainTheorem/ReceivingRoute`), conditionally on exactly three hypotheses:
+   `hR4 : Expansion.ReceivingStableCappedReceiving`, `hres : Realization.ReceivingResidualReceiving`
+   and `hhol : Realization.HollowReceiving Realization.IsReceivingCoverHollowAtBlock`, (R4), (R2)
+   and (R3) asked only of models with finite-cut receiving.  Each follows from its original form
+   (`MainTheorem.receivingForms_of_stableCappedReceiving`); no converse is claimed.  The three are
+   open.  (R1) is not a hypothesis and is not proved: it stays a later fidelity theorem relating
+   models and receiving models.  The four-hypothesis form above, the form with the coatom
+   extension property with apex as a hypothesis
+   (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`), and every status
+   above are unchanged.
+
 7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
    presentations"): for a countable `β`, on every countably infinite carrier, a model at
    `λ_β = blockStage β` that realizes every legal stage type at `λ_β`, receives every legal donor
