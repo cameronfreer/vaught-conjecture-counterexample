@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.LowStep
 import VaughtConjecture.Continuation.GrowthCappedDecoder
+import VaughtConjecture.Continuation.H2OwnerGeneral
 
 /-!
 # The tie case of the LOW step through a top cell of the donor
@@ -302,3 +303,89 @@ theorem lowStepTie_of_donorDomination (hF : IsLowFamily K t' tb p o r)
     exact le_max_right _ _
 
 end VaughtConjecture.StageType
+
+/-! ### The unserved case below the full grade -/
+
+namespace VaughtConjecture.StageType
+
+open Finset Label H2 FieldAdmission
+
+variable {α : Ordinal.{u}} {k K : ℕ}
+
+/-- **The unserved case holds below the full grade.**  At a legal source-gap context `t'` of grade
+`K ≤ k` on `k + 1` points with the lost point last, with face `p` along the first points, the
+unserved case of the private frontier (`StageType.LowStepUnserved`) holds: the lowered face at the
+cap (`H2.exists_lowered_at`, with the context as its own donor), where the face is first capped
+at the next label self-visible at `K` above the cap so that the owner carries its largest label,
+then capped below the threshold, and the root restored by a capped lift. -/
+theorem lowStepUnserved_of_le {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
+    {o r : Fin t'.card} (hs : t'.IsSourceGapContextAt K Fin.castSuccEmb (Fin.last k) o r)
+    (hKk : K ≤ k) {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p) :
+    LowStepUnserved K t' (Fin.last k) o r := by
+  intro u hu c hc hc0 hroot _ _ _
+  have hs' : t'.IsSourceGapContextAt K ((Function.Embedding.refl (Fin k)).trans Fin.castSuccEmb)
+      (Fin.last k) o r := by
+    convert hs
+    exact Function.Embedding.ext fun _ ↦ rfl
+  set L : Fin t'.card → Label.{u} := t'.toCellScheme.splice K (fun _ ↦ ⊥) u with hL_def
+  have hLle (d : Fin t'.card) (hd : t'.toCellScheme.grade d ≤ K) : L d = u d :=
+    CellScheme.splice_of_le hd
+  have hL : LawfulAt t' K L :=
+    ⟨(CellScheme.Rows.isLawfulBelow_congr (R := t'.rows) (X := ((univ : Finset (Fin (k + 1))), K))
+      (w := u) (w' := L) fun d hd ↦
+        (hLle d (show t'.toCellScheme.grade d ≤ K from hd.2)).symm).mp hu,
+      fun d hd ↦ CellScheme.splice_of_lt (not_le.mp hd)⟩
+  have hlow : ∀ x : Fin p.card, p.label x ≠ ⊤ → L (faceCell hp x) ≤ c := fun x hx ↦ by
+    by_cases hd : t'.toCellScheme.grade (faceCell hp x) ≤ K
+    · rw [hLle _ hd]
+      exact hroot _ hd (last_notMem_scope_faceCell hp x) (by rwa [label_faceCell])
+    · rw [hL_def, CellScheme.splice_of_lt (not_le.mp hd)]; exact bot_le
+  obtain ⟨W, hW, hWr, hWL, hWf⟩ := exists_lowered_at hleg hs' hKk hp hleg hp hc hL hL
+    (fun _ ↦ rfl) hc hc0 le_rfl hlow
+  refine ⟨W, hW.1, fun d hd ↦ by rw [hWL d, hLle d hd], fun d hd hl ↦ ?_, hWf⟩
+  obtain ⟨x, rfl⟩ := exists_faceCell_eq_of_last_notMem hp hl
+  rw [hWr x, hLle _ hd]
+
+end VaughtConjecture.StageType
+
+/-! ### The capped lift from the tie case alone -/
+
+namespace VaughtConjecture.ProfileTower
+
+open Finset Label CellScheme
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} {N : Finset (Fin I.amalgam.card ⊕ Unit)}
+  {T : Set (Fin I.amalgam.card ⊕ Unit)} {o r : Fin I.amalgam.card} {g : ℕ} {L : Lvl I g}
+
+local notation "𝒞" => lowCat I (g + 1) N T o r
+
+/-- **The capped lift from either coatom into the LOW layer over a good level, from the tie case
+alone**: below the full grade the unserved case holds (`StageType.lowStepUnserved_of_le`), so
+`ProfileTower.Lvl.Good.cappedLift_lowS_of_unserved_tie` needs only `StageType.LowStepTie`. -/
+theorem Lvl.Good.cappedLift_lowS_of_tie (hL : L.Good) (hgm : g + 1 ≤ m)
+    {o' r' : Fin I.left.card}
+    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
+    (htb : I.right.topGrade ≤ g + 1)
+    (hTie : StageType.LowStepTie (g + 1) I.left I.right I.restrictFace_face_left
+      I.restrictFace_face_right o' r')
+    (ho : o = StageType.faceCell I.restrictFace_left o')
+    (hr : r = StageType.faceCell I.restrictFace_left r')
+    (hNQ : ∀ f ∈ N, ∃ d, f = Sum.inl d ∧ d ∈ I.amalgam.toCellScheme.below (coatD, g + 1))
+    (hTQ : ∀ f ∈ T, ∃ d, f = Sum.inl d ∧ d ∈ I.amalgam.toCellScheme.below (coatD, g + 1))
+    (hNroot : ∀ i, I.left.toCellScheme.grade i ≤ g + 1 →
+      Fin.last m ∉ I.left.toCellScheme.scope i → I.left.label i ≠ ⊤ →
+        Sum.inl (StageType.faceCell I.restrictFace_left i) ∈ N)
+    (hTR : ∀ f ∈ T, ∃ t, I.right.label t = ⊤ ∧
+      f = Sum.inl (StageType.faceCell I.restrictFace_right t))
+    (hTtop : ∀ t, I.right.label t = ⊤ →
+      Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ T)
+    (hLoN : ∀ t, I.right.label t ≠ ⊤ → I.right.toCellScheme.grade t ≤ g + 1 →
+      Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ N)
+    {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
+    (L.lowS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
+      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
+  hL.cappedLift_lowS_of_unserved_tie hgm hs htb
+    (StageType.lowStepUnserved_of_le I.isLegal_left hs hgm I.restrictFace_face_left) hTie ho hr
+    hNQ hTQ hNroot hTR hTtop hLoN hx
+
+end VaughtConjecture.ProfileTower
