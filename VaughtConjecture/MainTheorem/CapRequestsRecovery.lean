@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.CapRequestsFill
+import VaughtConjecture.Continuation.TiedRootCapOffsets
 import VaughtConjecture.MainTheorem.CutoffCoatomRelabel
 
 /-!
@@ -17,7 +18,7 @@ table of Layer 3: the reading through a proper cap, at the seed of the first coa
 This file belongs to Layer 4 of `roadmap/README.md`.
 -/
 
-universe u
+universe u v
 
 namespace VaughtConjecture
 
@@ -680,6 +681,174 @@ theorem hasCutoffFirstCoatomCompletions_of_capFills
   obtain ⟨c, h3, hface, hfill⟩ := h X γ hk hγ hC
   exact X.exists_isCutoffStableRecovery c h3 hface (fun k' h₁ h₂ ↦ (hfill k' h₁ h₂).1)
     fun k' h₁ h₂ ↦ (hfill k' h₁ h₂).2
+
+end StageType
+
+/-! ### The margin calibration with a floor -/
+
+namespace StageType
+
+variable {ξ : Ordinal.{u}} {m k : ℕ}
+
+variable (ξ) in
+/-- The **margin calibration with a floor**: the margin calibration
+(`StageType.GradedCapMarginCalibration`) with, for the same cap `b` of grade `N`, moreover
+`3 ≤ N`, every cell of `D` of grade below `N` ((M3): `k + 1 < N`), and the offsets of the labels of
+the root (the cells of `T⁺` visible through `f`) below `N` (`StageType.RootOffsetsBelow`). -/
+def GradedCapMarginCalibration' ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m)
+    (f : Fin k ↪ Fin m) (D : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) :
+    Prop :=
+  ∃ b : Fin Tp.card,
+    ((blockStage ξ + Tp.toCellScheme.grade b : Ordinal.{u}) : Label.{u}) ≤ Tp.label b ∧
+    k + 1 < Tp.toCellScheme.grade b ∧ 3 ≤ Tp.toCellScheme.grade b ∧
+    (∃ R : ℕ, R < Tp.toCellScheme.grade b ∧ γ < blockStage ξ + R) ∧
+    (∃ (a : Fin Tp.card) (i : ℕ), i < Tp.toCellScheme.grade b ∧
+      Tp.toCellScheme.grade a ≤ Tp.toCellScheme.grade b ∧
+      Tp.label a = ((blockStage ξ + i : Ordinal.{u}) : Label.{u})) ∧
+    (∀ (j : Fin D.card) (o : Ordinal.{u}), D.label j = o →
+      ∃ (μ : Ordinal.{u}) (n i : ℕ) (a : Fin Tp.card), Order.IsSuccPrelimit μ ∧ o = μ + n ∧
+        n < Tp.toCellScheme.grade b ∧ i < Tp.toCellScheme.grade b ∧
+        Tp.toCellScheme.grade a ≤ Tp.toCellScheme.grade b ∧
+        Tp.label a = ((μ + i : Ordinal.{u}) : Label.{u})) ∧
+    Tp.RootOffsetsBelow f (Tp.toCellScheme.grade b)
+
+/-- The margin calibration with a floor is a margin calibration. -/
+theorem GradedCapMarginCalibration'.gradedCapMarginCalibration
+    {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f : Fin k ↪ Fin m}
+    {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}}
+    (h : GradedCapMarginCalibration' ξ Tp f D γ) : GradedCapMarginCalibration ξ Tp f D γ :=
+  let ⟨b, hb, hk, _, hR, hM, href, _⟩ := h
+  ⟨b, hb, by omega, hR, hM, href⟩
+
+/-- **Cap data with a floor**: cap data (`StageType.MarginCapData`) whose cap has grade `N ≥ 3`,
+above the grade `k + 1` of every cell of `D`, with the offsets of the root's labels below `N`. -/
+structure FloorCapData (Tp : StageType.{u} (blockStage (ξ + 1)) (m + 1)) (f : Fin k ↪ Fin (m + 1))
+    (D : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) extends
+    MarginCapData Tp D γ where
+  /-- The cap has grade at least `3`. -/
+  three_le : 3 ≤ Tp.toCellScheme.grade cap
+  /-- Every cell of `D` has grade below that of the cap. -/
+  succ_lt : k + 1 < Tp.toCellScheme.grade cap
+  /-- The offsets of the root's labels lie below the grade of the cap. -/
+  rootOffsetsBelow : Tp.RootOffsetsBelow f (Tp.toCellScheme.grade cap)
+
+/-- **The margin calibration with a floor gives cap data with a floor**, for a legal `T⁺`:
+availability moves the cap to a cell of full scope and the same grade. -/
+theorem GradedCapMarginCalibration'.nonempty_floorCapData
+    {Tp : StageType.{u} (blockStage (ξ + 1)) (m + 1)} {f : Fin k ↪ Fin (m + 1)}
+    {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}} (hT : Tp.IsLegal)
+    (h : GradedCapMarginCalibration' ξ Tp f D γ) : Nonempty (FloorCapData Tp f D γ) := by
+  classical
+  obtain ⟨b, hb, hk, h3, ⟨R, hR, hγ⟩, ⟨a, i, hi, ha, hal⟩, href, hoff⟩ := h
+  obtain ⟨s, hs⟩ := hT.isComplete ((univ : Finset (Fin (m + 1))), Tp.toCellScheme.grade b)
+    ⟨Tp.univ_mem_faces, show 0 < Tp.toCellScheme.grade b by omega, by
+      rw [card_univ, Fintype.card_fin]
+      exact Tp.grade_le b⟩
+  obtain ⟨u, hu, hbu⟩ := Tp.isLawful.availability b s
+    (by rw [show Tp.toCellScheme.scope s = univ from congrArg Prod.fst hs]; exact subset_univ _)
+    (congrArg Prod.snd hs).symm
+  have hus : Tp.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 1))),
+      Tp.toCellScheme.grade b) := hu.trans hs
+  have hg : Tp.toCellScheme.grade u = Tp.toCellScheme.grade b := congrArg Prod.snd hus
+  have hspec (j : Fin D.card) : ∃ (r : Fin Tp.card) (n : ℕ), ∀ o : Ordinal.{u}, D.label j = o →
+      ∃ (μ : Ordinal.{u}) (i' : ℕ), Order.IsSuccPrelimit μ ∧ o = μ + n ∧
+        n < Tp.toCellScheme.grade b ∧ i' < Tp.toCellScheme.grade b ∧
+        Tp.toCellScheme.grade r ≤ Tp.toCellScheme.grade b ∧
+        Tp.label r = ((μ + i' : Ordinal.{u}) : Label.{u}) := by
+    by_cases hj : ∃ o : Ordinal.{u}, D.label j = o
+    · obtain ⟨o, ho⟩ := hj
+      obtain ⟨μ, n, i', r, hμ, hon, hn, hi', hr, hrl⟩ := href j o ho
+      refine ⟨r, n, fun o' ho' ↦ ⟨μ, i', hμ, ?_, hn, hi', hr, hrl⟩⟩
+      rw [ho] at ho'
+      exact (WithTop.coe_injective (WithBot.coe_injective ho')).symm.trans hon
+    · exact ⟨b, 0, fun o ho ↦ absurd ⟨o, ho⟩ hj⟩
+  choose ref off hro using hspec
+  exact ⟨{ cap := u, marker := a, R := R, i := i, ref := ref, off := off
+           scope_cap := congrArg Prod.fst hus
+           le_label_cap := by rw [hg]; exact hb.trans hbu
+           lt_grade_cap := by rw [hg]; omega
+           R_lt := by rw [hg]; exact hR
+           lt_R := hγ
+           i_lt := by rw [hg]; exact hi
+           grade_marker_le := by rw [hg]; exact ha
+           label_marker := hal
+           ref_spec := fun j o ho ↦ by rw [hg]; exact hro j o ho
+           three_le := by rw [hg]; exact h3
+           succ_lt := by rw [hg]; exact hk
+           rootOffsetsBelow := by rw [hg]; exact hoff }⟩
+
+end StageType
+
+namespace Realization
+
+variable {ξ : Ordinal.{u}} {M : Type v} {R : Realization.{u, v} (blockStage ξ) M}
+
+/-- **Acquisition of the margin calibration with a floor**: a model `R` at `λ_ξ` that is not
+cover-hollow and has top-grade supremum `⊤` acquires calibrated contexts for it.  The margin
+calibration is acquired at `max γ (λ_ξ + M)` with `M` above the arity of the root plus `2` and above
+every offset of the root's labels (`StageType.exists_offset_bound`): its offset `R` with
+`λ_ξ + M < λ_ξ + R` gives `M < R < N`; the root's labels are those of the type of the root, by
+exact consistency of the candidate. -/
+theorem IsModel.acquiresCalibratedContexts_gradedCapMargin' (hR : R.IsModel)
+    (hnh : ¬ R.IsCoverHollow) (hgrow : R.topGradeSup = ⊤) :
+    AcquiresCalibratedContexts ξ (StageType.GradedCapMarginCalibration' ξ) R hR.isStablyLawful := by
+  intro x hx D hD γ hγ
+  obtain ⟨Koff, hKoff⟩ := StageType.exists_offset_bound x.type
+  set M : ℕ := x.arity + 3 + Koff with hM
+  have hγ' : max γ (blockStage ξ + M) < blockStage (ξ + 1) := by
+    refine max_lt hγ ?_
+    rw [blockStage_add_one]
+    exact add_lt_add_right (Ordinal.natCast_lt_omega0 M) _
+  obtain ⟨w, f, hf, b, hb, hk, ⟨R', hR', hγR⟩, hM2, href⟩ :=
+    hR.acquiresCalibratedContexts_gradedCapMargin hnh hgrow x hx D hD _ hγ'
+  have hMR : M < R' := by
+    have h1 : blockStage ξ + (M : Ordinal.{u}) < blockStage ξ + R' :=
+      (le_max_right _ _).trans_lt hγR
+    exact_mod_cast (add_lt_add_iff_left _).mp h1
+  have hface : StageType.restrictFace f
+      (R.stableType hR.isStablyLawful w.tuple w.type w.eval_tuple) = some x.type := by
+    rw [← isConsistent_stableCandidate hR.isConsistent hR.isCovering w.tuple _ f
+      (stableCandidate_eval_of_eval w.eval_tuple), hf]
+    exact x.eval_tuple
+  refine ⟨w, f, hf, b, hb, by omega, by omega, ⟨R', hR', (le_max_left _ _).trans_lt hγR⟩, hM2,
+    href, fun y hy μ f' hμ hl ↦ ?_⟩
+  obtain ⟨i, rfl⟩ := Scheme.exists_faceCell_eq (StageType.comap_toScheme_of_restrictFace hface) hy
+  have hl' : x.type.label i = ((μ + f' : Ordinal.{u}) : Label.{u}) :=
+    (StageType.label_faceCell hface i).symm.trans hl
+  have := hKoff i μ f' hμ hl'
+  omega
+
+end Realization
+
+namespace StageType
+
+variable {ξ : Ordinal.{u}}
+
+/-- **First-coatom completions for the margin calibration with a floor from the private fills**:
+the statement of `StageType.hasCutoffFirstCoatomCompletions_of_capFills` at the calibration with a
+floor (`StageType.GradedCapMarginCalibration'`), whose acquisition is compiled
+(`Realization.IsModel.acquiresCalibratedContexts_gradedCapMargin'`), with the grade bound `3 ≤ N`
+discharged: it is part of the cap data with a floor that the calibration gives
+(`StageType.GradedCapMarginCalibration'.nonempty_floorCapData`).  The hypothesis asks, at every
+calibrated input and for every cap data with a floor, the common face condition (`hface`) and the
+fills from the private coatom; none is proved here. -/
+theorem hasCutoffFirstCoatomCompletions'_of_capFills
+    (h : ∀ ⦃m k : ℕ⦄ (X : FirstCoatomInput.{u} ξ m k) (γ : Ordinal.{u}), 0 < k →
+      γ < blockStage (ξ + 1) →
+      GradedCapMarginCalibration' ξ X.Tp (X.f.trans Fin.castSuccEmb) X.D γ →
+      ∀ c : FloorCapData X.Tp (X.f.trans Fin.castSuccEmb) X.D γ,
+        (∀ x : Fin X.Tp.card, Fin.last m ∉ X.Tp.toCellScheme.scope x →
+          X.Tp.toCellScheme.grade x < X.Tp.toCellScheme.grade c.cap) ∧
+        ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+          CapRequests.CapFillBotAt (X.requests c.toMarginCapData) (Fin.last (m + 1)) k' ∧
+            CapRequests.CapFillPosAt (X.requests c.toMarginCapData) (Fin.last (m + 1)) k') :
+    HasCutoffFirstCoatomCompletions ξ (GradedCapMarginCalibration' ξ) := by
+  intro m k Tp p tb f P hT hp htb hk hP D hD htbD γ hγ hC
+  let X : FirstCoatomInput.{u} ξ m k := ⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩
+  obtain ⟨c⟩ := hC.nonempty_floorCapData hT
+  obtain ⟨hface, hfill⟩ := h X γ hk hγ hC c
+  exact X.exists_isCutoffStableRecovery c.toMarginCapData c.three_le hface
+    (fun k' h₁ h₂ ↦ (hfill k' h₁ h₂).1) fun k' h₁ h₂ ↦ (hfill k' h₁ h₂).2
 
 end StageType
 
