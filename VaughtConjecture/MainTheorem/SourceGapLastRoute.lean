@@ -20,28 +20,36 @@ determination also at contexts whose lost point lies on the first coatom.  This 
 at the source-gap contexts whose lost point is the last point (`StageType.IsSourceGapContextLast`).
 Each item is compiled in this repository (theorem named).
 
-* **The reduction** (`Realization.FirstCoatomCutoffDetermination.cutoffDetermination_off`, and
-  for the coatom form `Realization.CoatomCutoffDetermination.cutoffDetermination_off`): cutoff
-  determination at the first coatom for `IsSourceGapContextLast` gives cutoff determination for
-  the source-gap contexts with the coatom off the lost point closed
-  (`StageType.IsSourceGapContextOff`).  The transposition of the lost point with the last point
-  makes the complement of the lost point the first coatom, and the context one with the lost point
-  last (`Realization.FirstCoatomCutoffDetermination.exists_coface_reindex`).
+* **The reduction**
+  (`Realization.FirstCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`, and for
+  the coatom form
+  `Realization.CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`):
+  cutoff determination at the first coatom for `IsSourceGapContextLast` gives cutoff determination
+  for the source-gap contexts with the coatom off the lost point closed
+  (`StageType.IsSourceGapContextOff`).  That coatom is closed by hypothesis; the transposition of
+  the lost point with the last point only moves it to the coordinate first coatom
+  (`Fin.castSuccEmb`), and makes the context one with the lost point last
+  (`Realization.FirstCoatomCutoffDetermination.exists_coface_reindex`).  A relabelling
+  never makes a coatom closed that is not.
 * **The acquisition** (`Realization.residualAcquisition_isSourceGapContextOff`, in
   `VaughtConjecture.Continuation.SourceGapContext`): the acquired source-gap contexts have the lost
-  point last and the face of first loss, closed, as first coatom.
+  point last, and their first coatom is the face of first loss, which is closed by the first-loss
+  construction.
 * **The main theorem from three finite statements, lost point last** (in `MainTheorem`,
   `densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGapLast_markedCap`), with
   (R4) and (R3) as in the source-gap form.  Its (R2) hypothesis is implied by the (R2)
   hypothesis of the source-gap form
   (`Realization.CoatomCutoffDetermination.isSourceGapContextLast`); no converse is claimed.
 
-The source-gap form does not reduce to the form with the lost point last by a transposition.  The
-closed coatoms of a context are the complements `univ.erase a` of the extreme points `a` of its
-plan (`Geometry.extremes`), and a plan has at most two extreme points
-(`Geometry.IsPlan.card_extremes_le_two`).  When the lost point is not one of them, its complement
-is not closed, no relabelling makes the coatom off the lost point the first coatom, and the
-source-gap form asks determination with the lost point on the first coatom.
+The reduction does not extend to the source-gap form by a relabelling.  The closed coatoms of a
+context are the complements `univ.erase a` of the extreme points `a` of its plan
+(`StageType.isPlan`, `Geometry.mem_extremes`, `StageType.erase_mem_faces_iff_mem_extremes`), at
+most two (`Geometry.IsPlan.card_extremes_le_two`).  At a context none of whose witnessing lost
+points is extreme, the coatom off each lost point is not closed: a relabelling can move it to the
+coordinate first coatom but cannot make it closed, and the coatom form is asked only where the
+first coatom is closed.  There the source-gap form asks determination with every witnessing lost
+point on a closed first coatom, and this file does not reduce that to the form with the lost point
+last.
 
 **Not claimed.**  Coatom cutoff determination for `IsSourceGapContextLast` is not proved, nor are
 (R4) and (R3), so the spectrum is not proved here.
@@ -69,9 +77,11 @@ theorem CoatomCutoffDetermination.isSourceGapContextLast
 /-- **Cutoff determination with the coatom off the lost point closed, from cutoff determination at
 the first coatom with the lost point last**: relabel the context by the transposition `σ` of the
 lost point `l` with the last point.  The relabelled context has the lost point last, its root
-avoids the last point, and its first coatom is the complement of `l`, closed; the form at the
-first coatom applies there (`FirstCoatomCutoffDetermination.exists_coface_reindex`). -/
-theorem FirstCoatomCutoffDetermination.cutoffDetermination_off
+avoids the last point, and its coordinate first coatom is the image of the complement of `l`,
+which is closed by the hypothesis (`IsSourceGapContextOff`); the transposition only moves it to the
+coordinate position.  The form at the first coatom applies there
+(`FirstCoatomCutoffDetermination.exists_coface_reindex`). -/
+theorem FirstCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff
     (hdet : FirstCoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
     CutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextOff K h where
   exists_coface α K n k t' h hα ht' hP t ht d hd hdK := by
@@ -109,12 +119,12 @@ theorem FirstCoatomCutoffDetermination.cutoffDetermination_off
     rwa [hroot] at this
 
 /-- **Cutoff determination with the coatom off the lost point closed, from the coatom form with
-the lost point last**: `FirstCoatomCutoffDetermination.cutoffDetermination_off` through
-`CoatomCutoffDetermination.firstCoatom`. -/
-theorem CoatomCutoffDetermination.cutoffDetermination_off
+the lost point last**: `FirstCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`
+through `CoatomCutoffDetermination.firstCoatom`. -/
+theorem CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff
     (hdet : CoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
     CutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextOff K h :=
-  hdet.firstCoatom.cutoffDetermination_off
+  hdet.firstCoatom.cutoffDetermination_isSourceGapContextOff
 
 end Realization
 
@@ -134,7 +144,7 @@ nonisomorphic ones, conditional on exactly three finite statements about stage t
 As `densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap`, whose
 (R2) hypothesis implies `h2` (`Realization.CoatomCutoffDetermination.isSourceGapContextLast`).
 The acquisition `Realization.residualAcquisition_isSourceGapContextOff` and the reduction
-`Realization.CoatomCutoffDetermination.cutoffDetermination_off` are compiled. -/
+`Realization.CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff` are compiled. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGapLast_markedCap
     (h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions.{0} ξ (GradedCapCalibration.{0} ξ))
     (h2 : CoatomCutoffDetermination.{0} fun K t' h ↦ t'.IsSourceGapContextLast K h)
@@ -142,7 +152,7 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGa
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_determinations
     (fun ξ hξ ↦ (h4 ξ hξ).hasCutoffStableRecoverySchemes_gradedCap)
-    residualAcquisition_isSourceGapContextOff h2.cutoffDetermination_off
+    residualAcquisition_isSourceGapContextOff h2.cutoffDetermination_isSourceGapContextOff
     hollowAcquisition_isMarkedCapContext
     (h3.hollowCutoffDetermination (fun _ _ _ _ _ ht ↦ ht.not_surjective)
       fun _ _ _ _ _ σ ht ↦ ht.reindex σ)

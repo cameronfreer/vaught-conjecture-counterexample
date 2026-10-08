@@ -3884,10 +3884,14 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Realization.residualAcquisition_isSourceGapContextOff`, `Continuation/SourceGapContext`), and
    coatom cutoff determination for `IsSourceGapContextLast` gives cutoff determination for them by
    the transposition of the lost point with the last point
-   (`Realization.CoatomCutoffDetermination.cutoffDetermination_off`).  Coatom cutoff determination
-   for `IsSourceGapContextLast` is open.  The source-gap form does not reduce to it by a
-   transposition: the closed coatoms of a context are the complements of the extreme points of its
-   plan, at most two (`Geometry.IsPlan.card_extremes_le_two`).
+   (`Realization.CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`).  Coatom
+   cutoff determination for `IsSourceGapContextLast` is open.  The coatom off the lost point is closed by hypothesis;
+   the transposition only moves it to the coordinate first coatom.  The reduction does not extend
+   to the source-gap form by a relabelling: the closed coatoms of a context are the complements of
+   the extreme points of its plan (`StageType.isPlan`, `Geometry.mem_extremes`), at most two
+   (`Geometry.IsPlan.card_extremes_le_two`), and at a context none of whose witnessing lost points
+   is extreme, a relabelling can move the coatom off a lost point to the coordinate first coatom
+   but cannot make it closed.
 
    **Bounded pinned extensions and the bounded (R2) form.**  Compiled in this repository (theorem
    named): capping above a grade, `StageType.capAbove` (`Stage/CapGrade`), lawful with no side
@@ -3911,7 +3915,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    determination under `hK`, roots not onto and invariance under relabelling
    (`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination`); for source-gap contexts
    `hK` is compiled (`StageType.IsSourceGapContext.topGrade_eq`), giving
-   `Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_off`,
+   `Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`,
    `Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_sourceGap`,
    `Realization.receivingResidualReceiving_of_boundedCoatom_sourceGapLast`
    `(hdet : BoundedCoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h) :`

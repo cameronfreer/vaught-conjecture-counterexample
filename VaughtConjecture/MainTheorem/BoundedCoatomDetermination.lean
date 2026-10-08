@@ -51,9 +51,11 @@ determination follows by relabelling as for the coatom form
 (`StageType.IsSourceGapContext.topGrade_eq`, in `VaughtConjecture.Continuation.SourceGapContext`),
 so its coatom face has top grade at most `K`
 (`StageType.IsSourceGapContextLast.topGrade_le_of_restrictFace`).  Hence:
-* the bounded coatom form with the lost point last gives cutoff determination with the lost point
-  off the coatom (`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_off`, by the
-  transposition of `Realization.FirstCoatomCutoffDetermination.cutoffDetermination_off`), and (R2)
+* the bounded coatom form with the lost point last gives cutoff determination with the coatom off
+  the lost point closed
+  (`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`, by the
+  transposition of
+  `Realization.FirstCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`), and (R2)
   for receiving models through the compiled acquisition with the first coatom closed
   (`Realization.receivingResidualReceiving_of_boundedCoatom_sourceGapLast`);
 * the bounded coatom form for source-gap contexts gives cutoff determination for them
@@ -215,13 +217,14 @@ theorem BoundedCoatomCutoffDetermination.cutoffDetermination
 
 /-! ### Source-gap contexts -/
 
-/-- **Cutoff determination with the lost point off the coatom, from the bounded coatom form with
-the lost point last**: the contexts have top grade `K`, and the lost point is transposed with the
-last point (`FirstCoatomCutoffDetermination.cutoffDetermination_off`). -/
-theorem BoundedCoatomCutoffDetermination.cutoffDetermination_off
+/-- **Cutoff determination with the coatom off the lost point closed, from the bounded coatom form
+with the lost point last**: the contexts have top grade `K`, and the lost point is transposed with
+the last point (`FirstCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`). -/
+theorem BoundedCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff
     (hdet : BoundedCoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
     CutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextOff K h :=
-  (hdet.firstCoatom fun _ _ _ _ _ _ hs ↦ hs.topGrade_eq.le).cutoffDetermination_off
+  FirstCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff
+    (hdet.firstCoatom fun _ _ _ _ _ _ hs ↦ hs.topGrade_eq.le)
 
 /-- **Cutoff determination for source-gap contexts from the bounded coatom form.** -/
 theorem BoundedCoatomCutoffDetermination.cutoffDetermination_sourceGap
@@ -233,12 +236,12 @@ theorem BoundedCoatomCutoffDetermination.cutoffDetermination_sourceGap
 
 /-- **(R2) for receiving models from the bounded coatom form with the lost point last**: the
 acquisition with the first coatom closed (`residualAcquisition_isSourceGapContextOff`) and
-`BoundedCoatomCutoffDetermination.cutoffDetermination_off`. -/
+`BoundedCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`. -/
 theorem receivingResidualReceiving_of_boundedCoatom_sourceGapLast
     (hdet : BoundedCoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
     ReceivingResidualReceiving.{u, w} :=
   receivingResidualReceiving_of_cutoffDetermination residualAcquisition_isSourceGapContextOff
-    hdet.cutoffDetermination_off
+    hdet.cutoffDetermination_isSourceGapContextOff
 
 end Realization
 
@@ -257,7 +260,7 @@ last**: as
   (`h2`);
 * (R3): hollow coatom cutoff determination for the marked-cap context (`h3`).
 None of the three is proved here.  The reduction of (R2) is
-`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_off`. -/
+`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_boundedCoatom_sourceGapLast_markedCap
     (h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions.{0} ξ (GradedCapCalibration.{0} ξ))
     (h2 : BoundedCoatomCutoffDetermination.{0} fun K t' h ↦ t'.IsSourceGapContextLast K h)
@@ -265,7 +268,7 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_boundedCoatom_sourceGapLast_m
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_determinations
     (fun ξ hξ ↦ (h4 ξ hξ).hasCutoffStableRecoverySchemes_gradedCap)
-    residualAcquisition_isSourceGapContextOff h2.cutoffDetermination_off
+    residualAcquisition_isSourceGapContextOff h2.cutoffDetermination_isSourceGapContextOff
     hollowAcquisition_isMarkedCapContext
     (h3.hollowCutoffDetermination (fun _ _ _ _ _ ht ↦ ht.not_surjective)
       fun _ _ _ _ _ σ ht ↦ ht.reindex σ)
