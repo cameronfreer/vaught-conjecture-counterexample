@@ -57,7 +57,9 @@ Each item below is compiled in this file (theorem named).
   references of `F` and the marker have grade at most that of the cap.  Where the shifter at a
   reference value does not commute with visibility replacement at `N`, it exceeds the suppressor
   at `N`, and both sides are the capped cap; elsewhere it commutes.  No bottom reflection and no
-  orderliness of the state is needed.
+  orderliness of the state is needed.  For a witness bounded by a grade `K ≥ N`
+  (`IsWitness (stepSuppressor K) σ`) the plain image `σ ∘ s` is correct, with no grades at all
+  (`CapRequests.IsCorrect.comp`); this covers the orbit code at a grade at least `N`.
 * **The actual state** (`CapRequests.isCorrect_of_forall`, `CapRequests.isCorrect_actual`): a
   state that is `⊥` on `Z`, at least the marker value on `T`, and reads every `f ∈ F` in the block
   of its reference, `s (ref f) = μ + k` with `k < N` and `s f = μ + off f` (`μ` zero or a limit),
@@ -276,6 +278,19 @@ theorem IsCorrect.of_transformsTo (hs : r.IsCorrect s) {grade : ι → ℕ} (hgr
   obtain rfl : s' = fun d ↦ min (σ (s d)) (g (grade d)) := funext heq
   exact hs.map hgr hw
 
+/-- **A witness bounded by a grade at least the threshold keeps correctness of the plain image**:
+for a witness `(stepSuppressor K, σ)` with `N ≤ K` and offsets of `F` at most `N`, the state
+`σ ∘ s` is correct when `s` is.  No grades are involved: the threshold `N` serves as the grade of
+every cell. -/
+theorem IsCorrect.comp (hs : r.IsCorrect s) {K : ℕ} (hw : IsWitness (stepSuppressor K) σ)
+    (hNK : r.N ≤ K) (hoff : ∀ f ∈ r.F, r.off f ≤ r.N) : r.IsCorrect (σ ∘ s) := by
+  have hgr : r.IsGraded fun _ ↦ r.N :=
+    ⟨le_rfl, hoff, fun _ _ ↦ le_rfl, fun _ _ ↦ le_rfl, fun _ _ ↦ le_rfl, fun _ _ ↦ le_rfl, le_rfl⟩
+  have e : (fun d ↦ min (σ (s d)) (stepSuppressor K r.N)) = σ ∘ s := funext fun d ↦ by
+    rw [stepSuppressor_of_le hNK, min_top_right]
+    rfl
+  exact e ▸ hs.map hgr hw
+
 end Map
 
 /-! ### The actual state -/
@@ -462,6 +477,12 @@ theorem inBottomClass_map_iff {grade : ι → ℕ} {g : ℕ → Label.{u}} {σ :
   refine forall₂_congr fun d hd ↦ ?_
   have e : σ (s d) = ⊥ ↔ s d = ⊥ := ⟨hσ _, fun h ↦ h ▸ hw.map_bot⟩
   rw [min_eq_bot, or_iff_left (hg d hd), e]
+
+/-- **The bottom class of a plain image**: for a map sending exactly `⊥` to `⊥`, the state `σ ∘ s`
+is in the class exactly when `s` is. -/
+theorem inBottomClass_comp_iff {σ : Label.{u} → Label.{u}} (hσ : ∀ x, σ x = ⊥ ↔ x = ⊥) :
+    InBottomClass B ZA (σ ∘ s) ↔ InBottomClass B ZA s :=
+  forall₂_congr fun d _ ↦ by rw [Function.comp_apply, hσ]
 
 namespace CapRequests
 

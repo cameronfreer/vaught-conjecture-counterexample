@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.CapRequests
 import VaughtConjecture.Continuation.StableRecoveryReading
 import VaughtConjecture.Stage.MarkedCap
+import VaughtConjecture.Extension.OrbitCode
 
 /-!
 # Cap requests at the reading type
@@ -24,7 +25,8 @@ of the donor face `{1, 2}` labelled `⊥`).  The requests `capReq` take the cap 
   the grades of the cells.
 * (R4) at the proper cap `λ_ξ + 2`: capping the labels at `λ_ξ + 2` keeps them correct, and the
   new cell is read as `λ_ξ + 1`, the cell `8` as at least `λ_ξ + 1`.
-* A transformation by a capped witness keeps correctness (`IsCorrect.map`).
+* A transformation by a capped witness keeps correctness (`IsCorrect.map`), and so does the orbit
+  code at the threshold `2` (`IsCorrect.comp` with `Label.isWitness_orbitMap`).
 * **Recognition at the reading cell**: the row of the reading cell `8` reads the reference cell
   and the new cell at `1` and the cap at `ω + 2`, so it is correct for the requests carried to the
   cells below `8`, and locality at `8` (`IsCorrect.of_transformsTo`) makes the labels below `8`,
@@ -148,6 +150,12 @@ example : capReq.IsCorrect fun d ↦
       ((fun n ↦ if n ≤ 2 then min ⊤ ((blockStage ξ + (2 : ℕ) : Ordinal.{u}) : Label.{u})
         else ⊥) (readingCells.grade d)) :=
   (isCorrect_readingType ξ).map isGraded_capReq (IsWitness.id_top.cap (isSelfVisible_two ξ))
+
+/-- **The orbit code at the threshold keeps correctness**: the orbit code at `2` of the labels of
+the reading type is correct for `capReq` (`IsCorrect.comp` with the orbit map, a witness bounded
+by grade `2`). -/
+example : capReq.IsCorrect (orbitCode 2 (readingType.{u} ξ).label) :=
+  (isCorrect_readingType ξ).comp (isWitness_orbitMap 2 _) le_rfl fun _ _ ↦ (by decide : 1 ≤ 2)
 
 /-! ### Recognition at the reading cell -/
 
