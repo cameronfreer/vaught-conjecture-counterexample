@@ -274,12 +274,13 @@ coatom extension construction, pinned and exact pinned extension, restriction-co
    original rows' lawfulness along the exact base table; it uses no bottom reflection of the
    decoder.
    The growth construction of (R3) and (R4) and the LOW construction of (R2) are both required
-   applications.  The two-witness splice is also proved here: for a top-labelled cell `Σ` of
-   grade `J ≤ K` below a top-witness cell `Θ`, a witness from `E(Σ)` to the labels below `Σ`
-   and a witness from `E(Σ)` to the row of `Θ` capped at its entry at `Σ` combine into a
-   witness from `E(Σ)` to the labels where they are below `α` and, where they are top, to the
-   band map of the capped row with a base (zero or a limit) that the capped row does not fall
-   below there.  It replaces the transitivity step in the proof of
+   applications.  The two-witness splice is compiled in this repository (theorem named) in a
+   more general form (`Label.TransformsTo.splice_bandMap`, `Label/Band`); the case needed
+   here: for a top-labelled cell `Σ` of grade `J ≤ K` below a top-witness cell `Θ`, a witness
+   from `E(Σ)` to the labels below `Σ` and a witness from `E(Σ)` to the row of `Θ` capped at its
+   entry at `Σ` combine into a witness from `E(Σ)` to the labels where they are below `α` and,
+   where they are top, to the band map of the capped row with a base (zero or a limit) that the
+   capped row does not fall below there.  It replaces the transitivity step in the proof of
    [Kni26, Lemma 5.3.5] for the rows other than the top-witness row.  (R6) is reduced to the
    coatom extension property at a stage, whose proof, in its apex form, is the completion of the
    amalgam of [Kni26, Definition 4.3.1] by cells of full scope (checkpoints 2.1–2.7 below).
@@ -4624,6 +4625,21 @@ lands, their notes stay in those modules.
 - `Extension/PrescribedFullRowsRoutes`: the remaining restatements of the routes' conditions are
   replaced by the routes' declarations (`Continuation/AvailableTopDetermination`,
   `Realization/TightCap`, `Realization/PerBlockCarrying`) when those modules land.
+
+**Marked caps (Layer 3, (R3)).**
+
+- `Stage/MarkedCap`: Layer 1, in place.  Done: `Label.TransformsTo.splice_bandMap` (the
+  two-witness splice), `Label.isSelfVisible_bandMap` and `Label.bandMap_lt_bandMap` are in
+  `Label/Band`, beside the band rule.
+- `Continuation/MarkedCap`: Layer 4, in place.  `StageType.IsTopCap.grade_eq_topGrade`,
+  `StageType.isTopCap_iff`, `StageType.isMarkedCapContext_iff`,
+  `StageType.IsMarkedCapContext.lt_topGrade` and `StageType.not_isMarkedCapContext_of_topGrade_le`
+  concern stage types only and go to `Stage/MarkedCap` when `StageType.topGrade`
+  (`Continuation/Terminal`) moves to `Stage/`.  `StageType.IsAnchoredMarkedCapContext` uses
+  `StageType.IsAnchored` (`Extension/GatedExtension`) and stays out of `Stage/`.  The exclusions
+  of the determination counterexamples (`MarkedCapExclusions`), instances of the general
+  exclusions, and the example of a marked-cap context stay in `Continuation/MarkedCap`, which
+  imports the modules of the counterexamples.
 
 **Finite geometry and the coatom amalgam (Layer 3, (R6)).**
 
