@@ -539,8 +539,22 @@ theorem exists_correctCompletion (hα : Order.IsSuccLimit α) {t' : StageType.{u
 
 /-! ### Assembly -/
 
-/-- **Hollow coatom cutoff determination at the contexts respecting the root bottoms**
-(through the SCAFFOLD `H3.exists_correctCompletion`). -/
+/-- **The existential coatom form at the contexts respecting the root bottoms** (through the
+SCAFFOLD `H3.exists_correctCompletion`; the donor coface is, for now, the pinned extension). -/
+theorem hollowCoatomCutoffDeterminationExists :
+    Realization.HollowCoatomCutoffDeterminationExists.{u}
+      (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelow' t' h) where
+  exists_coface α n k t' g p hα ht' hP hp t ht d hd := by
+    obtain ⟨c, r, hctx, hoff, hbot⟩ := hP
+    obtain ⟨tb, htb, htbd⟩ := Realization.exists_mem_cofaces_restrictFace_eq hα ht' hp ht hd
+    obtain ⟨F, hF⟩ := exists_correctCompletion hα ht' hp htb htbd hctx hoff hbot
+    obtain ⟨δ, hδ, hdet⟩ := isDeterminedWithin_of_hasAdmittedRows ht' hp htb hα htbd hctx.1
+      hctx.2.1 hctx.2.2.1 F hF
+    exact ⟨tb, htb, htbd, F.completion hα.isSuccPrelimit,
+      ⟨F.isLegal_completion _, F.restrictFace_left_completion _⟩,
+      F.restrictFace_right_completion _, δ, hδ, hdet⟩
+
+/-- **The coatom form** (through the SCAFFOLD; every donor coface). -/
 theorem hollowCoatomCutoffDetermination :
     Realization.HollowCoatomCutoffDetermination.{u}
       (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelow' t' h) where
@@ -553,10 +567,13 @@ theorem hollowCoatomCutoffDetermination :
       ⟨F.isLegal_completion _, F.restrictFace_left_completion _⟩,
       F.restrictFace_right_completion _, δ, hδ, hdet⟩
 
-/-- **(R3) for receiving models** (through the SCAFFOLD `H3.exists_correctCompletion`). -/
+/-- **(R3) for receiving models** through the existential coatom form (SCAFFOLD). -/
 theorem receivingHollowReceiving :
     Realization.HollowReceiving.{u, w} Realization.IsReceivingCoverHollowAtBlock :=
-  Realization.receivingHollowReceiving_of_coatomCutoffDetermination hollowCoatomCutoffDetermination
+  Realization.receivingHollowReceiving_of_markedCapContextBelow'
+    (hollowCoatomCutoffDeterminationExists.hollowCutoffDetermination
+      (Realization.markedCapContextBelow'_routeInputs.{u, w}).2.1
+      (Realization.markedCapContextBelow'_routeInputs.{u, w}).2.2)
 
 end H3
 
