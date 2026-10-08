@@ -47,6 +47,13 @@ occurrence with itself.  Compiled in this repository (theorem named):
   is `ProfileTowerDeadSeedSix.seedSix`, on six points.  So `completionNonDominating_of_tower`
   does not discharge `CompletionNonDominating`; this refutes neither `CompletionNonDominating`
   (another completion may satisfy the clause) nor (R4).
+* **A dead cap dominates no live cell** (`Scheme.capNonDominatingAt_of_dead`): in every legal
+  scheme the clause holds at a cap of full scope reading itself as `⊥`.  The failing caps of the
+  completion of the profile tower are live: every cell of a level reads itself at the top grid
+  point.
+* **The clause at the grade of the cap holds unconditionally, in a bot-keeping completion**
+  (`exists_botKeeping_capNonDominating_sameLayer`): for every seed, the bot-keeping completion of
+  the profile tower satisfies the clause at the cells of the grade of the cap.
 * **The margin calibration with a non-dominating cap** (`StageType.GradedCapMarginCalibrationND`):
   the margin calibration with a floor, a last point `x` off the root with `univ.erase x` a face,
   and the clause at `x` for every cell of full scope.
@@ -119,6 +126,60 @@ def CapNonDominatingCrossAt (S : Scheme.{u} n) (x : Fin n) (c : Fin S.card) : Pr
     S.toCellScheme.grade c < S.toCellScheme.grade a → S.rowAt a a ≠ ⊥ →
       ∃ u, S.toCellScheme.gradedIndex u = S.toCellScheme.gradedIndex G ∧
         Label.LowerBlock (S.rowAt u c) (S.rowAt u a)
+
+/-- **A dead cap dominates no live cell**: in a well-formed scheme with consistent and bountiful
+rows, a cell `c` of full scope reading itself as `⊥` satisfies the clause at every point.  The row
+of a live cell `a` extends to a labelling lawful below the graded index of `G`
+(bountifulness); availability gives a cell `u` of that graded index at least `a` there, so `u`
+reads `a` other than `⊥` (locality), while every cell reads the dead cell `c` as `⊥`
+(consistency). -/
+theorem capNonDominatingAt_of_dead {S : Scheme.{u} n} (hwf : S.IsWellFormed)
+    (hcons : S.rows.IsConsistent) (hb : S.rows.IsBountiful) (x : Fin n) {c : Fin S.card}
+    (hc : S.toCellScheme.scope c = univ) (hdead : S.rowAt c c = ⊥) :
+    S.CapNonDominatingAt x c := by
+  classical
+  intro a G _ hG hag hca hlive
+  have hX := hwf.isWellFormed.gradedIndex_mem a
+  have hY := hwf.isWellFormed.gradedIndex_mem G
+  have hXY : S.toCellScheme.gradedIndex a ≤ S.toCellScheme.gradedIndex G :=
+    ⟨by change S.toCellScheme.scope a ⊆ S.toCellScheme.scope G; rw [hG]; exact subset_univ _,
+      le_of_eq hag⟩
+  obtain ⟨q, hq, hqeq⟩ := CellScheme.Rows.IsBountiful.surjOn_isLawfulBelow _ hb hX hY hXY (hcons a)
+  have hw := CellScheme.Rows.isLawfulBelow_extendBot.mpr hq
+  obtain ⟨-, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hw
+  have haY : a ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex G) := hXY
+  have hGY : G ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex G) :=
+    S.toCellScheme.mem_below_gradedIndex G
+  have hwa : CellScheme.Rows.extendBot (S.toCellScheme.gradedIndex G) q a ≠ ⊥ := by
+    rw [CellScheme.Rows.extendBot_of_mem q haY]
+    have h := congrFun hqeq ⟨a, S.toCellScheme.mem_below_gradedIndex a⟩
+    change q ⟨a, haY⟩ = S.rows.row a ⟨a, S.toCellScheme.mem_below_gradedIndex a⟩ at h
+    rw [h]
+    rwa [Scheme.rowAt_of_mem (S.toCellScheme.mem_below_gradedIndex a)] at hlive
+  obtain ⟨u, hu, hau⟩ := havail a G hGY (by rw [hG]; exact subset_univ _) hag
+  have huY : u ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex G) := by
+    rw [CellScheme.mem_below, hu]
+  have hau' : a ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u) := by rw [hu]; exact haY
+  have hcu : c ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u) := by
+    rw [hu]
+    refine ⟨by change S.toCellScheme.scope c ⊆ S.toCellScheme.scope G; rw [hc, hG], ?_⟩
+    change S.toCellScheme.grade c ≤ S.toCellScheme.grade G
+    omega
+  refine ⟨u, hu, ?_⟩
+  have hrc : S.rowAt u c = ⊥ := by
+    rw [Scheme.rowAt_of_mem hcu]
+    refine CellScheme.Rows.IsLawful.eq_bot_of_row_self_eq_bot (hcons u) ⟨c, hcu⟩ ?_
+    rwa [Scheme.rowAt_of_mem (S.toCellScheme.mem_below_gradedIndex c)] at hdead
+  have hra : S.rowAt u a ≠ ⊥ := by
+    rw [Scheme.rowAt_of_mem hau']
+    intro h
+    have h' := (hloc u huY).eq_bot (d := ⟨a, hau'⟩) h
+    simp only [min_eq_bot] at h'
+    rcases h' with h' | h'
+    · exact hwa h'
+    · exact hwa (le_bot_iff.mp (h' ▸ hau))
+  rw [hrc]
+  exact ⟨bot_lt_iff_ne_bot.mpr hra, fun μ i j _ h ↦ absurd h.symm WithBot.coe_ne_bot⟩
 
 end Scheme
 
@@ -227,6 +288,41 @@ theorem completionNonDominating_of_tower (hsep : TowerLayerSeparating.{u})
 (`ProfileTower.layerSeparating`). -/
 theorem towerLayerSeparating : TowerLayerSeparating.{u} := fun _ _ I _ _ hg ↦
   ProfileTower.layerSeparating I (by omega) hg
+
+/-- **A bot-keeping completion dominating no live cell of the grade of the cap**, for every seed:
+the bot-keeping completion of the profile tower (`ProfileTower.exists_botKeeping_tower`) has, at
+every cap of full scope and grade `3 ≤ g ≤ m` and every live cell `a` of grade `g` avoiding the
+last point, a reader of each graded index `(univ, g)` reading the cap in a block strictly below
+`a` (layer separation, `towerLayerSeparating`).  This is `CompletionNonDominating` at the grade of
+the cap, unconditionally; the cells of higher grade are not covered. -/
+theorem exists_botKeeping_capNonDominating_sameLayer {α : Ordinal.{u}} {m : ℕ}
+    (I : Seed.{u} α m) :
+    ∃ F : CompletionBelowFullGrade I, F.BotKeeping ∧ ∀ (hα : Order.IsSuccPrelimit α)
+      (c : Fin (F.completion hα).card), (F.completion hα).toCellScheme.scope c = univ →
+      3 ≤ (F.completion hα).toCellScheme.grade c → (F.completion hα).toCellScheme.grade c ≤ m →
+      ∀ a G : Fin (F.completion hα).card,
+        Fin.last (m + 1) ∉ (F.completion hα).toCellScheme.scope a →
+        (F.completion hα).toCellScheme.scope G = univ →
+        (F.completion hα).toCellScheme.grade a = (F.completion hα).toCellScheme.grade G →
+        (F.completion hα).toCellScheme.grade a = (F.completion hα).toCellScheme.grade c →
+        (F.completion hα).toScheme.rowAt a a ≠ ⊥ →
+          ∃ u, (F.completion hα).toCellScheme.gradedIndex u =
+              (F.completion hα).toCellScheme.gradedIndex G ∧
+            Label.LowerBlock ((F.completion hα).toScheme.rowAt u c)
+              ((F.completion hα).toScheme.rowAt u a) := by
+  by_cases hm : 3 ≤ m
+  swap
+  · obtain ⟨F, hF⟩ := I.exists_botKeeping
+    exact ⟨F, hF, fun _ c _ h3 hcm ↦ absurd (h3.trans hcm) hm⟩
+  obtain ⟨j, rfl⟩ : ∃ j, m = j + 3 := ⟨m - 3, by omega⟩
+  obtain ⟨F, hF, -, hS⟩ := ProfileTower.exists_botKeeping_tower I
+  refine ⟨F, hF, fun hα c hc h3 hcm a G ha hG hag hac hlive ↦ ?_⟩
+  obtain ⟨a₀, rfl, hsc, hgr, hrow⟩ := F.exists_old_completion hα ha
+  obtain ⟨u, hu, hlb⟩ := hS hα c hc h3 hcm (towerLayerSeparating I _ h3 hcm) a₀
+    (hgr.trans hac) (by rw [hrow]; exact hlive) (by rw [hsc]; exact ha)
+  refine ⟨u, ?_, hlb⟩
+  rw [hu]
+  exact Prod.ext hG.symm (hac.symm.trans hag)
 
 /-- **Completions dominating no live cell from cross-layer non-domination**: the same-layer part
 holds in the completion of the profile tower (`towerLayerSeparating`). -/
