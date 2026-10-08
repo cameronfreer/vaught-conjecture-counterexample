@@ -23,10 +23,12 @@ contexts with the cap at the top grade (`TiedRootCapRelabel.MarkedCapContextBelo
 * `H3.TopRootLowBound` (assumed): at a context with the cap at the top grade, over every coface
   `tb` of the coatom face with face `d`, every prescription lawful below the private coatom at the
   top cut grade, not `⊥` at the cap and at the marker, and not `⊥` at the cells of the class below
-  the private coatom, has a lower bound at the root (`H3.RootLowBound`: the prescription is at
-  least `n + 1` at every root cell with an ordinal label, or every label of `d` other than `⊥`
-  and `⊤` is at least the block start of some ordinal root label).  It gives the donor raise
-  over the gluing coface (`H3.exists_raiseCoface_of_rootLowBound`).
+  the private coatom, has the weakened lower bound at the root (`H3.RootLowBound'`: the
+  prescription is at least `n + 1` at every root cell with an ordinal label, or the low truncation
+  of `d` at the root blocks, `⊥` at the labels other than `⊤` below the block start of every
+  ordinal root label, is lawful on `d`).  It is implied by the earlier form `H3.RootLowBound`
+  (`H3.rootLowBound'_of_rootLowBound`).  It gives the donor raise over the gluing coface
+  (`H3.exists_raiseCoface_of_rootLowBound'`).
 * `H3.TopBandGap` (assumed): at such a context and coface, the gap of the band below the top cut
   grade (`CapRequests.BandGapBelowAt` at `k`: for every datum of the band some `c`, self-visible
   at `k`, at least `h` and at least the marker value, with no value of the prescription in
@@ -51,7 +53,8 @@ namespace H3
 /-- **The lower bound at the root at the contexts with the cap at the top grade** (a named
 hypothesis): over every coface `tb` of the coatom face with face `d`, every prescription lawful
 below the private coatom at the top cut grade, not `⊥` at the cap and at the marker, and in the
-class, has a lower bound at the root (`H3.RootLowBound`). -/
+class, has the weakened lower bound at the root (`H3.RootLowBound'`: the floor at the root, or the
+low truncation of `d` at the root blocks is lawful). -/
 def TopRootLowBound : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (ht' : t'.IsLegal) (hp : restrictFace Fin.castSuccEmb t' = some p)
@@ -67,7 +70,7 @@ def TopRootLowBound : Prop :=
         f (faceCell (restrictFace_left_seed ht' hp htb) r) ≠ ⊥ →
         (∀ e ∈ classCells ht' hp htb htbd, e ∈ (seed ht' hp htb).amalgam.toCellScheme.below
           (univ.erase (Fin.last (k + 1)), k + 1) → f e ≠ ⊥) →
-        RootLowBound n ht' hp htb hpt d f
+        RootLowBound' n ht' hp htb hpt d f
 
 /-- **The gap of the band at the contexts with the cap at the top grade** (a named hypothesis):
 over every coface `tb` of the coatom face with face `d`, the gap of the band below the top cut
@@ -85,7 +88,7 @@ def TopBandGap : Prop :=
 
 /-- **The existential coatom form at the contexts with the cap at the top grade**, from the lower
 bound at the root and the gap of the band (assumed): the gluing coface carries the donor raise
-(`H3.exists_raiseCoface_of_rootLowBound`); the completion with rows admitted in the class from the
+(`H3.exists_raiseCoface_of_rootLowBound'`); the completion with rows in the class from the
 raise and the gap (`H3.exists_classCompletion_top_of_gap`, the donor provisions compiled at the
 top grade); determination from it (`H3.isDeterminedWithin_of_classRows`). -/
 theorem hollowCoatomCutoffDeterminationExists_top (hlow : TopRootLowBound.{u})
@@ -98,7 +101,7 @@ theorem hollowCoatomCutoffDeterminationExists_top (hlow : TopRootLowBound.{u})
       rw [hctx.1.grade_eq_topGrade, htopg]
       omega
     obtain ⟨tb, htb, htbd, hpt, hraise⟩ :=
-      exists_raiseCoface_of_rootLowBound hα ht' hp ht hd hctx hoff hbot
+      exists_raiseCoface_of_rootLowBound' hα ht' hp ht hd hctx hoff hbot
     have hraise' : ∀ k', t'.toCellScheme.grade c ≤ k' → k' ≤ k + 1 →
         CapRequests.DonorRaiseBotAtIn
           (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega))

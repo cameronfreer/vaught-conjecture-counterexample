@@ -14,6 +14,14 @@ Compiled in this repository (theorem named):
 * **A witness at the root** (`H3.RootWitness`, a named condition on a prescription): a witness
   `Φ`, bounded by a grade at least `n + 1` and sending no label of `d` other than `⊥` to `⊥`, with
   `θ ≤ Φ ⊤` and `Φ ∘ t.label` agreeing with the prescription on the root capped at `θ`.
+* **A lift at the root** (`H3.RootLift`, a named condition on a prescription): a labelling lawful
+  on `d` agreeing with the prescription on the root capped at `θ` and at least `θ` at the cells of
+  `d` labelled `⊤`.  A witness image of `d.label` with a lawful companion of its zero set is one
+  (`H3.rootLift_of_companion`), in particular a witness at the root (`H3.rootLift_of_rootWitness`).
+* **The donor raise over a gluing coface from lifts at the root**
+  (`H3.donorRaiseBotAtIn_of_rootLift`): the prescription on `p` (spliced at the grade), the lift of
+  the root prescription to `d` relative to the lift at the root
+  (`StageType.exists_isLawful_faceLift`), glued.
 * **The donor raise over a gluing coface** (`H3.donorRaiseBotAtIn_of_gluesAt`): if the coface `tb`
   of `p` glues the lawful labellings of `p` and of `d` agreeing on the root
   (`StageType.GluesAt`), the donor raise in the class form holds at every grade from the grade of
@@ -74,6 +82,43 @@ def RootWitness {d : StageType.{u} α (n + 1)} {t : StageType.{u} α n}
     (∀ z, Φ (d.label z) = ⊥ → d.label z = ⊥) ∧ θ ≤ Φ ⊤ ∧
       ∀ x, min (Φ (t.label x)) θ = min (ψ x) θ
 
+/-- **A lift at the root** for a prescription `ψ` on the root `t` of `d`, at the cap `θ`: a
+labelling lawful on `d` agreeing with `ψ` on the root capped at `θ` and at least `θ` at the cells
+of `d` labelled `⊤`. -/
+def RootLift {d : StageType.{u} α (n + 1)} {t : StageType.{u} α n}
+    (ht : restrictFace Fin.castSuccEmb d = some t) (ψ : Fin t.card → Label.{u}) (θ : Label.{u}) :
+    Prop :=
+  ∃ q : Fin d.card → Label.{u}, d.rows.IsLawful q ∧
+    (∀ x, min (q (faceCell ht x)) θ = min (ψ x) θ) ∧ ∀ z, d.label z = ⊤ → θ ≤ q z
+
+/-- **A witness image with a lawful companion is a lift at the root**: for a witness `Φ` bounded
+by a grade at least `n + 1`, with `θ ≤ Φ ⊤`, agreeing with `ψ` on the root capped at `θ`, and some
+lawful labelling of `d` that is `⊥` exactly where `Φ ∘ d.label` is `⊥`, the labelling
+`Φ ∘ d.label` is lawful (`CellScheme.Rows.IsLawful.map_of_bot_iff`), so a lift at the root. -/
+theorem rootLift_of_companion {d : StageType.{u} α (n + 1)} {t : StageType.{u} α n}
+    (ht : restrictFace Fin.castSuccEmb d = some t) {ψ : Fin t.card → Label.{u}} {θ : Label.{u}}
+    {K : ℕ} (hK : n + 1 ≤ K) {Φ : Label.{u} → Label.{u}} (hΦ : IsWitness (stepSuppressor K) Φ)
+    {q₀ : Fin d.card → Label.{u}} (hq₀ : d.rows.IsLawful q₀)
+    (hbot : ∀ z, Φ (d.label z) = ⊥ ↔ q₀ z = ⊥) (hθΦ : θ ≤ Φ ⊤)
+    (hroot : ∀ x, min (Φ (t.label x)) θ = min (ψ x) θ) : RootLift ht ψ θ := by
+  refine ⟨Φ ∘ d.label, d.isLawful.map_of_bot_iff hq₀ (fun z ↦ (d.grade_le z).trans hK) hΦ hbot,
+    fun x ↦ ?_, fun z hz ↦ ?_⟩
+  · change min (Φ (d.label (faceCell ht x))) θ = _
+    rw [label_faceCell]
+    exact hroot x
+  · change θ ≤ Φ (d.label z)
+    rw [hz]
+    exact hθΦ
+
+/-- **A witness at the root is a lift at the root** (`H3.rootLift_of_companion`, the companion
+being `d.label`). -/
+theorem rootLift_of_rootWitness {d : StageType.{u} α (n + 1)} {t : StageType.{u} α n}
+    {ht : restrictFace Fin.castSuccEmb d = some t} {ψ : Fin t.card → Label.{u}} {θ : Label.{u}}
+    (h : RootWitness ht ψ θ) : RootLift ht ψ θ := by
+  obtain ⟨K, hK, Φ, hΦ, hΦbot, hθΦ, hroot⟩ := h
+  exact rootLift_of_companion ht hK hΦ d.isLawful
+    (fun z ↦ ⟨hΦbot z, fun h ↦ by rw [h, hΦ.map_bot]⟩) hθΦ hroot
+
 section Raise
 
 variable {t' : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {tb : StageType.{u} α (k + 1)}
@@ -86,11 +131,12 @@ variable {t' : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {tb : StageTyp
 noncomputable def rootCell (x : Fin t.card) : Fin (seed ht' hp htb).amalgam.card :=
   faceCell (restrictFace_left_seed ht' hp htb) (faceCell hp (faceCell hpt x))
 
-/-- **The donor raise over a gluing coface.**  If `tb` glues the lawful labellings of `p` and of
-`d` agreeing on the root, then at a grade `N ≤ k' ≤ k + 1` the donor raise in the class form holds
-as soon as every prescription not `⊥` at the cap and in the class has, on the root, a witness at
-a cap `θ` self-visible at `n + 1` and at least its marker value. -/
-theorem donorRaiseBotAtIn_of_gluesAt {c r : Fin t'.card} (hc : 0 < t'.toCellScheme.grade c)
+/-- **The donor raise over a gluing coface, from lifts at the root.**  If `tb` glues the lawful
+labellings of `p` and of `d` agreeing on the root, then at a grade `N ≤ k' ≤ k + 1` the donor
+raise in the class form holds as soon as every prescription not `⊥` at the cap and in the class
+has, on the root, a lift at a cap `θ` self-visible at `n + 1` and at least its marker value
+(`H3.RootLift`). -/
+theorem donorRaiseBotAtIn_of_rootLift {c r : Fin t'.card} (hc : 0 < t'.toCellScheme.grade c)
     (hglue : GluesAt htb.2 htbd hpt hd.2) {k' : ℕ}
     (hn : n < k') (hk' : k' ≤ k + 1) (B : Set (Fin (seed ht' hp htb).amalgam.card))
     (hwit : ∀ f : ProfileTower.Prof (seed ht' hp htb),
@@ -101,7 +147,7 @@ theorem donorRaiseBotAtIn_of_gluesAt {c r : Fin t'.card} (hc : 0 < t'.toCellSche
         (univ.erase (Fin.last (k + 1)), k') → f e ≠ ⊥) →
       ∃ θ : Label.{u}, IsSelfVisible (n + 1) θ ∧
         (requests ht' hp htb htbd c r hc).markerValue f ≤ θ ∧
-        RootWitness hd.2 (fun x ↦ f (rootCell ht' hp htb hpt x)) θ) :
+        RootLift hd.2 (fun x ↦ f (rootCell ht' hp htb hpt x)) θ) :
     CapRequests.DonorRaiseBotAtIn (requests ht' hp htb htbd c r hc) B (Fin.last (k + 1))
       (Fin.castSucc (Fin.last k)) k' := by
   classical
@@ -137,9 +183,13 @@ theorem donorRaiseBotAtIn_of_gluesAt {c r : Fin t'.card} (hc : 0 < t'.toCellSche
     refine hwPle _ ?_
     rw [grade_faceCell]
     exact (t.grade_le x).trans hn.le
-  obtain ⟨θ, hθ, hmθ, K, hK, Φ, hΦ, hΦbot, hθΦ, hroot⟩ := hwit f hf hcap hcl
-  obtain ⟨vd, hvd, hvdψ, hvdtop⟩ := exists_isLawful_raise_top hd.1 hd.2 hψ hK hΦ hΦbot hθ hθΦ
-    fun x ↦ by rw [hψf]; exact hroot x
+  obtain ⟨θ, hθ, hmθ, q, hq, hqroot, hqtop⟩ := hwit f hf hcap hcl
+  obtain ⟨vd, hvd, hvdψ, hvdc⟩ := exists_isLawful_faceLift hd.1 hd.2 hψ hq hθ
+    fun x ↦ by rw [hψf]; exact hqroot x
+  have hvdtop (z : Fin d.card) (hz : d.label z = ⊤) : θ ≤ vd z := by
+    have h := hvdc z
+    rw [min_eq_right (hqtop z hz)] at h
+    exact h ▸ min_le_left _ _
   obtain ⟨w, hw, hwP', hwd⟩ := hglue wP hwP vd hvd fun i ↦ (hvdψ i).symm
   refine ⟨faceExtend hR w, ?_, fun e he heD ↦ ?_, fun y hy ↦ ?_⟩
   · have h := isLawfulBelow_of_faceCell hR (x := faceExtend hR w)
@@ -171,6 +221,29 @@ theorem donorRaiseBotAtIn_of_gluesAt {c r : Fin t'.card} (hc : 0 < t'.toCellSche
     rw [faceCell_trans (extendByLast_trans g Fin.castSuccEmb) hR htbd hA j, faceExtend_faceCell,
       hwd]
     exact hmθ.trans (hvdtop j hj)
+
+/-- **The donor raise over a gluing coface.**  If `tb` glues the lawful labellings of `p` and of
+`d` agreeing on the root, then at a grade `N ≤ k' ≤ k + 1` the donor raise in the class form holds
+as soon as every prescription not `⊥` at the cap and in the class has, on the root, a witness at
+a cap `θ` self-visible at `n + 1` and at least its marker value (`H3.donorRaiseBotAtIn_of_rootLift`,
+`H3.rootLift_of_rootWitness`). -/
+theorem donorRaiseBotAtIn_of_gluesAt {c r : Fin t'.card} (hc : 0 < t'.toCellScheme.grade c)
+    (hglue : GluesAt htb.2 htbd hpt hd.2) {k' : ℕ}
+    (hn : n < k') (hk' : k' ≤ k + 1) (B : Set (Fin (seed ht' hp htb).amalgam.card))
+    (hwit : ∀ f : ProfileTower.Prof (seed ht' hp htb),
+      (seed ht' hp htb).amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (k + 1)), k')
+        (fun e ↦ f e) →
+      f (requests ht' hp htb htbd c r hc).cap ≠ ⊥ →
+      (∀ e ∈ B, e ∈ (seed ht' hp htb).amalgam.toCellScheme.below
+        (univ.erase (Fin.last (k + 1)), k') → f e ≠ ⊥) →
+      ∃ θ : Label.{u}, IsSelfVisible (n + 1) θ ∧
+        (requests ht' hp htb htbd c r hc).markerValue f ≤ θ ∧
+        RootWitness hd.2 (fun x ↦ f (rootCell ht' hp htb hpt x)) θ) :
+    CapRequests.DonorRaiseBotAtIn (requests ht' hp htb htbd c r hc) B (Fin.last (k + 1))
+      (Fin.castSucc (Fin.last k)) k' :=
+  donorRaiseBotAtIn_of_rootLift ht' hp htb hpt hd htbd hc hglue hn hk' B fun f hf hcap hcl ↦ by
+    obtain ⟨θ, hθ, hm, hw⟩ := hwit f hf hcap hcl
+    exact ⟨θ, hθ, hm, rootLift_of_rootWitness hw⟩
 
 end Raise
 
