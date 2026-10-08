@@ -482,6 +482,66 @@ invariance under relabelling (`StageType.IsSourceGapContext.reindex`,
 `Realization.receivingHollowReceiving_of_cutoffDetermination`,
 `Expansion.ReceivingStableCappedReceiving.of_hasCutoffStableRecoverySchemes_gradedCap`).
 
+**Receiving route with the lost point last.**  Compiled in this repository (theorem named):
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGapLast_markedCap`
+`(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
+`(h2 : CoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h)`
+`(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
+`HasThinAlephOneSpectrum densitySentence` (`MainTheorem/SourceGapLastRoute`).  (R4) and (R3) are
+as in the source-gap form; (R2) is asked only at the source-gap contexts whose lost point is the
+last point (`StageType.IsSourceGapContextLast`).  The (R2) hypothesis of the source-gap form
+implies it (`Realization.CoatomCutoffDetermination.isSourceGapContextLast`); no converse is
+claimed.  Acquisition proved; determination open.  The acquired source-gap contexts have the
+coatom off the lost point closed (`StageType.IsSourceGapContextOff`,
+`Realization.residualAcquisition_isSourceGapContextOff`, `Continuation/SourceGapContext`), and
+coatom cutoff determination for `IsSourceGapContextLast` gives cutoff determination for them by
+the transposition of the lost point with the last point
+(`Realization.CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`).  Coatom
+cutoff determination for `IsSourceGapContextLast` is open.  The coatom off the lost point is closed by hypothesis;
+the transposition only moves it to the coordinate first coatom.  The reduction does not extend
+to the source-gap form by a relabelling: the closed coatoms of a context are the complements of
+the extreme points of its plan (`StageType.isPlan`, `Geometry.mem_extremes`), at most two
+(`Geometry.IsPlan.card_extremes_le_two`), and at a context none of whose witnessing lost points
+is extreme, a relabelling can move the coatom off a lost point to the coordinate first coatom
+but cannot make it closed.
+
+**Bounded pinned extensions and the bounded (R2) form.**  Compiled in this repository (theorem
+named): capping above a grade, `StageType.capAbove` (`Stage/CapGrade`), lawful with no availability
+condition (the cells of grade above `K` form an upper set, `StageType.lt_grade_upper`, and
+availability relates cells of equal grades only; the cap premises `c < α` and self-visibility of `c`
+at the arity remain); its cells labelled `⊤` are those of the type of grade at most `K`
+(`StageType.capAbove_label_eq_top_iff`), and when the cap lies above every label other than `⊤`
+every face whose cells labelled `⊤` have grade at most `K` is kept literally, labels above `K`
+included (`StageType.restrictFace_capAbove`); such a cap exists at a limit stage
+(`StageType.exists_cap_ne_top`).  The bounded pinned extension
+`StageType.exists_pinned_extension_topGrade_le (hα : Order.IsSuccLimit α) (hP : P.IsLegal)`
+`(hPf : restrictFace f P = some p) (hd : d.IsLegal) (hdp : restrictFace Fin.castSuccEmb d = some p)`
+`(hPK : P.topGrade ≤ K) (hdK : d.topGrade ≤ K) : ∃ Q, Q.IsLegal ∧`
+`restrictFace Fin.castSuccEmb Q = some P ∧ restrictFace (extendByLast f) Q = some d ∧ Q.topGrade ≤ K`
+(`MainTheorem/CoatomExtensionTheorem`) truncates the exact pinned extension above `K`
+(`StageType.exists_truncation_topGrade_le`, `Continuation/TopGradeTruncation`).  The bounded coatom
+form `Realization.BoundedCoatomCutoffDetermination` (`MainTheorem/BoundedCoatomDetermination`) asks
+(R2) only at the intermediate cofaces `tb` of the coatom face of top grade at most `K`; the coatom
+form implies it (`Realization.CoatomCutoffDetermination.boundedCoatom`), and no converse is claimed.
+It gives cutoff determination at the first coatom (`Realization.FirstCoatomCutoffDetermination`) for
+every predicate whose contexts of grade `K` have top grade at most `K`
+(`Realization.BoundedCoatomCutoffDetermination.firstCoatom`, hypothesis `hK`), and cutoff
+determination under `hK`, roots not onto and invariance under relabelling
+(`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination`); for source-gap contexts `hK`
+is compiled (`StageType.IsSourceGapContext.topGrade_eq`), giving
+`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`,
+`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_sourceGap`,
+`Realization.receivingResidualReceiving_of_boundedCoatom_sourceGapLast`
+`(hdet : BoundedCoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h) :`
+`ReceivingResidualReceiving`, and
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_boundedCoatom_sourceGapLast_markedCap`
+`(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
+`(h2 : BoundedCoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h)`
+`(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
+`HasThinAlephOneSpectrum densitySentence`.  The bounded (R2) form for `IsSourceGapContextLast` (and
+for `IsSourceGapContext`) is not proved: the bounded receiving hypothesis remains open; no (R2)
+closure is claimed.
+
 Each hypothesis is a separate statement with its own status.  Hypothesis 8 is compiled
 (`StageType.hasApexCoatomExtensions`).  Hypotheses 1 and 3 are derived from it and so compiled
 with no hypothesis (`MainTheorem.capToModel`, `forcingDonors_blockStage`); hypothesis 7 is
@@ -587,8 +647,10 @@ Status of each:
    acquisition for it is compiled in this repository
    (`Realization.residualAcquisition_isSourceGapContext`) with no hypothesis beyond those of
    `Realization.ResidualAcquisition`; its stage-type part needs no model
-   (`StageType.exists_isSourceGapContextAt_comap`).  Cutoff determination for it is open; with it
-   and (R1) at every limit stage, (R2) follows
+   (`StageType.exists_isSourceGapContextAt_comap`); the acquired contexts have the coatom off the
+   lost point closed (`StageType.IsSourceGapContextOff`, compiled in this repository,
+   `Realization.residualAcquisition_isSourceGapContextOff`).  Cutoff determination for it is
+   open; with it and (R1) at every limit stage, (R2) follows
    (`Realization.residualReceiving_of_cutoffDetermination_isSourceGapContext`).  If no legal
    stage type were a source-gap context, (R2) would hold outright
    (`Realization.residualReceiving_of_forall_not_isSourceGapContext`); but legal source-gap types
