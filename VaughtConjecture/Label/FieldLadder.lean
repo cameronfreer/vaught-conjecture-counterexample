@@ -32,7 +32,10 @@ ceiling, of the ceilings of all cells.  Its rows are lawful on it (`Label.ladder
 positive table read at the ceilings is lawful on it (`Label.ladderLawful_image`, through the chart
 `Label.ladderChart` of `Label.transformsTo_ladderSource`), and every lawful labelling with a
 positive top rung is read by the chart of its top rung with `⊥` exactly at the ceiling `0`
-(`Label.LadderLawful.reflects`).
+(`Label.LadderLawful.reflects`).  With several members (the cut `Label.rankCut` of their rank
+vectors caps the indices, `Label.ladderIndex`), every lawful labelling is `⊥` or the chart image of
+the table of the member with the largest top rung, `⊥` exactly at its index `0`
+(`Label.LadderLawful.exists_shape`).
 
 ## References
 
@@ -366,78 +369,227 @@ theorem transformsTo_ladderSource {D : Type*} (a : D → ℕ) {t : ℕ} (ht : 1 
       rw [ite_eq_right (not_lt.mpr (omega0_le_ladderSource h)), ladderCount_ladderSource,
         max_eq_right (Nat.one_le_iff_ne_zero.mpr h)]
 
+/-! ### Agreement of rank vectors -/
+
+section Cut
+
+variable {X : Type*}
+
+/-- Two rank vectors **agree up to `k`**: equal at every field capped at `k`. -/
+def RankAgree (a b : X → ℕ) (k : ℕ) : Prop := ∀ d, min (a d) k = min (b d) k
+
+theorem RankAgree.mono {a b : X → ℕ} {k l : ℕ} (h : RankAgree a b k) (hl : l ≤ k) :
+    RankAgree a b l := fun d ↦ by
+  have hh := congrArg (fun z ↦ min z l) (h d)
+  simpa only [min_assoc, min_eq_right hl] using hh
+
+open Classical in
+/-- The **cut** of two rank vectors at the height `H`: the largest `k ≤ H` up to which they
+agree. -/
+noncomputable def rankCut (H : ℕ) (a b : X → ℕ) : ℕ :=
+  ((Finset.range (H + 1)).filter (RankAgree a b)).sup id
+
+theorem rankCut_le (H : ℕ) (a b : X → ℕ) : rankCut H a b ≤ H := by
+  classical
+  refine Finset.sup_le fun k hk ↦ ?_
+  exact Nat.le_of_lt_succ (Finset.mem_range.mp (Finset.mem_filter.mp hk).1)
+
+theorem le_rankCut {H k : ℕ} {a b : X → ℕ} (hk : k ≤ H) (h : RankAgree a b k) :
+    k ≤ rankCut H a b := by
+  classical
+  exact Finset.le_sup (f := id)
+    (Finset.mem_filter.mpr ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le hk), h⟩)
+
+theorem rankAgree_rankCut (H : ℕ) (a b : X → ℕ) : RankAgree a b (rankCut H a b) := by
+  classical
+  have hn : ((Finset.range (H + 1)).filter (RankAgree a b)).Nonempty :=
+    ⟨0, Finset.mem_filter.mpr ⟨by simp, fun _ ↦ by simp⟩⟩
+  obtain ⟨k, hk, he⟩ := Finset.sup_mem_of_nonempty (f := id) hn
+  have ha := (Finset.mem_filter.mp hk).2
+  change k = rankCut H a b at he
+  exact he ▸ ha
+
+theorem rankCut_symm (H : ℕ) (a b : X → ℕ) : rankCut H a b = rankCut H b a :=
+  le_antisymm (le_rankCut (rankCut_le H a b) fun d ↦ (rankAgree_rankCut H a b d).symm)
+    (le_rankCut (rankCut_le H b a) fun d ↦ (rankAgree_rankCut H b a d).symm)
+
+theorem rankCut_self (H : ℕ) (a : X → ℕ) : rankCut H a a = H :=
+  le_antisymm (rankCut_le H a a) (le_rankCut le_rfl fun _ ↦ rfl)
+
+theorem rankCut_triangle (H : ℕ) (a b c : X → ℕ) :
+    min (rankCut H a b) (rankCut H b c) ≤ rankCut H a c :=
+  le_rankCut ((min_le_left _ _).trans (rankCut_le H a b)) fun d ↦
+    ((rankAgree_rankCut H a b).mono (min_le_left _ _) d).trans
+      ((rankAgree_rankCut H b c).mono (min_le_right _ _) d)
+
+/-- The cut seen from two vectors agrees capped at their own cut. -/
+theorem rankCut_cross (H : ℕ) (a b c : X → ℕ) :
+    min (rankCut H a c) (rankCut H a b) = min (rankCut H b c) (rankCut H a b) := by
+  have h1 := rankCut_triangle H a b c
+  have h2 := rankCut_triangle H b a c
+  rw [rankCut_symm H b a] at h2
+  omega
+
+end Cut
+
 /-! ### The ladder table -/
 
 section Table
 
-variable {D : Type*} (ceil : D → ℕ)
+variable {Q X D : Type*} (H : ℕ) (prof : Q → X → ℕ) (parent : D → Q) (ceil : D → ℕ)
+
+/-- The **index** of a cell `v` for the member `a`: its ceiling, capped at the cut of the rank
+vectors of `a` and of the parent of `v`. -/
+noncomputable def ladderIndex (a : Q) (v : D) : ℕ :=
+  min (rankCut H (prof a) (prof (parent v))) (ceil v)
 
 /-- The **row** of a cell `c` of the ladder table: the codes, at the ceiling of `c`, of the
-ceilings of the cells.  A rung `i` has ceiling `i + 1`; a shadow has the rank of its field. -/
-noncomputable def ladderRow (c v : D) : Label.{u} := ladderSource (ceil c) (ceil v)
+indices of the cells for the parent of `c`.  A rung `i` has ceiling `i + 1`; a shadow of a field
+has the rank of the field in its parent. -/
+noncomputable def ladderRow (c v : D) : Label.{u} :=
+  ladderSource (ceil c) (ladderIndex H prof parent ceil (parent c) v)
 
 /-- A labelling of the ladder table **lawful at the grade `1`**: self-visible at `1`, and local at
 every cell with respect to its row. -/
 def LadderLawful (q : D → Label.{u}) : Prop :=
   (∀ v, IsSelfVisible 1 (q v)) ∧
-    ∀ c, TransformsTo (fun _ ↦ 1) (ladderRow.{u} ceil c) fun v ↦ min (q v) (q c)
+    ∀ c, TransformsTo (fun _ ↦ 1) (ladderRow.{u} H prof parent ceil c) fun v ↦ min (q v) (q c)
 
-variable {ceil}
+variable {H prof parent ceil}
 
-/-- **Rendering**: a positive table `f` read at the ceilings is lawful on the ladder table. -/
-theorem ladderLawful_image {H : ℕ} (hceil : ∀ v, ceil v ≤ H) {f : ℕ → Label.{u}}
+theorem ladderIndex_le (a : Q) (v : D) : ladderIndex H prof parent ceil a v ≤ H :=
+  (min_le_left _ _).trans (rankCut_le _ _ _)
+
+/-- The indices for two members agree capped at the cut of their rank vectors. -/
+theorem ladderIndex_agree (a b : Q) (v : D) :
+    min (ladderIndex H prof parent ceil a v) (rankCut H (prof a) (prof b)) =
+      min (ladderIndex H prof parent ceil b v) (rankCut H (prof a) (prof b)) := by
+  unfold ladderIndex
+  have h := rankCut_cross H (prof a) (prof b) (prof (parent v))
+  calc min (min (rankCut H (prof a) (prof (parent v))) (ceil v)) (rankCut H (prof a) (prof b))
+      = min (min (rankCut H (prof a) (prof (parent v))) (rankCut H (prof a) (prof b)))
+          (ceil v) := by ac_rfl
+    _ = min (min (rankCut H (prof b) (prof (parent v))) (rankCut H (prof a) (prof b)))
+          (ceil v) := by rw [h]
+    _ = _ := by ac_rfl
+
+/-- At its own parent a cell's index is its ceiling. -/
+theorem ladderIndex_parent (hceil : ∀ v, ceil v ≤ H) (v : D) :
+    ladderIndex H prof parent ceil (parent v) v = ceil v := by
+  rw [ladderIndex, rankCut_self, min_eq_right (hceil v)]
+
+/-- **Rendering**: a positive table `f` read at the indices of a member `a` is lawful on the
+ladder table. -/
+theorem ladderLawful_image (a : Q) {f : ℕ → Label.{u}}
     (hf : Monotone f) (h0 : f 0 = ⊥) (hv : ∀ i, IsSelfVisible 1 (f i))
-    (hp : ∀ i, 0 < i → i ≤ H → f i ≠ ⊥) : LadderLawful ceil fun v ↦ f (ceil v) := by
+    (hp : ∀ i, 0 < i → i ≤ H → f i ≠ ⊥) :
+    LadderLawful H prof parent ceil fun v ↦ f (ladderIndex H prof parent ceil a v) := by
   refine ⟨fun v ↦ hv _, fun c ↦ ?_⟩
-  by_cases hc : ceil c = 0
-  · have he : (fun v ↦ min (f (ceil v)) (f (ceil c))) = fun _ ↦ (⊥ : Label.{u}) := by
-      funext v; rw [hc, h0, min_eq_right bot_le]
-    rw [he]
+  set e := ladderIndex H prof parent ceil a c with he
+  have hec : e ≤ ceil c := min_le_right _ _
+  have hecut : e ≤ rankCut H (prof a) (prof (parent c)) := min_le_left _ _
+  have hmin (v : D) : min (ladderIndex H prof parent ceil a v) e =
+      min (ladderIndex H prof parent ceil (parent c) v) e := by
+    rw [← min_eq_right hecut, ← min_assoc, ladderIndex_agree a (parent c) v, min_assoc]
+  have hfun : (fun v ↦ min (f (ladderIndex H prof parent ceil a v)) (f e)) =
+      fun v ↦ f (min (min (ladderIndex H prof parent ceil (parent c) v) (ceil c)) e) := by
+    funext v
+    rw [← hf.map_min, hmin, min_assoc, min_eq_right hec]
+  rw [hfun]
+  by_cases he0 : e = 0
+  · have hz : (fun v ↦ f (min (min (ladderIndex H prof parent ceil (parent c) v) (ceil c)) e)) =
+        fun _ ↦ (⊥ : Label.{u}) := by funext v; rw [he0, Nat.min_zero, h0]
+    rw [hz]
     exact TransformsTo.bot _ _
-  · have h := transformsTo_ladderSource ceil (t := ceil c) (by omega) hf h0 hv
-      fun i hi hit ↦ hp i hi (hit.trans (hceil c))
-    have he : (fun v ↦ min (f (ceil v)) (f (ceil c))) = fun v ↦ f (min (ceil v) (ceil c)) :=
-      funext fun v ↦ (hf.map_min).symm
-    rw [he]
-    exact h
+  · exact transformsTo_ladderSource (ladderIndex H prof parent ceil (parent c)) (t := ceil c)
+      (by omega) (f := fun i ↦ f (min i e)) (fun _ _ h ↦ hf (min_le_min_right _ h)) (by simp [h0])
+      (fun _ ↦ hv _) fun i hi _ ↦ hp _ (by omega) ((min_le_right _ _).trans (ladderIndex_le a c))
 
 /-- **Every row of the ladder table is lawful on the table**: the rows are consistent. -/
-theorem ladderLawful_row {H : ℕ} (hceil : ∀ v, ceil v ≤ H) (c : D) :
-    LadderLawful.{u} ceil (ladderRow ceil c) := by
+theorem ladderLawful_row (c : D) :
+    LadderLawful.{u} H prof parent ceil (ladderRow H prof parent ceil c) := by
   by_cases hc : ceil c = 0
-  · have he : ladderRow.{u} ceil c = fun _ ↦ ⊥ := by
+  · have he : ladderRow.{u} H prof parent ceil c = fun _ ↦ ⊥ := by
       funext v
       rw [ladderRow, (ladderSource_eq_bot_iff _ _).mpr (by rw [hc]; exact Nat.min_zero _)]
     rw [he]
     refine ⟨fun _ ↦ isSelfVisible_bot _, fun _ ↦ ?_⟩
     simp only [min_self]
     exact TransformsTo.bot _ _
-  · exact ladderLawful_image hceil (monotone_ladderSource _) (ladderSource_zero _)
+  · exact ladderLawful_image (parent c) (monotone_ladderSource _) (ladderSource_zero _)
       (isSelfVisible_ladderSource _) fun i hi _ h0 ↦ by
         rw [ladderSource_eq_bot_iff] at h0
         omega
 
-/-- **Reflection of `⊥` by the chart of the top rung.**  On a ladder table of height `H ≥ 1` whose
-rungs `r i` (`i < H`) have ceilings `i + 1`, every labelling lawful at the grade `1` with a
-positive top rung has a chart `(g, σ)` at the top rung reading every cell `v` through the code of
-its ceiling, and a cell is `⊥` below the top rung exactly when its ceiling is `0`. -/
-theorem LadderLawful.reflects {H : ℕ} (hH : 0 < H) (hceil : ∀ v, ceil v ≤ H) (r : ℕ → D)
-    (hr : ∀ i < H, ceil (r i) = i + 1) {q : D → Label.{u}} (hq : LadderLawful ceil q)
-    (htop : q (r (H - 1)) ≠ ⊥) :
+/-- **Reflection of `⊥` by the chart of a top rung.**  Let a member `a` have rungs `r i`
+(`i < H`, `H ≥ 1`) of ceiling `i + 1`.  In every labelling lawful on the ladder table with a
+positive top rung `r (H - 1)`, the chart `(g, σ)` of the top rung reads every cell `v` (below the
+top rung) through the code of its index for `a`, and `v` is `⊥` below the top rung exactly when
+that index is `0`. -/
+theorem LadderLawful.reflects (hH : 0 < H) (hceil : ∀ v, ceil v ≤ H) (a : Q) (r : ℕ → D)
+    (hpr : ∀ i < H, parent (r i) = a) (hr : ∀ i < H, ceil (r i) = i + 1) {q : D → Label.{u}}
+    (hq : LadderLawful H prof parent ceil q) (htop : q (r (H - 1)) ≠ ⊥) :
     ∃ (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}), IsWitness g σ ∧
-      (∀ v, min (q v) (q (r (H - 1))) = min (σ (ladderSource H (ceil v))) (g 1)) ∧
-      ∀ v, min (q v) (q (r (H - 1))) = ⊥ ↔ ceil v = 0 := by
+      (∀ v, min (q v) (q (r (H - 1))) =
+        min (σ (ladderSource H (ladderIndex H prof parent ceil a v))) (g 1)) ∧
+      ∀ v, min (q v) (q (r (H - 1))) = ⊥ ↔ ladderIndex H prof parent ceil a v = 0 := by
   obtain ⟨g, σ, hw, hch⟩ := hq.2 (r (H - 1))
   have htopc : ceil (r (H - 1)) = H := by rw [hr _ (by omega)]; omega
-  have hchart (v : D) : min (q v) (q (r (H - 1))) = min (σ (ladderRow ceil (r (H - 1)) v)) (g 1) :=
-    hch v
-  have hrow (v : D) : ladderRow.{u} ceil (r (H - 1)) v = ladderSource H (ceil v) := by
-    rw [ladderRow, htopc]
+  have hidx (i : ℕ) (hi : i < H) : ladderIndex H prof parent ceil a (r i) = i + 1 := by
+    rw [← hpr i hi, ladderIndex_parent hceil, hr i hi]
+  have hrow (v : D) : ladderRow.{u} H prof parent ceil (r (H - 1)) v =
+      ladderSource H (ladderIndex H prof parent ceil a v) := by
+    rw [ladderRow, htopc, hpr _ (by omega)]
+  have hchart (v : D) : min (q v) (q (r (H - 1))) =
+      min (σ (ladderRow H prof parent ceil (r (H - 1)) v)) (g 1) := hch v
   refine ⟨g, σ, hw, fun v ↦ (hchart v).trans (by rw [hrow]), fun v ↦ ?_⟩
-  exact ladder_shadow_eq_bot_iff (ladderRow ceil) q r (fun i _ ↦ hq.2 (r i))
-    (fun i hi ↦ by rw [ladderRow, hr i hi])
-    (fun i hi _ ↦ by rw [ladderRow, hr i hi, hr (i - 1) (by omega)]; congr 1; omega)
-    htop hw hchart (fun j hj ↦ by rw [hrow, hr j hj]) (hceil v) (hrow v)
+  exact ladder_shadow_eq_bot_iff (ladderRow H prof parent ceil) q r (fun i _ ↦ hq.2 (r i))
+    (fun i hi ↦ by rw [ladderRow, hr i hi, hpr i hi, hidx i hi])
+    (fun i hi hi0 ↦ by
+      rw [ladderRow, hr i hi, hpr i hi, hidx (i - 1) (by omega)]
+      congr 1; omega)
+    htop hw hchart (fun j hj ↦ by rw [hrow, hidx j hj]) (ladderIndex_le a v) (hrow v)
+
+/-- **Every cell lies below the top rung of its parent** in a lawful labelling: the row of a cell
+reads the top rung of its parent as itself. -/
+theorem LadderLawful.le_top (hceil : ∀ v, ceil v ≤ H) (top : Q → D)
+    (hpt : ∀ a, parent (top a) = a) (htc : ∀ a, ceil (top a) = H) {q : D → Label.{u}}
+    (hq : LadderLawful H prof parent ceil q) (c : D) : q c ≤ q (top (parent c)) := by
+  obtain ⟨g, σ, -, hr⟩ := hq.2 c
+  have he : ladderRow.{u} H prof parent ceil c (top (parent c)) =
+      ladderRow H prof parent ceil c c := by
+    rw [ladderRow, ladderRow, ladderIndex_parent hceil, ladderIndex, hpt, rankCut_self, htc,
+      min_self, ← ladderSource_min (ceil c) H, min_eq_right (hceil c)]
+  have h1 := hr (top (parent c))
+  have h2 := hr c
+  simp only [min_self] at h2
+  rw [he, ← h2] at h1
+  exact min_eq_right_iff.mp h1
+
+/-- **Recognition on the ladder table**: every labelling lawful on the table is `⊥`, or for the
+member `a` with the largest top rung it is the image, under the chart `(g, σ)` of that top rung, of
+the codes of the indices for `a`, with `⊥` exactly at the index `0`.  The members have rungs
+`r a i` of ceiling `i + 1` (`i < H`, `H ≥ 1`). -/
+theorem LadderLawful.exists_shape [Finite Q] [Nonempty Q] (hH : 0 < H)
+    (hceil : ∀ v, ceil v ≤ H) (r : Q → ℕ → D) (hpr : ∀ a, ∀ i < H, parent (r a i) = a)
+    (hr : ∀ a, ∀ i < H, ceil (r a i) = i + 1) {q : D → Label.{u}}
+    (hq : LadderLawful H prof parent ceil q) :
+    (∀ v, q v = ⊥) ∨ ∃ (a : Q) (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}),
+      IsWitness g σ ∧
+      (∀ v, q v = min (σ (ladderSource H (ladderIndex H prof parent ceil a v))) (g 1)) ∧
+      ∀ v, q v = ⊥ ↔ ladderIndex H prof parent ceil a v = 0 := by
+  have := Fintype.ofFinite Q
+  obtain ⟨a, -, ha⟩ := Finset.exists_max_image Finset.univ (fun a : Q ↦ q (r a (H - 1)))
+    Finset.univ_nonempty
+  have hdom (v : D) : q v ≤ q (r a (H - 1)) :=
+    (hq.le_top hceil (fun b ↦ r b (H - 1)) (fun b ↦ hpr b _ (by omega))
+      (fun b ↦ by rw [hr b _ (by omega)]; omega) v).trans (ha (parent v) (Finset.mem_univ _))
+  by_cases htop : q (r a (H - 1)) = ⊥
+  · exact Or.inl fun v ↦ le_bot_iff.mp (htop ▸ hdom v)
+  obtain ⟨g, σ, hw, hch, hbot⟩ := hq.reflects hH hceil a (r a) (hpr a) (hr a) htop
+  refine Or.inr ⟨a, g, σ, hw, fun v ↦ ?_, fun v ↦ ?_⟩
+  · rw [← hch v, min_eq_left (hdom v)]
+  · rw [← hbot v, min_eq_left (hdom v)]
 
 end Table
 
