@@ -9,8 +9,8 @@ import VaughtConjecture.Continuation.SourceGapFieldFace
 /-!
 # h2 at two points: coatom cutoff determination for source-gap contexts (work file)
 
-WORK FILE (branch `research/work-h2`): a top-down skeleton.  Statements marked `SCAFFOLD` still
-contain `sorry`; everything else is proved.
+WORK FILE (branch `research/work-h2`).  No `sorry` here; the assembly with the remaining
+SCAFFOLD statements is `VaughtConjecture.Continuation.H2Two`.
 
 **The clause** (`H2.SelfLowG`): the LOW clause with every designated top as its own field:
 `∀ t ∈ Tops, Lo.sup R < R t → frontierAt o r K L ≤ R t`.  At a reader with the context at its
@@ -383,128 +383,5 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
 
 end Key
 
-/-! ### The completion with the reading property -/
-
-/-- The root cells of the coatom face carrying `⊤` and avoiding the lost point. -/
-def rootTops {t' : StageType.{u} α 2} {p : StageType.{u} α 1}
-    (hp : restrictFace Fin.castSuccEmb t' = some p) (l : Fin 2) : Set (Fin p.card) :=
-  {a | p.label a = ⊤ ∧ l ∉ t'.toCellScheme.scope (StageType.faceCell hp a)}
-
-/-- **The state-level provisions at grade `2`**, from donor raising: the order law at the owner,
-the frontier bound (`StageType.IsSourceGapContextAt.frontier_le`) and owner lowering
-(`FieldAdmission.ownerLowering_of_isLegal`) come from the context. -/
-theorem stateAdmission_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
-    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
-    (hs : t'.IsSourceGapContextAt 2 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
-    (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
-    (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)}
-    (hDR : DonorRaising (StageType.faceCell hp) (StageType.faceCell htbp) 2 t'.rows.IsLawful
-      tb.rows.IsLawful (rootTops hp l) Tops) :
-    IsStateAdmission (StageType.faceCell hp) (StageType.faceCell htbp) 2 t'.rows.IsLawful
-      tb.rows.IsLawful (SelfLowG o r 2 Lo Tops) := by
-  refine selfLow_isStateAdmission (rootTops hp l) (fun f hf ↦ ?_) (fun f hf a ha ↦ ?_) hDR
-    (ownerLowering_of_isLegal hleg hp htbp hs.grade_owner Nat.one_pos (by omega) t'.grade_le)
-  · have := hf.orderly o
-    rwa [hs.grade_owner] at this
-  · exact hs.frontier_le hf ((StageType.label_faceCell hp a).trans ha.1) ha.2
-
-set_option warningAsError false in
-/-- **SCAFFOLD (contains `sorry`): donor raising at two points**, for the designated tops of
-`tb` (cells labelled `⊤`, not on the root). -/
-theorem donorRaising_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
-    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
-    (hs : t'.IsSourceGapContextAt 2 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
-    (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
-    (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
-    {Tops : Finset (Fin tb.card)} (hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb) :
-    DonorRaising (StageType.faceCell hp) (StageType.faceCell htbp) 2 t'.rows.IsLawful
-      tb.rows.IsLawful (rootTops hp l) Tops := by
-  sorry
-
-set_option warningAsError false in
-/-- **SCAFFOLD (contains `sorry`): the admitted completion at two points and grade `2`**: from
-the state-level provisions of the clause, a completion below the full grade of the seed with the
-reading property (the canonical layer at grade `1` of the amalgam, then the admitted field layer at
-grade `2` on the states satisfying the clause). -/
-theorem exists_completion_of_stateAdmission {t' : StageType.{u} α 2} (hleg : t'.IsLegal)
-    {o r : Fin t'.card} (ho : t'.toCellScheme.grade o = 2) {p : StageType.{u} α 1}
-    (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
-    (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
-    {Lo Tops : Finset (Fin tb.card)}
-    (hA : IsStateAdmission (StageType.faceCell hp) (StageType.faceCell htbp) 2 t'.rows.IsLawful
-      tb.rows.IsLawful (SelfLowG o r 2 Lo Tops)) :
-    ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
-      RecProp F o r 2 Lo Tops := by
-  sorry
-
-set_option warningAsError false in
-/-- **SCAFFOLD (contains `sorry`): the case of top grade `1`.** -/
-theorem exists_completion_recProp_one {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
-    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
-    (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
-    (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
-    (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
-    {Lo Tops : Finset (Fin tb.card)} (hLo : ∀ x ∈ Lo, tb.label x ≠ ⊤)
-    (hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ 1 ∧
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb) :
-    ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
-      RecProp F o r 1 Lo Tops := by
-  sorry
-
-/-- **The completion with the reading property** (from the three scaffolds above). -/
-theorem exists_completion_recProp {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {K n : ℕ}
-    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
-    (hs : t'.IsSourceGapContextAt K (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
-    (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
-    (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
-    {Lo Tops : Finset (Fin tb.card)} (hLo : ∀ x ∈ Lo, tb.label x ≠ ⊤)
-    (hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ K ∧
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb) :
-    ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
-      RecProp F o r K Lo Tops := by
-  have hK0 : 0 < K := hs.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
-  have hK2 : K ≤ 2 := hs.grade_owner ▸ t'.grade_le o
-  rcases (show K = 1 ∨ K = 2 by omega) with rfl | rfl
-  · exact exists_completion_recProp_one hleg hs hp htbleg htbp hLo hTops
-  · exact exists_completion_of_stateAdmission hleg hs.grade_owner hp htbleg htbp
-      (stateAdmission_two hleg hs hp htbp
-        (donorRaising_two hleg hs hp htbleg htbp fun x hx ↦ ⟨(hTops x hx).1, (hTops x hx).2.2⟩))
-
-/-! ### h2 at two points, from the scaffold -/
-
-/-- **h2 at two points** (modulo `H2.exists_completion_recProp`, SCAFFOLD). -/
-theorem coatomCutoffDeterminationTwo : CoatomCutoffDeterminationTwo.{u} := by
-  intro α K n t' g p hα hleg ⟨l, o, r, hs⟩ hp tb ⟨htbleg, htbp⟩ d hd hdK
-  have hα' := hα.isSuccPrelimit
-  set Lo : Finset (Fin tb.card) := univ.filter fun x ↦ tb.label x ≠ ⊤
-  set Tops : Finset (Fin tb.card) := ((univ.filter fun x ↦ tb.label x = ⊤) ∩
-    tb.toScheme.visibleCells (extendByLast g)) \ tb.toScheme.visibleCells Fin.castSuccEmb
-  have hLo : ∀ x ∈ Lo, tb.label x ≠ ⊤ := fun x hx ↦ (mem_filter.mp hx).2
-  have hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ K ∧
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb := by
-    intro x hx
-    obtain ⟨hx1, hxr⟩ := mem_sdiff.mp hx
-    obtain ⟨hx2, hxv⟩ := mem_inter.mp hx1
-    have hxt := (mem_filter.mp hx2).2
-    refine ⟨hxt, ?_, hxr⟩
-    obtain ⟨i, rfl⟩ := Scheme.exists_faceCell_eq (comap_toScheme_of_restrictFace hd) hxv
-    have hdi : d.label i = ⊤ := (StageType.label_faceCell hd i).symm.trans hxt
-    exact (StageType.grade_faceCell hd i).trans_le ((grade_le_topGrade hdi).trans hdK)
-  have hmem : ∀ x, tb.label x = ⊤ → x ∈ tb.toScheme.visibleCells (extendByLast g) →
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → x ∈ Tops := by
-    intro x hxt hxv hxr
-    simp [Tops, hxt, hxv, hxr]
-  obtain ⟨F, hF⟩ := exists_completion_recProp hleg hs hp htbleg htbp hLo hTops
-  obtain ⟨δ, hδ, hδlab⟩ := exists_cutoff hα tb
-  have hR := F.restrictFace_right_completion hα'
-  refine ⟨F.completion hα', ⟨F.isLegal_completion hα', F.restrictFace_left_completion hα'⟩, hR,
-    δ, hδ, ?_⟩
-  have hd' : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) (F.completion hα') = some d := by
-    rw [← extendByLast_trans, ← restrictFace_trans _ _ _ hR]
-    exact hd
-  refine isDeterminedWithin_of_key (F.restrictFace_left_completion hα') hd'
-    fun ℓ hℓ hleft hcap ↦ key_completion F hα' hs.label_owner hs.label_lost hF hδ.1 hδlab hLo
-      hmem ℓ hℓ hleft hcap
 
 end VaughtConjecture.H2
