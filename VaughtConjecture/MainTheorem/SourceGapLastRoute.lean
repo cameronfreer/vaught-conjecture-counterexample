@@ -8,7 +8,7 @@ import VaughtConjecture.MainTheorem.SourceGapMarkedCapRoute
 /-!
 # The receiving route with the lost point off the coatom (work file)
 
-WORK FILE (branch `research/h2-last-reduction`).  No `sorry`.
+WORK FILE (branch `research/h2-last-reduction`).  No placeholders.
 
 The coatom form of cutoff determination for source-gap contexts
 (`Realization.CoatomCutoffDetermination`, `StageType.IsSourceGapContext`) asks determination also
@@ -22,10 +22,11 @@ of source-gap contexts (`Realization.exists_covers_isSourceGapContextAt`) produc
 lost point last whose first coatom is the face of first loss, closed; the proof is repeated here
 with that face exported.
 
-**Reduction** (`Realization.CoatomCutoffDetermination.cutoffDetermination_off`): coatom cutoff
-determination for `IsSourceGapContextLast` gives cutoff determination for `IsSourceGapContextOff`,
-by the transposition of the lost point with the last point (the complement of the lost point is
-closed, so it becomes the first coatom).
+**Reduction** (`Realization.FirstCoatomCutoffDetermination.cutoffDetermination_off`): cutoff
+determination at the first coatom for `IsSourceGapContextLast` gives cutoff determination for
+`IsSourceGapContextOff`, by the transposition of the lost point with the last point (the
+complement of the lost point is closed, so it becomes the first coatom); the coatom form gives the
+former (`Realization.CoatomCutoffDetermination.cutoffDetermination_off`).
 
 **The main theorem from three finite statements, lost point last**
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGapLast_
@@ -302,10 +303,10 @@ theorem residualAcquisition_isSourceGapContextOff :
     rw [this]
     exact hcf
 
-/-- **Cutoff determination with the lost point off the coatom, from the coatom form with the lost
-point last**: transpose the lost point with the last point. -/
-theorem CoatomCutoffDetermination.cutoffDetermination_off
-    (hdet : CoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
+/-- **Cutoff determination with the lost point off the coatom, from the form at the first coatom
+with the lost point last**: transpose the lost point with the last point. -/
+theorem FirstCoatomCutoffDetermination.cutoffDetermination_off
+    (hdet : FirstCoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
     CutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextOff K h where
   exists_coface α K n k t' h hα ht' hP t ht d hd hdK := by
     obtain ⟨l, o, r, hs, hface⟩ := hP
@@ -349,14 +350,21 @@ theorem CoatomCutoffDetermination.cutoffDetermination_off
       rw [StageType.restrictFace_reindex, hg]
       convert ht using 2
       exact Function.Embedding.ext fun i ↦ by simp
-    obtain ⟨D'', hD'', δ, hδ, hdet''⟩ := hdet.exists_coface_castSucc hα (ht'.reindex σ) hP' hp
-      ht'' hd hdK
+    obtain ⟨D'', hD'', δ, hδ, hdet''⟩ := hdet.exists_coface (t'.reindex σ) g _ hα (ht'.reindex σ)
+      hP' hp t ht'' d hd hdK
     refine ⟨_, StageType.reindex_extendPerm_symm_mem_cofaces hD'', δ, hδ, ?_⟩
     have hroot : (g.trans Fin.castSuccEmb).trans σ.toEmbedding = h := by
       rw [hg]
       exact Function.Embedding.ext fun i ↦ by simp
     have := hdet''.reindex_extendPerm
     rwa [hroot] at this
+
+/-- **Cutoff determination with the lost point off the coatom, from the coatom form with the lost
+point last**: transpose the lost point with the last point. -/
+theorem CoatomCutoffDetermination.cutoffDetermination_off
+    (hdet : CoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
+    CutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextOff K h :=
+  hdet.firstCoatom.cutoffDetermination_off
 
 end Realization
 
