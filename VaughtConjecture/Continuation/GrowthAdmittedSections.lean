@@ -124,4 +124,80 @@ theorem exists_donorCoatom (he : n < J) :
 
 end GrowthCarrier
 
+namespace Scheme
+
+variable {β : Ordinal.{u}} {M J n : ℕ} {S : Scheme.{u} M} {t' : StageType.{u} β J}
+  {D : Scheme.{u} (n + 1)}
+
+/-- **Admission below the threshold**: in a consistent scheme `S` carrying the cells of a context
+`t'` (through `κ`, at their grades) and of a donor `D` (through `δ`, at grades at most the
+threshold), with a cell of full scope at the threshold, every such cell a controller admitted on
+the class, every labelling lawful below the full face at the threshold is admitted by the requests.
+Only the cells below `(univ, N)` are used: availability at the cap gives an admitted controller,
+whose row transfers (`Scheme.exists_controllerRead`). -/
+theorem admits_of_isLawfulBelow (hcons : S.rows.IsConsistent)
+    (Q : StageType.GrowthRequests t' D) (κ : Fin t'.card → Fin S.card)
+    (δ : Fin D.card → Fin S.card)
+    (hκ : ∀ x, S.toCellScheme.grade (κ x) = t'.toCellScheme.grade x)
+    (hδ : ∀ j, S.toCellScheme.grade (δ j) ≤ Q.threshold)
+    (hfull : ∃ w, S.toCellScheme.gradedIndex w = (univ, Q.threshold))
+    (hadm : ∀ u, S.toCellScheme.gradedIndex u = (univ, Q.threshold) →
+      (∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
+        S.rowAt u (κ x) = ⊥ → t'.label x = ⊥) → S.rowAt u (κ Q.cap) ≠ ⊥ →
+      ∀ j, Q.CorrectAt (fun x ↦ S.rowAt u (κ x)) j (S.rowAt u (δ j)))
+    (href : ∀ j ∈ Q.exacts, t'.toCellScheme.grade (Q.ref j) ≤ Q.threshold ∧
+      Q.offset j ≤ Q.threshold)
+    (hmk : t'.toCellScheme.grade Q.marker ≤ Q.threshold ∧ Q.markerOffset ≤ Q.threshold)
+    {v : Fin S.card → Label.{u}}
+    (hv : S.rows.IsLawfulBelow ((univ : Finset (Fin M)), Q.threshold) fun z ↦ v z) :
+    Q.Admits (fun x ↦ v (κ x)) (fun j ↦ v (δ j)) := by
+  intro hclass hcap j
+  obtain ⟨hord, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hv
+  obtain ⟨w, hw⟩ := hfull
+  have hcN : S.toCellScheme.grade (κ Q.cap) = Q.threshold := hκ Q.cap
+  have hbelowN (z : Fin S.card) (hz : S.toCellScheme.grade z ≤ Q.threshold) :
+      z ∈ S.toCellScheme.below ((univ : Finset (Fin M)), Q.threshold) := by
+    rw [CellScheme.mem_below, CellScheme.gradedIndex_le_iff]
+    exact ⟨subset_univ _, hz⟩
+  have hwb : w ∈ S.toCellScheme.below ((univ : Finset (Fin M)), Q.threshold) := by
+    rw [CellScheme.mem_below, hw]
+  obtain ⟨u', hu'g, hle⟩ := havail (κ Q.cap) w hwb
+    (by rw [show S.toCellScheme.scope w = univ from congrArg Prod.fst hw]; exact subset_univ _)
+    (hcN.trans (congrArg Prod.snd hw).symm)
+  have hu' : S.toCellScheme.gradedIndex u' = (univ, Q.threshold) := hu'g.trans hw
+  have hl := hloc u' (by rw [CellScheme.mem_below, hu'])
+  have hvc : IsSelfVisible Q.threshold (v (κ Q.cap)) := hcN ▸ hord _ (hbelowN _ hcN.le)
+  obtain ⟨Φ, -, hΦb, -, hΦ⟩ := exists_controllerRead hl
+    (mem_below_of_gradedIndex_eq hu' hcN.le) hcN hle
+  -- the row of the controller is in the class
+  have hrow : ∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
+      S.rowAt u' (κ x) = ⊥ → t'.label x = ⊥ := by
+    intro x hx hr
+    have hxN : S.toCellScheme.grade (κ x) ≤ Q.threshold := by
+      rw [hκ]
+      exact hx.2
+    have h := hΦ _ (mem_below_of_gradedIndex_eq hu' hxN) hxN
+    rw [hr, min_eq_left bot_le, hΦb] at h
+    refine hclass x hx ?_
+    rcases min_eq_bot.mp h with h' | h'
+    · exact h'
+    · exact absurd h' hcap
+  have hrc : S.rowAt u' (κ Q.cap) ≠ ⊥ := by
+    intro hr
+    have h := hΦ _ (mem_below_of_gradedIndex_eq hu' hcN.le) hcN.le
+    rw [min_self, hr, min_self, hΦb] at h
+    exact hcap h
+  have hA := hadm u' hu' hrow hrc j
+  refine ⟨fun hz ↦ ?_, fun hf ↦ ?_, fun hy ↦ ?_⟩
+  · exact min_eq_bot_of_controller hl hcN hle hu' (hδ j) (hA.1 hz)
+  · rw [StageType.GrowthRequests.readExact]
+    have hr := href j hf
+    exact min_eq_visibilityReplace_of_controller hcons hl hvc hcN hle hu' hr.2 (hδ j)
+      ((hκ _).trans_le hr.1) (hA.2.1 hf)
+  · rw [StageType.GrowthRequests.readMarker]
+    exact visibilityReplace_le_of_controller hcons hl hvc hcN hle hu' hmk.2
+      ((hκ _).trans_le hmk.1) (hδ j) (hA.2.2 hy)
+
+end Scheme
+
 end VaughtConjecture

@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.GrowthAdmittedStep
+import VaughtConjecture.Continuation.GrowthAdmittedSections
 import VaughtConjecture.Extension.TowerCatalogueLayer
 import VaughtConjecture.MainTheorem.GrowthSeed
 
@@ -29,6 +29,15 @@ code (`StageType.GrowthRequests.Admits.orbitMap`).  So the catalogue step at the
 (`ProfileTower.Lvl.CatStepAbove`, open): a lawful completion of the context section on the donor
 face, agreeing with an admitted profile capped at `h` and reading the requests below the cap value
 (the request lift of `GrowthCarrier.exists_requestLift_of_cappedLift`).
+
+**Above the admitted layer the invariant of good levels fails**
+(`ProfileTower.Lvl.Good.growthAdmits_of_isCutLawful`): a good level at a grade at least the
+threshold whose cells of full scope at the threshold are admitted on the class admits every
+profile lawful on its cut, since `ProfileTower.Lvl.Good` gives each such profile a lawful section
+(`StageType.Scheme.admits_of_isLawfulBelow`).  So a cut-lawful profile reading the labels of `t'`
+on the context and differing from `d` on the donor rules such a level out
+(`ProfileTower.Lvl.Good.not_forall_admitted`): the levels above the admitted layer need an invariant
+quantified over the admitted profiles only.
 
 ## References
 
@@ -178,5 +187,80 @@ theorem Lvl.Good.cappedLift_donor_of_open (hL : L.Good) (hgm : g + 1 ≤ m)
       (X := (univ.erase (Fin.castSucc (Fin.last m)), g + 1))
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
   hL.cappedLift_catS_of_steps hgm (by simp [Pts]) (growthAdmits_bot hleft hdon Q) hbot hstep
+
+/-! ### Good levels above the threshold admit every cut-lawful profile -/
+
+/-- **A good level with admitted controllers admits every cut-lawful profile.**  If a good level
+at a grade `g` at least the threshold has its cells of full scope at the threshold admitted on the
+class (read on the context and donor cells of the amalgam), then every profile lawful on the
+grade-`g` cut is admitted: its section is lawful below the full face at the threshold, literal on
+the old cells (`StageType.Scheme.admits_of_isLawfulBelow`).  So the invariant
+`ProfileTower.Lvl.Good`, which asks a lawful section for every cut-lawful profile, cannot hold
+above an admitted layer unless every cut-lawful profile is admitted. -/
+theorem Lvl.Good.growthAdmits_of_isCutLawful (hL : L.Good) (hleft : I.left = t')
+    (hdon : restrictFace (extendByLast e) I.amalgam = some d)
+    (Q : GrowthRequests t' d.toScheme) (hN0 : 0 < Q.threshold) (hNg : Q.threshold ≤ g)
+    (hdN : ∀ j, d.toCellScheme.grade j ≤ Q.threshold)
+    (hadm : ∀ u, L.S.toCellScheme.gradedIndex u = (univ, Q.threshold) →
+      (∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
+        L.S.rowAt u (L.embed (ctxCell hleft x)) = ⊥ → t'.label x = ⊥) →
+      L.S.rowAt u (L.embed (ctxCell hleft Q.cap)) ≠ ⊥ →
+      ∀ j, Q.CorrectAt (fun x ↦ L.S.rowAt u (L.embed (ctxCell hleft x))) j
+        (L.S.rowAt u (L.embed (donCell hdon j))))
+    (href : ∀ j ∈ Q.exacts, t'.toCellScheme.grade (Q.ref j) ≤ Q.threshold ∧
+      Q.offset j ≤ Q.threshold)
+    (hmk : t'.toCellScheme.grade Q.marker ≤ Q.threshold ∧ Q.markerOffset ≤ Q.threshold)
+    {P : Prof I} (hP : IsCutLawful I g P) :
+    GrowthAdmits hleft hdon Q (withCut P ⊥) := by
+  have hv : L.S.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), Q.threshold)
+      fun z ↦ L.σ P z :=
+    (hL.lawful P hP).mono (X := ((univ : Finset (Fin (m + 2))), Q.threshold)) ⟨subset_rfl, hNg⟩
+  have hgr (z : Fin I.amalgam.card) :
+      L.S.toCellScheme.grade (L.embed z) = I.amalgam.toCellScheme.grade z :=
+    congrArg Prod.snd (hL.gradedIndex_embed z)
+  have h := Scheme.admits_of_isLawfulBelow hL.consistent Q (fun x ↦ L.embed (ctxCell hleft x))
+    (fun j ↦ L.embed (donCell hdon j)) (fun x ↦ (hgr _).trans (ctxCell_mem hleft x).2)
+    (fun j ↦ by
+      rw [hgr, donCell, I.amalgam.toScheme.grade_faceCell]
+      exact hdN j)
+    (hL.complete _ hN0 hNg) hadm href hmk hv
+  simp only [hL.literal] at h
+  exact h
+
+/-- **No good level above an admitted layer**, in the presence of a cut-lawful profile that reads
+the labels of `t'` on the context and differs from `d` on the donor: with requests read exactly at
+the labels of `t'` (cap labelled other than `⊥`), the cells of full scope at the threshold of a
+good level at a grade `g` at least the threshold are not all admitted on the class. -/
+theorem Lvl.Good.not_forall_admitted (hL : L.Good) (hleft : I.left = t')
+    (hdon : restrictFace (extendByLast e) I.amalgam = some d)
+    (Q : GrowthRequests t' d.toScheme) (hN0 : 0 < Q.threshold) (hNg : Q.threshold ≤ g)
+    (hdN : ∀ j, d.toCellScheme.grade j ≤ Q.threshold)
+    (href : ∀ j ∈ Q.exacts, t'.toCellScheme.grade (Q.ref j) ≤ Q.threshold ∧
+      Q.offset j ≤ Q.threshold)
+    (hmk : t'.toCellScheme.grade Q.marker ≤ Q.threshold ∧ Q.markerOffset ≤ Q.threshold)
+    (hex : ∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j) (hcap : t'.label Q.cap ≠ ⊥)
+    {P : Prof I} (hP : IsCutLawful I g P) (hctx : ∀ x, P (ctxCell hleft x) = t'.label x)
+    (hne : ∃ j, P (donCell hdon j) ≠ d.label j) :
+    ¬ ∀ u, L.S.toCellScheme.gradedIndex u = (univ, Q.threshold) →
+      (∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
+        L.S.rowAt u (L.embed (ctxCell hleft x)) = ⊥ → t'.label x = ⊥) →
+      L.S.rowAt u (L.embed (ctxCell hleft Q.cap)) ≠ ⊥ →
+      ∀ j, Q.CorrectAt (fun x ↦ L.S.rowAt u (L.embed (ctxCell hleft x))) j
+        (L.S.rowAt u (L.embed (donCell hdon j))) := by
+  intro hadm
+  have h := hL.growthAdmits_of_isCutLawful hleft hdon Q hN0 hNg hdN hadm href hmk hP
+  obtain ⟨j, hj⟩ := hne
+  have hA := h (fun x _ hx ↦ by
+      have : P (ctxCell hleft x) = ⊥ := hx
+      rwa [hctx] at this)
+    (by
+      change P (ctxCell hleft Q.cap) ≠ ⊥
+      rw [hctx]
+      exact hcap) j
+  have hA' : Q.CorrectAt t'.label j (P (donCell hdon j)) := by
+    have : (fun x ↦ (withCut P ⊥) (Sum.inl (ctxCell hleft x))) = t'.label := funext hctx
+    rw [← this]
+    exact hA
+  exact hj ((hex j _).mp hA')
 
 end VaughtConjecture.ProfileTower
