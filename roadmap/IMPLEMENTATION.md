@@ -3342,15 +3342,39 @@ Each checkpoint needs both its abstract API and a concrete application:
    of a coupled gated extension are used: the refutation holds whatever the display, and does not
    use cap lowering (CL) or the lifts from the faces that contain the new point; the parts of (CL)
    named for the instance on `P α` (the forcing lift, joint lawfulness, the rows) are not decided in
-   general.  (R1) itself is not refuted.  Open, and the next question for (R1) through a gate:
-   whether the private contexts that models acquire
-   (`Realization.IsModel.exists_privateContext_isAnchored`) satisfy the bottom transport condition
-   with every donor anchored below their cap (a lawful labelling of the private type that drops a
-   proper anchor and keeps the cap must be carried by the readings of the gate to a labelling that
-   the rows of each such donor allow), and whether the coupled property restricted to them holds;
-   neither is stated in the library (prospective).  The condition holds when the cap reads an anchor
-   of every donor label below it in the block of its reading of the cap itself
-   (`StageType.carriesBottoms_of_row_mem_block`), which the refuting private type does not satisfy;
+   general.  (R1) itself is not refuted.  The repair is ordered: acquisition of private contexts
+   satisfying the condition, then the extension property restricted to them, then receiving.  The
+   acquisition step is stated (`Realization.HasCarryingPrivateContext`: a private context in the
+   form of `Realization.IsModel.exists_privateContext_isAnchored` whose type satisfies
+   `StageType.CarriesBottoms` with the donor at the label of its cap; and
+   `Realization.AcquiresCarryingContexts`: one over every occurrence, for every coface and every
+   floor below the stage; `Realization/CarryingContext`).  Compiled in this repository (theorem
+   named): models acquire carrying contexts for donors whose new cells are labelled `⊥` or `⊤`
+   (`Realization.IsModel.hasCarryingPrivateContext_of_forall_label`); a private context of the
+   acquired form at which a coupled gated extension exists is carrying
+   (`Realization.hasCarryingPrivateContext_of_coupledGatedExtension`), so acquisition is necessary
+   for the coupled route; the refuting input satisfies the finite stage-type and label conditions
+   of the acquisition output (at every floor, with `N₀ ≤ 2`) and fails the condition
+   (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`), so those
+   conditions alone do not give it, and no occurrence of that input in an actual model is
+   exhibited; and a lawful labelling that keeps a cell `C` and drops a cell that the row of `C`
+   reads at an ordinal drops everything that the row of `C` reads below the end of the block of
+   that reading (`CellScheme.Rows.IsLawful.eq_bot_of_row_le_block`, `Scheme/Row`), so, of the cells
+   that the row of `C` reads at ordinals, it drops only cells read in a block strictly below its
+   reading of `C` (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`); a cell read as `⊥` has no
+   block.  Hence the condition holds when the cap reads an anchor of every donor label below it in
+   the block of its reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`), which
+   the refuting private type does not satisfy; it follows (not stated as a theorem) that it can
+   fail only at a donor cell all of whose anchors the cap reads in lower blocks.  Undecided:
+   whether every model at a limit stage acquires carrying contexts from the full model axioms.  The
+   existing acquisition proof (uniformity, high-arity dominance, exact consistency) gives the
+   private cap a label above the floor and does not establish control of its row jointly with that
+   label; generalized saturation prescribes the whole scheme of a one-point extension, rows
+   included, whenever its nonemptiness guard holds, but no private context is shown in which a
+   prescribed row and a private cap above the floor occur together.  The two clauses of the
+   condition are each met alone (by the labelling `⊥` and by the donor's own labelling); what is
+   open is the two together at the donor cells whose anchors the cap reads below its own block.
+   The extension property restricted to carrying contexts is not stated (prospective);
    the condition is necessary for the property, not shown sufficient.  The conditional theorem is
    vacuous at every stage above `1`; it receives one permitted cutoff at a time and is not exact
    projected receiving. Projected-donor lifting is not part of checkpoint 4 (`README.md`, Layer 3,
@@ -4967,6 +4991,12 @@ witnesses).**
   (`Extension/PinnedExtension`); a lemma shared by the two, in a module both import (for instance
   `Extension/Basic`, or `Stage/` for the closed-point choice), is a later change of proofs only,
   with no statement change.
+- `Realization/CarryingContext`: Layer 3, the acquisition step of a repair of (R1), in place; it
+  imports `Extension/GatedExtension` (for `StageType.CarriesBottoms`) and
+  `Realization/PrivateContext`, not a counterexample module.  The row lemmas
+  `CellScheme.Rows.IsLawful.eq_bot_of_row_le_block` and `lt_row_self_of_eq_bot` are in
+  `Scheme/Row`, beside `ne_bot_of_row_mem_block`, which is now derived from the first (statement
+  unchanged).
 
 - The attached gate: `Label.ne_bot_of_min_eq_of_ne_bot` is in `Label/Basic`;
   `CellScheme.Rows.ReadsOnly` and the row lemmas stated with it
@@ -5181,10 +5211,11 @@ witnesses).**
 - The ordinary construction of (R1) as data (4b-ii): `StageType.HasCoupledGatedPinnedExtensions` is
   refuted at every stage above `1`
   (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), as is its first form
-  `StageType.HasGatedPinnedExtensions`; a construction for the private contexts that models acquire
-  is prospective, including an attached gated extension (`StageType.AttachedGatedExtension`) over
-  every acquired private context (open); (R2), (R3), (R4); and output 3, the proof of
-  `ContinuationCriterion`.
+  `StageType.HasGatedPinnedExtensions`; whether every model acquires carrying private contexts
+  (`Realization.AcquiresCarryingContexts`) is undecided; a construction for the private contexts
+  that models acquire is prospective, including an attached gated extension
+  (`StageType.AttachedGatedExtension`) over every acquired private context (open); (R2), (R3),
+  (R4); and output 3, the proof of `ContinuationCriterion`.
 - The graded back-and-forth theorem (`README.md`, Layer 0), formerly listed here,
   is retired, not moved: both of its intended applications, approximate comparison of full
   presentations and the back-and-forth form of condition 3 of the expansion-domain route, compile
