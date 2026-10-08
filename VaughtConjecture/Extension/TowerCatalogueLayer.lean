@@ -398,12 +398,13 @@ coatom three times, the lift of the level at the grade `g`, and the extension th
 controllers (`ProfileTower.Lvl.Good.exists_extension_cat`,
 `ProfileTower.Lvl.Good.exists_extension_cat_bot`). -/
 theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
-    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hAbot : ∀ W : Prof I, A (withCut W ⊥))
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hA0 : A fun _ ↦ ⊥)
     (hbot : ∀ w : Fin (L.catS 𝒞).card → Label.{u},
       (L.catS 𝒞).rows.IsLawfulBelow (univ.erase x, g + 1) (fun z ↦ w z) →
       ∃ W : Prof I, IsCutLawful I (g + 1) W ∧
-        ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
-          I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d)))
+        (∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+          I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d))) ∧
+        A (withCut (orbitCode (g + 1) W) ⊥))
     (hstep : ∀ P ∈ 𝒞, ∀ h : Label.{u}, IsSelfVisible (g + 1) h → IsShort (g + 1) h → ⊥ < h →
       ∀ w : Fin (L.catS 𝒞).card → Label.{u},
       (L.catS 𝒞).rows.IsLawfulBelow (univ.erase x, g + 1) (fun z ↦ w z) →
@@ -444,10 +445,6 @@ theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m +
         (univ.erase x, g + 1) := hz
     rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd, hL.gradedIndex_embed] at h1
     exact h1.1
-  have hA0 : A fun _ ↦ ⊥ := by
-    convert hAbot (fun _ ↦ ⊥) using 1
-    funext f
-    rcases f with d | z <;> rfl
   obtain ⟨i₀, -⟩ := exists_equivFin_eq (C := 𝒞) (bot_mem_predCat hA0)
   refine Rows.cappedLift_of_boundary_short (U := (univ.erase x, g + 1))
     (V := (univ.erase x, g + 1)) (O := (univ.erase x, g + 1)) (erase_subset _ _)
@@ -458,9 +455,9 @@ theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m +
     ⟨Fin.natAdd _ i₀, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i₀⟩ fun u hu ↦ ?_
   · -- the extension from the boundary at `⊥`
     intro w hw _ _
-    obtain ⟨W, hW, hWw⟩ := hbot w hw
+    obtain ⟨W, hW, hWw, hAW⟩ := hbot w hw
     have hQC : withCut (orbitCode (g + 1) W) ⊥ ∈ 𝒞 :=
-      mem_predCat_of hW (mem_insert_self _ _) (hAbot _)
+      mem_predCat_of hW (mem_insert_self _ _) hAW
     obtain ⟨q, hq, hqW⟩ := hL.exists_extension_cat_bot hCsub hQC
     refine ⟨q, hq, fun z hz ↦ ?_, fun _ ↦ by simp⟩
     obtain ⟨z, hzY⟩ := z
@@ -582,6 +579,12 @@ theorem Lvl.Good.cappedLift_catS_of_catStep (hL : L.Good) (hgm : g + 1 ≤ m) {x
     (hstep : L.CatStep A x) :
     (L.catS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  hL.cappedLift_catS hgm hx hAbot (fun _ hw ↦ hL.exists_cutLawful_of_coatom hgm hx hw) hstep
+  have hA0 : A fun _ ↦ ⊥ := by
+    convert hAbot (fun _ ↦ ⊥) using 1
+    funext f
+    rcases f with d | z <;> rfl
+  hL.cappedLift_catS hgm hx hA0 (fun _ hw ↦ by
+    obtain ⟨W, hW, hWw⟩ := hL.exists_cutLawful_of_coatom hgm hx hw
+    exact ⟨W, hW, hWw, hAbot _⟩) hstep
 
 end VaughtConjecture.ProfileTower
