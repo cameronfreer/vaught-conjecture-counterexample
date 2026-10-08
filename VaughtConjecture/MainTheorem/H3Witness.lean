@@ -128,6 +128,126 @@ theorem isBoundedReading_band {ν : Label.{u} → Label.{u}} (hν : IsBoundedRea
     · simp only [hx, mt hlt.mp hx, ite_false]
       rw [bandMap_visibilityReplace hκ hlam (hk.trans hKN) hi (not_lt.mp hx), hν.comm _ k i hk hi]
 
+/-- **A witness inverting a bounded reading on finitely many labels.**  Let `σ₀` be a bounded
+reading at `N > 0` reading finitely many row values `ρ x` (none `⊤`) as labels `ℓ x = σ₀ (ρ x)`
+whose finite parts lie below `N`, `ν` a bounded reading at `K ≤ N`, and `θ` self-visible at
+`K`.  For a label `c₀ ≠ ⊥`, self-visible at `K` and at most `ν (ρ x)` at every ordinal `ℓ x`,
+some witness `Φ` bounded by `K` sends no label other than `⊥` to `⊥`, sends `⊤` to at least
+`θ`, and sends every ordinal `ℓ x` to `ν (ρ x)`: the maximum of the
+constant `c₀` off `⊥`, the constant `θ` at `⊤`, and, for each `x`, the band map from the block of
+`ℓ x` to the block of `ρ x` followed by `ν` (no-separation: `Label.IsBoundedReading.strip`,
+`Label.IsBoundedReading.eq_of_eq`). -/
+theorem exists_witness_of_reading {ι : Type*} [Finite ι] {ℓ ρ : ι → Label.{u}} {N : ℕ}
+    (hN : 0 < N) {σ₀ : Label.{u} → Label.{u}} (hσ₀ : IsBoundedReading N σ₀)
+    (hread : ∀ x, ℓ x = σ₀ (ρ x)) (hρ : ∀ x, ρ x ≠ ⊤)
+    (hoff : ∀ x (μ : Ordinal.{u}) (j : ℕ), Order.IsSuccPrelimit μ →
+      ℓ x = ((μ + j : Ordinal.{u}) : Label.{u}) → j < N)
+    (hKN : K ≤ N) {ν : Label.{u} → Label.{u}} (hν : IsBoundedReading K ν) {θ : Label.{u}}
+    (hθ : IsSelfVisible K θ) {c₀ : Label.{u}} (hc₀ : IsSelfVisible K c₀) (hc₀b : c₀ ≠ ⊥)
+    (hc₀ν : ∀ x (o : Ordinal.{u}), ℓ x = o → c₀ ≤ ν (ρ x)) :
+    ∃ Φ : Label.{u} → Label.{u}, IsWitness (stepSuppressor.{u} K) Φ ∧
+      (∀ y, Φ y = ⊥ → y = ⊥) ∧ θ ≤ Φ ⊤ ∧ ∀ x (o : Ordinal.{u}), ℓ x = o → Φ (ℓ x) = ν (ρ x) := by
+  classical
+  have := Fintype.ofFinite ι
+  -- the blocks of the ordinal labels and of their row values
+  have hdec (x : ι) : ∃ (lam κ : Ordinal.{u}) (j : ℕ), Order.IsSuccPrelimit lam ∧
+      Order.IsSuccPrelimit κ ∧ ((∃ o : Ordinal.{u}, ℓ x = o) →
+        ℓ x = ((lam + j : Ordinal.{u}) : Label.{u}) ∧ ρ x = ((κ + j : Ordinal.{u}) : Label.{u}) ∧
+          ∀ i ≤ N, σ₀ ((κ + i : Ordinal.{u}) : Label.{u}) = ((lam + i : Ordinal.{u}) : Label.{u}))
+      := by
+    by_cases hx : ∃ o : Ordinal.{u}, ℓ x = o
+    · obtain ⟨o, ho⟩ := hx
+      obtain ⟨lam, hlam, j, rfl⟩ := exists_eq_add_natCast_isSuccPrelimit o
+      have hjN := hoff x lam j hlam ho
+      induction hρx : ρ x using recBotCoeTop with
+      | bot =>
+        rw [hread, hρx, hσ₀.map_bot] at ho
+        exact absurd ho.symm WithBot.coe_ne_bot
+      | top => exact absurd hρx (hρ x)
+      | coe o' =>
+        obtain ⟨κ, hκ, j', rfl⟩ := exists_eq_add_natCast_isSuccPrelimit o'
+        rw [hread, hρx] at ho
+        obtain ⟨rfl, hstrip⟩ := hσ₀.strip hN hκ hlam hjN ho
+        exact ⟨lam, κ, j', hlam, hκ, fun _ ↦ ⟨(hread x).trans (hρx ▸ ho), rfl, hstrip⟩⟩
+    · exact ⟨0, 0, 0, Ordinal.isSuccPrelimit_zero, Ordinal.isSuccPrelimit_zero, fun h ↦ absurd h hx⟩
+  choose lam κ j hlam hκ hblk using hdec
+  set piece : ι → Label.{u} → Label.{u} := fun x y ↦
+    if ∃ o : Ordinal.{u}, ℓ x = o then
+      (if y < ((lam x : Ordinal.{u}) : Label.{u}) then ⊥ else ν (bandMap (κ x) (lam x) N y))
+    else ⊥ with hpiece
+  have hpiece_br (x : ι) : IsBoundedReading K (piece x) := by
+    by_cases hx : ∃ o : Ordinal.{u}, ℓ x = o
+    · simpa only [hpiece, hx, ite_true] using isBoundedReading_band hν (hκ x) (hlam x) hKN
+    · simpa only [hpiece, hx, ite_false] using (isBoundedReading_bot (K := K))
+  set Φ : Label.{u} → Label.{u} := fun y ↦
+    max (max (if y = ⊥ then ⊥ else c₀) (if y = ⊤ then θ else ⊥))
+      (univ.sup fun x ↦ piece x y) with hΦ
+  have hΦbr : IsBoundedReading K Φ :=
+    ((isBoundedReading_nonBot hc₀).max (isBoundedReading_atTop hθ)).max
+      (IsBoundedReading.finsetSup univ fun x _ ↦ hpiece_br x)
+  have hrefl (y : Label.{u}) (hy : Φ y = ⊥) : y = ⊥ := by
+    by_contra hne
+    have h : c₀ ≤ Φ y := by
+      simp only [hΦ, hne, ite_false]
+      exact (le_max_left _ _).trans (le_max_left _ _)
+    exact hc₀b (le_bot_iff.mp (hy ▸ h))
+  refine ⟨Φ, hΦbr.isWitness hrefl, hrefl, ?_, fun x' o ho ↦ ?_⟩
+  · simp only [hΦ, top_ne_bot, ite_false, ite_true]
+    exact (le_max_right _ _).trans (le_max_left _ _)
+  -- the value at an ordinal label
+  obtain ⟨hℓ', hρ', hst'⟩ := hblk x' ⟨o, ho⟩
+  have hne : ℓ x' ≠ ⊥ := by rw [ho]; exact WithBot.coe_ne_bot
+  have hnt : ℓ x' ≠ ⊤ := fun h ↦ WithTop.coe_ne_top (WithBot.coe_injective (ho.symm.trans h))
+  have hjN : j x' < N := hoff x' (lam x') (j x') (hlam x') hℓ'
+  -- the piece at `x'` reads `ℓ x'` as `ν (ρ x')`
+  have hband (x : ι) (hx : ∃ o : Ordinal.{u}, ℓ x = o) (hlx : lam x = lam x') :
+      piece x (ℓ x') = ν (ρ x') := by
+    obtain ⟨-, -, hst⟩ := hblk x hx
+    have hnl : ¬ ℓ x' < ((lam x : Ordinal.{u}) : Label.{u}) := by
+      rw [hℓ', hlx]
+      exact not_lt.mpr (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
+    simp only [hpiece, hx, hnl, ite_true, ite_false]
+    rw [hℓ', ← hlx, bandMap_coe_add_natCast, min_eq_left hjN.le]
+    congr 1
+    refine hσ₀.eq_of_eq hN (fun h ↦ WithTop.coe_ne_top (WithBot.coe_injective h)) (hρ x')
+      (hlam x') hjN ?_ ?_
+    · rw [hst (j x') hjN.le, hlx]
+    · rw [← hread, hℓ']
+  refine le_antisymm ?_ ?_
+  · simp only [hΦ, hne, hnt, ite_false]
+    refine max_le (max_le (hc₀ν x' o ho) bot_le) (Finset.sup_le fun x _ ↦ ?_)
+    by_cases hx : ∃ o : Ordinal.{u}, ℓ x = o
+    swap
+    · simp only [hpiece, hx, ite_false]
+      exact bot_le
+    obtain ⟨-, -, hst⟩ := hblk x hx
+    by_cases hlt : ℓ x' < ((lam x : Ordinal.{u}) : Label.{u})
+    · simp only [hpiece, hx, hlt, ite_true]
+      exact bot_le
+    have hle : lam x ≤ lam x' := by
+      by_contra hgt
+      push Not at hgt
+      apply hlt
+      rw [hℓ']
+      exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr ((hlam x).add_natCast_lt hgt _))
+    rcases hle.lt_or_eq with hlt' | heq
+    · simp only [hpiece, hx, hlt, ite_true, ite_false]
+      have hbm : bandMap (κ x) (lam x) N (ℓ x') = ((κ x + N : Ordinal.{u}) : Label.{u}) := by
+        refine bandMap_of_le ?_
+        rw [hℓ']
+        exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
+          (((hlam x').add_natCast_lt hlt' N).le.trans le_self_add))
+      rw [hbm]
+      refine hν.monotone (le_of_not_gt fun hρlt ↦ ?_)
+      have h1 := hσ₀.monotone hρlt.le
+      rw [← hread x', hst N le_rfl, hℓ'] at h1
+      have h2 : lam x' + j x' ≤ lam x + N := WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp h1)
+      exact absurd (h2.trans_lt ((hlam x').add_natCast_lt hlt' N)) (not_lt.mpr le_self_add)
+    · exact (hband x hx heq).le
+  · simp only [hΦ]
+    exact (hband x' ⟨o, ho⟩ rfl).symm.le.trans
+      ((Finset.le_sup (f := fun x ↦ piece x (ℓ x')) (mem_univ x')).trans (le_max_right _ _))
+
 end Label
 
 end VaughtConjecture
