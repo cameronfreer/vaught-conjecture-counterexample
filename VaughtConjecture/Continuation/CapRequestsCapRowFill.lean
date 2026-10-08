@@ -29,6 +29,12 @@ self-visible at `N`.  Compiled in this repository (theorem named):
   (`ProfileTower.exists_isCutLawful_of_coatom_le`) gives a profile equal to `f` below the private
   coatom whose splice is correct, since correctness reads only the state capped at the cap
   (`CapRequests.IsCorrect.of_min_eq`).
+* **The fill at `⊥` at every grade `k` from the cap** (`CapRequests.CapRowExtensionAt`,
+  `CapRequests.CapFillBotUncoveredAt`, `CapRequests.capFillBotAt_of_capRowExtensionAt`): with a
+  cell `E` of graded index `(Cp, k)` at least the cap in `f`, the same argument runs at `E` (every
+  cell below the private coatom lies below `E`, and `f E` is self-visible at `k`); the prescriptions
+  with every such cell strictly below the cap (for instance the top grade killed) are the
+  **uncovered** case, a named hypothesis.
 * **The fill at the positive caps outside the band** (`CapRequests.CapFillPosBandAt`,
   `CapRequests.capFillPosAt_of_band`): at a positive cap `h` with `f cap ≤ h` the fill of the other
   coatom along the prescribed profile `P` is correct (the state capped at `f cap` is `P` capped at
@@ -131,6 +137,118 @@ theorem capFillBotAt_of_capRowExtension (hgr : r.IsGraded I.amalgam.toCellScheme
   rw [hWcap, hscap]
   by_cases hx : I.amalgam.toCellScheme.grade x ≤ N
   · rw [hat_of_le hx, hat_of_le hx, hWW' x]
+    simp only [min_assoc, min_self]
+  · rw [hat_of_lt (not_le.mp hx), hat_of_lt (not_le.mp hx)]
+
+/-! ### The fill at `⊥` at every grade from the cap -/
+
+variable (r xd) in
+/-- **An extension of the row of a cell `E` at the grade `k`**: a profile equal to the row of `E`
+below `E`, correct for the requests, whose transformation by every witness `(g, σ)` with
+`g k ≠ ⊥` is lawful below the donor coatom `univ.erase xd` at `k`. -/
+def CapRowExtensionAt (k : ℕ) (E : Fin I.amalgam.card) : Prop :=
+  ∃ P₀ : Prof I,
+    (∀ d (hd : d ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex E)),
+      P₀ d = I.amalgam.rows.row E ⟨d, hd⟩) ∧
+    r.IsCorrect P₀ ∧
+    ∀ (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}), IsWitness g σ → g k ≠ ⊥ →
+      I.amalgam.rows.IsLawfulBelow (univ.erase xd, k)
+        fun d ↦ min (σ (P₀ d)) (g (I.amalgam.toCellScheme.grade d))
+
+variable (r xp) in
+/-- **The uncovered fill at `⊥`** at the grade `k`: the statement of `CapRequests.CapFillBotAt` for
+the prescriptions whose cap is not `⊥` and lies strictly above the prescription at every cell of
+graded index `(univ.erase xp, k)`. -/
+def CapFillBotUncoveredAt (k : ℕ) : Prop :=
+  ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase xp, k) (fun d ↦ f d) →
+    f r.cap ≠ ⊥ →
+    (∀ E, I.amalgam.toCellScheme.gradedIndex E = (univ.erase xp, k) → f E < f r.cap) →
+    ∃ W : Prof I, IsCutLawful I k W ∧
+      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase xp, k), W d = f d) ∧
+      r.IsCorrect (hat I k W)
+
+/-- **The fill at `⊥` from the private coatom at every grade from the cap**, from extensions of the
+rows of the cells of graded index `(univ.erase xp, k)` and the uncovered fill.  A prescription `f`
+with a cell `E` of that graded index at least its cap is transported along the locality of `f` at
+`E` (every cell below the private coatom lies below `E`, and `f E` is self-visible at `k`); the
+fill of the other coatom at `f E` is correct since `f cap ≤ f E`. -/
+theorem capFillBotAt_of_capRowExtensionAt (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hm : 0 < m) (hxp : xp ∈ (Pts : Finset (Fin (m + 2))))
+    (hxd : xd ∈ (Pts : Finset (Fin (m + 2)))) (hne : xd ≠ xp)
+    (hcapC : I.amalgam.toCellScheme.scope r.cap = univ.erase xp) {k : ℕ}
+    (hNk : I.amalgam.toCellScheme.grade r.cap ≤ k) (hkm : k ≤ m + 1)
+    (hext : ∀ E, I.amalgam.toCellScheme.gradedIndex E = (univ.erase xp, k) →
+      CapRowExtensionAt r xd k E)
+    (hunc : CapFillBotUncoveredAt r xp k) : CapFillBotAt r xp k := by
+  classical
+  intro f hf
+  have hk0 : 0 < k := (I.amalgam.isWellFormed.isWellFormed.grade_pos r.cap).trans_le hNk
+  have hcb : r.cap ∈ I.amalgam.toCellScheme.below (univ.erase xp, k) := ⟨hcapC.le, hNk⟩
+  by_cases hc0 : f r.cap = ⊥
+  · obtain ⟨W, hW, hWf, -⟩ := exists_isCutLawful_of_coatom_le hm hk0 hkm hxp
+      (isSelfVisible_bot _) (P := fun _ ↦ ⊥)
+      ⟨Rows.isLawfulBelow_const_bot _, Rows.isLawfulBelow_const_bot _⟩ hf fun _ _ ↦ by simp
+    refine ⟨W, hW, hWf, isCorrect_of_cap_eq_bot ?_⟩
+    rw [hat_of_le hNk, hWf _ hcb, hc0]
+  by_cases hcov : ∃ E, I.amalgam.toCellScheme.gradedIndex E = (univ.erase xp, k) ∧
+      f r.cap ≤ f E
+  swap
+  · simp only [not_exists, not_and, not_le] at hcov
+    exact hunc f hf hc0 hcov
+  obtain ⟨E, hE, hcE⟩ := hcov
+  have hEb : E ∈ I.amalgam.toCellScheme.below (univ.erase xp, k) := by
+    rw [CellScheme.mem_below, hE]
+  obtain ⟨hord, hloc, -⟩ := Rows.isLawfulBelow_iff_forall.mp hf
+  obtain ⟨g, σ, hw, heq⟩ := hloc E hEb
+  have hE0 : f E ≠ ⊥ := ne_bot_of_le_ne_bot hc0 hcE
+  have hgk : g k ≠ ⊥ := by
+    have h : min (f E) (f E) = min (σ (I.amalgam.rows.row E
+        ⟨E, CellScheme.mem_below_gradedIndex _ _⟩)) (g (I.amalgam.toCellScheme.grade E)) :=
+      heq ⟨E, CellScheme.mem_below_gradedIndex _ _⟩
+    rw [min_self, show I.amalgam.toCellScheme.grade E = k from congrArg Prod.snd hE] at h
+    exact ne_bot_of_le_ne_bot hE0 (h.le.trans (min_le_right _ _))
+  set hE' := f E with hE'def
+  set c := f r.cap with hcdef
+  have hEsv : IsSelfVisible k hE' := by
+    have := hord E hEb
+    rwa [show I.amalgam.toCellScheme.grade E = k from congrArg Prod.snd hE] at this
+  have hcsv : IsSelfVisible (I.amalgam.toCellScheme.grade r.cap) c := hord r.cap hcb
+  obtain ⟨P₀, hP₀row, hP₀c, hP₀D⟩ := hext E hE
+  set W' : Prof I := fun d ↦ min (σ (P₀ d)) (g (I.amalgam.toCellScheme.grade d)) with hW'def
+  have hW'C (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase xp, k)) :
+      W' d = min (f d) hE' := by
+    have hd' : d ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex E) := by
+      rw [hE]; exact hd
+    rw [hW'def]
+    dsimp only
+    rw [hP₀row d hd']
+    exact (heq ⟨d, hd'⟩).symm
+  have hfE : I.amalgam.rows.IsLawfulBelow (univ.erase xp, k) fun d ↦ min (f d) hE' :=
+    Rows.isLawfulBelow_iff.mpr ((Rows.isLawfulBelow_iff.mp hf).min_const_of_isSelfVisible
+      (K := k) (fun d ↦ d.2.2) hEsv)
+  have hW'Cl : I.amalgam.rows.IsLawfulBelow (univ.erase xp, k) fun d ↦ W' d :=
+    (Rows.isLawfulBelow_congr (w := fun d ↦ min (f d) hE') (w' := W')
+      fun d hd ↦ (hW'C d hd).symm).mp hfE
+  have hW'cut : IsCutLawful I k W' := lawful_pair hxp hxd hne.symm hW'Cl (hP₀D g σ hw hgk)
+  have hW'corr : r.IsCorrect W' := hP₀c.map hgr hw
+  obtain ⟨W, hW, hWf, hWW'⟩ := exists_isCutLawful_of_coatom_le hm hk0 hkm hxp hEsv hW'cut hf
+    fun d hd ↦ by rw [hW'C d hd, min_assoc, min_self]
+  refine ⟨W, hW, hWf, ?_⟩
+  have hNN : r.N ≤ I.amalgam.toCellScheme.grade r.cap := hgr.le_grade_cap
+  have hs : r.IsCorrect (hat I k fun d ↦ min (W' d) c) :=
+    (hW'corr.cap hgr.off_le (hcsv.mono hNN)).hat hgr k
+  have hscap : hat I k (fun d ↦ min (W' d) c) r.cap = c := by
+    rw [hat_of_le hNk]
+    show min (W' r.cap) c = c
+    rw [hW'C _ hcb, min_eq_left hcE]
+    exact min_self _
+  have hWcap : hat I k W r.cap = c := by rw [hat_of_le hNk, hWf _ hcb]
+  refine hs.of_min_eq (hWcap.trans hscap.symm) (by rw [hscap]; exact hcsv.mono hNN)
+    (fun x ↦ ?_) hgr.off_le
+  rw [hWcap, hscap]
+  have e (y : Label.{u}) : min y c = min (min y hE') c := by rw [min_assoc, min_eq_right hcE]
+  by_cases hx : I.amalgam.toCellScheme.grade x ≤ k
+  · rw [hat_of_le hx, hat_of_le hx, e (W x), hWW' x, ← e]
     simp only [min_assoc, min_self]
   · rw [hat_of_lt (not_le.mp hx), hat_of_lt (not_le.mp hx)]
 
