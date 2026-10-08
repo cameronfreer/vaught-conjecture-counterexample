@@ -19,7 +19,8 @@ repository).  The LOW layer of a display (`ProfileTower.isLowLayer_of_isGradePre
 reading from a level reading the actual state (`ProfileTower.ReadsActual.exists_isLowLayer`) use
 of the LOW catalogue only that its states lie in the code grid and are LOW; they hold for every
 such catalogue, in particular for the state catalogue of the LOW clause at `K`
-(`ProfileTower.sCat`), whose states are not normalized.
+(`ProfileTower.sCat`), whose states are normalized by the orbit code over all fields, not by that
+of the amalgam part (`ProfileTower.orbitCode_update_cutoffCut` keeps the partner in it).
 
 **The state tower reads the actual state** (`ProfileTower.readsActualOn_sTower`, compiled in this
 repository).  Let `I` be the seed of a LOW family at `K = g + 1 < m` (the private context a
@@ -351,12 +352,17 @@ theorem readsActualOn_sTower (hα : Order.IsSuccPrelimit α)
   have hclt : c < s (Sum.inr ()) := cutoffCut_lt_of_sepInv hss
   have hcmem : c ∈ grid (g + 1) (bound I) := cutoffCut_scode_mem_grid _ _ _
   have hsK : s ∈ 𝒦 := by
-    refine mem_sCat.mpr ⟨scode_mem_codeGrid _ _, isCutLawful_camal_scode hSc, ?_⟩
+    refine mem_sCat.mpr ⟨scode_mem_codeGrid _ _, isCutLawful_camal_scode hSc,
+      orbitCode_orbitCode, ?_⟩
     have := lowPred_update_of_sepInv (K := g + 1) (N := lowN I (g + 1))
       (r := StageType.faceCell I.restrictFace_left r) hTi hss le_rfl
     rwa [Function.update_eq_self] at this
   have hpK : Function.update s (Sum.inr ()) c ∈ 𝒦 := by
-    refine mem_sCat.mpr ⟨fun f ↦ ?_, ?_, lowPred_update_of_sepInv hTi hss hclt.le⟩
+    have hNi : Sum.inr () ∉ lowNAll I := fun h ↦ by
+      obtain ⟨t, -, ht⟩ := mem_image.mp h
+      cases ht
+    refine mem_sCat.mpr ⟨fun f ↦ ?_, ?_, orbitCode_update_cutoffCut hNi orbitCode_orbitCode hss.2.1,
+      lowPred_update_of_sepInv hTi hss hclt.le⟩
     · rcases f with d | z
       · rw [Function.update_of_ne Sum.inl_ne_inr]; exact scode_mem_codeGrid _ _ _
       · rw [Function.update_self]; exact grid_subset_codeGrid _ _ hcmem
@@ -383,7 +389,7 @@ theorem readsActualOn_sTower (hα : Order.IsSuccPrelimit α)
     rw [hiu] at h
     exact h
   refine ReadsActualOn.exists_isLowLayer hα hL
-    (fun R hR ↦ ⟨(mem_sCat.mp hR).1, (mem_sCat.mp hR).2.2⟩) (N := (sTower L 𝒜 (J + 2)).forget)
+    (fun R hR ↦ ⟨(mem_sCat.mp hR).1, (mem_sCat.mp hR).2.2.2⟩) (N := (sTower L 𝒜 (J + 2)).forget)
     (hN₂.forget hA0) (hN₁.hasBotExtension_next hA0) (by omega) (by omega)
     (ψ := sEmb (J + 1)) (isGradePrefix_sEmb (J + 1)) (fun d ↦ sTower_embed (J + 1) d)
     ⟨Fin.natAdd N₁.S.card iu, θ, ilo, ihi, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ _,
