@@ -47,12 +47,18 @@ from cutoff stable recovery for the graded cap calibration at every `ξ < ω₁`
 **The calibration margin** (`StageType.GradedCapMarginCalibration`,
 `Realization.IsModel.acquiresCalibratedContexts_gradedCapMargin`).  The graded cap calibration
 gives a cap of grade `N` with `γ < λ_ξ + N`.  A reading of the new formal-top cells of `D` through
-a marker at an offset `R` below the grade of the cap gives values at least `λ_ξ + R`, which exceed
-`γ` only if `γ < λ_ξ + R` (argued, not formalized: no such reading is compiled).  The margin
-calibration asks for such an `R < N`.  Its acquisition is
-compiled: the graded cap calibration acquired at the successor of `γ`, still below `λ_{ξ+1}`, gives
-`γ + 1 < λ_ξ + N`, so `R = N - 1` works.  So (R4) for receiving models follows from cutoff stable
-recovery for the margin calibration
+a marker labelled `λ_ξ + i` at an offset `R` below the grade of the cap gives values at least
+`λ_ξ + R`, which exceed `γ` only if `γ < λ_ξ + R` (argued here; no such reading is compiled in
+this module).  The margin calibration adds to the graded cap calibration, for the same cap:
+* (M1) an offset `R < N` with `γ < λ_ξ + R`;
+* (M2) a **marker in the block of `λ_ξ`**: a cell labelled `λ_ξ + i` with `i < N` and of grade at
+  most `N`, whether or not `D` has a label in that block (the reference clause gives one only when
+  it has).
+Its acquisition is compiled, in every model that is not cover-hollow and has unbounded growth,
+from the argument of `Realization.IsModel.acquiresCalibratedContexts_gradedCap`: there the marker
+of non-hollowness is acquired with `i < N` and grade at most `N`, and the grade `N` of the cap
+exceeds `K + |x|` for `γ ≤ λ_ξ + K`, so `R = K + 1` works.  So (R4) for receiving models follows
+from cutoff stable recovery for the margin calibration
 (`Expansion.ReceivingStableCappedReceiving.of_hasCutoffStableRecoverySchemes_gradedCapMargin`),
 whose inputs are among those of the graded cap calibration
 (`StageType.GradedCapMarginCalibration.gradedCapCalibration`).
@@ -155,8 +161,9 @@ theorem HasStableRecoverySchemes.hasCutoffStableRecoverySchemes
 
 variable (ξ) in
 /-- The **graded cap calibration with a margin**: the graded cap calibration
-(`StageType.GradedCapCalibration`) with, for the same cap `b` of grade `N`, an offset `R < N` with
-`γ < λ_ξ + R`. -/
+(`StageType.GradedCapCalibration`) with, for the same cap `b` of grade `N`, (M1) an offset `R < N`
+with `γ < λ_ξ + R`, and (M2) a marker in the block of `λ_ξ`: a cell `a` labelled `λ_ξ + i` with
+`i < N` and of grade at most `N`. -/
 def GradedCapMarginCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m)
     (_ : Fin k ↪ Fin m) (D : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) :
     Prop :=
@@ -164,6 +171,9 @@ def GradedCapMarginCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (
     ((blockStage ξ + Tp.toCellScheme.grade b : Ordinal.{u}) : Label.{u}) ≤ Tp.label b ∧
     k < Tp.toCellScheme.grade b ∧
     (∃ R : ℕ, R < Tp.toCellScheme.grade b ∧ γ < blockStage ξ + R) ∧
+    (∃ (a : Fin Tp.card) (i : ℕ), i < Tp.toCellScheme.grade b ∧
+      Tp.toCellScheme.grade a ≤ Tp.toCellScheme.grade b ∧
+      Tp.label a = ((blockStage ξ + i : Ordinal.{u}) : Label.{u})) ∧
     ∀ (j : Fin D.card) (o : Ordinal.{u}), D.label j = o →
       ∃ (μ : Ordinal.{u}) (n i : ℕ) (a : Fin Tp.card), Order.IsSuccPrelimit μ ∧ o = μ + n ∧
         n < Tp.toCellScheme.grade b ∧ i < Tp.toCellScheme.grade b ∧
@@ -175,22 +185,8 @@ theorem GradedCapMarginCalibration.gradedCapCalibration
     {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f : Fin k ↪ Fin m}
     {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}}
     (h : GradedCapMarginCalibration ξ Tp f D γ) : GradedCapCalibration ξ Tp f D γ := by
-  obtain ⟨b, hb, hk, ⟨R, hR, hγ⟩, href⟩ := h
+  obtain ⟨b, hb, hk, ⟨R, hR, hγ⟩, -, href⟩ := h
   exact ⟨b, hb, hk, hγ.trans (add_lt_add_right (Nat.cast_lt.mpr hR) _), href⟩
-
-/-- **The graded cap calibration at the successor gives the margin**: if the graded cap
-calibration holds at `succ γ`, the margin calibration holds at `γ`, with `R` one less than the
-grade of the cap. -/
-theorem GradedCapCalibration.gradedCapMarginCalibration_of_succ
-    {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f : Fin k ↪ Fin m}
-    {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}}
-    (h : GradedCapCalibration ξ Tp f D (Order.succ γ)) : GradedCapMarginCalibration ξ Tp f D γ := by
-  obtain ⟨b, hb, hk, hγ, href⟩ := h
-  obtain ⟨N, hN⟩ : ∃ N, Tp.toCellScheme.grade b = N + 1 := ⟨_, (Nat.succ_pred_eq_of_pos
-    (Nat.zero_lt_of_lt hk)).symm⟩
-  refine ⟨b, hb, hk, ⟨N, by omega, ?_⟩, href⟩
-  rw [hN, Nat.cast_succ, ← add_assoc, ← Order.succ_eq_add_one] at hγ
-  exact Order.succ_lt_succ_iff.mp hγ
 
 /-! ### The semantic coatom completion -/
 
@@ -303,15 +299,101 @@ theorem stablyReceivesAt_of_acquiresCalibratedContexts_of_hasFiniteCutReceiving
 
 /-- **Acquisition of the margin calibration**: a model `R` at `λ_ξ` that is not cover-hollow and
 has top-grade supremum `⊤` acquires calibrated contexts for the graded cap calibration with a
-margin.  The graded cap calibration is acquired at the successor of `γ`, which is still below
-`λ_{ξ+1}` (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`). -/
+margin.  The argument of `Realization.IsModel.acquiresCalibratedContexts_gradedCap`, which already
+acquires the marker of non-hollowness (`Realization.exists_stableCandidate_label_eq_coe_add`) with
+its offset and grade below the grade `N` of the cap; for `γ ≤ λ_ξ + K` the cap is chosen of grade
+above `K + |x|` with `|x| > 0`, so the offset `R = K + 1` gives (M1). -/
 theorem IsModel.acquiresCalibratedContexts_gradedCapMargin (hR : R.IsModel)
     (hnh : ¬ R.IsCoverHollow) (hgrow : R.topGradeSup = ⊤) :
-    AcquiresCalibratedContexts ξ (StageType.GradedCapMarginCalibration ξ) R hR.isStablyLawful :=
-  fun x hx D hD γ hγ ↦
-    let ⟨w, f, hf, hC⟩ := hR.acquiresCalibratedContexts_gradedCap hnh hgrow x hx D hD
-      (Order.succ γ) ((isSuccLimit_blockStage (ξ + 1)).succ_lt hγ)
-    ⟨w, f, hf, hC.gradedCapMarginCalibration_of_succ⟩
+    AcquiresCalibratedContexts ξ (StageType.GradedCapMarginCalibration ξ) R hR.isStablyLawful := by
+  classical
+  intro x hx D _ γ hγ
+  have hlim := isSuccPrelimit_blockStage ξ
+  have hpos : (0 : Ordinal.{u}) < blockStage ξ :=
+    Ordinal.omega0_pos.trans_le (omega0_le_blockStage ξ)
+  obtain ⟨K, hK⟩ := exists_le_blockStage_add_natCast hγ
+  obtain ⟨t, ht, -⟩ := exists_eq_stableType_of_stableCandidate_eval x.eval_tuple
+  -- the block of each label of `D`: below `λ_ξ` (a reference cell by uniformity) or `λ_ξ` itself
+  have hblock (j : Fin D.card) : ∃ ν : Ordinal.{u}, (Order.IsSuccPrelimit ν ∧ ν < blockStage ξ) ∧
+      ∃ B : ℕ, ∀ o : Ordinal.{u}, D.label j = o →
+        ∃ n < B, o = ν + n ∨ o = blockStage ξ + n := by
+    rcases atStage_iff.mp (D.atStage j) with h | ⟨o, ho, h⟩ | h
+    · exact ⟨0, ⟨Ordinal.isSuccPrelimit_zero, hpos⟩, 0, fun o ho ↦ by simp [h] at ho⟩
+    · rw [blockStage_add_one] at ho
+      rcases lt_or_ge o (blockStage ξ) with hlt | hge
+      · obtain ⟨n, hn⟩ := Ordinal.exists_eq_add_natCast_of_le_of_lt_add_omega0
+          (Ordinal.mul_div_le o ω) (Ordinal.lt_mul_div_add o Ordinal.omega0_ne_zero)
+        refine ⟨ω * (o / ω), ⟨Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _),
+          (Ordinal.mul_div_le o ω).trans_lt hlt⟩, n + 1,
+          fun o' ho' ↦ ⟨n, n.lt_succ_self, Or.inl ?_⟩⟩
+        rw [← h] at ho'
+        exact (WithTop.coe_injective (WithBot.coe_injective ho')).symm.trans hn
+      · obtain ⟨n, hn⟩ := Ordinal.exists_eq_add_natCast_of_le_of_lt_add_omega0 hge ho
+        refine ⟨0, ⟨Ordinal.isSuccPrelimit_zero, hpos⟩, n + 1,
+          fun o' ho' ↦ ⟨n, n.lt_succ_self, Or.inr ?_⟩⟩
+        rw [← h] at ho'
+        exact (WithTop.coe_injective (WithBot.coe_injective ho')).symm.trans hn
+    · exact ⟨0, ⟨Ordinal.isSuccPrelimit_zero, hpos⟩, 0, fun o ho ↦ by simp [h] at ho⟩
+  choose ν hν B hB using hblock
+  -- reference cells for the blocks below `λ_ξ`, in an occurrence `y` containing `x`
+  obtain ⟨y, fy, K₁, B₁, hfy, -, -, hanc⟩ :=
+    hR.exists_extend_uniformity ⟨x.arity, x.tuple, t, ht⟩ hpos (List.ofFn ν) fun μ hμ ↦ by
+      obtain ⟨j, rfl⟩ := List.mem_ofFn.mp hμ
+      exact hν j
+  -- a marker, in an occurrence `z₀` of the candidate
+  obtain ⟨z₀, a₀, i₀, ha₀⟩ := exists_stableCandidate_label_eq_coe_add hnh hR.isStablyLawful
+  -- a cap, in an occurrence `z₁` of the candidate, of grade above everything involved
+  obtain ⟨z₁, b₁, hgb₁, hb₁⟩ := exists_coe_add_grade_le_stableCandidate_label hgrow
+    hR.isStablyLawful (K + x.arity + K₁ + i₀ + univ.sup B + y.arity + z₀.arity)
+  -- one occurrence `w` containing `y`, `z₀` and `z₁`
+  obtain ⟨w, hw⟩ := hR.isCovering.exists_subset_support
+    (univ.map y.tuple ∪ univ.map z₀.tuple ∪ univ.map z₁.tuple)
+  obtain ⟨g, hg⟩ := w.exists_trans_eq (subset_union_left.trans (subset_union_left.trans hw))
+  obtain ⟨f₀, hf₀⟩ := w.exists_trans_eq (subset_union_right.trans (subset_union_left.trans hw))
+  obtain ⟨f₁, hf₁⟩ := w.exists_trans_eq (subset_union_right.trans hw)
+  -- the marker and the cap move to the stable type of `w` with their labels and grades
+  have hcons := isConsistent_stableCandidate (hlaw := hR.isStablyLawful) hR.isConsistent
+    hR.isCovering
+  let W : (R.stableCandidate hR.isStablyLawful).Occurrence :=
+    ⟨w.arity, w.tuple, _, stableCandidate_eval_of_eval w.eval_tuple⟩
+  obtain ⟨a', ha'l, ha'g⟩ := Occurrence.exists_label_grade_eq_of_trans_eq hcons (y := W) hf₀ a₀
+  obtain ⟨b', hb'l, hb'g⟩ := Occurrence.exists_label_grade_eq_of_trans_eq hcons (y := W) hf₁ b₁
+  have hN : K + x.arity + K₁ + i₀ + univ.sup B + y.arity + z₀.arity <
+      W.type.toCellScheme.grade b' :=
+    hgb₁.trans_eq hb'g.symm
+  -- the bounds on the grade of the cap, stated for `W.type`, the stable type of `w`
+  have hkN : x.arity < W.type.toCellScheme.grade b' := by omega
+  have hRN : K + 1 < W.type.toCellScheme.grade b' := by omega
+  have hBN : univ.sup B < W.type.toCellScheme.grade b' := by omega
+  have hiN : i₀ < W.type.toCellScheme.grade b' := by omega
+  have hK₁N : K₁ < W.type.toCellScheme.grade b' := by omega
+  have hyN : y.arity < W.type.toCellScheme.grade b' := by omega
+  have ha'N : W.type.toCellScheme.grade a' ≤ W.type.toCellScheme.grade b' := by
+    have := z₀.type.grade_le a₀
+    omega
+  refine ⟨w, fy.trans g, by rw [Function.Embedding.trans_assoc, hg, hfy], b', ?_, hkN,
+    ⟨K + 1, hRN, hK.trans_lt (add_lt_add_right (Nat.cast_lt.mpr (Nat.lt_succ_self K)) _)⟩,
+    ⟨a', i₀, hiN, ha'N, ha'l.trans ha₀⟩, fun j o ho ↦ ?_⟩
+  · -- the cap: its label in `W.type` is its label in `z₁.type`
+    change _ ≤ W.type.label b'
+    rw [hb'l, hb'g]
+    exact hb₁
+  · have hBj : B j ≤ univ.sup B := le_sup (mem_univ j)
+    obtain ⟨n, hn, h | h⟩ := hB j o ho
+    · -- a block below `λ_ξ`: the reference cell of `y`, moved to `w` with its label and grade
+      obtain ⟨z, k, hk, hz, -⟩ := hanc (ν j) (List.mem_ofFn.mpr ⟨j, rfl⟩)
+      obtain ⟨z', hz', hz'g⟩ := Occurrence.exists_label_grade_eq_of_trans_eq hR.isConsistent hg z
+      have hne : w.type.label z' ≠ ⊤ := by
+        rw [hz', hz]
+        exact (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)).ne
+      refine ⟨ν j, n, k, z', (hν j).1, h, (hn.trans_le hBj).trans hBN,
+        hk.trans hK₁N, hz'g.trans_le ((y.type.grade_le z).trans hyN.le), ?_⟩
+      -- the label of the stable type at `z'` is the stable section there
+      change R.stableSection w.tuple w.type z' = _
+      rw [stableSection_of_ne_top hne, hz', hz]
+    · -- the block `λ_ξ`: the marker
+      exact ⟨blockStage ξ, n, i₀, a', hlim, h, (hn.trans_le hBj).trans hBN, hiN, ha'N,
+        ha'l.trans ha₀⟩
 
 end Realization
 
