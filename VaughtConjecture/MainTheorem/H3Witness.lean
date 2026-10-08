@@ -128,6 +128,17 @@ theorem isBoundedReading_band {ν : Label.{u} → Label.{u}} (hν : IsBoundedRea
     · simp only [hx, mt hlt.mp hx, ite_false]
       rw [bandMap_visibilityReplace hκ hlam (hk.trans hKN) hi (not_lt.mp hx), hν.comm _ k i hk hi]
 
+/-- **A replacement at the value `i` is self-visible at `i`**, for `i ≤ k`. -/
+theorem isSelfVisible_visibilityReplace_of_le {k i : ℕ} (hi : i ≤ k) (x : Label.{u}) :
+    IsSelfVisible i (visibilityReplace k i x) := by
+  by_cases hb : x = ⊥
+  · rw [hb, visibilityReplace_bot]; exact isSelfVisible_bot _
+  by_cases ht : x = ⊤
+  · rw [ht, visibilityReplace_top]; exact isSelfVisible_top _
+  obtain ⟨q, n, rfl⟩ := exists_block hb ht
+  rw [visibilityReplace_block, isSelfVisible_block]
+  split_ifs <;> omega
+
 /-- **A witness inverting a bounded reading on finitely many labels.**  Let `σ₀` be a bounded
 reading at `N > 0` reading finitely many row values `ρ x` (none `⊤`) as labels `ℓ x = σ₀ (ρ x)`
 whose finite parts lie below `N`, `ν` a bounded reading at `K ≤ N`, and `θ` self-visible at
@@ -249,5 +260,168 @@ theorem exists_witness_of_reading {ι : Type*} [Finite ι] {ℓ ρ : ι → Labe
       ((Finset.le_sup (f := fun x ↦ piece x (ℓ x')) (mem_univ x')).trans (le_max_right _ _))
 
 end Label
+
+namespace H3
+
+open Label StageType CellScheme ProfileTower
+
+variable {α : Ordinal.{u}} {n k : ℕ}
+
+section Witness
+
+variable {t' : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {tb : StageType.{u} α (k + 1)}
+  (ht' : t'.IsLegal) (hp : restrictFace Fin.castSuccEmb t' = some p) (htb : tb ∈ p.cofaces)
+  {g : Fin n ↪ Fin k} {t : StageType.{u} α n} (hpt : restrictFace g p = some t)
+  {d : StageType.{u} α (n + 1)} (hd : d ∈ t.cofaces)
+
+variable (n) in
+/-- **The cap of the witness at the root** of a prescription `f`: the replacement at the value
+`n + 1` of its value at the marker, capped at its value at the cap. -/
+noncomputable def rootCap (c r : Fin t'.card) (f : Prof (seed ht' hp htb)) : Label.{u} :=
+  min (visibilityReplace (t'.toCellScheme.grade c) (n + 1)
+      (f (faceCell (restrictFace_left_seed ht' hp htb) r)))
+    (f (faceCell (restrictFace_left_seed ht' hp htb) c))
+
+/-- **A witness at the root from the locality at the cap.**  At an acquired context, a
+prescription `f` lawful below the private coatom at a grade from the grade of the cap, not `⊥` at
+the cap, has a witness at the root at its root cap (`H3.rootCap`), provided some label `c₀ ≠ ⊥`
+self-visible at `n + 1` lies below its values at the root cells with ordinal labels, capped at the
+root cap (a named condition): the witness of `Label.exists_witness_of_reading` for the bounded
+reading of the label of `t'` at the cap and the shifter of the locality of `f` at the cap, capped
+at the root cap; the root cells labelled `⊤` read at least the root cap by the marker inequality,
+those labelled `⊥` are `⊥` by the root bottoms. -/
+theorem rootWitness_of_locality {c r : Fin t'.card}
+    (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r)
+    (hoff : t'.RootOffsetsBelow (g.trans Fin.castSuccEmb) (t'.toCellScheme.grade c))
+    (hbot : t'.RootBottomRespected (g.trans Fin.castSuccEmb) c) {k' : ℕ}
+    (f : Prof (seed ht' hp htb))
+    (hf : (seed ht' hp htb).amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (k + 1)), k')
+      (fun e ↦ f e))
+    (hck : t'.toCellScheme.grade c ≤ k')
+    (hcap : f (faceCell (restrictFace_left_seed ht' hp htb) c) ≠ ⊥)
+    (hlow : ∃ c₀ : Label.{u}, c₀ ≠ ⊥ ∧ IsSelfVisible (n + 1) c₀ ∧
+      ∀ x (o : Ordinal.{u}), t.label x = o →
+        c₀ ≤ min (f (rootCell ht' hp htb hpt x)) (rootCap n ht' hp htb c r f)) :
+    RootWitness hd.2 (fun x ↦ f (rootCell ht' hp htb hpt x)) (rootCap n ht' hp htb c r f) := by
+  classical
+  set N := t'.toCellScheme.grade c with hNdef
+  set θ := rootCap n ht' hp htb c r f with hθdef
+  have hL := restrictFace_left_seed ht' hp htb
+  have ht : restrictFace (g.trans Fin.castSuccEmb) t' = some t :=
+    (restrictFace_trans t' Fin.castSuccEmb g hp).symm.trans hpt
+  have hrc (x : Fin t.card) : rootCell ht' hp htb hpt x = faceCell hL (faceCell ht x) := by
+    change faceCell hL (faceCell hp (faceCell hpt x)) = _
+    rw [faceCell_trans rfl hp hpt ht x]
+  have hn := hctx.2.2.1
+  have hvis (x : Fin t.card) : faceCell ht x ∈ t'.visibleCells (g.trans Fin.castSuccEmb) :=
+    t'.toScheme.faceCell_mem_visibleCells _ x
+  have hbelow (x : Fin t.card) :
+      faceCell ht x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex c) :=
+    mem_below_of_mem_visibleCells hctx.1.1 (by omega) (hvis x)
+  have hbelowA (y : Fin t'.card) (hy : y ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex c)) :
+      faceCell hL y ∈ (seed ht' hp htb).amalgam.toCellScheme.below
+        ((seed ht' hp htb).amalgam.toCellScheme.gradedIndex (faceCell hL c)) := by
+    rw [CellScheme.mem_below] at hy ⊢
+    simp only [CellScheme.gradedIndex, Prod.mk_le_mk, scope_faceCell, grade_faceCell,
+      map_subset_map] at hy ⊢
+    exact hy
+  have hcb : faceCell hL c ∈ (seed ht' hp htb).amalgam.toCellScheme.below
+      (univ.erase (Fin.last (k + 1)), k') := by
+    refine ⟨?_, ?_⟩
+    · change (seed ht' hp htb).amalgam.toCellScheme.scope (faceCell hL c) ⊆ _
+      rw [scope_faceCell, ← Coatom.univ_map_left]
+      exact map_subset_map.mpr (subset_univ _)
+    · change (seed ht' hp htb).amalgam.toCellScheme.grade (faceCell hL c) ≤ k'
+      rw [grade_faceCell]
+      exact hck
+  obtain ⟨hord, hloc, -⟩ := Rows.isLawfulBelow_iff_forall.mp hf
+  obtain ⟨gf, σf, hw, heq⟩ := hloc _ hcb
+  have hloc' (y : Fin t'.card) (hy : y ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex c)) :
+      min (f (faceCell hL y)) (f (faceCell hL c)) =
+        min (σf (t'.rowAt c y)) (gf (t'.toCellScheme.grade y)) := by
+    have h := heq ⟨faceCell hL y, hbelowA y hy⟩
+    change min (f (faceCell hL y)) (f (faceCell hL c)) =
+      min (σf ((seed ht' hp htb).amalgam.rows.row (faceCell hL c) ⟨faceCell hL y, hbelowA y hy⟩))
+        (gf ((seed ht' hp htb).amalgam.toCellScheme.grade (faceCell hL y))) at h
+    rw [← Scheme.rowAt_of_mem (hbelowA y hy), rowAt_faceCell hL, grade_faceCell] at h
+    exact h
+  have hcc : c ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex c) :=
+    t'.toCellScheme.mem_below_gradedIndex c
+  have hgN : f (faceCell hL c) ≤ gf N := by
+    have h := hloc' c hcc
+    rw [min_self] at h
+    exact h.le.trans (min_le_right _ _)
+  have hcsv : IsSelfVisible N (f (faceCell hL c)) := by
+    have h := hord _ hcb
+    change IsSelfVisible ((seed ht' hp htb).amalgam.toCellScheme.grade (faceCell hL c)) _ at h
+    rwa [grade_faceCell] at h
+  have hθcap : θ ≤ f (faceCell hL c) := min_le_right _ _
+  have hθg {j : ℕ} (hj : j ≤ N) : θ ≤ gf j := hθcap.trans (hgN.trans (hw.antitone hj))
+  have hθsv : IsSelfVisible (n + 1) θ :=
+    (Label.isSelfVisible_visibilityReplace_of_le (by omega) _).min (hcsv.mono (by omega))
+  set ν : Label.{u} → Label.{u} := fun z ↦ min (σf z) θ
+  have hν : Label.IsBoundedReading (n + 1) ν :=
+    Label.isBoundedReading_minCap hw hθsv (hθg (by omega))
+  obtain ⟨σ₀, hσ₀, hread₀⟩ := exists_isBoundedReading t'.isLawful hctx.1.2.1
+  have hgrade (x : Fin t.card) : t'.toCellScheme.grade (faceCell ht x) ≤ N := by
+    have h := hbelow x
+    rw [CellScheme.mem_below] at h
+    exact h.2
+  have hid (x : Fin t.card) : min (f (rootCell ht' hp htb hpt x)) θ =
+      min (σf (t'.rowAt c (faceCell ht x))) θ := by
+    rw [hrc]
+    calc min (f (faceCell hL (faceCell ht x))) θ
+        = min (min (f (faceCell hL (faceCell ht x))) (f (faceCell hL c))) θ := by
+          rw [min_assoc, min_eq_right hθcap]
+      _ = min (min (σf (t'.rowAt c (faceCell ht x))) (gf (t'.toCellScheme.grade (faceCell ht x))))
+            θ := by rw [hloc' _ (hbelow x)]
+      _ = min (σf (t'.rowAt c (faceCell ht x))) θ := by
+          rw [min_assoc, min_eq_right (hθg (hgrade x))]
+  obtain ⟨c₀, hc₀b, hc₀, hc₀ν⟩ := hlow
+  obtain ⟨Φ, hΦ, hrefl, hΦtop, hΦval⟩ := Label.exists_witness_of_reading (ι := Fin t.card)
+    (ℓ := t.label) (ρ := fun x ↦ t'.rowAt c (faceCell ht x)) (by omega) hσ₀
+    (fun x ↦ (label_faceCell ht x).symm.trans (hread₀ _ (hbelow x)))
+    (fun x ↦ ((t'.isCoded.rowAt_lt c _).trans_le le_top).ne)
+    (fun x μ j hμ h ↦ hoff _ (hvis x) μ j hμ ((label_faceCell ht x).trans h))
+    (by omega) hν hθsv hc₀ hc₀b fun x o ho ↦ (hc₀ν x o ho).trans_eq (hid x)
+  refine ⟨n + 1, le_rfl, Φ, hΦ, fun z h ↦ hrefl _ h, hΦtop, fun x ↦ ?_⟩
+  induction hx : t.label x using Label.recBotCoeTop with
+  | bot =>
+    rw [hΦ.map_bot, min_bot_left]
+    have hl : t'.label (faceCell ht x) = ⊥ := (label_faceCell ht x).trans hx
+    have hrow := hbot _ (hvis x) hl
+    have h := hloc' _ (hbelow x)
+    rw [hrow, hw.map_bot, min_bot_left] at h
+    have hf0 : f (faceCell hL (faceCell ht x)) = ⊥ := (min_eq_bot.mp h).resolve_right hcap
+    change ⊥ = min (f (rootCell ht' hp htb hpt x)) θ
+    rw [hrc, hf0, min_bot_left]
+  | coe o =>
+    rw [← hx, hΦval x o hx, hid x]
+    simp only [ν, min_assoc, min_self]
+  | top =>
+    rw [min_eq_right hΦtop]
+    have hl : t'.label (faceCell ht x) = ⊤ := (label_faceCell ht x).trans hx
+    have hmark := hctx.2.2.2 _ (hvis x) hl
+    have hrb : r ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex c) := hctx.2.1.2.1
+    have hθA : θ ≤ σf (visibilityReplace N (n + 1) (t'.rowAt c r)) := by
+      by_cases hA : σf (t'.rowAt c r) ≤ gf N
+      · rw [hw.visibilityReplace_comm _ N hA (n + 1) (by omega)]
+        calc θ = visibilityReplace N (n + 1) (min (f (faceCell hL r)) (f (faceCell hL c))) :=
+              (visibilityReplace_min_of_isSelfVisible (by omega) hcsv _).symm
+          _ = visibilityReplace N (n + 1) (min (σf (t'.rowAt c r))
+                (gf (t'.toCellScheme.grade r))) := by rw [hloc' r hrb]
+          _ ≤ visibilityReplace N (n + 1) (σf (t'.rowAt c r)) :=
+              monotone_visibilityReplace (by omega) (min_le_left _ _)
+      · exact hθcap.trans (hw.le_apply_visibilityReplace hcsv hgN
+          (hgN.trans_lt (not_le.mp hA)) (by omega))
+    have h1 : θ ≤ σf (t'.rowAt c (faceCell ht x)) := hθA.trans (hw.monotone hmark)
+    have h2 : θ ≤ min (f (rootCell ht' hp htb hpt x)) (f (faceCell hL c)) := by
+      rw [hrc, hloc' _ (hbelow x)]
+      exact le_min h1 (hθg (hgrade x))
+    exact (min_eq_right (h2.trans (min_le_left _ _))).symm
+
+end Witness
+
+end H3
 
 end VaughtConjecture
