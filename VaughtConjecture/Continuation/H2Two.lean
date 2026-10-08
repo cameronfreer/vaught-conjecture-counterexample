@@ -53,8 +53,9 @@ theorem stateAdmission_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : �
 
 set_option warningAsError false in
 /-- **SCAFFOLD (contains `sorry`): the tie at a cap not self-visible at `3`** (`H2.TieAtCap`):
-a cap `h = μ + 2` above the replaced low maximum of a capped lift, where the band raise is not a
-witness bounded by the grade `2`. -/
+a cap `h = μ + 2` above the replaced low maximum of a capped lift whose designated tops are at
+least the frontier cap or exactly `h`.  A witness bounded by the grade `2` sending `μ + 2` above
+itself sends `μ` above `μ + 1`, so the tops at exactly `h` are not raised by a band raise. -/
 theorem tieAtCap_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
     {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
     (hs : t'.IsSourceGapContextAt 2 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
