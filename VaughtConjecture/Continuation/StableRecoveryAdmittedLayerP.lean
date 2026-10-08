@@ -318,7 +318,7 @@ theorem exists_isLawful_lowerP {a b a' b' : Label.{u}} (hL : rows.{u}.IsLawful (
 
 /-- The private and donor copies of the orbit code of a labelling of the lower scheme are the
 orbit map applied to its private and donor copies. -/
-private theorem privP_orbitCode (g : Fin (lowerP β).card → Label.{u}) :
+theorem privP_orbitCode (g : Fin (lowerP β).card → Label.{u}) :
     privP β (orbitCode 2 ((lowerP β).toCellScheme.splice 2 (fun _ ↦ ⊥) g)) =
       fun z ↦ orbitMap 2 ((lowerP β).toCellScheme.splice 2 (fun _ ↦ ⊥) g) (privP β g z) := by
   funext z
@@ -327,7 +327,8 @@ private theorem privP_orbitCode (g : Fin (lowerP β).card → Label.{u}) :
   exact (Scheme.appendFullCellsScheme_grade_castAdd _ _ _ _).trans_le
     (Nat.lt_succ_iff.mp ((seedP β).grade_lt _))
 
-private theorem donP_orbitCode (g : Fin (lowerP β).card → Label.{u}) :
+/-- The donor copy of the orbit code is the orbit map applied to the donor copy. -/
+theorem donP_orbitCode (g : Fin (lowerP β).card → Label.{u}) :
     donP β (orbitCode 2 ((lowerP β).toCellScheme.splice 2 (fun _ ↦ ⊥) g)) =
       fun z ↦ orbitMap 2 ((lowerP β).toCellScheme.splice 2 (fun _ ↦ ⊥) g) (donP β g z) := by
   funext z
