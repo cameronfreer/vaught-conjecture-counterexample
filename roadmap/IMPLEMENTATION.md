@@ -1276,11 +1276,12 @@ corresponding declarations here: compiled in this repository (theorem named), co
 (the hypotheses named), informal and not compiled, or prospective.  [AFK26] states Propositions
 4.32, 4.34 and 4.35 without proof and sketches the proof of Lemma 4.33.  It also states that the
 proof that its system `K[L]` is a Knight system has been formalized; in this repository every
-compiled form of the main theorem is conditional on named hypotheses, at fewest the four of
-`DASHBOARD.md` (hypotheses 2 and 4–6), or on hypotheses derived from them, each still to be proved;
-hypothesis 8 is compiled in this repository (theorem named) (`StageType.hasApexCoatomExtensions`).
-The
-docstrings of `VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026.
+compiled form of the main theorem is conditional on named hypotheses: on the retained all-model
+terminal-classification route, at fewest the four of `DASHBOARD.md` (hypotheses 2 and 4–6), or
+hypotheses derived from them; on the receiving-models route, the three open hypotheses (R4), (R2)
+and (R3) for receiving models; each still to be proved; hypothesis 8 is compiled in this
+repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstrings of
+`VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026.
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
@@ -2263,9 +2264,11 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     hypothesis 8; row 55) and `isNice_of_hasTerminalRefinement` (row 30), both compiled
     conditionally; the composition into `FullPresentations` (row 27) is prospective.  [AFK26]
     states that this proof has been formalized; in this repository every compiled form of the
-    main theorem is conditional on named hypotheses, at fewest the four of `DASHBOARD.md` ((R1), the
-    continuation criterion, (R2), (R3)), or on hypotheses derived from them, each still to be
-    proved; hypothesis 8 is compiled in this repository (theorem named).
+    main theorem is conditional on named hypotheses: on the retained all-model
+    terminal-classification route, at fewest the four of `DASHBOARD.md` ((R1), the continuation
+    criterion, (R2), (R3)), or hypotheses derived from them; on the receiving-models route, the
+    three open hypotheses (R4), (R2) and (R3) for receiving models; each still to be proved;
+    hypothesis 8 is compiled in this repository (theorem named).
 48. [AFK26, Theorem 2.19] (weak Knight systems and perfect sets of models): if `K` is a weak
     Knight system and, for every `β`, the members of the base `K_{-∞}` with no lift in `K_β`
     fall into countably many isomorphism classes, then `K_{-∞}` contains no perfect set of
@@ -3650,7 +3653,8 @@ Each checkpoint needs both its abstract API and a concrete application:
    reduction to `ℕ` for the density sentence needs no hypothesis for the absence of finite models
    (`MainTheorem.infinite_of_realize_densitySentence`).
 
-   **The main theorem: four forms.**
+   **The main theorem: four forms on the all-model terminal-classification route** (retained;
+   the receiving-models route, with three open hypotheses, is at the end of this item).
    `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
    (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on seven named hypotheses:
    `CapToModel`, (R1), forcing donors, `ContinuationCriterion`, (R2), (R3), and nonempty losses.

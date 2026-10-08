@@ -245,8 +245,10 @@ Notes on the rows, each with its marker:
   hypothesis 8 enters), 4.34 and 4.35 without proof and sketches Lemma 4.33.  Their counterparts
   here are compiled (the hereditary property, `hereditary_legalAge`, with no hypothesis) or
   compiled conditionally on the hypotheses below, and every compiled form of the main theorem is
-  conditional on named hypotheses, at fewest the four of the four-hypothesis form ((R1), the
-  continuation criterion, (R2), (R3)), each still to be proved; hypothesis 8 is compiled.
+  conditional on named hypotheses: on the retained all-model terminal-classification route, at
+  fewest the four of the four-hypothesis form ((R1), the continuation criterion, (R2), (R3)), and
+  on the receiving-models route the three of its three-hypothesis form ((R4), (R2) and (R3) for
+  receiving models), each still to be proved; hypothesis 8 is compiled.
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`),
   and with both compiled, at every `β < ω₁` with no further hypothesis
@@ -279,12 +281,15 @@ coupled inputs, the twin donors, the grade of private tops) are the tests of U1�
 
 ## The named hypotheses of the main theorem
 
-Four forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses.  Each
-later form is obtained from the one before it; all four are kept.  At present the fewest
-hypotheses are four.  The count went from seven to six to five by compiled derivations, and from
-five to four by a compiled proof of hypothesis 8 (`StageType.hasApexCoatomExtensions`, compiled
-in this repository (theorem named)); with it hypotheses 1 and 3 are compiled with no hypothesis,
-and hypothesis 7 from next-block uniqueness alone.  Hypotheses 2 and 4–6 are still to be proved.
+Four forms of the main theorem on `ℕ` by the all-model terminal-classification route (retained)
+are compiled, each conditionally on named hypotheses.  Each later form is obtained from the one
+before it; all four are kept.  On this route the fewest hypotheses are four.  The receiving-models
+route (below) has a separate form with three open hypotheses, (R4), (R2) and (R3) for receiving
+models; it changes nothing in this list or the table.  The count went from seven to six to five
+by compiled derivations, and from five to four by a compiled proof of hypothesis 8
+(`StageType.hasApexCoatomExtensions`, compiled in this repository (theorem named)); with it
+hypotheses 1 and 3 are compiled with no hypothesis, and hypothesis 7 from next-block uniqueness
+alone.  Hypotheses 2 and 4–6 are still to be proved.
 
 - **Seven hypotheses.**  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
   (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on hypotheses 1–7 of the table
