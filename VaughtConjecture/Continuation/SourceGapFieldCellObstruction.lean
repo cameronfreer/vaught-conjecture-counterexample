@@ -23,7 +23,7 @@ the doubling copies of `z`, and the row of each copy reads it.  A copy reads the
 
 **Such a reading forces `φ` above `⊥`** (`FieldAdmission.eq_bot_of_transformsTo_one_two`): a
 witness sending a row value `1` to `⊥` sends `2` to `⊥` (`visibilityReplace 2 2 1 = 2`, and the
-guard at the grade `2` holds at `⊥`), so a section `⊥` at the cell read at `1` is `⊥` at every cell
+commutation condition at the grade `2` holds at `⊥`), so a section `⊥` at the cell read at `1` is `⊥` at every cell
 of no lower grade read at `2`.  At the copies (equal to the root) this says: `φ` is `⊥` only when
 the root is.
 
