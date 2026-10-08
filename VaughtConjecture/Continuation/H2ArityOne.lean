@@ -310,7 +310,7 @@ theorem castSucc_mem_visibleCells_addApex {k p : ℕ} {t : StageType.{u} α k}
 
 section Seed
 
-variable {I : Seed.{u} α 1}
+variable {m : ℕ} {I : Seed.{u} α m}
 
 variable (I) in
 /-- The cell of the amalgam over a cell of the context (the first coatom). -/
@@ -343,18 +343,25 @@ def RootDet {n : ℕ} (t : StageType.{u} α (n + 1)) (x : Fin t.card) : Prop :=
 
 section Key
 
-variable {I : Seed.{u} α 1}
+variable {m : ℕ} {I : Seed.{u} α m}
 
-/-- The middle point is not on a face through the second coatom. -/
-theorem one_notMem_range {n : ℕ} (g : Fin n ↪ Fin 1) :
-    (1 : Fin 3) ∉ Set.range (extendByLast (g.trans (Fin.castSuccEmb : Fin 1 ↪ Fin 2))) := by
+/-- The last point of the first coatom is not on a face through the second coatom. -/
+theorem last_notMem_range {m n : ℕ} (g : Fin n ↪ Fin m) :
+    (Fin.last m).castSucc ∉
+      Set.range (extendByLast (g.trans (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)))) := by
   rintro ⟨i, hi⟩
   induction i using Fin.lastCases with
-  | last => rw [extendByLast_last] at hi; exact absurd hi (by decide)
+  | last =>
+    rw [extendByLast_last] at hi
+    exact Fin.castSucc_ne_last _ hi.symm
   | cast j =>
     rw [extendByLast_castSucc] at hi
-    have : (g j : Fin 1) = 0 := Subsingleton.elim _ _
-    simp [this] at hi
+    exact Fin.castSucc_ne_last _ (Fin.castSucc_injective _ hi)
+
+/-- The middle point is not on a face through the second coatom (two points). -/
+theorem one_notMem_range {n : ℕ} (g : Fin n ↪ Fin 1) :
+    (1 : Fin 3) ∉ Set.range (extendByLast (g.trans (Fin.castSuccEmb : Fin 1 ↪ Fin 2))) :=
+  last_notMem_range g
 
 /-- **The key step at two points.**  In the coface `F.completion` of a completion with the reading
 property, a lawful labelling agreeing with it on the context face and capped at a cutoff above the
@@ -364,7 +371,7 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
     {Lo Tops : Finset (Fin I.right.card)} (hrec : RecProp F o r K Lo Tops) {δ : Label.{u}}
     {c : Label.{u}} (hc : IsSelfVisible K c)
     (hlabc : ∀ x, I.right.label x ≠ ⊤ → I.right.label x ≤ c) (hcδ : c < δ)
-    (hLo : ∀ x ∈ Lo, I.right.label x ≠ ⊤) {n : ℕ} {g : Fin n ↪ Fin 1}
+    (hLo : ∀ x ∈ Lo, I.right.label x ≠ ⊤) {n : ℕ} {g : Fin n ↪ Fin m}
     (hTops : ∀ x, I.right.label x = ⊤ → x ∈ I.right.toScheme.visibleCells (extendByLast g) →
       x ∉ I.right.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet I.right x → x ∈ Tops)
     (ℓ : Fin (F.completion hα).card → Label.{u}) (hℓ : (F.completion hα).rows.IsLawful ℓ)
@@ -372,12 +379,12 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
       ℓ x = (F.completion hα).label x)
     (hcap : ∀ x, min (ℓ x) δ = min ((F.completion hα).label x) δ) :
     ∀ y ∈ (F.completion hα).toScheme.visibleCells
-      (extendByLast (g.trans (Fin.castSuccEmb : Fin 1 ↪ Fin 2))),
+      (extendByLast (g.trans (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)))),
       ℓ y = (F.completion hα).label y := by
   set T := F.truncate hα
   have hδ (x : Fin I.right.card) (hx : I.right.label x ≠ ⊤) : I.right.label x < δ :=
     (hlabc x hx).trans_lt hcδ
-  have hn : 0 < 1 + 2 := by omega
+  have hn : 0 < m + 2 := by omega
   have hlab (x : Fin F.scheme.card) : (F.completion hα).label (Fin.castSucc x) = T.label x :=
     addApex_label_castSucc (t := T) F.isLegalBelowFullGrade (Nat.succ_pos _) x
   have hTe (e : Fin I.amalgam.card) : T.label (F.embed e) = I.amalgam.label e :=
@@ -388,7 +395,7 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
   have hctx (x : Fin I.left.card) : ℓ (Fin.castSucc (F.embed (ctx I x))) = I.left.label x := by
     have hv : F.embed (ctx I x) ∈ T.toScheme.visibleCells Fin.castSuccEmb := by
       refine Scheme.mem_visibleCells.mpr ?_
-      change ((F.scheme.toCellScheme.scope (F.embed (ctx I x)) : Set (Fin 3)) ⊆ _)
+      change ((F.scheme.toCellScheme.scope (F.embed (ctx I x)) : Set (Fin (m + 2))) ⊆ _)
       rw [F.scope_embed, StageType.scope_faceCell]
       intro a ha
       obtain ⟨b, -, rfl⟩ := mem_map.mp (mem_coe.mp ha)
@@ -401,7 +408,7 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
       ℓ (Fin.castSucc (F.embed (don I z))) = I.right.label z := by
     have hv : F.embed (don I z) ∈ T.toScheme.visibleCells Fin.castSuccEmb := by
       refine Scheme.mem_visibleCells.mpr ?_
-      change ((F.scheme.toCellScheme.scope (F.embed (don I z)) : Set (Fin 3)) ⊆ _)
+      change ((F.scheme.toCellScheme.scope (F.embed (don I z)) : Set (Fin (m + 2))) ⊆ _)
       rw [F.scope_embed, StageType.scope_faceCell]
       intro a ha
       obtain ⟨b, hb, rfl⟩ := mem_map.mp (mem_coe.mp ha)
@@ -419,25 +426,26 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
     exact StageType.isLawful_comp_faceCell I.restrictFace_right h2
   intro y hy
   obtain ⟨x, hx, rfl⟩ := exists_castSucc_of_mem_visibleCells_addApex (t := T)
-    F.isLegalBelowFullGrade (Nat.succ_pos _) ⟨1, one_notMem_range g⟩ hy
+    F.isLegalBelowFullGrade (Nat.succ_pos _) ⟨_, last_notMem_range g⟩ hy
   have hx' := Scheme.mem_visibleCells.mp hx
   have hxu : F.scheme.toCellScheme.scope x ≠ univ := by
     intro he
-    have h1 : (1 : Fin 3) ∈ ((F.scheme.toCellScheme.scope x : Finset (Fin 3)) : Set (Fin 3)) := by
+    have h1 : (Fin.last m).castSucc ∈
+        ((F.scheme.toCellScheme.scope x : Finset (Fin (m + 2))) : Set (Fin (m + 2))) := by
       rw [he]; exact mem_coe.mpr (mem_univ _)
-    exact one_notMem_range g (hx' h1)
+    exact last_notMem_range g (hx' h1)
   obtain ⟨e, rfl⟩ := F.mem_range_embed x hxu
-  have he' : ((I.amalgam.toCellScheme.scope e : Finset (Fin 3)) : Set (Fin 3)) ⊆
-      Set.range (extendByLast (g.trans (Fin.castSuccEmb : Fin 1 ↪ Fin 2))) := by
+  have he' : ((I.amalgam.toCellScheme.scope e : Finset (Fin (m + 2))) : Set (Fin (m + 2))) ⊆
+      Set.range (extendByLast (g.trans (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)))) := by
     have := hx'
-    change ((F.scheme.toCellScheme.scope (F.embed e) : Set (Fin 3)) ⊆ _) at this
+    change ((F.scheme.toCellScheme.scope (F.embed e) : Set (Fin (m + 2))) ⊆ _) at this
     rwa [F.scope_embed] at this
-  have hrange : Set.range (extendByLast (g.trans (Fin.castSuccEmb : Fin 1 ↪ Fin 2))) =
-      (fun i ↦ Coatom.right 1 i) '' Set.range (extendByLast g) := by
+  have hrange : Set.range (extendByLast (g.trans (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)))) =
+      (fun i ↦ Coatom.right m i) '' Set.range (extendByLast g) := by
     rw [← extendByLast_trans]
     ext a
     simp [Coatom.right, Coatom.face]
-  have hvR : e ∈ I.amalgam.toScheme.visibleCells (Coatom.right 1) := by
+  have hvR : e ∈ I.amalgam.toScheme.visibleCells (Coatom.right m) := by
     refine Scheme.mem_visibleCells.mpr (he'.trans ?_)
     rw [hrange]
     rintro _ ⟨b, -, rfl⟩
@@ -457,13 +465,13 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
     · -- a new top: the clause at the reader
       have hzv : z ∈ I.right.toScheme.visibleCells (extendByLast g) := by
         refine Scheme.mem_visibleCells.mpr fun a ha ↦ ?_
-        have hmem : Coatom.right 1 a ∈ ((I.amalgam.toCellScheme.scope (don I z) :
-            Finset (Fin 3)) : Set (Fin 3)) := by
+        have hmem : Coatom.right m a ∈ ((I.amalgam.toCellScheme.scope (don I z) :
+            Finset (Fin (m + 2))) : Set (Fin (m + 2))) := by
           rw [StageType.scope_faceCell]
           exact mem_coe.mpr (mem_map_of_mem _ (mem_coe.mp ha))
         obtain ⟨b, hb, hba⟩ := (hrange ▸ he' hmem :
-          Coatom.right 1 a ∈ (fun i ↦ Coatom.right 1 i) '' Set.range (extendByLast g))
-        exact (Coatom.right 1).injective hba ▸ hb
+          Coatom.right m a ∈ (fun i ↦ Coatom.right m i) '' Set.range (extendByLast g))
+        exact (Coatom.right m).injective hba ▸ hb
       have hTz := hTops z hz hzv hroot hdet
       have hqo : (fun x ↦ ℓ (Fin.castSucc x)) (F.embed (ctx I o)) = ⊤ := by
         change ℓ (Fin.castSucc (F.embed (ctx I o))) = ⊤
