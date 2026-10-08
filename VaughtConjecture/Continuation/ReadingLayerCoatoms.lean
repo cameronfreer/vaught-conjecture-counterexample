@@ -19,9 +19,9 @@ from conditions on its two coatom types.
   coatom type, an apex marker reading the cells labelled `⊥` as `⊥`, the face off the point `3`
   labelled `⊥`, the root offsets below the grade `4` of the apex (the acquisition condition), and
   two cells `z₁`, `z₂` of grades `1`, `2` with one proper label, every lawful labelling taking one
-  value at the cells of grade `1` not labelled `⊥`, the only cell of grade `2` not labelled `⊥`
-  being `z₂`, and the cells of grade `3` labelled `⊥`; on the right coatom type, rows raising at
-  the point `3` (`StageType.RowsRaiseAt`) and a new top `x₀` of grade `1` through `3` labelled `⊤`.
+  value at the cells of grade `1` not labelled `⊥` and one at those of grade `2`, and the cells of
+  grade `3` labelled `⊥`; on the right coatom type, rows raising at the point `3`
+  (`StageType.RowsRaiseAt`) and a new top `x₀` of grade `1` through `3` labelled `⊤`.
 * **Legality** (`TowerProfile.readingFillPos_left_of_coatoms`,
   `TowerProfile.isLegalBelowFullGrade_readingTop_of_coatoms`, compiled): under these conditions
   the four fill conditions hold, so the reading layer of the marker and the new top is legal below
@@ -104,8 +104,8 @@ labelled `⊥` as `⊥` (`StageType.RootBottomRespected`) and the other cells la
 face off the point `3` labelled `⊥`; **the root offsets below the grade `4` of the apex** (the
 acquisition condition, `StageType.RootOffsetsBelow`); and two root cells `z₁`, `z₂` of grades `1`,
 `2` with one proper label such that every lawful labelling takes one value at the cells of grade
-`1` not labelled `⊥` (that at `z₁`), the only cell of grade `2` not labelled `⊥` is `z₂`, and the
-cells of grade `3` are labelled `⊥`. -/
+`1` not labelled `⊥` (that at `z₁`) and one value at the cells of grade `2` not labelled `⊥`
+(that at `z₂`), and the cells of grade `3` are labelled `⊥`. -/
 structure LeftTie {n : ℕ} (t' : StageType.{u} α 4) (ι : Fin n ↪ Fin 4)
     (a z₁ z₂ : Fin t'.card) : Prop where
   gradedIndex_apex : t'.toCellScheme.gradedIndex a = (univ, 4)
@@ -123,7 +123,8 @@ structure LeftTie {n : ℕ} (t' : StageType.{u} α 4) (ι : Fin n ↪ Fin 4)
   isProper_label : IsProper (t'.label z₂)
   tie_one : ∀ p : Fin t'.card → Label.{u}, t'.rows.IsLawful p → ∀ z,
     t'.toCellScheme.grade z = 1 → t'.label z ≠ ⊥ → p z = p z₁
-  eq_two : ∀ z, t'.toCellScheme.grade z = 2 → t'.label z ≠ ⊥ → z = z₂
+  tie_two : ∀ p : Fin t'.card → Label.{u}, t'.rows.IsLawful p → ∀ z,
+    t'.toCellScheme.grade z = 2 → t'.label z ≠ ⊥ → p z = p z₂
   label_three : ∀ z, t'.toCellScheme.grade z = 3 → t'.label z = ⊥
 
 /-- The apex of a left coatom type with a tie-keeping marker reads every cell labelled `⊥` as
@@ -190,7 +191,8 @@ theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} {n : ℕ}
     exact hL.tie_one _ (isLawful_left_of_isLawfulBelow hf) z ((grade_leftCell z).symm.trans hg)
       fun hz ↦ h0 (hfr0 hf hfr z hz)
   · obtain ⟨z, rfl⟩ := hcell hd
-    rw [hL.eq_two z ((grade_leftCell z).symm.trans hg) fun hz ↦ h0 (hfr0 hf hfr z hz)]
+    exact hL.tie_two _ (isLawful_left_of_isLawfulBelow hf) z ((grade_leftCell z).symm.trans hg)
+      fun hz ↦ h0 (hfr0 hf hfr z hz)
   · obtain ⟨z, rfl⟩ := hcell hd
     exact hfr0 hf hfr z (hL.label_three z ((grade_leftCell z).symm.trans hg))
   · rw [hga]
@@ -261,8 +263,8 @@ residual hypotheses are:
 * `hface`: the cells off the point `3` (the common face with the right coatom) are labelled `⊥` —
   a shape restriction;
 * `z₁`, `z₂`: root cells of grades `1`, `2` with one proper label, with `htie`, `htwo`, `hthree`
-  (one value at the cells of grade `1` not labelled `⊥`, one cell of grade `2` not labelled `⊥`,
-  the cells of grade `3` labelled `⊥`) — the shape of this family;
+  (one value at the cells of grade `1` not labelled `⊥`, one value at those of grade `2`, the
+  cells of grade `3` labelled `⊥`) — the shape of this family;
 * `hR`: the right coatom type raises at the point `3` and has a new top `x₀`
   (`TowerProfile.RightNewTop`) — a shape restriction on the donor side. -/
 theorem isLegalBelowFullGrade_readingTop_of_acquired {n : ℕ} {h : Fin n ↪ Fin 4}
@@ -278,7 +280,8 @@ theorem isLegalBelowFullGrade_readingTop_of_acquired {n : ℕ} {h : Fin n ↪ Fi
     (hlab : I.left.label z₂ = I.left.label z₁) (hprop : IsProper (I.left.label z₂))
     (htie : ∀ p : Fin I.left.card → Label.{u}, I.left.rows.IsLawful p → ∀ z,
       I.left.toCellScheme.grade z = 1 → I.left.label z ≠ ⊥ → p z = p z₁)
-    (htwo : ∀ z, I.left.toCellScheme.grade z = 2 → I.left.label z ≠ ⊥ → z = z₂)
+    (htwo : ∀ p : Fin I.left.card → Label.{u}, I.left.rows.IsLawful p → ∀ z,
+      I.left.toCellScheme.grade z = 2 → I.left.label z ≠ ⊥ → p z = p z₂)
     (hthree : ∀ z, I.left.toCellScheme.grade z = 3 → I.left.label z = ⊥)
     {x₀ : Fin I.right.card} (hR : RightNewTop I.right x₀) :
     (readingTop I (leftCell I c) (newTops I x₀)).IsLegalBelowFullGrade := by
@@ -300,7 +303,7 @@ theorem isLegalBelowFullGrade_readingTop_of_acquired {n : ℕ} {h : Fin n ↪ Fi
       label_eq := hlab
       isProper_label := hprop
       tie_one := htie
-      eq_two := htwo
+      tie_two := htwo
       label_three := hthree }
 
 /-- **The root of an acquired context carrying the two tied cells has exactly two points**
@@ -464,7 +467,7 @@ theorem leftTie_threeType :
           TwoFaceLiftCounterexample.cellGrade])
     exact ⟨((3 : ℕ) : Ordinal.{u}), (natCast_label 3).symm.trans e.symm⟩
   tie_one p hp z hz hl := tie_one_threeType hα hp z hz hl
-  eq_two z hz hl := by
+  tie_two p _ z hz hl := by
     rcases cases_threeType hα z with rfl | ⟨a, rfl⟩
     · exact absurd ((grade_threeType_last hα).symm.trans hz) (by decide)
     · have ha : TwoFaceLiftCounterexample.cellGrade a = 2 :=

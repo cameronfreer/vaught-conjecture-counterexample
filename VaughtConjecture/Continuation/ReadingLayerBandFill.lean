@@ -40,14 +40,14 @@ grade, not as a union of two lifts along `e`.
 * **The fill from the tie of the marker** (`TowerProfile.readingFillPos_left_of_tie`, compiled):
   at a seed whose right coatom type raises at the point `3` (`StageType.RowsRaiseAt`: its cells of
   grade `1` through `3` read the cells through `3` as themselves and the others as `⊥`; `rightType`
-  does), with the marker `r` of grade `4` on the left
-  coatom, a new top `x` of grade `1` through the point `4`, and cells `t₁`, `t₂` of grades `1`, `2`
-  of the left coatom.  Hypotheses: in every labelling lawful below the left coatom and not `⊥` at
-  `r`, the cells of grade `1` not `⊥` take the value at `t₁`, the only cell of grade `2` not `⊥` is
-  `t₂`, the cells of grade `3` are `⊥`; the marker is a cell `c` of the left coatom type labelled
-  `⊤`, of full scope and grade at least the arity of a root `ι`, with **the root offsets below its
-  grade** (`StageType.RootOffsetsBelow`, the acquisition condition), and `t₁`, `t₂` carry one
-  proper root label.  Then the fill holds for `X = {x}`: the marker keeps the tie of `t₁` and `t₂`
+  does), with the marker `r` of grade `4` on the left coatom, a new top `x` of grade `1` through the
+  point `4`, and cells `t₁`, `t₂` of grades `1`, `2` of the left coatom. Hypotheses: in every
+  labelling lawful below the left coatom and not `⊥` at `r`, the cells of grade `1` not `⊥` take the
+  value at `t₁`, the cells of grade `2` not `⊥` take the value at `t₂`, the cells of grade `3` are
+  `⊥`; the marker is a cell `c` of the left coatom type labelled `⊤`, of full scope and grade at
+  least the arity of a root `ι`, with **the root offsets below its grade**
+  (`StageType.RootOffsetsBelow`, the acquisition condition), and `t₁`, `t₂` carry one proper root
+  label. Then the fill holds for `X = {x}`: the marker keeps the tie of `t₁` and `t₂`
   (`StageType.keepsProperRootTies_of_rootOffsetsBelow`), its row reading `t₂` at most as `t₁`.
   In the band the tie gives `h ≤ f t₁` and `f t₂ ≤ f t₁`; the server is
   `TowerProfile.exists_server_of_rightType` (one cell for all the cells of the left coatom,
@@ -652,14 +652,14 @@ variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
 
 /-- **The fill at the short positive caps from the left coatom, from the ties of the marker**, at a
 seed whose right coatom type raises at the point `3` (`StageType.RowsRaiseAt`; `rightType` does,
-`TowerProfile.rowsRaiseAt_rightType`).  Let `r` be a marker of grade `4` on the left coatom,
-`x` a cell of the amalgam of grade `1` through the point `4` (a new top), and `t₁`, `t₂` cells of
-the left coatom of grades `1` and `2`.  Suppose that in every labelling `f` lawful below the left
-coatom and not `⊥` at `r` the cells of grade `1` not `⊥` take the value at `t₁`, the only cell of
-grade `2` not `⊥` is `t₂`, and the cells of grade `3` are `⊥`.  Suppose the marker is the cell of
-a cell `c` of the left coatom type labelled `⊤`, of full scope and grade at least the arity of a
-root `ι`, with **the root offsets below its grade** (`StageType.RootOffsetsBelow`), and `t₁`, `t₂`
-are the cells of cells visible through `ι` carrying one proper label.  Then
+`TowerProfile.rowsRaiseAt_rightType`). Let `r` be a marker of grade `4` on the left coatom, `x` a
+cell of the amalgam of grade `1` through the point `4` (a new top), and `t₁`, `t₂` cells of the left
+coatom of grades `1` and `2`. Suppose that in every labelling `f` lawful below the left coatom and
+not `⊥` at `r` the cells of grade `1` not `⊥` take the value at `t₁`, the cells of grade `2` not `⊥`
+take the value at `t₂`, and the cells of grade `3` are `⊥`. Suppose the marker is the cell of a cell
+`c` of the left coatom type labelled `⊤`, of full scope and grade at least the arity of a root `ι`,
+with **the root offsets below its grade** (`StageType.RootOffsetsBelow`), and `t₁`, `t₂` are the
+cells of cells visible through `ι` carrying one proper label.  Then
 `ReadingFillPos I r X (Fin.last 4)` for `X = {x}`: the marker keeps the tie of `t₁` and `t₂`
 (`StageType.keepsProperRootTies_of_rootOffsetsBelow`), its row reading `t₂` at most as `t₁`.
 
@@ -687,7 +687,7 @@ theorem readingFillPos_left_of_tie (hraise : I.right.RowsRaiseAt 3)
     (H2 : ∀ f : Fin (scheme I).card → Label.{u},
       (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
       ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
-        (scheme I).toCellScheme.grade d = 2 → f d ≠ ⊥ → d = t₂)
+        (scheme I).toCellScheme.grade d = 2 → f d ≠ ⊥ → f d = f t₂)
     (H3 : ∀ f : Fin (scheme I).card → Label.{u},
       (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
       ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
