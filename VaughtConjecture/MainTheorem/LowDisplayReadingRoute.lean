@@ -32,14 +32,14 @@ extending the glued labels with a separator of the LOW catalogue labelled by a p
 
 **LOW layers on the class of the reading** (`StageType.hasLowLayersOn_lowReading`, compiled in
 this repository).  On the class `StageType.LowReadingClass` of the LOW families with a donor top
-of grade `K`, `0 < K ≤ k`, and the reading, LOW layers exist: the completed display is legal, its
+of grade `K`, `K ≤ k`, and the reading, LOW layers exist: the completed display is legal, its
 faces are the context and the donor literally, and it carries the LOW layer of
 `ProfileTower.isLowLayer_lowDisplay`.  Hence LOW displays on that class
 (`StageType.hasLowDisplaysOn_lowReading`).
 
 **The reading holds exactly when the faces are `⊥` above `K`** (`StageType.lowReadingFamily_iff`,
 compiled in this repository).  At a stage that is zero or a limit, for a LOW family with a donor top
-of grade `K` and `0 < K ≤ k`: the reading implies that every cell of the context and of the donor
+of grade `K` and `K ≤ k`: the reading implies that every cell of the context and of the donor
 of grade in `(K, k]` is labelled `⊥` (`StageType.LowReadingFamily.label_eq_bot`, from
 `ProfileTower.LowReading.face_label_eq_bot`: the canonical levels above the controllers read every
 controller of positive cutoff as `⊥`), and conversely (`StageType.lowReadingFamily_of_bot`, from
@@ -49,14 +49,15 @@ grade in `(K, k]` not labelled `⊥` the reading fails (`StageType.not_lowReadin
 
 **(R2) on the class of the faces `⊥` above `K`** (`StageType.hasLowLayersOn_lowBot`,
 `StageType.hasLowDisplaysOn_lowBot`, compiled in this repository).  On the class
-`StageType.LowBotClass` (a donor top of grade `K`, `0 < K ≤ k`, and the context and the donor
+`StageType.LowBotClass` (a donor top of grade `K`, `K ≤ k`, and the context and the donor
 labelled `⊥` at every grade in `(K, k]`; no condition on labels when `K = k`), LOW layers and LOW
 displays exist.
 
 **Not claimed.**  `StageType.HasLowDisplays` is not proved.  Outside `StageType.LowBotClass` the
 LOW families left are those without a donor top of grade `K` (`StageType.LowStepTieLow`), those
-with `K = k + 1` or `K = 0`, and those with a label other than `⊥` above `K < k`, for which the
-completed display carries no separator labelled `⊤` (`StageType.not_lowReadingFamily`).
+with `K = k + 1` (the grade of a LOW family is positive, `StageType.IsLowFamily.grade_pos`), and
+those with a label other than `⊥` above `K < k`, for which the completed display carries no
+separator labelled `⊤` (`StageType.not_lowReadingFamily`).
 
 ## Placement
 
@@ -122,6 +123,12 @@ end Class
 
 variable {α : Ordinal.{u}} {k : ℕ}
 
+/-- **The grade of a LOW family is positive**: it is the grade of the owner, and grades of cells
+are positive. -/
+theorem IsLowFamily.grade_pos {K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k}
+    {o r : Fin t'.card} (hF : IsLowFamily K t' tb p o r) : 0 < K :=
+  hF.isSourceGapContextAt.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
+
 /-- **The reading of a LOW family** (open): for every decomposition `K = g + 1`, `k = g + 1 + j`
 and every donor top `z` of grade `K`, the reading (`ProfileTower.LowReading`) of the completed
 display over the levels from the grade `0` at `g` and the LOW layer at `K` of the seed of the
@@ -137,16 +144,17 @@ def LowReadingFamily (K : ℕ) (t' tb : StageType.{u} α (k + 1)) (p : StageType
       ((ProfileTower.lvlZero_good g (by omega)).lowNext (by omega) hF.isSourceGapContextAt
         hF.topGrade_donor hz hzK)
 
-/-- **The class of the reading**: the LOW families with a donor top of grade `K`, `0 < K ≤ k`,
-and the reading (`StageType.LowReadingFamily`). -/
+/-- **The class of the reading**: the LOW families with a donor top of grade `K`, `K ≤ k`, and
+the reading (`StageType.LowReadingFamily`). -/
 def LowReadingClass (α : Ordinal.{u}) (K k : ℕ) (t' tb : StageType.{u} α (k + 1))
     (p : StageType.{u} α k) (o r : Fin t'.card) : Prop :=
-  (∃ z, tb.label z = ⊤ ∧ tb.toCellScheme.grade z = K) ∧ 0 < K ∧ K ≤ k ∧
+  (∃ z, tb.label z = ⊤ ∧ tb.toCellScheme.grade z = K) ∧ K ≤ k ∧
     LowReadingFamily K t' tb p o r
 
 /-- **LOW layers on the class of the reading** (`ProfileTower.LowReading.exists_isLowLayer`). -/
 theorem hasLowLayersOn_lowReading : HasLowLayersOn.{u} LowReadingClass := by
-  intro α K k t' tb p o r _ hF ⟨⟨z, hz, hzK⟩, hK0, hKk, hread⟩
+  intro α K k t' tb p o r _ hF ⟨⟨z, hz, hzK⟩, hKk, hread⟩
+  have hK0 := hF.grade_pos
   obtain ⟨g, rfl⟩ : ∃ g, K = g + 1 := ⟨K - 1, by omega⟩
   obtain ⟨j, rfl⟩ : ∃ j, k = g + 1 + j := ⟨k - (g + 1), by omega⟩
   exact ProfileTower.LowReading.exists_isLowLayer (hread hF g j rfl rfl z hz hzK)
@@ -160,30 +168,31 @@ theorem hasLowDisplaysOn_lowReading : HasLowDisplaysOn.{u} LowReadingClass :=
 variable {K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {o r : Fin t'.card}
 
 /-- **The reading forces `⊥` above `K`**: on a LOW family with a donor top of grade `K` and
-`0 < K ≤ k`, the reading implies that every cell of the context and of the donor of grade in
+`K ≤ k`, the reading implies that every cell of the context and of the donor of grade in
 `(K, k]` is labelled `⊥` (`ProfileTower.LowReading.face_label_eq_bot`). -/
 theorem LowReadingFamily.label_eq_bot (hF : IsLowFamily K t' tb p o r)
     (hread : LowReadingFamily K t' tb p o r) {z : Fin tb.card} (hz : tb.label z = ⊤)
-    (hzK : tb.toCellScheme.grade z = K) (hK0 : 0 < K) (hKk : K ≤ k) :
+    (hzK : tb.toCellScheme.grade z = K) (hKk : K ≤ k) :
     (∀ x : Fin t'.card, K < t'.toCellScheme.grade x → t'.toCellScheme.grade x ≤ k →
       t'.label x = ⊥) ∧
     ∀ x : Fin tb.card, K < tb.toCellScheme.grade x → tb.toCellScheme.grade x ≤ k →
       tb.label x = ⊥ := by
+  have hK0 := hF.grade_pos
   obtain ⟨g, rfl⟩ : ∃ g, K = g + 1 := ⟨K - 1, by omega⟩
   obtain ⟨j, rfl⟩ : ∃ j, k = g + 1 + j := ⟨k - (g + 1), by omega⟩
   exact ProfileTower.LowReading.face_label_eq_bot (hread hF g j rfl rfl z hz hzK)
 
-/-- **The reading fails above `K`**: on a LOW family with a donor top of grade `K`, `0 < K ≤ k`,
+/-- **The reading fails above `K`**: on a LOW family with a donor top of grade `K`, `K ≤ k`,
 and a cell of the context or of the donor of grade in `(K, k]` not labelled `⊥`, the reading of
 the completed display fails. -/
 theorem not_lowReadingFamily (hF : IsLowFamily K t' tb p o r) {z : Fin tb.card}
-    (hz : tb.label z = ⊤) (hzK : tb.toCellScheme.grade z = K) (hK0 : 0 < K) (hKk : K ≤ k)
+    (hz : tb.label z = ⊤) (hzK : tb.toCellScheme.grade z = K) (hKk : K ≤ k)
     (hne : (∃ x : Fin t'.card, K < t'.toCellScheme.grade x ∧ t'.toCellScheme.grade x ≤ k ∧
       t'.label x ≠ ⊥) ∨
       ∃ x : Fin tb.card, K < tb.toCellScheme.grade x ∧ tb.toCellScheme.grade x ≤ k ∧
         tb.label x ≠ ⊥) :
     ¬ LowReadingFamily K t' tb p o r := fun hread ↦ by
-  obtain ⟨h₁, h₂⟩ := hread.label_eq_bot hF hz hzK hK0 hKk
+  obtain ⟨h₁, h₂⟩ := hread.label_eq_bot hF hz hzK hKk
   rcases hne with ⟨x, hxK, hxk, hx⟩ | ⟨x, hxK, hxk, hx⟩
   · exact hx (h₁ x hxK hxk)
   · exact hx (h₂ x hxK hxk)
@@ -192,11 +201,11 @@ theorem not_lowReadingFamily (hF : IsLowFamily K t' tb p o r) {z : Fin tb.card}
 
 variable (α) in
 /-- **The class of the faces `⊥` above `K`**: the LOW families with a donor top of grade `K`,
-`0 < K ≤ k`, and every cell of the context and of the donor of grade in `(K, k]` labelled `⊥`
+`K ≤ k`, and every cell of the context and of the donor of grade in `(K, k]` labelled `⊥`
 (no condition when `K = k`). -/
 def LowBotClass (K k : ℕ) (t' tb : StageType.{u} α (k + 1)) (_ : StageType.{u} α k)
     (_ _ : Fin t'.card) : Prop :=
-  (∃ z, tb.label z = ⊤ ∧ tb.toCellScheme.grade z = K) ∧ 0 < K ∧ K ≤ k ∧
+  (∃ z, tb.label z = ⊤ ∧ tb.toCellScheme.grade z = K) ∧ K ≤ k ∧
     (∀ x : Fin t'.card, K < t'.toCellScheme.grade x → t'.toCellScheme.grade x ≤ k →
       t'.label x = ⊥) ∧
     ∀ x : Fin tb.card, K < tb.toCellScheme.grade x → tb.toCellScheme.grade x ≤ k →
@@ -216,25 +225,24 @@ theorem lowReadingFamily_of_bot (hα : Order.IsSuccPrelimit α)
       hF.face_private hF.face_donor) hl hr)
 
 /-- **The reading holds exactly when the faces are `⊥` above `K`**: at a stage that is zero or a
-limit, for a LOW family with a donor top of grade `K` and `0 < K ≤ k`
+limit, for a LOW family with a donor top of grade `K` and `K ≤ k`
 (`StageType.LowReadingFamily.label_eq_bot`, `StageType.lowReadingFamily_of_bot`). -/
 theorem lowReadingFamily_iff (hα : Order.IsSuccPrelimit α) (hF : IsLowFamily K t' tb p o r)
-    {z : Fin tb.card} (hz : tb.label z = ⊤) (hzK : tb.toCellScheme.grade z = K) (hK0 : 0 < K)
-    (hKk : K ≤ k) :
+    {z : Fin tb.card} (hz : tb.label z = ⊤) (hzK : tb.toCellScheme.grade z = K) (hKk : K ≤ k) :
     LowReadingFamily K t' tb p o r ↔
       (∀ x : Fin t'.card, K < t'.toCellScheme.grade x → t'.toCellScheme.grade x ≤ k →
         t'.label x = ⊥) ∧
       ∀ x : Fin tb.card, K < tb.toCellScheme.grade x → tb.toCellScheme.grade x ≤ k →
         tb.label x = ⊥ :=
-  ⟨fun h ↦ h.label_eq_bot hF hz hzK hK0 hKk, fun ⟨hl, hr⟩ ↦ lowReadingFamily_of_bot hα hl hr⟩
+  ⟨fun h ↦ h.label_eq_bot hF hz hzK hKk, fun ⟨hl, hr⟩ ↦ lowReadingFamily_of_bot hα hl hr⟩
 
 /-- **LOW layers on the class of the faces `⊥` above `K`**: the completed display over the LOW
 layer with the actual labels (`StageType.hasLowLayersOn_lowReading`,
 `StageType.lowReadingFamily_of_bot`). -/
 theorem hasLowLayersOn_lowBot : HasLowLayersOn.{u} LowBotClass := by
-  intro α K k t' tb p o r hα hF ⟨htop, hK0, hKk, hl, hr⟩
+  intro α K k t' tb p o r hα hF ⟨htop, hKk, hl, hr⟩
   exact hasLowLayersOn_lowReading t' tb p o r hα hF
-    ⟨htop, hK0, hKk, lowReadingFamily_of_bot hα.isSuccPrelimit hl hr⟩
+    ⟨htop, hKk, lowReadingFamily_of_bot hα.isSuccPrelimit hl hr⟩
 
 /-- **LOW displays on the class of the faces `⊥` above `K`**: (R2) for these LOW families. -/
 theorem hasLowDisplaysOn_lowBot : HasLowDisplaysOn.{u} LowBotClass :=

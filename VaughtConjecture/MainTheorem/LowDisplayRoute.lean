@@ -98,7 +98,7 @@ theorem IsSourceGapContextAt.castSuccEmb {t' : StageType.{u} α (k + 1)}
 last, and a legal donor `tb` of top grade at most `K` with the same face `p` along
 `Fin.castSuccEmb`) has a LOW display at a threshold occurring at the stage.
 
-Not proved.  It holds on the LOW families with a donor top of grade `K`, `0 < K ≤ k`, and
+Not proved.  It holds on the LOW families with a donor top of grade `K`, `K ≤ k`, and
 the context and the donor labelled `⊥` at every grade in `(K, k]`
 (`StageType.hasLowDisplaysOn_lowBot`, in `VaughtConjecture.MainTheorem.LowDisplayReadingRoute`:
 the completed display over the LOW layer with the actual labels).  Outside that class it is open:
