@@ -270,6 +270,321 @@ theorem exists_three_of_one {e : Fin (scheme I).card → Label.{u}}
   · intro d hd
     exact hw1 hd
 
+/-- **A labelling lawful below a pair in the profile layer is lawful below it on the amalgam**:
+the old cells form a lower embedding along which the rows pull back, and a cell available at a
+graded index of an old cell is old. -/
+theorem isLawfulBelow_comp_embed3 {X : Finset (Fin 5) × ℕ} {Q : Fin (scheme I).card → Label.{u}}
+    (hQ : (scheme I).rows.IsLawfulBelow X fun d ↦ Q d) :
+    (I.tower 0).rows.IsLawfulBelow X fun d ↦ Q (embed3 I d.1) := by
+  obtain ⟨ho, hl, ha⟩ := (CellScheme.Rows.isLawfulBelow_iff_forall (w := Q)).mp hQ
+  have hmemX {d : Fin I.amalgam.card} (hd : d ∈ I.amalgam.toCellScheme.below X) :
+      embed3 I d ∈ (scheme I).toCellScheme.below X := by
+    rw [CellScheme.mem_below, gradedIndex_embed3]; exact hd
+  refine (CellScheme.Rows.isLawfulBelow_iff_forall (w := fun d ↦ Q (embed3 I d))).mpr
+    ⟨fun d hd ↦ ?_, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
+  · have := ho _ (hmemX hd)
+    rwa [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd] at this
+  · set φ : I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s) →
+        (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex (embed3 I s)) :=
+      fun d ↦ ⟨embed3 I d.1, by
+        rw [CellScheme.mem_below, gradedIndex_embed3, gradedIndex_embed3]; exact d.2⟩ with hφ
+    have hloc := (hl _ (hmemX hs)).reindex φ
+    have e1 : ((fun d : (scheme I).toCellScheme.below
+        ((scheme I).toCellScheme.gradedIndex (embed3 I s)) ↦ (scheme I).toCellScheme.grade d.1) ∘
+        φ) = fun d ↦ I.amalgam.toCellScheme.grade d.1 := by
+      funext d
+      change (scheme I).toCellScheme.grade (embed3 I d.1) = _
+      rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd]
+    have e2 : ((scheme I).rows.row (embed3 I s) ∘ φ) = I.amalgam.rows.row s := by
+      funext d
+      exact (Scheme.rowAt_of_mem (φ d).2).symm.trans ((rowAt_embed3 s d.1).trans
+        (Scheme.rowAt_of_mem d.2))
+    rw [e1, e2] at hloc
+    exact hloc
+  · obtain ⟨u, hu, hle⟩ := ha (embed3 I s) (embed3 I t) (hmemX ht)
+      (by rw [scope_embed3, scope_embed3]; exact hst)
+      ((congrArg Prod.snd (gradedIndex_embed3 (I := I) s)).trans
+        (hg.trans (congrArg Prod.snd (gradedIndex_embed3 (I := I) t)).symm))
+    have hus : (scheme I).toCellScheme.scope u ≠ univ := by
+      rw [show (scheme I).toCellScheme.scope u = I.amalgam.toCellScheme.scope t from
+        (congrArg Prod.fst hu).trans (scope_embed3 t)]
+      exact I.scope_ne_univ t
+    obtain ⟨u', rfl⟩ := mem_range_embed3 u hus
+    exact ⟨u', (gradedIndex_embed3 u').symm.trans (hu.trans (gradedIndex_embed3 t)), hle⟩
+
+/-- Raising above a cap keeps the cap. -/
+theorem min_raise_self (h x : Label.{u}) : min (raise h x) h = min x h := by
+  unfold raise
+  split_ifs with hx
+  · rw [min_top_left, min_eq_right hx]
+  · rfl
+
+/-- **The target on the amalgam**: `f` on the left coatom and `e` raised at `h` through the point
+`4`, lawful below `(univ, 1)` when `f` is bottom on the common face. -/
+theorem isLawfulBelow_target {e f : Fin (scheme I).card → Label.{u}} {h : Label.{u}}
+    (hhb : ⊥ < h)
+    (hfa : (I.tower 0).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) fun d ↦ f (embed3 I d.1))
+    (hRa : (I.tower 0).rows.IsLawfulBelow (univ, 1) fun d ↦ raise h (e (embed3 I d.1)))
+    (hfe : ∀ d : Fin I.amalgam.card, Fin.last 4 ∉ I.amalgam.toCellScheme.scope d →
+      min (f (embed3 I d)) h = min (e (embed3 I d)) h)
+    (hface : ∀ d : Fin I.amalgam.card, Fin.last 4 ∉ I.amalgam.toCellScheme.scope d →
+      Fin.castSucc (Fin.last 3) ∉ I.amalgam.toCellScheme.scope d → f (embed3 I d) = ⊥) :
+    (I.tower 0).rows.IsLawfulBelow (univ, 1) fun d ↦
+      if Fin.last 4 ∈ I.amalgam.toCellScheme.scope d.1 then raise h (e (embed3 I d.1))
+      else f (embed3 I d.1) := by
+  classical
+  set q : Fin I.amalgam.card → Label.{u} := fun d ↦
+    if Fin.last 4 ∈ I.amalgam.toCellScheme.scope d then raise h (e (embed3 I d))
+    else f (embed3 I d) with hqdef
+  obtain ⟨hfo, hfl, hfav⟩ := (CellScheme.Rows.isLawfulBelow_iff_forall
+    (w := fun d ↦ f (embed3 I d))).mp hfa
+  obtain ⟨hRo, hRl, hRav⟩ := (CellScheme.Rows.isLawfulBelow_iff_forall
+    (w := fun d ↦ raise h (e (embed3 I d)))).mp hRa
+  have hC {d : Fin I.amalgam.card} (hd : I.amalgam.toCellScheme.grade d ≤ 1)
+      (h4 : Fin.last 4 ∉ I.amalgam.toCellScheme.scope d) :
+      d ∈ I.amalgam.toCellScheme.below (univ.erase (Fin.last 4), 4) :=
+    (I.amalgam.toCellScheme.gradedIndex_le_iff).mpr
+      ⟨fun x hx ↦ mem_erase.mpr ⟨fun h' ↦ h4 (h' ▸ hx), mem_univ _⟩, by omega⟩
+  have hle (d : Fin I.amalgam.card) : q d ≤ raise h (e (embed3 I d)) := by
+    by_cases h4 : Fin.last 4 ∈ I.amalgam.toCellScheme.scope d
+    · simp only [hqdef, h4, ↓reduceIte, le_refl]
+    · simp only [hqdef, h4, ↓reduceIte]
+      have := hfe d h4
+      rcases lt_or_ge (f (embed3 I d)) h with hl | hl
+      · rw [min_eq_left hl.le] at this
+        have hel : e (embed3 I d) < h := by
+          by_contra hge; rw [min_eq_right (not_lt.mp hge)] at this; exact hl.ne this
+        rw [min_eq_left hel.le] at this
+        rw [this]
+        unfold raise
+        rw [if_neg (not_le.mpr hel)]
+      · have hge : h ≤ e (embed3 I d) := Label.le_of_min_eq_of_le' this.symm hl
+        unfold raise
+        rw [if_pos hge]
+        exact le_top
+  refine (CellScheme.Rows.isLawfulBelow_iff_forall (w := q)).mpr
+    ⟨fun d hd ↦ ?_, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
+  · by_cases h4 : Fin.last 4 ∈ I.amalgam.toCellScheme.scope d
+    · simp only [hqdef, h4, ↓reduceIte]; exact hRo d hd
+    · simp only [hqdef, h4, ↓reduceIte]; exact hfo d (hC hd.2 h4)
+  · by_cases h4 : Fin.last 4 ∈ I.amalgam.toCellScheme.scope s
+    · -- through the point `4`: the raised `e`
+      have hsD : I.amalgam.toCellScheme.scope s ⊆ univ.erase (Fin.castSucc (Fin.last 3)) :=
+        (I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem s)
+          (I.scope_ne_univ s)).resolve_left fun h' ↦
+            Finset.notMem_erase (Fin.last 4) univ (h' h4)
+      have heq : (fun d : I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s) ↦
+          min (q d) (q s)) = fun d ↦ min (raise h (e (embed3 I d.1)))
+            (raise h (e (embed3 I s))) := by
+        funext d
+        have hqd : q d = raise h (e (embed3 I d)) := by
+          by_cases h4d : Fin.last 4 ∈ I.amalgam.toCellScheme.scope d
+          · simp only [hqdef, h4d, ↓reduceIte]
+          · have hsub : I.amalgam.toCellScheme.scope d ⊆ I.amalgam.toCellScheme.scope s :=
+              ((I.amalgam.toCellScheme.gradedIndex_le_iff).mp d.2).1
+            have h3 : Fin.castSucc (Fin.last 3) ∉ I.amalgam.toCellScheme.scope d := fun h' ↦
+              Finset.notMem_erase _ univ (hsD (hsub h'))
+            have hf0 := hface d h4d h3
+            have he0 : e (embed3 I d) = ⊥ := by
+              have := hfe d h4d
+              rw [hf0, min_eq_left bot_le] at this
+              exact (min_eq_bot.mp this.symm).resolve_right hhb.ne'
+            simp only [hqdef, h4d, ↓reduceIte, hf0, he0, raise_bot hhb]
+        rw [hqd]
+        simp only [hqdef, h4, ↓reduceIte]
+      convert hRl s hs using 1
+      exact heq
+    · have hsub (d : I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s)) :
+          Fin.last 4 ∉ I.amalgam.toCellScheme.scope d := fun h' ↦
+        h4 (((I.amalgam.toCellScheme.gradedIndex_le_iff).mp d.2).1 h')
+      have heq : (fun d : I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s) ↦
+          min (q d) (q s)) = fun d ↦ min (f (embed3 I d.1)) (f (embed3 I s)) := by
+        funext d
+        simp only [hqdef, hsub d, h4, ↓reduceIte]
+      convert hfl s (hC hs.2 h4) using 1
+      exact heq
+  · by_cases h4 : Fin.last 4 ∈ I.amalgam.toCellScheme.scope t
+    · obtain ⟨u, hu, hleu⟩ := hRav s t ht hst hg
+      have h4u : Fin.last 4 ∈ I.amalgam.toCellScheme.scope u := by
+        rw [show I.amalgam.toCellScheme.scope u = I.amalgam.toCellScheme.scope t from
+          congrArg Prod.fst hu]
+        exact h4
+      refine ⟨u, hu, (hle s).trans ?_⟩
+      simp only [hqdef, h4u, ↓reduceIte]
+      exact hleu
+    · have h4s : Fin.last 4 ∉ I.amalgam.toCellScheme.scope s := fun h' ↦ h4 (hst h')
+      obtain ⟨u, hu, hleu⟩ := hfav s t (hC ht.2 h4) hst hg
+      have h4u : Fin.last 4 ∉ I.amalgam.toCellScheme.scope u := by
+        rw [show I.amalgam.toCellScheme.scope u = I.amalgam.toCellScheme.scope t from
+          congrArg Prod.fst hu]
+        exact h4
+      refine ⟨u, hu, ?_⟩
+      simp only [hqdef, h4s, h4u, ↓reduceIte]
+      exact hleu
+
+/-- **The fill at the short positive caps from the left coatom, from a refining server.**  Let `r`
+be a marker of grade `4` on the left coatom and `X` a set of cells of grade `1` through the point
+`4`.  Suppose that every labelling `f` lawful below the left coatom and not `⊥` at `r` is `⊥` on
+the common face, takes one value at the cells of grade `2` not `⊥` (that at `t₂`), at most every
+value not `⊥` at the cells of grade `1`, and is `⊥` at the cells of grade `3`.  Then
+`ReadingFillPos I r X (Fin.last 4)`.  No tie at the grade `1` is asked (the cells of grade `1` of
+the left coatom may carry any values), no condition on the rows of the right coatom type, and no
+relation among the new tops: the fill at the grade `1` is `f` on the left coatom and `e` raised to
+`⊤` above the cap through the point `4` (`TowerProfile.exists_one_of_target`, the refining server
+built by the lexicographic raise), glued at the grades `2` and `3`
+(`TowerProfile.exists_three_of_one`) and completed at the grade `4`
+(`TowerProfile.exists_isLawfulBelow_four`). -/
+theorem readingFillPos_left_of_refine {r : Fin (scheme I).card}
+    (hgr : (scheme I).toCellScheme.grade r = 4)
+    (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
+    {X : Finset (Fin (scheme I).card)}
+    (hX : ∀ x ∈ X, ∃ y, embed3 I y = x ∧ Fin.last 4 ∈ I.amalgam.toCellScheme.scope y ∧
+      I.amalgam.toCellScheme.grade y = 1)
+    {t₂ : Fin (scheme I).card}
+    (ht₂ : t₂ ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
+    (hg₂ : (scheme I).toCellScheme.grade t₂ = 2)
+    (H2 : ∀ f : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
+      ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+        (scheme I).toCellScheme.grade d = 2 → f d ≠ ⊥ → f d = f t₂)
+    (H12 : ∀ f : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
+      ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+        (scheme I).toCellScheme.grade d = 1 → f d ≠ ⊥ → f t₂ ≤ f d)
+    (H3 : ∀ f : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
+      ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+        (scheme I).toCellScheme.grade d = 3 → f d = ⊥)
+    (Hface : ∀ f : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
+      ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+        Fin.castSucc (Fin.last 3) ∉ (scheme I).toCellScheme.scope d → f d = ⊥) :
+    ReadingFillPos I r X (Fin.last 4) := by
+  classical
+  intro e he h hh _ hhb f hf hfe
+  have hel : (scheme I).rows.IsLawful e :=
+    (Scheme.mem_catalogue.mp (Scheme.readingMarks_subset _ _ he)).1
+  have hfill_bot : ∃ g : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ, 4) (fun d ↦ g d) ∧
+      (∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4), g d = f d) ∧
+      ∀ d, min (g d) h = min (e d) h :=
+    exists_fill_four (x := Fin.last 4) (y := Fin.castSucc (Fin.last 3)) (by simp) (by simp)
+      (by decide) hf hel hh hfe
+  by_cases hre : h ≤ e r
+  swap
+  · obtain ⟨g, hg, hgf, hga⟩ := hfill_bot
+    exact ⟨g, hg, hgf, hga, reads_of_lt he (not_le.mp hre) hga⟩
+  rcases X.eq_empty_or_nonempty with hXe | ⟨x₀, hx₀⟩
+  · obtain ⟨g, hg, hgf, hga⟩ := hfill_bot
+    exact ⟨g, hg, hgf, hga, fun x hx ↦ absurd (hXe ▸ hx) (Finset.notMem_empty x)⟩
+  obtain ⟨z₀, hz₀, hPz₀, hgz₀⟩ := hX x₀ hx₀
+  have hfr : h ≤ f r := Label.le_of_min_eq_of_le' (hfe _ hrC) hre
+  have hfr0 : f r ≠ ⊥ := (hhb.trans_le hfr).ne'
+  obtain ⟨hfo, -, -⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hf
+  have hpos (d : Fin (scheme I).card) : 1 ≤ (scheme I).toCellScheme.grade d :=
+    isWellFormed_scheme.isWellFormed.grade_pos d
+  set V : Label.{u} := max h (f t₂) with hVdef
+  have hV : IsSelfVisible 2 V :=
+    (hh.mono (by omega)).max (by have := hfo t₂ ht₂; rwa [hg₂] at this)
+  have hhV : h ≤ V := le_max_left _ _
+  -- the conditions on the left coatom
+  have hfV : ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+      (scheme I).toCellScheme.grade d ≤ 2 → h ≤ f d → V ≤ f d := fun d hd hg2 hfd ↦ by
+    have h0 : f d ≠ ⊥ := (hhb.trans_le hfd).ne'
+    rcases (show (scheme I).toCellScheme.grade d = 1 ∨ (scheme I).toCellScheme.grade d = 2 by
+      have := hpos d; omega) with h1 | h2
+    · exact max_le hfd (H12 f hf hfr0 d hd h1 h0)
+    · exact max_le hfd (H2 f hf hfr0 d hd h2 h0).ge
+  have hfV' : ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+      (scheme I).toCellScheme.grade d = 2 → h ≤ f d → f d ≤ V := fun d hd h2 hfd ↦ by
+    rw [H2 f hf hfr0 d hd h2 (hhb.trans_le hfd).ne']
+    exact le_max_right _ _
+  have hf3 : ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+      (scheme I).toCellScheme.grade d = 3 → f d ≤ h := fun d hd h3 ↦ by
+    rw [H3 f hf hfr0 d hd h3]; exact bot_le
+  -- the target on the amalgam
+  have hRs : (scheme I).rows.IsLawfulBelow (univ, 1) fun d ↦ raise h (e d) :=
+    (hel.isLawfulBelow _).map_of_apply_eq_bot (fun d ↦ d.2.2)
+      (isWitness_raise (K := 1) (hh.mono (by omega)) hhb) fun _ h0 ↦ eq_bot_of_raise_eq_bot h0
+  have hCem (d : Fin I.amalgam.card) (h4 : Fin.last 4 ∉ I.amalgam.toCellScheme.scope d) :
+      embed3 I d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4) := by
+    rw [CellScheme.mem_below, gradedIndex_embed3]
+    refine (I.amalgam.toCellScheme.gradedIndex_le_iff).mpr
+      ⟨fun x hx ↦ mem_erase.mpr ⟨fun h' ↦ h4 (h' ▸ hx), mem_univ _⟩, ?_⟩
+    have h1 := I.amalgam.isWellFormed.isWellFormed.grade_le_card d
+    have h2 : #(I.amalgam.toCellScheme.scope d) ≤ 4 := by
+      have := card_le_card (s := I.amalgam.toCellScheme.scope d)
+        (t := univ.erase (Fin.last 4)) fun x hx ↦ mem_erase.mpr ⟨fun h' ↦ h4 (h' ▸ hx), mem_univ _⟩
+      simpa using this
+    exact h1.trans h2
+  have hq := isLawfulBelow_target (I := I) (e := e) (f := f) hhb (isLawfulBelow_comp_embed3 hf)
+    (isLawfulBelow_comp_embed3 (Q := fun d ↦ raise h (e d)) hRs) (fun d h4 ↦ hfe _ (hCem d h4))
+    (fun d h4 h3 ↦ Hface f hf hfr0 _ (hCem d h4) (by rwa [scope_embed3]))
+  set q : Fin I.amalgam.card → Label.{u} := fun d ↦
+    if Fin.last 4 ∈ I.amalgam.toCellScheme.scope d then raise h (e (embed3 I d))
+    else f (embed3 I d) with hqdef
+  have hqe (d : Fin I.amalgam.card) (_ : I.amalgam.toCellScheme.grade d ≤ 1) :
+      min (q d) h = min (e (embed3 I d)) h := by
+    by_cases h4 : Fin.last 4 ∈ I.amalgam.toCellScheme.scope d
+    · simp only [hqdef, h4, ↓reduceIte]; exact min_raise_self _ _
+    · simp only [hqdef, h4, ↓reduceIte]; exact hfe _ (hCem d h4)
+  have hqV (d : Fin I.amalgam.card) (hd : I.amalgam.toCellScheme.grade d ≤ 1) (hqd : h ≤ q d) :
+      V ≤ q d := by
+    by_cases h4 : Fin.last 4 ∈ I.amalgam.toCellScheme.scope d
+    · simp only [hqdef, h4, ↓reduceIte] at hqd ⊢
+      unfold raise at hqd ⊢
+      split_ifs with hed
+      · exact le_top
+      · rw [if_neg hed] at hqd; exact absurd hqd hed
+    · simp only [hqdef, h4, ↓reduceIte] at hqd ⊢
+      exact hfV _ (hCem d h4) (by
+        rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd]; omega)
+        hqd
+  have hez₀ : h ≤ e (embed3 I z₀) :=
+    hre.trans (Scheme.le_of_mem_readingMarks he (hz₀ ▸ hx₀))
+  obtain ⟨w₁, hw₁, hw₁q, hw₁e, hw₁V⟩ := exists_one_of_target (hel.isLawfulBelow _) hh hhb
+    (hV.mono (by omega)) hhV hq hqe hqV hgz₀ hez₀
+  have hmem1 {d : Fin (scheme I).card} (hd : (scheme I).toCellScheme.grade d = 1) :
+      d ∈ (scheme I).toCellScheme.below ((univ : Finset (Fin 5)), 1) :=
+    ⟨subset_univ _, hd.le⟩
+  obtain ⟨w, hw, hwf, hwe, hww₁⟩ := exists_three_of_one (hel.isLawfulBelow _) hh hhb hf hfe hV hhV
+    hfV hfV' hf3 hw₁
+    (fun d hd hg1 ↦ by
+      have hsd : (scheme I).toCellScheme.scope d ≠ univ := fun h' ↦ by
+        have := ((scheme I).toCellScheme.gradedIndex_le_iff.mp ((CellScheme.mem_below _).mp hd)).1
+        rw [h'] at this
+        exact Finset.notMem_erase (Fin.last 4) univ (this (mem_univ _))
+      obtain ⟨d', rfl⟩ := mem_range_embed3 d hsd
+      have h4 : Fin.last 4 ∉ I.amalgam.toCellScheme.scope d' := fun h' ↦ by
+        have := ((scheme I).toCellScheme.gradedIndex_le_iff.mp ((CellScheme.mem_below _).mp hd)).1
+        rw [scope_embed3] at this
+        exact Finset.notMem_erase (Fin.last 4) univ (this h')
+      have hg' : I.amalgam.toCellScheme.grade d' ≤ 1 := by
+        rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd] at hg1
+        omega
+      rw [hw₁q d' hg']
+      simp only [hqdef, h4, ↓reduceIte])
+    (fun d hd hed ↦ Label.eq_of_min_eq_of_lt (hw₁e d (hmem1 hd)).symm hed)
+    (fun d hd hed ↦ hw₁V d (hmem1 hd) hed)
+  have hwU : (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) fun d ↦ w d :=
+    (CellScheme.Rows.isLawfulBelow_congr fun d hd ↦ hwf d hd).mpr hf
+  obtain ⟨g, hg, hgw, hga⟩ := exists_isLawfulBelow_four (x := Fin.last 4)
+    (y := Fin.castSucc (Fin.last 3)) (by simp) (by simp) (by decide) hwU hw hel hh
+    fun d hd ↦ hd.elim (fun hd ↦ by rw [hwf d hd]; exact hfe d hd) (hwe d)
+  refine ⟨g, hg, fun d hd ↦ (hgw d (.inl hd)).trans (hwf d hd),
+    fun d ↦ hga d (mem_below_univ_four d), fun x hx ↦ ?_⟩
+  obtain ⟨y, rfl, hPy, hgy⟩ := hX x hx
+  have hgy' : (scheme I).toCellScheme.grade (embed3 I y) = 1 := by
+    rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd, hgy]
+  have hx3 : embed3 I y ∈ (scheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3) :=
+    ⟨subset_univ _, show (scheme I).toCellScheme.grade (embed3 I y) ≤ 3 by rw [hgy']; omega⟩
+  have hey : h ≤ e (embed3 I y) := hre.trans (Scheme.le_of_mem_readingMarks he hx)
+  rw [hgw _ (.inr hx3), hww₁ _ hgy', hw₁q y hgy.le]
+  simp only [hqdef, hPy, ↓reduceIte]
+  unfold raise
+  rw [if_pos hey]
+  exact le_top
+
 end TowerProfile
 
 end VaughtConjecture
