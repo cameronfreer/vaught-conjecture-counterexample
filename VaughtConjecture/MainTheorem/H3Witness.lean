@@ -19,6 +19,11 @@ Work file (placement later), for the named condition `H3.RootWitness` of
   `Label.isBoundedReading_atTop`, `Label.isBoundedReading_band`): the shifter of a witness capped
   at a label below its suppressor; a constant off `⊥`; a constant at `⊤`; and a band map from a
   block start `λ` to a block start `κ`, `⊥` below `λ`, followed by a bounded reading.
+* **A witness inverting a bounded reading** (`Label.exists_witness_of_reading`).
+* **A witness at the root from the locality at the cap** (`H3.rootWitness_of_locality`), given a
+  lower bound at the root (`H3.RootLowBound`, a named condition).
+* **The donor raise over a gluing coface at an acquired context**
+  (`H3.exists_raiseCoface_of_rootLowBound`), from the lower bound at the root (assumed).
 -/
 
 universe u
@@ -420,7 +425,77 @@ theorem rootWitness_of_locality {c r : Fin t'.card}
       exact le_min h1 (hθg (hgrade x))
     exact (min_eq_right (h2.trans (min_le_left _ _))).symm
 
+variable (n) in
+/-- **A lower bound at the root** for a prescription `f` (a named condition): some label `c₀ ≠ ⊥`,
+self-visible at `n + 1`, lies below its values at the root cells with ordinal labels, capped at
+its root cap.  It holds, for instance, when `f` is at least `n + 1` there and not `⊥` at the
+marker. -/
+def RootLowBound (c r : Fin t'.card) (f : Prof (seed ht' hp htb)) : Prop :=
+  ∃ c₀ : Label.{u}, c₀ ≠ ⊥ ∧ IsSelfVisible (n + 1) c₀ ∧
+    ∀ x (o : Ordinal.{u}), t.label x = o →
+      c₀ ≤ min (f (rootCell ht' hp htb hpt x)) (rootCap n ht' hp htb c r f)
+
 end Witness
+
+/-- **The donor raise over a gluing coface at an acquired context**, from the lower bound at the
+root (assumed, `H3.RootLowBound`): some coface `tb` of `p` with face `d` has the donor raise in
+the class form at every grade `N ≤ k' ≤ k + 1` at which every prescription in the class, not `⊥`
+at the cap and at the marker, has a lower bound at the root.  At a prescription `⊥` at the marker
+the marker value is `⊥` and the identity is a witness at the cap `⊥`; otherwise the witness is that
+of `H3.rootWitness_of_locality` at the root cap, which is at least the marker value. -/
+theorem exists_raiseCoface_of_rootLowBound (hα : Order.IsSuccLimit α)
+    {t' : StageType.{u} α (k + 1)} {p : StageType.{u} α k} (ht' : t'.IsLegal)
+    (hp : restrictFace Fin.castSuccEmb t' = some p) {g : Fin n ↪ Fin k} {t : StageType.{u} α n}
+    (ht : restrictFace (g.trans Fin.castSuccEmb) t' = some t) {d : StageType.{u} α (n + 1)}
+    (hd : d ∈ t.cofaces) {c r : Fin t'.card}
+    (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r)
+    (hoff : t'.RootOffsetsBelow (g.trans Fin.castSuccEmb) (t'.toCellScheme.grade c))
+    (hbot : t'.RootBottomRespected (g.trans Fin.castSuccEmb) c) :
+    ∃ tb, ∃ htb : tb ∈ p.cofaces, ∃ htbd : restrictFace (extendByLast g) tb = some d,
+      ∃ hpt : restrictFace g p = some t,
+      ∀ k', t'.toCellScheme.grade c ≤ k' → k' ≤ k + 1 →
+        (∀ f : Prof (seed ht' hp htb),
+          (seed ht' hp htb).amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (k + 1)), k')
+            (fun e ↦ f e) →
+          f (faceCell (restrictFace_left_seed ht' hp htb) c) ≠ ⊥ →
+          f (faceCell (restrictFace_left_seed ht' hp htb) r) ≠ ⊥ →
+          (∀ e ∈ classCells ht' hp htb htbd, e ∈ (seed ht' hp htb).amalgam.toCellScheme.below
+            (univ.erase (Fin.last (k + 1)), k') → f e ≠ ⊥) →
+          RootLowBound n ht' hp htb hpt c r f) →
+        CapRequests.DonorRaiseBotAtIn
+          (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega))
+          (classCells ht' hp htb htbd) (Fin.last (k + 1)) (Fin.castSucc (Fin.last k)) k' := by
+  obtain ⟨tb, htb, htbd, hpt, hraise⟩ := exists_raiseCoface_gluing hα ht' hp ht hd hctx
+  refine ⟨tb, htb, htbd, hpt, fun k' hk' hkm hlow ↦ hraise k' hk' hkm fun f hf hcap hcl ↦ ?_⟩
+  have hn := hctx.2.2.1
+  by_cases hm : f (faceCell (restrictFace_left_seed ht' hp htb) r) = ⊥
+  · -- the marker value is `⊥`: the identity at the cap `⊥`
+    refine ⟨⊥, isSelfVisible_bot _, ?_, n + 1, le_rfl, id, IsWitness.id_step _,
+      fun _ h ↦ h, bot_le, fun _ ↦ by simp⟩
+    change min (visibilityReplace _ _ (f (faceCell (restrictFace_left_seed ht' hp htb) r))) _ ≤ ⊥
+    rw [hm, visibilityReplace_bot, min_bot_left]
+  refine ⟨rootCap n ht' hp htb c r f, ?_, ?_,
+    rootWitness_of_locality ht' hp htb hpt hd hctx hoff hbot f hf hk' hcap
+      (hlow f hf hcap hm hcl)⟩
+  · have hcsv : IsSelfVisible (t'.toCellScheme.grade c)
+        (f (faceCell (restrictFace_left_seed ht' hp htb) c)) := by
+      have hcb : faceCell (restrictFace_left_seed ht' hp htb) c ∈
+          (seed ht' hp htb).amalgam.toCellScheme.below (univ.erase (Fin.last (k + 1)), k') := by
+        refine ⟨?_, ?_⟩
+        · change (seed ht' hp htb).amalgam.toCellScheme.scope
+            (faceCell (restrictFace_left_seed ht' hp htb) c) ⊆ _
+          rw [scope_faceCell, ← Coatom.univ_map_left]
+          exact map_subset_map.mpr (subset_univ _)
+        · change (seed ht' hp htb).amalgam.toCellScheme.grade
+            (faceCell (restrictFace_left_seed ht' hp htb) c) ≤ k'
+          rw [grade_faceCell]
+          exact hk'
+      have h := (Rows.isLawfulBelow_iff_forall.mp hf).1 _ hcb
+      change IsSelfVisible ((seed ht' hp htb).amalgam.toCellScheme.grade
+        (faceCell (restrictFace_left_seed ht' hp htb) c)) _ at h
+      rwa [grade_faceCell] at h
+    exact (Label.isSelfVisible_visibilityReplace_of_le (by omega) _).min (hcsv.mono (by omega))
+  · exact min_le_min_right _ (visibilityReplace_le_visibilityReplace (Nat.zero_le _) _)
 
 end H3
 
