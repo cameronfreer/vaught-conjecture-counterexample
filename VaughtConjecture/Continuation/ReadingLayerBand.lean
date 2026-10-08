@@ -39,7 +39,7 @@ compiles the escape with `x := ⊤` at one band labelling.
 the left cell `y` in the band has a fill with the right part free (`x := ⊤`), compiled as a
 **positive instance** (feasibility only: the fill is the band labelling itself, and the mark
 reads `y` strictly below `x`).  The fill for **every** band labelling and mark (Step B) is not
-done here.
+done here; it is in the module `VaughtConjecture.Continuation.ReadingLayerBandFill`.
 
 ## Placement
 
