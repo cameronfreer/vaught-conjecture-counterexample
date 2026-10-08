@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.WorkH4
-import VaughtConjecture.Extension.ProfileTowerCross
+import VaughtConjecture.Extension.ProfileTowerDeadSeed
 
 /-!
 # Acquiring a context whose caps dominate no live cell, through a completion
@@ -34,6 +34,10 @@ occurrence with itself.  Compiled in this repository (theorem named):
   (`completionNonDominating_of_crossSeparating`).  Cross separation is equivalent to bottom
   variation of the live profiles of the catalogue at the higher grade
   (`towerCrossSeparating_iff_bottomVariation`).
+* **Cross separation fails at some seed** (`not_towerCrossSeparating`): at the seed
+  `ProfileTowerDeadSeed.deadSeed`, whose cells of grade at most `3` are dead and whose first
+  coatom has a live cell of grade `4`.  So `towerCrossLayer_of_crossSeparating` does not discharge
+  `TowerCrossLayer`; this refutes neither `TowerCrossLayer` nor (R4).
 * **The margin calibration with a non-dominating cap** (`StageType.GradedCapMarginCalibrationND`):
   the margin calibration with a floor, a last point `x` off the root with `univ.erase x` a face,
   and the clause at `x` for every cell of full scope.
@@ -244,6 +248,12 @@ theorem towerCrossSeparating_iff_bottomVariation :
     fun h _ _ I N k h3 hlt hk ↦
       (ProfileTower.crossSeparating_iff_bottomVariation (by omega) hlt.le hk).mpr
         (h I N k h3 hlt hk)⟩
+
+/-- **Cross separation fails at some seed**: at `ProfileTowerDeadSeed.deadSeed`, from the grade `3`
+to the grade `4` (`ProfileTowerDeadSeed.not_crossSeparating_deadSeed`). -/
+theorem not_towerCrossSeparating : ¬ TowerCrossSeparating.{u} := fun h ↦
+  ProfileTowerDeadSeed.not_crossSeparating_deadSeed (0 : Ordinal.{u})
+    (h (j := 0) (ProfileTowerDeadSeed.deadSeed 0) 3 4 le_rfl (by omega) le_rfl)
 
 /-- A cell of the completion of the profile tower of grade at most `m` is a cell of the last
 level. -/

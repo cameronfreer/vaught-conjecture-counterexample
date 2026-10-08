@@ -16,14 +16,13 @@ Compiled in this repository (theorem named):
 
 * **The acquisition from the profile tower**
   (`Realization.IsModel.acquiresCalibratedContexts_gradedCapMarginND_of_tower`): conditional on
-  cross separation of the profile towers (`TowerCrossSeparating`: a live profile of the grade of
-  the cell read differs in bottoms from each catalogue profile of the cap's grade at a cell of
-  grade at most the cap's); layer separation is proved (`towerLayerSeparating`), and cross-layer
-  non-domination follows from cross separation (`towerCrossLayer_of_crossSeparating`), through
-  `completionNonDominating_of_crossSeparating`.
+  cross-layer non-domination (`TowerCrossLayer`); layer separation is proved
+  (`towerLayerSeparating`), through `completionNonDominating_of_crossLayer`.  The reduction of
+  `TowerCrossLayer` to cross separation (`towerCrossLayer_of_crossSeparating`) does not discharge
+  it: cross separation fails at some seed (`not_towerCrossSeparating`).
 * **(R4) for receiving models** (`ReceivingStableCappedReceiving.of_firstCoatomEx_nd`): from
   first-coatom completions with a chosen coface for the calibration with a non-dominating cap at
-  every `ξ < ω₁`, conditional on `TowerCrossSeparating`.
+  every `ξ < ω₁`, conditional on `TowerCrossLayer`.
 * **The hypothesis of the endpoint gives this one**
   (`StageType.HasCutoffFirstCoatomCompletions.ex_nd`): first-coatom completions for the graded cap
   calibration (the `h4` of
@@ -33,7 +32,7 @@ Compiled in this repository (theorem named):
 * **The thin `ℵ₁` spectrum through this calibration**
   (`densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap_nd`,
   in `MainTheorem`): from the (R4) hypothesis in this form, (R2) and (R3) as in the endpoint,
-  conditional on `TowerCrossSeparating`.  The endpoint's own `h4` implies
+  conditional on `TowerCrossLayer`.  The endpoint's own `h4` implies
   the (R4) hypothesis here (`StageType.HasCutoffFirstCoatomCompletions.ex_nd`); no converse is
   claimed.
 
@@ -74,14 +73,14 @@ namespace Realization
 variable {ξ : Ordinal.{u}} {M : Type v} {R : Realization.{u, v} (blockStage ξ) M}
 
 /-- **Acquisition of the calibration with a non-dominating cap from the profile tower**,
-conditional on cross separation of the profile towers (`TowerCrossSeparating`); the same-layer
-part is proved (`towerLayerSeparating`). -/
+conditional on cross-layer non-domination (`TowerCrossLayer`); the same-layer part is proved
+(`towerLayerSeparating`). -/
 theorem IsModel.acquiresCalibratedContexts_gradedCapMarginND_of_tower (hR : R.IsModel)
-    (hnh : ¬ R.IsCoverHollow) (hgrow : R.topGradeSup = ⊤) (hcross : TowerCrossSeparating.{u}) :
+    (hnh : ¬ R.IsCoverHollow) (hgrow : R.topGradeSup = ⊤) (hcross : TowerCrossLayer.{u}) :
     AcquiresCalibratedContexts ξ (StageType.GradedCapMarginCalibrationND ξ) R
       hR.isStablyLawful :=
   hR.acquiresCalibratedContexts_gradedCapMarginND hnh hgrow
-    (completionNonDominating_of_crossSeparating hcross)
+    (completionNonDominating_of_crossLayer hcross)
 
 end Realization
 
@@ -90,8 +89,8 @@ namespace Expansion
 open Realization
 
 /-- **(R4) for receiving models from first-coatom completions with a chosen coface for the
-calibration with a non-dominating cap**, conditional on cross separation of the profile towers. -/
-theorem ReceivingStableCappedReceiving.of_firstCoatomEx_nd (hcross : TowerCrossSeparating.{0})
+calibration with a non-dominating cap**, conditional on cross-layer non-domination. -/
+theorem ReceivingStableCappedReceiving.of_firstCoatomEx_nd (hcross : TowerCrossLayer.{0})
     (h : ∀ ξ < ω₁, StageType.HasCutoffFirstCoatomCompletionsEx.{0} ξ
       (StageType.GradedCapMarginCalibrationND.{0} ξ)) :
     ReceivingStableCappedReceiving.{w} :=
@@ -110,9 +109,9 @@ open FirstOrder Language baseLanguage Realization StageType
 completions with a chosen coface for that calibration at every `ξ < ω₁` (`h4`, implied by the
 `h4` of the endpoint through `StageType.HasCutoffFirstCoatomCompletions.ex_nd`), (R2) and (R3) as
 in `densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap`,
-conditional on cross separation of the profile towers (`TowerCrossSeparating`). -/
+conditional on cross-layer non-domination (`TowerCrossLayer`). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap_nd
-    (hcross : TowerCrossSeparating.{0})
+    (hcross : TowerCrossLayer.{0})
     (h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletionsEx.{0} ξ (GradedCapMarginCalibrationND.{0} ξ))
     (h2 : CoatomCutoffDetermination.{0} fun K t' h ↦ t'.IsSourceGapContext K h)
     (h3 : HollowCoatomCutoffDetermination.{0} fun t' h ↦ t'.IsMarkedCapContext h) :

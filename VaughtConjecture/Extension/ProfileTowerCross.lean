@@ -482,6 +482,31 @@ theorem crossSeparating_iff_bottomVariation (hm : 0 < m) {N j : ℕ} (hNj : N �
     · exact ⟨R', hR', hR'a, d, hd, fun h' ↦ hne (hc.trans h'.symm)⟩
     · exact ⟨R, hR, hRa, d, hd, hc⟩
 
+/-- **A profile lawful on a cut is `⊥` at every dead cell below the cut.** -/
+theorem IsCutLawful.eq_bot_of_dead {k : ℕ} {P : Prof I} (hP : IsCutLawful I k P)
+    {d : Fin I.amalgam.card} (hd : I.amalgam.toCellScheme.grade d ≤ k)
+    (hdead : I.amalgam.toScheme.rowAt d d = ⊥) : P d = ⊥ := by
+  have hrow : I.amalgam.rows.row d ⟨d, CellScheme.mem_below_gradedIndex _ d⟩ = ⊥ := by
+    rwa [Scheme.rowAt_of_mem (I.amalgam.toCellScheme.mem_below_gradedIndex _)] at hdead
+  rcases I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.gradedIndex_mem d).1
+    (I.scope_ne_univ d) with h | h
+  · exact hP.1.eq_bot_of_row_self_eq_bot ⟨h, hd⟩ hrow
+  · exact hP.2.eq_bot_of_row_self_eq_bot ⟨h, hd⟩ hrow
+
+/-- **Cross separation fails over dead low grades**: if every cell of grade at most `N` reads
+itself as `⊥`, every profile lawful on a cut at a grade `j ≥ N` is `⊥` there
+(`ProfileTower.IsCutLawful.eq_bot_of_dead`), so none differs in bottoms from the constant bottom
+profile of the catalogue at `N` (`ProfileTower.bot_mem_cat`); cross separation from `N` to `j` then
+fails as soon as some old cell of grade `j` avoiding the last point reads itself other than `⊥`. -/
+theorem not_crossSeparating_of_dead {N j : ℕ} (hNj : N ≤ j)
+    (hdead : ∀ d, I.amalgam.toCellScheme.grade d ≤ N → I.amalgam.toScheme.rowAt d d = ⊥)
+    {a : Fin I.amalgam.card} (ha : I.amalgam.toCellScheme.grade a = j)
+    (hlive : I.amalgam.toScheme.rowAt a a ≠ ⊥)
+    (hlast : Fin.last (m + 1) ∉ I.amalgam.toCellScheme.scope a) : ¬ CrossSeparating I N j := by
+  intro h
+  obtain ⟨R, hR, -, d, hd, hne⟩ := h _ (bot_mem_cat N) a ha hlive hlast
+  exact hne (iff_of_true ((mem_cat.mp hR).1.eq_bot_of_dead (hd.trans hNj) (hdead d hd)) rfl)
+
 end ProfileTower
 
 end VaughtConjecture
