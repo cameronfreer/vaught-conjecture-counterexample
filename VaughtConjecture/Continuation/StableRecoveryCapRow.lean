@@ -71,16 +71,6 @@ namespace VaughtConjecture
 open Finset Label StageType
 open Ordinal hiding univ
 
-namespace Label
-
-/-- The block index (`Label.blockIndex`: `o / ω` at an ordinal `o`, `0` at `⊥` and `⊤`) of
-`ω · c + i` is `c`: the code `c` of a value `ω · c + i`. -/
-theorem blockIndex_omega0_mul_add (c : Ordinal.{u}) (i : ℕ) :
-    blockIndex ((ω * c + i : Ordinal.{u}) : Label.{u}) = c :=
-  omega0_mul_add_natCast_div c i
-
-end Label
-
 /-! ### The row of the cap -/
 
 namespace StageType

@@ -162,6 +162,12 @@ private theorem visibilityReplace_self_pt (b : Ordinal.{u}) (n : ℕ) :
 noncomputable def blockIndex (y : Label.{u}) : Ordinal.{u} :=
   WithTop.untopD 0 (WithBot.unbotD 0 y) / ω
 
+/-- The block index (`Label.blockIndex`: `o / ω` at an ordinal `o`, `0` at `⊥` and `⊤`) of
+`ω · c + i` is `c`: the code `c` of a value `ω · c + i`. -/
+theorem blockIndex_omega0_mul_add (c : Ordinal.{u}) (i : ℕ) :
+    blockIndex ((ω * c + i : Ordinal.{u}) : Label.{u}) = c :=
+  omega0_mul_add_natCast_div c i
+
 /-- The **block move** to the block of `y`: an ordinal label `o` goes to the point of the block of
 `y` with the finite part of `o`; bottom and the formal top are fixed. -/
 noncomputable def moveToBlock (y : Label.{u}) : Label.{u} → Label.{u} :=
