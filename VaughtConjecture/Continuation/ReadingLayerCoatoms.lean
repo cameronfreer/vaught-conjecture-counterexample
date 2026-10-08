@@ -201,7 +201,10 @@ theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} {n : ℕ}
   refine readingFillPos_left_of_rowTie hR.rowsRaiseAt hgr hrC hPx
     ((StageType.grade_faceCell _ _).trans hR.grade_eq)
     (mem_image_of_mem _ (mem_singleton_self _))
-    (fun x hx ↦ by obtain ⟨z, hz, rfl⟩ := mem_image.mp hx; rw [mem_singleton.mp hz])
+    (fun x hx ↦ by
+      obtain ⟨z, hz, rfl⟩ := mem_image.mp hx
+      rw [mem_singleton.mp hz]
+      exact ⟨_, rfl, hPx, I.amalgam.toCellScheme.mem_below_gradedIndex _⟩)
     (leftCell_mem z₁) ((grade_leftCell z₁).trans hL.grade_one)
     (leftCell_mem z₂) ((grade_leftCell z₂).trans hL.grade_two)
     (fun f hf hfr d hd hg h0 ↦ ?_) (fun f hf hfr d hd hg h0 ↦ ?_) (fun f hf hfr d hd hg ↦ ?_)

@@ -246,7 +246,9 @@ theorem exists_three_of_server {e : Fin (scheme I).card → Label.{u}}
       (scheme I).rows.IsLawfulBelow (univ, 3) (fun d ↦ w d) ∧
       (∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4), w d = f d) ∧
       (∀ d ∈ (scheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3),
-        min (w d) h = min (e d) h) ∧ w x = ⊤ := by
+        min (w d) h = min (e d) h) ∧
+      ∀ d, (scheme I).toCellScheme.grade d = 1 →
+        (scheme I).rowAt u x ≤ (scheme I).rowAt u d → w d = ⊤ := by
   classical
   set C := (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4) with hCdef
   have hh0 : h ≠ ⊥ := hhb.ne'
@@ -537,10 +539,14 @@ theorem exists_three_of_server {e : Fin (scheme I).card → Label.{u}}
   · rcases lt_or_ge (e d) h with hed | hed
     · rw [(hinv3 hd.2).1 hed]
     · rw [min_eq_right hed, min_eq_right ((hinv3 hd.2).2 hed)]
-  · rw [hw1 hgx]
+  · intro d hd hxd
+    rw [hw1 hd]
     refine top_le_iff.mp (le_trans ?_ (le_max_right _ _))
-    simp only [blockStep, hρx]
+    simp only [blockStep]
     rw [ite_eq_left]
+    refine le_trans ?_ hxd
+    change (((ω * β : Ordinal.{u}) : Label.{u})) ≤ ρ x
+    rw [hρx]
     exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
 
 /-- **The fill from a server.**  Under the hypotheses of `TowerProfile.exists_three_of_server`,
@@ -573,7 +579,9 @@ theorem exists_fill_of_server {e : Fin (scheme I).card → Label.{u}}
     ∃ g : Fin (scheme I).card → Label.{u},
       (scheme I).rows.IsLawfulBelow (univ, 4) (fun d ↦ g d) ∧
       (∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4), g d = f d) ∧
-      (∀ d, min (g d) h = min (e d) h) ∧ g x = ⊤ := by
+      (∀ d, min (g d) h = min (e d) h) ∧
+      ∀ d, (scheme I).toCellScheme.grade d = 1 →
+        (scheme I).rowAt u x ≤ (scheme I).rowAt u d → g d = ⊤ := by
   obtain ⟨w, hw, hwf, hwe, hwx⟩ := exists_three_of_server (hel.isLawfulBelow _) hh hhb hf hfe
     hgx hex hu heu hux hA hhA hfA hV hhV hVA hfV hfV' hf3
   have hwU : (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) fun d ↦ w d :=
@@ -581,11 +589,11 @@ theorem exists_fill_of_server {e : Fin (scheme I).card → Label.{u}}
   obtain ⟨g, hg, hgw, hga⟩ := exists_isLawfulBelow_four (x := Fin.last 4)
     (y := Fin.castSucc (Fin.last 3)) (by simp) (by simp) (by decide) hwU hw hel hh
     fun d hd ↦ hd.elim (fun hd ↦ by rw [hwf d hd]; exact hfe d hd) (hwe d)
-  have hx3 : x ∈ (scheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3) :=
-    ⟨subset_univ _, show (scheme I).toCellScheme.grade x ≤ 3 by rw [hgx]; omega⟩
   refine ⟨g, hg, fun d hd ↦ (hgw d (.inl hd)).trans (hwf d hd),
-    fun d ↦ hga d (mem_below_univ_four d), ?_⟩
-  rw [hgw x (.inr hx3), hwx]
+    fun d ↦ hga d (mem_below_univ_four d), fun d hd hxd ↦ ?_⟩
+  have hd3 : d ∈ (scheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3) :=
+    ⟨subset_univ _, show (scheme I).toCellScheme.grade d ≤ 3 by rw [hd]; omega⟩
+  rw [hgw d (.inr hd3), hwx d hd hxd]
 
 end TowerProfile
 
@@ -650,6 +658,52 @@ open TopReadingApexExample
 
 variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
 
+/-- **A server reads the cells through the point `4` below a new top at least as the new top**:
+the row of a cell of grade `1` through the point `4` reads the cells below it through the point
+`4` as it reads itself (`TowerProfile.rowP_right`), so by locality a labelling lawful below
+`(univ, 1)`, such as the row of a cell of graded index `(univ, 1)`, is at those cells at least its
+value at the new top. -/
+theorem rowAt_le_rowAt_of_raise {tb : StageType.{u} α 4}
+    (hR : StageType.restrictFace (Coatom.right 3) I.amalgam = some tb) (hraise : tb.RowsRaiseAt 3)
+    {u : Fin (scheme I).card}
+    (hu : (scheme I).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), 1))
+    {xa : Fin I.amalgam.card} (hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope xa)
+    (hgxa : I.amalgam.toCellScheme.grade xa = 1) {y : Fin I.amalgam.card}
+    (hPy : Fin.last 4 ∈ I.amalgam.toCellScheme.scope y)
+    (hy : y ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex xa)) :
+    (scheme I).rowAt u (embed3 I xa) ≤ (scheme I).rowAt u (embed3 I y) := by
+  have hρ := isLawfulBelow_rowAt (I := I) hu
+  have hgx : (scheme I).toCellScheme.grade (embed3 I xa) = 1 := by
+    rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd, hgxa]
+  have hsb : embed3 I xa ∈ (scheme I).toCellScheme.below ((univ : Finset (Fin 5)), 1) :=
+    ⟨subset_univ _, hgx.le⟩
+  have hyb : embed3 I y ∈ (scheme I).toCellScheme.below
+      ((scheme I).toCellScheme.gradedIndex (embed3 I xa)) := by
+    rw [CellScheme.mem_below, gradedIndex_embed3, gradedIndex_embed3]
+    exact hy
+  have hrow (z : Fin I.amalgam.card) (hz : z ∈ I.amalgam.toCellScheme.below
+      (I.amalgam.toCellScheme.gradedIndex xa)) :
+      (scheme I).rowAt (embed3 I xa) (embed3 I z) = I.amalgam.toScheme.rows.row xa ⟨z, hz⟩ :=
+    (Scheme.rowAt_of_comap isLowerEmbedding_embed3 comap_rows_embed3 xa z).trans
+      (Scheme.rowAt_of_mem hz)
+  have hxx := hrow xa (I.amalgam.toCellScheme.mem_below_gradedIndex xa)
+  have hxy := hrow y hy
+  have h := ((CellScheme.Rows.isLawfulBelow_iff_forall.mp hρ).2.1 _ hsb).le_of_le
+    (d := ⟨embed3 I xa, (scheme I).toCellScheme.mem_below_gradedIndex _⟩) (d' := ⟨_, hyb⟩)
+    (by
+      rw [← Scheme.rowAt_of_mem, ← Scheme.rowAt_of_mem, hxx, hxy,
+        (rowP_right hR hraise xa hPx hgxa y hy).1 hPy])
+    (by
+      change (scheme I).toCellScheme.grade (embed3 I y) ≤
+        (scheme I).toCellScheme.grade (embed3 I xa)
+      have h1 : I.amalgam.toCellScheme.grade y ≤ I.amalgam.toCellScheme.grade xa := hy.2
+      rw [hgx, ← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd]
+      omega)
+  change min ((scheme I).rowAt u (embed3 I xa)) ((scheme I).rowAt u (embed3 I xa)) ≤
+    min ((scheme I).rowAt u (embed3 I y)) ((scheme I).rowAt u (embed3 I xa)) at h
+  rw [min_self] at h
+  exact h.trans (min_le_left _ _)
+
 /-- **The fill at the short positive caps from the left coatom, from a tie of the marker's
 row** (the core of `TowerProfile.readingFillPos_left_of_tie`): the hypotheses of that theorem with
 the tie given directly, the row of the marker reading `t₂` at most as `t₁`. -/
@@ -658,7 +712,9 @@ theorem readingFillPos_left_of_rowTie (hraise : I.right.RowsRaiseAt 3)
     (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
     {xa : Fin I.amalgam.card} (hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope xa)
     (hgxa : I.amalgam.toCellScheme.grade xa = 1) {X : Finset (Fin (scheme I).card)}
-    (hxX : embed3 I xa ∈ X) (hX : ∀ x ∈ X, x = embed3 I xa)
+    (hxX : embed3 I xa ∈ X) (hX : ∀ x ∈ X, ∃ y, embed3 I y = x ∧
+      Fin.last 4 ∈ I.amalgam.toCellScheme.scope y ∧
+      y ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex xa))
     {t₁ t₂ : Fin (scheme I).card}
     (ht₁ : t₁ ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
     (hg₁ : (scheme I).toCellScheme.grade t₁ = 1)
@@ -687,7 +743,10 @@ theorem readingFillPos_left_of_rowTie (hraise : I.right.RowsRaiseAt 3)
   have hgx : (scheme I).toCellScheme.grade (embed3 I xa) = 1 := by
     rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd, hgxa]
   have hX3 : ∀ x ∈ X, (scheme I).toCellScheme.grade x ≤ 3 := fun x hx ↦ by
-    rw [hX x hx, hgx]; omega
+    obtain ⟨y, rfl, -, hy⟩ := hX x hx
+    have h1 : I.amalgam.toCellScheme.grade y ≤ I.amalgam.toCellScheme.grade xa := hy.2
+    rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd]
+    omega
   by_cases hre : h ≤ e r
   swap
   · obtain ⟨g, hg, hgf, hga⟩ := exists_fill_four (x := Fin.last 4)
@@ -769,7 +828,13 @@ theorem readingFillPos_left_of_rowTie (hraise : I.right.RowsRaiseAt 3)
       exact le_max_right _ _)
     (fun d hd hg ↦ by rw [H3 f hf hfr0 d hd hg]; exact bot_le)
   refine ⟨g, hg, hgf, hga, fun x hx ↦ ?_⟩
-  rw [hX x hx, hgxtop]
+  obtain ⟨y, rfl, hPy, hy⟩ := hX x hx
+  have hgy : (scheme I).toCellScheme.grade (embed3 I y) = 1 := by
+    have h1 : I.amalgam.toCellScheme.grade y ≤ I.amalgam.toCellScheme.grade xa := hy.2
+    have h2 := I.amalgam.isWellFormed.isWellFormed.grade_pos y
+    rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd]
+    omega
+  rw [hgxtop _ hgy (rowAt_le_rowAt_of_raise I.restrictFace_right hraise hu hPx hgxa hPy hy)]
   exact le_top
 
 /-- **The fill at the short positive caps from the left coatom, from the ties of the marker**, at a
@@ -796,7 +861,9 @@ theorem readingFillPos_left_of_tie (hraise : I.right.RowsRaiseAt 3)
     (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
     {xa : Fin I.amalgam.card} (hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope xa)
     (hgxa : I.amalgam.toCellScheme.grade xa = 1) {X : Finset (Fin (scheme I).card)}
-    (hxX : embed3 I xa ∈ X) (hX : ∀ x ∈ X, x = embed3 I xa)
+    (hxX : embed3 I xa ∈ X) (hX : ∀ x ∈ X, ∃ y, embed3 I y = x ∧
+      Fin.last 4 ∈ I.amalgam.toCellScheme.scope y ∧
+      y ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex xa))
     {t₁ t₂ : Fin (scheme I).card}
     (ht₁ : t₁ ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
     (hg₁ : (scheme I).toCellScheme.grade t₁ = 1)
