@@ -23,7 +23,7 @@ the realization is a clause of the model.
 
 * `StageType.HasExactGrowthCarriers C`, a **finite** statement about stage types (open): over every
   legal context `t'` at a limit stage with `C t' h d`, for a one-point coface `d` of the face of
-  `t'` along `h`, some growth carrier, with a coface of `t'` on it, recovers the labels of `d`
+  `t'` along `h`, some growth carrier recovers the labels of `d`
   exactly from the labels of `t'`.  The calibration `C` may depend on the donor `d`.
 * `Realization.HollowGrowthAcquisition H C`, a statement about models: every cover in a model
   satisfying `H` with unbounded top-grade growth extends, for each one-point coface `d` of its
@@ -70,16 +70,16 @@ namespace StageType
 /-- **Exact growth carriers** for a calibration `C` on contexts and donors, a finite statement
 about stage types (no realization), open: over every legal `t'` at a limit stage, for every
 one-point coface `d` of the face `t` of `t'` along `h` with `C t' h d`, some growth carrier over
-the scheme of `t'` with donor scheme that of `d` along `h` has a coface of `t'` on it and recovers
-the labels of `d` exactly, the formal top included, from the labels of `t'`. -/
+the scheme of `t'` with donor scheme that of `d` along `h` recovers the labels of `d` exactly, the
+formal top included, from the labels of `t'`.  A coface of `t'` on the carrier is automatic
+(`GrowthCarrier.nonempty_cofaces_inter_saturationFamily_of_isSuccPrelimit`). -/
 def HasExactGrowthCarriers
     (C : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
       StageType.{u} α (n + 1) → Prop) : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
     Order.IsSuccLimit α → t'.IsLegal → ∀ t : StageType.{u} α n, restrictFace h t' = some t →
       ∀ d ∈ t.cofaces, C t' h d → ∃ G : GrowthCarrier t'.toScheme d.toScheme h,
-        (t'.cofaces ∩ saturationFamily G.scheme).Nonempty ∧
-          G.Recovers t'.label fun j ℓ ↦ ℓ = d.label j
+        G.Recovers t'.label fun j ℓ ↦ ℓ = d.label j
 
 /-- **A carrier with exact recovery determines the donor**: every stage type on the carrier with
 face `t'` along the first points has face `d` along `h` followed by the new point. -/
@@ -108,7 +108,9 @@ theorem HasExactGrowthCarriers.schemeDetermination
     (hcar : HasExactGrowthCarriers fun t' h _ ↦ P t' h) :
     Realization.SchemeDetermination.{u} P where
   exists_coface _ _ _ t' h hα ht' hP t ht d hd := by
-    obtain ⟨G, ⟨D', hD', hD'E⟩, hrec⟩ := hcar t' h hα ht' t ht d hd hP
+    obtain ⟨G, hrec⟩ := hcar t' h hα ht' t ht d hd hP
+    obtain ⟨D', hD', hD'E⟩ :=
+      G.nonempty_cofaces_inter_saturationFamily_of_isSuccPrelimit hα.isSuccPrelimit rfl
     exact ⟨D', hD', hD'E ▸ G.isDeterminedWithin hrec⟩
 
 end StageType
@@ -150,9 +152,10 @@ theorem hollowReceiving_of_hasExactGrowthCarriers
   exists_covers α M R hα hR hH htop n t c hc d hd := by
     obtain ⟨k, t', c', h, hc', hcc', hC⟩ := hacq.exists_context hα hR hH htop t c hc d hd
     let x : R.Occurrence := ⟨k, ⟨c', hc'.injective⟩, t', hc'.eval_eq⟩
-    obtain ⟨G, hsat, hrec⟩ := hcar t' h hα (hR.isLegal _ _ hc'.eval_eq) t
+    obtain ⟨G, hrec⟩ := hcar t' h hα (hR.isLegal _ _ hc'.eval_eq) t
       (restrictFace_of_covers hR.isConsistent hc hc' hcc') d hd hC
-    obtain ⟨u, hu, -, hev⟩ := GrowthCarrier.exists_eval_eq_of_recovers_eq hR x G hsat hrec
+    obtain ⟨u, hu, -, hev⟩ := GrowthCarrier.exists_eval_eq_of_recovers_eq hR x G
+      (G.nonempty_cofaces_inter_saturationFamily_of_isSuccPrelimit hα.isSuccPrelimit rfl) hrec
     refine ⟨u (Fin.last n), ?_⟩
     have hfun : Fin.snoc c (u (Fin.last n)) = ⇑u := by
       funext i

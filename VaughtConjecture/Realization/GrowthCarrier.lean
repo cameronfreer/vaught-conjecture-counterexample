@@ -179,6 +179,16 @@ theorem nonempty_cofaces_inter_saturationFamily {w : Fin G.scheme.card → Label
     (t.cofaces ∩ saturationFamily G.scheme).Nonempty :=
   ⟨_, G.mem_cofaces_displayType hw hst ht hctx, rfl⟩
 
+/-- **Legality suffices for realization**: at a stage that is zero or a limit, a legal carrier
+carries a coface of every stage type on its context scheme
+(`StageType.nonempty_cofaces_inter_saturationFamily`, [Kni26, Lemma 4.4.1]); no display is
+needed. -/
+theorem nonempty_cofaces_inter_saturationFamily_of_isSuccPrelimit
+    (hα : Order.IsSuccPrelimit α) {t : StageType.{u} α J} (ht : t.toScheme = C) :
+    (t.cofaces ∩ saturationFamily G.scheme).Nonempty :=
+  StageType.nonempty_cofaces_inter_saturationFamily hα G.isLegal G.context_mem
+    (G.comap_context.trans ht.symm)
+
 /-! ### The evaluation on a realized carrier -/
 
 variable {M : Type v} {R : Realization.{u, v} α M}

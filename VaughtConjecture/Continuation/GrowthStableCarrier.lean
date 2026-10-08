@@ -33,7 +33,7 @@ labelled the formal top; the realized carrier is the occurrence given by general
 * `StageType.CappedRelation D γ`: the relation of (R4) at a donor `D` and an ordinal `γ`.
 * `StageType.HasStableGrowthCarriers ξ C`, a **finite** statement about stage types (open): every
   legal stage type `T⁺` at `λ_{ξ+1}` satisfying the calibration `C` for `f`, `D` and `γ` has a
-  growth carrier, with a coface of `T⁺↓λ_ξ` on it, recovering the capped relation from the labels
+  growth carrier recovering the capped relation from the labels
   of `T⁺`.
 
 ## Main statements
@@ -106,7 +106,7 @@ noncomputable def stableLabelling (hR : R.IsConsistent) (hc : R.IsCovering)
 
 /-- **The stable evaluation of a growth carrier**: in a model `R` at `λ_ξ`, let `w` be an
 occurrence of `R` containing the tuple of `x` along `f`, and let a growth carrier over the type of
-`w`, with donor scheme that of `D` along `f`, have a nonempty saturation instance over `w` and
+`w`, with donor scheme that of `D` along `f`,
 recover the capped relation of `D` at `γ` from the stable section of `w`.  Then (R4) holds at
 `(x, D, γ)`.  The carrier is realized in `R`; the stable labels are read on the realized tuple. -/
 theorem stablyReceivesAt_of_growthCarrier (hR : R.IsModel)
@@ -114,11 +114,12 @@ theorem stablyReceivesAt_of_growthCarrier (hR : R.IsModel)
     {D : StageType.{u} (blockStage (ξ + 1)) (x.arity + 1)} {γ : Ordinal.{u}} (w : R.Occurrence)
     {f : Fin x.arity ↪ Fin w.arity} (hf : f.trans w.tuple = x.tuple)
     (G : GrowthCarrier w.type.toScheme D.toScheme f)
-    (hsat : (w.type.cofaces ∩ saturationFamily G.scheme).Nonempty)
     (hrec : G.Recovers (R.stableSection w.tuple w.type) (CappedRelation D γ)) :
     R.StablyReceivesAt hR.isStablyLawful x D γ := by
   obtain ⟨u, hu, -, s, hs, hsD, hl⟩ := G.exists_recovered hR
-    (stableLabelling hR.isConsistent hR.isCovering hR.isStablyLawful) w hsat hrec
+    (stableLabelling hR.isConsistent hR.isCovering hR.isStablyLawful) w
+    (G.nonempty_cofaces_inter_saturationFamily_of_isSuccPrelimit (isSuccPrelimit_blockStage ξ) rfl)
+    hrec
   exact ⟨u, hu.trans hf, R.stableType hR.isStablyLawful u s hs, stableCandidate_eval_of_eval hs,
     hsD, hl⟩
 
@@ -137,11 +138,10 @@ point satisfies the capped relation. -/
 theorem isStableRecoveryScheme {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f : Fin k ↪ Fin m}
     {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}}
     (G : GrowthCarrier Tp.toScheme D.toScheme f)
-    (hsat : ((Tp.reduce (isSuccPrelimit_blockStage ξ)).cofaces ∩
-      saturationFamily G.scheme).Nonempty)
     (hrec : G.Recovers Tp.label (CappedRelation D γ)) :
     Tp.IsStableRecoveryScheme f D γ G.scheme := by
-  obtain ⟨q, hq, hqE⟩ := hsat
+  obtain ⟨q, hq, hqE⟩ := G.nonempty_cofaces_inter_saturationFamily_of_isSuccPrelimit
+    (isSuccPrelimit_blockStage ξ) (t := Tp.reduce (isSuccPrelimit_blockStage ξ)) rfl
   refine ⟨⟨q, hq, hqE⟩, fun Q' hQ' hface ↦ ?_⟩
   obtain ⟨S, lab, hwf, hcod, hlaw, hst⟩ := Q'
   change S = G.scheme at hQ'
@@ -165,7 +165,7 @@ variable (ξ) in
 /-- **Stable growth carriers** for a calibration `C`, a finite statement about stage types (no
 realization), open: every legal stage type `T⁺` at `λ_{ξ+1}` with `C T⁺ f D γ`, for a coface `D`
 of its face along `f` (`0 < k`) and `γ < λ_{ξ+1}`, has a growth carrier over its scheme with donor
-scheme that of `D` along `f`, a coface of `T⁺↓λ_ξ` on it, and recovery of the capped relation of
+scheme that of `D` along `f` and recovery of the capped relation of
 `D` at `γ` from the labels of `T⁺`.  The recovery quantifies over every lawful section of the
 carrier's rows, with no stage bound. -/
 def HasStableGrowthCarriers
@@ -175,8 +175,7 @@ def HasStableGrowthCarriers
     (P : StageType.{u} (blockStage (ξ + 1)) k), Tp.IsLegal → 0 < k →
     restrictFace f Tp = some P → ∀ D ∈ P.cofaces, ∀ γ : Ordinal.{u}, γ < blockStage (ξ + 1) →
       C Tp f D γ → ∃ G : GrowthCarrier Tp.toScheme D.toScheme f,
-        ((Tp.reduce (isSuccPrelimit_blockStage ξ)).cofaces ∩
-          saturationFamily G.scheme).Nonempty ∧ G.Recovers Tp.label (CappedRelation D γ)
+        G.Recovers Tp.label (CappedRelation D γ)
 
 /-- **Stable growth carriers give stable recovery schemes** (`GrowthCarrier.isStableRecoveryScheme`)
 for the same calibration. -/
@@ -185,8 +184,8 @@ theorem HasStableGrowthCarriers.hasStableRecoverySchemes
       StageType.{u} (blockStage (ξ + 1)) (k + 1) → Ordinal.{u} → Prop}
     (h : HasStableGrowthCarriers ξ C) : HasStableRecoverySchemes ξ C :=
   fun _ _ Tp f P hT hk hP D hD γ hγ hC ↦
-    let ⟨G, hsat, hrec⟩ := h Tp f P hT hk hP D hD γ hγ hC
-    ⟨G.scheme, G.isStableRecoveryScheme hsat hrec⟩
+    let ⟨G, hrec⟩ := h Tp f P hT hk hP D hD γ hγ hC
+    ⟨G.scheme, G.isStableRecoveryScheme hrec⟩
 
 end StageType
 
