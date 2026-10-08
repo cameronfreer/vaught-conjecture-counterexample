@@ -56,19 +56,19 @@ through the source prefix and the bountifulness of the amalgam
 (`Seed.cappedLift_fieldLayerOne_of_ne_univ`), never through a completion; from each coatom to the
 full face they are the lifts at grade `0` (no cells), `1` and `2`.
 
-**The completion** (`Seed.completionBelowFullGradeOne`): the layer at grade two, with the old
-cells along `Fin.castAdd` twice, legal below the full grade
-(`Seed.isLegalBelowFullGrade_fieldLayerOne`: completeness at `(univ, 1)` and `(univ, 2)` by the
-cells of the orbit code of the bottom labelling), and the glued labelling extended through both
-layers (`Seed.exists_isLawful_fieldLayerOne`).  Every lawful labelling of the amalgam extends
-(`Seed.exists_completionBelowFullGrade_one`), and with the arity zero every seed on at most three
-points has a completion below the full grade (`Seed.nonempty_completionBelowFullGrade_of_le_one`).
-No hypothesis on the stage enters.  So checkpoint 2.5 is proved at both small arities; the
-recursion on the grade for `m ≥ 2` (checkpoint 2.6) is still to be proved.  There the step from
-grade `j` to `j + 1` cannot use `V = (univ, j)` and a lift within the other coatom's face as here:
-the other coatom `D` meets the first in cells of grade `j + 1`, so its cells of grade `j + 1` need
-a lift from the union of `(C ∩ D, j + 1)` and `(D, j)`.  At `m = 1` the common face `{0}` carries
-no cell of grade `2`, which is what makes the lift within the face exact.
+**The completion** (`Seed.completionBelowFullGradeOne`): the layer at grade two, with the old cells
+along `Fin.castAdd` twice, legal below the full grade (`Seed.isLegalBelowFullGrade_fieldLayerOne`:
+completeness at `(univ, 1)` and `(univ, 2)` by the cells of the orbit code of the bottom labelling),
+and the glued labelling extended through both layers (`Seed.exists_isLawful_fieldLayerOne`).  Every
+lawful labelling of the amalgam extends (`Seed.exists_completionBelowFullGrade_one`), and with the
+arity zero every seed on at most three points has a completion below the full grade
+(`Seed.nonempty_completionBelowFullGrade_of_le_one`).  No hypothesis on the stage enters.  So
+checkpoint 2.5 is proved at both small arities; the completion at every arity `m ≥ 2` (checkpoints
+2.6–2.7) is compiled in this repository (theorem named) (`Seed.nonempty_completionBelowFullGrade`).
+There the step from grade `j` to `j + 1` cannot use `V = (univ, j)` and a lift within the other
+coatom's face as here: the other coatom `D` meets the first in cells of grade `j + 1`, so its cells
+of grade `j + 1` need a lift from the union of `(C ∩ D, j + 1)` and `(D, j)`.  At `m = 1` the common
+face `{0}` carries no cell of grade `2`, which is what makes the lift within the face exact.
 
 ## Placement
 

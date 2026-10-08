@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
 import VaughtConjecture.Extension.GatedExtensionCounterexample
+import VaughtConjecture.Realization.Families
 
 /-!
 # The coupled gated pinned extension property fails at every stage above `1`
@@ -50,7 +51,13 @@ reads, for every donor label below the cap, an anchor of that label in the block
 the cap itself, then no lawful labelling of `P` that keeps the cap drops that anchor
 (`CellScheme.Rows.IsLawful.ne_bot_of_row_mem_block`: a shifter sending the reading of the anchor to
 `⊥` sends its whole block to `⊥`), and the donor's own labelling meets the condition.  The
-condition is necessary for the property, not shown sufficient.
+condition is necessary for the property, not shown sufficient.  More generally, a lawful labelling
+that keeps a cell `C` and drops a cell `x` that the row of `C` reads at an ordinal drops every
+cell that the row of `C` reads below the end of the block of that reading
+(`CellScheme.Rows.IsLawful.eq_bot_of_row_le_block`), so the row of `C` reads `C` above that block
+(`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`).  These concern cells read at ordinals: a cell
+read as `⊥` has no block (the dead cells of the input below are read as `⊥`, and are `⊥` in every
+lawful labelling that keeps the cap).
 
 **The anchor readings at a positive cap**
 (`CellScheme.Rows.IsLawful.min_eq_visibilityReplace_of_min_eq`).  Part 2 of the requirement named
@@ -99,7 +106,18 @@ labelled `⊤`.  So the bottom transport condition asks for a lawful labelling o
 * It does not refute (R1), finite-cut receiving for all models: whether the private types that
   models acquire (`Realization.IsModel.exists_privateContext`) can carry such an anchor
   (a lawful labelling of the private type that is `⊥` at an anchor and not at the cap, with a donor
-  whose rows read the transported pattern within one block) is not decided here.
+  whose rows read the transported pattern within one block) is not decided here.  The refuting
+  input satisfies the finite stage-type and label conditions of the output of
+  `Realization.IsModel.exists_privateContext` (with `N₀ ≤ 2`) and of its anchored form, at every
+  floor (`exists_privateContext_not_carriesBottoms`), so those conditions alone do not give the
+  bottom transport condition.  No occurrence of this input in an actual model is exhibited, and
+  whether every model acquires a private context satisfying the condition
+  (`Realization.AcquiresCarryingContexts`) is undecided.
+* The refuting private type lies in every dominance family over its face on the first point, with
+  its full cell labelled `⊤`, and does not carry there
+  (`exists_mem_dominanceFamily_not_carriesBottoms`).  This refutes only the finite sufficient
+  condition "every member of a dominance family carries the bottoms at its dominating cell"; no
+  occurrence of it in a model is exhibited.
 * The refuting private type has a unique cell of full scope and full grade, and cells of grade
   `1` not labelled `⊥`; so neither of the conditions on private contexts asked about in
   `VaughtConjecture.Realization.CoupledFiniteCutReceiving` (question (M4)) excludes it.
@@ -763,5 +781,104 @@ theorem not_hasCoupledGatedPinnedExtensions (α : Ordinal.{u}) (hα : 1 < α) :
     (isLegal_P α hα) (restrictFace_of_mem _ _ hf) (isLegal_donor α hα) hdp rfl
     (by change (⊤ : Label.{u}) ≠ ⊥; simp) (by omega) hanc
   exact (isEmpty_coupledGatedExtension α hα emptyRoot).false E
+
+/-! ### The refuting input meets the finite conditions of an acquired private context -/
+
+/-- **The finite conditions of an acquired private context do not give the bottom transport
+condition.**  The refuting input satisfies, with private arity `2` over the empty root, the finite
+stage-type and label conditions of the output of `Realization.IsModel.exists_privateContext` and
+of its anchored form (`y.type := P α`, at every floor `γ < α`, with `N₀ ≤ 2`): a legal private
+type with the root as a literal face, a legal donor with the same root face, arity above `0 + 1`,
+a cell `C = 4` of graded index `(univ, 2)` labelled above every `γ < α`, for every ordinal donor
+label a reference cell (`z₁`, labelled `1 = vr_2(1, 1)`, not self-visible at `2`, below the label
+of `C`), and anchoring below `C`; and the bottom transport condition fails there
+(`not_carriesBottoms`).  This is a statement about stage types at one input: no occurrence of it
+in an actual model is exhibited.  The row of `C` reads `z₁` at `1` and `C` itself at `ω + 2`, a
+block higher (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`).  The existing acquisition proof
+(uniformity, high-arity dominance, exact consistency) does not establish control of this row
+jointly with the label of `C` above the floor; whether models acquire a private context
+satisfying the condition from the full model axioms is undecided. -/
+theorem exists_privateContext_not_carriesBottoms (α : Ordinal.{u}) (hα : 1 < α) :
+    ∃ (P : StageType.{u} α 2) (f : Fin 0 ↪ Fin 2) (p : StageType.{u} α 0)
+      (d : StageType.{u} α (0 + 1)) (C : Fin P.card),
+      P.IsLegal ∧ restrictFace f P = some p ∧ d.IsLegal ∧
+        restrictFace Fin.castSuccEmb d = some p ∧ 0 + 1 < 2 ∧
+        P.toCellScheme.gradedIndex C = (Finset.univ, 2) ∧
+        (∀ γ : Ordinal.{u}, γ < α → (γ : Label.{u}) < P.label C) ∧
+        (∀ (j : Fin d.card) (o : Ordinal.{u}), d.label j = o →
+          ∃ z, ∃ i < 2, d.label j = visibilityReplace 2 i (P.label z) ∧
+            ¬ IsSelfVisible 2 (P.label z) ∧ P.label z < P.label C) ∧
+        IsAnchored P C d ∧ ¬ CarriesBottoms P d (P.label C) := by
+  have hf : univ.map emptyRoot ∈ (P α hα).toCellScheme.faces := by
+    -- The faces of `P α` are the interval plan of `univ` (`cells`, by definition).
+    change _ ∈ Geometry.intervalPlan univ; decide +kernel
+  have hfd : univ.map (Fin.castSuccEmb : Fin 0 ↪ Fin 1) ∈ (donor α hα).toCellScheme.faces := by
+    -- The faces of the donor are the interval plan of `univ` (`donorCells`, by definition).
+    change _ ∈ Geometry.intervalPlan univ; decide +kernel
+  have hdp : restrictFace Fin.castSuccEmb (donor α hα) = some ((P α hα).comap emptyRoot hf) := by
+    rw [restrictFace_of_mem _ _ hfd]; exact congrArg some (StageType.eq_of_zero _ _)
+  have h1 : (1 : Label.{u}) = Label.visibilityReplace 2 1 (1 : Label.{u}) := by simp
+  refine ⟨P α hα, emptyRoot, (P α hα).comap emptyRoot hf, donor α hα, (4 : Fin 5),
+    isLegal_P α hα, restrictFace_of_mem _ _ hf, isLegal_donor α hα, hdp, by omega, rfl,
+    fun γ _ ↦ ?_, fun j o hj ↦ ?_, fun j _ _ hlt ↦ ?_, not_carriesBottoms α hα ?_ ?_⟩
+  · -- The cell `4` is labelled `⊤`.
+    change (γ : Label.{u}) < ⊤
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top γ)
+  · fin_cases j
+    · -- The cell `e₁` is labelled `1 = vr_2(1, 1)`, the label of `z₁` (`P`, `donor`).
+      refine ⟨(2 : Fin 5), 1, by omega, h1, ?_, ?_⟩
+      · -- The label of `z₁` is `1` (`P`).
+        change ¬ IsSelfVisible 2 (1 : Label.{u})
+        rw [← Nat.cast_one, isSelfVisible_natCast]; omega
+      · -- The labels of `z₁` and of the cap are `1` and `⊤` (`P`).
+        change (1 : Label.{u}) < ⊤
+        exact lt_of_le_of_ne le_top one_ne_top
+    · -- The cell `e₂` is labelled `⊤`, not an ordinal.
+      exact absurd hj (by
+        change (⊤ : Label.{u}) ≠ _
+        exact fun h ↦ WithTop.top_ne_coe (WithBot.coe_injective h))
+  · fin_cases j
+    · exact ⟨(2 : Fin 5), 1, by omega, h1⟩
+    · -- The cell `e₂` is labelled `⊤`, not below the label `⊤` of the cap.
+      exact absurd hlt (by change ¬ (⊤ : Label.{u}) < ⊤; exact lt_irrefl _)
+  · -- The cap is labelled `⊤` (`P`).
+    change IsSelfVisible 2 (⊤ : Label.{u})
+    exact isSelfVisible_top 2
+  · -- The cap is labelled `⊤` (`P`).
+    change (⊤ : Label.{u}) ≠ ⊥
+    simp
+
+/-! ### A member of every dominance family that does not carry -/
+
+/-- **A dominance step need not give a carrying cap**: the refuting private type `P α` is a coface
+of its face on the first point that lies in every dominance family, with its full cell `4`
+labelled `⊤` above every floor, and the bottom transport condition fails for it and the donor at
+that label (`not_carriesBottoms`).  So the finite condition "every member of a dominance family
+carries the bottoms at its dominating cell" is false; this refutes that sufficient condition, not
+the acquisition of carrying contexts by models.  It is a statement about stage types: no occurrence
+of `P α` in a model is exhibited. -/
+theorem exists_mem_dominanceFamily_not_carriesBottoms (α : Ordinal.{u})
+    (hα : 1 < α) :
+    ∃ (p : StageType.{u} α 1) (q : StageType.{u} α 2) (C : Fin q.card),
+      (∀ γ : Ordinal.{u}, q ∈ p.cofaces ∩ StageType.dominanceFamily γ) ∧
+      q.toCellScheme.gradedIndex C = (Finset.univ, 2) ∧
+      (∀ γ : Ordinal.{u}, (γ : Label.{u}) < q.label C) ∧
+      ¬ StageType.CarriesBottoms q (donor α hα) (q.label C) := by
+  have hf : univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) ∈ (P α hα).toCellScheme.faces := by
+    -- The faces of `P α` are the interval plan of `univ` (`cells`, by definition).
+    change _ ∈ Geometry.intervalPlan univ; decide +kernel
+  -- The cell `4` has grade `2` and is labelled `⊤` (`P`, by definition).
+  have htop : ∀ γ : Ordinal.{u}, (γ : Label.{u}) < (P α hα).label (4 : Fin 5) := fun γ ↦ by
+    change (γ : Label.{u}) < ⊤
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top γ)
+  refine ⟨(P α hα).comap Fin.castSuccEmb hf, P α hα, (4 : Fin 5), fun γ ↦
+    ⟨⟨isLegal_P α hα, StageType.restrictFace_of_mem _ _ hf⟩, (4 : Fin 5), rfl, htop γ⟩, rfl, htop,
+    not_carriesBottoms α hα ?_ ?_⟩
+  · -- The cell `4` is labelled `⊤` (`P`).
+    change IsSelfVisible 2 (⊤ : Label.{u})
+    exact isSelfVisible_top 2
+  · -- The cell `4` is labelled `⊤` (`P`).
+    change (⊤ : Label.{u}) ≠ ⊥
+    simp
 
 end VaughtConjecture.CoupledGatedExtensionCounterexample

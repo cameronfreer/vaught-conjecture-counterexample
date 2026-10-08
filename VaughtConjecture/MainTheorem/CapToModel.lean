@@ -27,14 +27,18 @@ hypothesis (`MainTheorem.capToModel`).
 extension property with apex gives the three coface instances used by the cap-to-model theorem and
 by the empty-root case of receiving
 (`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`, in
-`VaughtConjecture.Extension.FamilyCofaces`).  At the block stages `λ_{ξ+1}` this gives output 3
-of higher-stage reconstruction for every model at `λ_ξ`, `ξ < ω₁`, that is not cover-hollow and
-has top-grade supremum `⊤` (`Realization.isModel_stableCandidate_of_hasApexCoatomExtensions`),
-conditional on (R4) (`StableCappedReceiving`) and the coatom extension property with apex at
-`λ_{ξ+1}` only, neither of which is proved; the stable candidate is defined because every model is
-stably lawful (`Realization.IsModel.isStablyLawful`).  It also gives the continuation criterion
-(`ContinuationCriterion.of_hasApexCoatomExtensions`), conditional on (R4) and the coatom extension
-property with apex at every `λ_{ξ+1}` with `ξ < ω₁`.
+`VaughtConjecture.Extension.FamilyCofaces`).  At the block stages `λ_{ξ+1}` this gives output 3 of
+higher-stage reconstruction for every model at `λ_ξ`, `ξ < ω₁`, that is not cover-hollow and has
+top-grade supremum `⊤` (`Realization.isModel_stableCandidate_of_hasApexCoatomExtensions`),
+conditional on (R4) (`StableCappedReceiving`), still to be proved, and the coatom extension property
+with apex at `λ_{ξ+1}`, compiled in this repository (theorem named)
+(`StageType.hasApexCoatomExtensions_blockStage`; with it,
+`Realization.isModel_stableCandidate_of_stableCappedReceiving`); the stable candidate is defined
+because every model is stably lawful (`Realization.IsModel.isStablyLawful`).  It also gives the
+continuation criterion (`ContinuationCriterion.of_hasApexCoatomExtensions`), conditional on (R4) and
+the coatom extension property with apex at every `λ_{ξ+1}` with `ξ < ω₁`, the latter compiled in
+this repository (theorem named) (with it, `ContinuationCriterion.of_stableCappedReceiving'`).
+
 
 ## Placement
 
@@ -70,7 +74,9 @@ open Ordinal StageType
 /-- **Output 3 under the coatom extension property with apex at the next block**: the stable
 candidate of a model at `λ_ξ`, `ξ < ω₁`, that is not cover-hollow and has top-grade supremum `⊤` is
 a model at `λ_{ξ+1}`, conditional on (R4) (`hR4`) and the coatom extension property with apex at
-`λ_{ξ+1}` (`hapex`), neither of which is proved. -/
+`λ_{ξ+1}` (`hapex`); (R4) is still to be proved, and the coatom extension property with apex is
+compiled in this repository (theorem named) (`StageType.hasApexCoatomExtensions_blockStage`; with it
+discharged, `Realization.isModel_stableCandidate_of_stableCappedReceiving`). -/
 theorem Realization.isModel_stableCandidate_of_hasApexCoatomExtensions {ξ : Ordinal.{0}}
     {M : Type w} {R : Realization.{0, w} (blockStage ξ) M} (hξ : ξ < ω₁) (hR : R.IsModel)
     (hnh : ¬ R.IsCoverHollow) (hgrow : R.topGradeSup = ⊤) (hR4 : StableCappedReceiving.{w})
@@ -80,8 +86,10 @@ theorem Realization.isModel_stableCandidate_of_hasApexCoatomExtensions {ξ : Ord
     (.of_hasApexCoatomExtensions hapex (isSuccLimit_blockStage (ξ + 1)).isSuccPrelimit)
 
 /-- **The continuation criterion under the coatom extension property with apex at every next
-block**, conditional on (R4) (`hR4`) and the coatom extension property with apex at every
-`λ_{ξ+1}` with `ξ < ω₁` (`hext`), neither of which is proved. -/
+block**, conditional on (R4) (`hR4`) and the coatom extension property with apex at every `λ_{ξ+1}`
+with `ξ < ω₁` (`hext`); (R4) is still to be proved, and the coatom extension property with apex is
+compiled in this repository (theorem named) (`StageType.hasApexCoatomExtensions_blockStage`; with it
+discharged, `ContinuationCriterion.of_stableCappedReceiving'`). -/
 theorem ContinuationCriterion.of_hasApexCoatomExtensions (hR4 : StableCappedReceiving.{w})
     (hext : ∀ ξ < ω₁, HasApexCoatomExtensions.{0} (blockStage (ξ + 1))) :
     ContinuationCriterion.{w} :=

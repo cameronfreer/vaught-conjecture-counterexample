@@ -3,8 +3,11 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.TowerProfileCompletion
+import VaughtConjecture.Extension.FieldLayer
+import VaughtConjecture.Extension.TowerSection
+import VaughtConjecture.Extension.TwoFaceLift
 import VaughtConjecture.Extension.UpperDecoderAt
+import VaughtConjecture.Label.StepWitness
 
 /-!
 # Layers of rank-normalized profiles over the tower, at every arity
@@ -12,8 +15,7 @@ import VaughtConjecture.Extension.UpperDecoderAt
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade, here at every
 arity `m ≥ 2`, `m = 3` included; the modules `VaughtConjecture.Extension.TowerProfileScheme` and
 `VaughtConjecture.Extension.TowerProfileCompletion` are the first instance, at `m = 3`, kept as a
-test, and the completion does not go through them, beyond the generic lemma
-`Scheme.extendsFromBoundary_fieldLayer_of_fill` stated in the second).
+test; this module does not import them).
 
 Let `I` be a seed on `m + 2` points, with `N` cells in its amalgam.  A **profile** is a labelling of
 the cells of the amalgam (`ProfileTower.Prof`).  The **rank-normalized catalogue at the grade `k`**

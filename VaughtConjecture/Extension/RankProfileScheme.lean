@@ -299,11 +299,10 @@ theorem exists_profile_of_gradedIndex {u : Fin (rankScheme I J).card}
   exact ⟨i, rfl⟩
 
 /-- A row lawful below a pair equal to the graded index of its cell is consistent there. -/
-theorem isLawfulBelow_row_of_rowBelow {u : Fin (rankScheme I J).card}
-    {Y : Finset (Fin 5) × ℕ} (hu : (rankScheme I J).toCellScheme.gradedIndex u = Y)
-    (h : (rankScheme I J).rows.IsLawfulBelow Y ((rankScheme I J).rows.rowBelow u hu)) :
-    (rankScheme I J).rows.IsLawfulBelow ((rankScheme I J).toCellScheme.gradedIndex u)
-      ((rankScheme I J).rows.row u) := by
+theorem isLawfulBelow_row_of_rowBelow {n : ℕ} {S : Scheme.{u} n} {u : Fin S.card}
+    {Y : Finset (Fin n) × ℕ} (hu : S.toCellScheme.gradedIndex u = Y)
+    (h : S.rows.IsLawfulBelow Y (S.rows.rowBelow u hu)) :
+    S.rows.IsLawfulBelow (S.toCellScheme.gradedIndex u) (S.rows.row u) := by
   subst hu
   exact h
 
@@ -415,8 +414,8 @@ rank-normalized profile scheme with top layer `3`, for every seed on five points
 one-grade lift `CellScheme.Rows.cappedLift_of_boundaries_short`: the boundary lifts are those of the
 amalgam (`OrderedLayer.cappedLift_multiOld`), the extension from the boundary at `⊥` is
 `extendsFromBoundary_bot`, and every cell at `(univ, 3)` serves the positive caps
-(`isLawfulBelow_row_three`, `isShort_ne_top_rowBelow`, `extendsFromBoundary_row`).  The lift at the
-grade `2` is a hypothesis. -/
+(`isLawfulBelow_rowBelow_three`, `isShort_ne_top_rowBelow`, `extendsFromBoundary_row`).  The lift at
+the grade `2` is a hypothesis. -/
 theorem cappedLift_three_of_two {U V : Finset (Fin 5) × ℕ} (hUV : IsCoatomPair U V)
     (hlift : (rankScheme I 3).rows.CappedLift (X := (U.1, 2)) (Y := ((univ : Finset (Fin 5)), 2))
       ⟨subset_univ _, le_rfl⟩) :
