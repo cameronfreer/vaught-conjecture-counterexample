@@ -19,16 +19,16 @@ contexts with the cap at the top grade (`TiedRootCapRelabel.MarkedCapContextBelo
   unbounded growth, realizes over every occurrence a member of every full-top family
   (`Realization.fullTopFamily S ρ`: scheme `S`, `⊤` at the cells of full grade where `ρ` is `⊤`)
   containing a one-point coface of its type.  It gives the acquisition
-  (`Realization.hollowAcquisition_markedCapContextBelowTop'`).
-* `H3.TopRootLowBound` (assumed): at a context with the cap at the top grade, over every coface
-  `tb` of the coatom face with face `d`, every prescription lawful below the private coatom at the
-  top cut grade, not `⊥` at the cap and at the marker, and not `⊥` at the cells of the class below
-  the private coatom, has the weakened lower bound at the root (`H3.RootLowBound'`: the
-  prescription is at least `n + 1` at every root cell with an ordinal label, or the low truncation
-  of `d` at the root blocks, `⊥` at the labels other than `⊤` below the block start of every
-  ordinal root label, is lawful on `d`).  It is implied by the earlier form `H3.RootLowBound`
-  (`H3.rootLowBound'_of_rootLowBound`).  It gives the donor raise over the gluing coface
-  (`H3.exists_raiseCoface_of_rootLowBound'`).
+  (`Realization.hollowAcquisition_markedCapContextBelowTop'`).  It follows from (R3) for all
+  cover-hollow models at block stages (realize the given member exactly), so it assumes a
+  sub-case of the target stated for a larger class of models (argued, not formalized).
+* `H3.TopRaise` (assumed): at a context with the cap at the top grade and every coface `d` of the
+  root, some coface `tb` of the coatom face with face `d` carries the donor raise in the class form
+  at the top cut grade (`CapRequests.DonorRaiseBotAtIn` at `k + 1`).  A sufficient condition is
+  `H3.TopRootLowBound` (`H3.topRaise_of_topRootLowBound`: the weakened lower bound at the root,
+  `H3.RootLowBound'`, over the gluing coface, for every prescription); the earlier form with the
+  lower bound `H3.RootLowBound` fails at an apex context with a root cell labelled `ω + 1`, a
+  block-shift prescription and a donor with a new cell labelled `1` (argued, not formalized).
 * `H3.TopBand` (assumed): at such a context and coface, the band of the requests at the top cut
   grade (`CapRequests.CapFillPosBandAt` at `k + 1`).  It is implied by the gap of the band
   (`H3.TopBandGap`: `CapRequests.BandGapBelowAt` at `k`, for every datum of the band some `c`,
@@ -147,13 +147,47 @@ theorem topBand_of_topBandGap (hgap : TopBandGap.{u}) : TopBand.{u} :=
     capFillPosBandAt_top_of_gap ht' hp htb htbd hctx hkN
       (hgap t' p ht' hp tb htb g d htbd c r hctx hkN)
 
+/-- **The donor raise at the contexts with the cap at the top grade** (a named hypothesis).
+Quantifier order: for every context (a limit stage `α`, a legal `t'` on `k + 1` points with
+coatom face `p`, root face `t` along `g.trans Fin.castSuccEmb`, a marked cap `c` with marker `r`
+at the top grade, `k < grade c`, with the root offsets below the grade of the cap and the root
+bottoms respected) and every coface `d` of `t`, some coface `tb` of `p` with face `d` along
+`extendByLast g` carries the donor raise in the class form at the top cut grade `k + 1`: every
+prescription `f` lawful below the private coatom at `k + 1`, not `⊥` at the cap and at the class
+cells, extends from the common face to a labelling lawful below the donor coatom that is at least
+the marker value at the new tops (`CapRequests.DonorRaiseBotAtIn`).  The coface is chosen before
+the prescriptions.  It is implied by the weakened lower bound at the root
+(`H3.topRaise_of_topRootLowBound`, over the gluing coface). -/
+def TopRaise : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
+    (ht' : t'.IsLegal) (hp : restrictFace Fin.castSuccEmb t' = some p) (g : Fin n ↪ Fin k)
+    (t : StageType.{u} α n) (_ht : restrictFace (g.trans Fin.castSuccEmb) t' = some t)
+    (d : StageType.{u} α (n + 1)) (_hd : d ∈ t.cofaces) (c r : Fin t'.card)
+    (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r),
+      Order.IsSuccLimit α →
+      t'.RootOffsetsBelow (g.trans Fin.castSuccEmb) (t'.toCellScheme.grade c) →
+      t'.RootBottomRespected (g.trans Fin.castSuccEmb) c →
+      k < t'.toCellScheme.grade c →
+      ∃ tb, ∃ htb : tb ∈ p.cofaces, ∃ htbd : restrictFace (extendByLast g) tb = some d,
+        CapRequests.DonorRaiseBotAtIn
+          (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega))
+          (classCells ht' hp htb htbd) (Fin.last (k + 1)) (Fin.castSucc (Fin.last k)) (k + 1)
+
+/-- **The weakened lower bound at the root gives the donor raise** at the contexts with the cap
+at the top grade, over the gluing coface (`H3.exists_raiseCoface_of_rootLowBound'`). -/
+theorem topRaise_of_topRootLowBound (hlow : TopRootLowBound.{u}) : TopRaise.{u} := by
+  intro α n k t' p ht' hp g t ht d hd c r hctx hα hoff hbot hkN
+  obtain ⟨tb, htb, htbd, hpt, hraise⟩ :=
+    exists_raiseCoface_of_rootLowBound' hα ht' hp ht hd hctx hoff hbot
+  exact ⟨tb, htb, htbd, hraise (k + 1) (t'.grade_le c) le_rfl fun f hf hcap hm hcl ↦
+    hlow t' p ht' hp tb htb g t hpt d hd htbd c r hctx hkN f hf hcap hm hcl⟩
+
 /-- **The existential coatom form at the contexts with the cap at the top grade**, from the
-weakened lower bound at the root and the band (assumed): the gluing coface carries the donor raise
-(`H3.exists_raiseCoface_of_rootLowBound'`); the completion with rows in the class from the
-raise and the band (`H3.exists_classCompletion_of_fills₀`, the donor provisions compiled at the
-top grade, `H3.donorLiftProvisions_of_lt`); determination from it
-(`H3.isDeterminedWithin_of_classRows`). -/
-theorem hollowCoatomCutoffDeterminationExists_top (hlow : TopRootLowBound.{u})
+donor raise and the band (assumed): the coface of the donor raise (`H3.TopRaise`); the completion
+with rows in the class from the raise and the band (`H3.exists_classCompletion_of_fills₀`, the
+donor provisions compiled at the top grade, `H3.donorLiftProvisions_of_lt`); determination from
+it (`H3.isDeterminedWithin_of_classRows`). -/
+theorem hollowCoatomCutoffDeterminationExists_top (hraise : TopRaise.{u})
     (hband : TopBand.{u}) :
     Realization.HollowCoatomCutoffDeterminationExists.{u}
       (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelowTop' t' h) where
@@ -162,15 +196,14 @@ theorem hollowCoatomCutoffDeterminationExists_top (hlow : TopRootLowBound.{u})
     have hkN : k < t'.toCellScheme.grade c := by
       rw [hctx.1.grade_eq_topGrade, htopg]
       omega
-    obtain ⟨tb, htb, htbd, hpt, hraise⟩ :=
-      exists_raiseCoface_of_rootLowBound' hα ht' hp ht hd hctx hoff hbot
+    obtain ⟨tb, htb, htbd, hr⟩ := hraise t' p ht' hp g t ht d hd c r hctx hα hoff hbot hkN
     have hraise' : ∀ k', t'.toCellScheme.grade c ≤ k' → k' ≤ k + 1 →
         CapRequests.DonorRaiseBotAtIn
           (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega))
           (classCells ht' hp htb htbd) (Fin.last (k + 1)) (Fin.castSucc (Fin.last k)) k' :=
-      fun k' hk' hkm ↦ hraise k' hk' hkm fun f hf hcap hm hcl ↦ by
+      fun k' hk' hkm ↦ by
         obtain rfl : k' = k + 1 := by omega
-        exact hlow t' p ht' hp tb htb g t hpt d hd htbd c r hctx hkN f hf hcap hm hcl
+        exact hr
     obtain ⟨F, hF⟩ := exists_classCompletion_of_fills₀ ht' hp htb htbd hctx
       (donorLiftProvisions_of_lt ht' hp htb htbd hctx hkN) hraise' fun k' hk' hkm ↦ by
         obtain rfl : k' = k + 1 := by omega
@@ -183,13 +216,13 @@ theorem hollowCoatomCutoffDeterminationExists_top (hlow : TopRootLowBound.{u})
 
 /-- **(R3) for receiving models through the contexts with the cap at the top grade**,
 conditional on `HollowFullTopSaturation` (a clause on hollow models that is not a clause of
-`IsModel`), the weakened lower bound at the root and the band (assumed). -/
+`IsModel`), the donor raise and the band (assumed). -/
 theorem receivingHollowReceiving_top (hsat : Realization.HollowFullTopSaturation.{u, w})
-    (hlow : TopRootLowBound.{u}) (hband : TopBand.{u}) :
+    (hraise : TopRaise.{u}) (hband : TopBand.{u}) :
     Realization.HollowReceiving.{u, w} Realization.IsReceivingCoverHollowAtBlock :=
   Realization.receivingHollowReceiving_of_cutoffDetermination
     (Realization.markedCapContextBelowTop'_routeInputs hsat).1
-    ((hollowCoatomCutoffDeterminationExists_top hlow hband).hollowCutoffDetermination
+    ((hollowCoatomCutoffDeterminationExists_top hraise hband).hollowCutoffDetermination
       (Realization.markedCapContextBelowTop'_routeInputs.{u, w} hsat).2.1
       (Realization.markedCapContextBelowTop'_routeInputs.{u, w} hsat).2.2)
 
@@ -202,14 +235,14 @@ open FirstOrder Language Structure baseLanguage Expansion Realization Ordinal
 /-- **The thin `ℵ₁` spectrum through the contexts with the cap at the top grade**: the
 three-hypothesis receiving route with (R3) for receiving models replaced by
 `HollowFullTopSaturation` (a clause on hollow models that is not a clause of `IsModel`), the
-weakened lower bound at the root, and the band (assumed). -/
+donor raise, and the band (assumed). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_markedCapContextBelowTop'
     (hR4 : ReceivingStableCappedReceiving.{0}) (hres : ReceivingResidualReceiving.{0, 0})
-    (hsat : HollowFullTopSaturation.{0, 0}) (hlow : H3.TopRootLowBound.{0})
+    (hsat : HollowFullTopSaturation.{0, 0}) (hraise : H3.TopRaise.{0})
     (hband : H3.TopBand.{0}) :
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_receivingModels' hR4 hres
-    (H3.receivingHollowReceiving_top hsat hlow hband)
+    (H3.receivingHollowReceiving_top hsat hraise hband)
 
 end MainTheorem
 
