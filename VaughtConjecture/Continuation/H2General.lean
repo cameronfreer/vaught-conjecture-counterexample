@@ -6,13 +6,16 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.H2Two
 
 /-!
-# h2 at every arity, with the lost point last (work file)
+# h2 at every arity, with the lost point last
 
-WORK FILE (branch `research/work-h2`).  Every declaration of this file is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the three general-arity inputs below are hypotheses of the
+implications.
 
 **The target** (`H2.CoatomCutoffDeterminationLast`): the coatom form of cutoff determination
-(`Realization.CoatomCutoffDetermination`, on `main`) for source-gap contexts with the lost point
-last (`StageType.IsSourceGapContextLast`, branch `research/h2-last-reduction`), on `k + 1` points.
+(`Realization.CoatomCutoffDetermination`) for source-gap contexts with the lost point
+last (`StageType.IsSourceGapContextLast`), on `k + 1` points.
 
 **The implication** (`H2.coatomCutoffDeterminationLast_of_hasRecCompletions`): the target follows
 from completions with the reading property (`H2.HasRecCompletions`): for every legal source-gap
@@ -30,7 +33,11 @@ gives the completion).  The order law at the owner and the frontier bound there 
 (`H2.frontier_le_lawfulAt`, through the extension at the cap `⊥`, `H2.exists_ext_bot_at`).
 
 **At two points** the completions are `H2.exists_completion_recProp` at the lost point `1`, given
-the case of top grade `1` (on the research branch `research/port-low-padded`).
+the case of top grade `1` (its hypothesis `hone`).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

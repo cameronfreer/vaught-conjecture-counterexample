@@ -6,9 +6,11 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.H2OneLayer
 
 /-!
-# Top grade `1` at two points: the step to grade `2` over the admitted layer (work file)
+# Top grade `1` at two points: the step to grade `2` over the admitted layer
 
-WORK FILE (branch `research/work-twolift`).
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the admission of states at the grade `1` is a hypothesis.
 
 Over the admitted layer at grade `1` (`Seed.layerOne`), a labelling prescribed below one coatom at
 grade `2` and agreeing there with an ambient capped at `c` (self-visible at `2`) extends to one
@@ -18,6 +20,10 @@ coatom to `(univ, 1)` (`Seed.cappedLift_layerOne_left`), then, on the other coat
 capped lift from `(univ, 1)` to `(univ, 2)` (bountifulness of the legal coatom type), glued over
 `(C, 2)`, `(univ, 1)` and `(D, 2)`.  No encoding is needed: the admission is met at grade `1` by
 the lift of the admitted layer itself.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

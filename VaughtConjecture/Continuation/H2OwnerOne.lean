@@ -10,9 +10,12 @@ import VaughtConjecture.Continuation.H2Two
 import VaughtConjecture.Continuation.SourceGapOwnerPartnerObstruction
 
 /-!
-# Owner lowering at grade `1` on two points (work file)
+# Owner lowering at grade `1` on two points
 
-WORK FILE (branch `research/work-owner-one`).
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved: a refutation at a legal context and the weakened provision that
+replaces it.
 
 Owner lowering at the grade `1` (`FieldAdmission.OwnerLowering … o r 1 …`) is the hypothesis
 `hOL` of `H2.stateAdmission_one`.  This file shows that it does **not** follow from legality and
@@ -56,7 +59,7 @@ root face, the context itself among them.  What is refuted is the clause `OwnerL
 this context; donor raising and the other inputs of `H2.stateAdmission_one` are not addressed.
 The refutations of this file concern the full labellings (`rows.IsLawful`); the engine of top
 grade `1` runs on the grade-`1` faces (`H2.LawfulOne`), between which the clause is an admission of
-states at both contexts (`VaughtConjecture.Continuation.H2OwnerOneFace`).
+states at both contexts (not compiled in this library).
 
 **Owner lowering below the designated tops** (`H2.OwnerLoweringBelow`,
 `H2.selfLow_isStateAdmissionGap_of_below`, `H2.stateAdmission_one_of_below`).  The donor provision
@@ -87,6 +90,10 @@ of the clause fails at the cap `1`: the clause is **not an admission of states**
 context with itself as donor, and owner lowering below the designated tops fails there.  So no form
 of owner lowering serves at grade `1` in general; the root cell here is labelled `⊤`, so the cells
 of the root are not all designated cells.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

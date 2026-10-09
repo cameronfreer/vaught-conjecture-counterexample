@@ -6,9 +6,11 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.H2GeneralOwner
 
 /-!
-# Owner lowering below the designated tops on the grade-`K` faces (work file)
+# Owner lowering below the designated tops on the grade-`K` faces
 
-WORK FILE (branch `research/work-ownerAt`).  Every declaration here is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the residual `H2.RootBelowTops` is a hypothesis.
 
 On `k + 1` points with the lost point last, below the full grade (`K ≤ k`), the root (the cells of
 the common face, which avoid the lost point) has cells of grade `K`, so the cap at the grade `K` of
@@ -33,6 +35,10 @@ whose value in the donor face is above a designated top.  Then every lowered fac
 `a` at `a`, and availability bounds the frontier from below by it as soon as the owner and the lost
 top are the only cells of graded indices above that of `a` (argued; on two points the lost top and
 the owner share the graded index `(univ, 1)` at `K = 1`, so the configuration needs three points).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

@@ -7,9 +7,12 @@ import VaughtConjecture.Continuation.H2GeneralOwner
 import VaughtConjecture.Continuation.H2OneRaise
 
 /-!
-# h2 at every arity: the engine at two points (work file)
+# h2 at every arity: the engine at two points
 
-WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; owner lowering below the designated tops at the grade `1` is a
+hypothesis of `H2.hasRecCompletions_one_of_below`.
 
 **The engine at two points** (`H2.admittedCompletionsAt_one`, the input `H2.AdmittedCompletionsAt`
 at `k = 1`): at the grade `1` it is `H2.exists_completion_recProp_one_of_admission` (the grade-`1`
@@ -17,10 +20,14 @@ faces are `H2.LawfulOne`), and at the grade `2` it is `H2.exists_completion_of_s
 (the grade-`2` faces are the lawful labellings, `H2.lawfulAt_iff_isLawful`).
 
 So **at two points the completions with the reading property follow from owner lowering below the
-full grade alone** (`H2.hasRecCompletions_one_of_below`): the case of top grade `1`
-`H2.exists_completion_recProp_one` (on the research branch `research/port-low-padded`) is not needed
-once `H2.OwnerLoweringBelowAt 1` (owner lowering below the designated tops between the grade-`1`
-faces at grade `1`) holds. -/
+full grade alone** (`H2.hasRecCompletions_one_of_below`): the case of top grade `1` need not be
+assumed once `H2.OwnerLoweringBelowAt 1` (owner lowering below the designated tops between the
+grade-`1` faces at grade `1`) holds.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
+-/
 
 universe u
 

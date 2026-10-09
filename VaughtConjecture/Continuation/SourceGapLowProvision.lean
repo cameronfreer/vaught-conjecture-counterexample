@@ -48,9 +48,9 @@ pairs.
 **Status.**  Go at the level of the states: at both seeds no boundary labelling fails a LOW
 provision, from either coatom, at any cap.  Not compiled here: the gluing of the two faces into a
 profile of the amalgam (lawfulness on the cut), the transfer of the admission to the orbit code of
-the profile (`SourceGapRequests.AdmitsLowVia.code` of the admission lane, with every designated
+the profile (`SourceGapRequests.AdmitsLowVia.code`, with every designated
 cell, the owner, the lost top and the partner of grade at most `2`), and the admitted layer at the
-arity one itself (the admitted-lift theorem of the admission lane is stated for the levels of the
+arity one itself (the admitted-lift theorem is stated for the levels of the
 profile tower).
 
 ## Placement
@@ -122,7 +122,7 @@ context face, `R` that of the donor face (both labellings of the scheme of the i
 root cell `y`).  The owner is the cell `o` (`3`) of `L`, the lost top the cell `r` (`4`) of `L`,
 `K = 2`; the designated donor cells below the top are `e'` (`1`) and `r'` (`4`) of `R`, the
 designated tops `z'` (`2`) and `o'` (`3`) of `R`; **the partner is the owner** (the field is the
-value at `o`).  This is `SourceGapRequests.AdmitsLowVia` of the admission lane at these data. -/
+value at `o`).  This is `SourceGapRequests.AdmitsLowVia` at these data. -/
 def LowVia (L R : Fin 5 → Label.{u}) : Prop :=
   max (R 1) (R 4) < L 3 →
     max (L 3) (min (L 3) (visibilityReplace 2 2 (L 4))) ≤ R 2 ∧

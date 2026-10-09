@@ -7,9 +7,12 @@ import VaughtConjecture.Continuation.H2OneTop
 import VaughtConjecture.Extension.AdmittedFieldLayerCells
 
 /-!
-# Top grade `1` at two points: the completion (work file)
+# Top grade `1` at two points: the completion
 
-WORK FILE (branch `research/work-twolift`).
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the admission of states at the grade `1`, holding at the labels of
+the two coatom types, is a hypothesis.
 
 For a seed `I` on three points and an admission of states `Adm` at the grade `1` reading only the
 cells of grade at most `1`, holding at the labels of the two coatom types: the admitted layer at
@@ -26,6 +29,10 @@ entry; `Scheme.exists_admitted_image_le`, the recognition of
 The admission is an admission of states between the grade-`1` faces (`H2.LawfulOne`) of the two
 coatom types; **h2 at top grade `1`** from it is `H2.exists_completion_recProp_one_of_admission`
 (module `VaughtConjecture.Continuation.H2OneRaise`).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

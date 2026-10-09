@@ -519,7 +519,7 @@ section Amalgam
 variable {N : SLvl I g}
 
 /-- **The state step from the step for states on the amalgam**: a state step on amalgam
-labellings below the coatom (`ProfileTower.StateCatStep` of the lower-top lane has this form),
+labellings below the coatom (`ProfileTower.StateCatStep` has this form),
 whose conclusion satisfies `A` before coding, gives the state step of a good state level when `A`
 is kept by the orbit code over all fields. -/
 theorem SLvl.sCatStep_of_amalgam (hN : N.Good A)

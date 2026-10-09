@@ -10,15 +10,22 @@ import VaughtConjecture.Continuation.TwoCoatomLift
 /-!
 # h2 at two points: the assembly
 
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+
 `H2.exists_coface_two` gives coatom cutoff determination at one source-gap context on two points
 from donor raising with the gap at the top grade `2` and the completion with the reading property
 at the top grade `1`.  Donor raising with the gap is proved at lost point `1`
 (`H2.donorRaising_two_one`) and whenever every root cell is low or a designated root top
 (`H2.donorRaising_two_of_root`), from capped lifts and the band raise
 (`H2.donorRaisingGap_of_cappedLift`).  The two-coatom lift `H2.hasTwoCoatomLift_two` is proved
-(`Seed.hasTwoCoatomLift`).  The remaining statements at the top grade `1` and at lost point `0`,
-and their assembly into `H2.CoatomCutoffDeterminationTwo`, are on the research branch
-`research/port-low-padded`.
+(`Seed.hasTwoCoatomLift`).  The completion at the top grade `1` (`hone`) and donor raising at the
+top grade `2` (`hDR`) are hypotheses of `H2.exists_coface_two`; donor raising at lost point `0`
+with a root top, and so `H2.CoatomCutoffDeterminationTwo`, are not proved here.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

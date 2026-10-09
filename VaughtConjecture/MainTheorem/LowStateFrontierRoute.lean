@@ -30,7 +30,7 @@ labels above `K`.
 step stated on amalgam labellings below the coatom with an uncoded conclusion
 (`ProfileTower.SLvl.sCatStep_of_amalgam`; the orbit code over all fields keeps the LOW clause), the
 form in which the LOW step for states at `K` is proved for every LOW family of top grade at most
-`K` in the lower-top lane (`ProfileTower.stateCatStep_low_seed`); there the grades above `K` remain.
+`K` (`ProfileTower.stateCatStep_low_seed`); there the grades above `K` remain.
 
 **Status.**  `StageType.HasLowDisplays` is proved (`StageType.hasLowDisplays_of_padded`, in
 `VaughtConjecture.MainTheorem.LowPaddedRoute`, through the padded tower).  The frontier steps are
@@ -109,7 +109,7 @@ theorem hasLowDisplaysOn_stateFrontier : HasLowDisplaysOn.{u} StateFrontierClass
 /-- **The steps for states on the amalgam of a LOW family** (a hypothesis): for every
 decomposition `K = g + 1`, `k = g + J + 2`, the step for states on the amalgam of the seed of the
 family, for the LOW clause at `K`, at every grade from `K` to `k`, from the two coatoms (the
-form of `ProfileTower.StateCatStep` of the lower-top lane). -/
+form of `ProfileTower.StateCatStep`). -/
 def StateAmalgamSteps (K : ℕ) (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (o r : Fin t'.card) : Prop :=
   ∀ (hF : IsLowFamily K t' tb p o r) (g J : ℕ) (hK : K = g + 1) (hk : k = g + J + 2), by

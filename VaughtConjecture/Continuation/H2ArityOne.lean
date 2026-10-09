@@ -7,10 +7,12 @@ import VaughtConjecture.Continuation.SourceGapAdmittedDetermination
 import VaughtConjecture.Continuation.SourceGapFieldFace
 
 /-!
-# h2 at two points: coatom cutoff determination for source-gap contexts (work file)
+# h2 at two points: coatom cutoff determination for source-gap contexts
 
-WORK FILE (branch `research/work-h2`).  Every declaration here is proved; the assembly at two
-points is `VaughtConjecture.Continuation.H2Two`.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the completion with the reading property is a hypothesis of the
+assembly (`H2.exists_coface_two`, `VaughtConjecture.Continuation.H2Two`).
 
 **The clause** (`H2.SelfLowG`): the LOW clause with every designated top as its own field:
 `∀ t ∈ Tops, Lo.sup R < R t → frontierAt o r K L ≤ R t`.  At a reader with the context at its
@@ -26,6 +28,10 @@ first point, and a legal coface `tb` of its coatom face `p`:
 * a permitted cutoff above the labels of `tb` other than `⊤` (`H2.exists_cutoff`);
 * determination of the donor face from the clause (`H2.key_completion`) and the generic
   passage to `IsDeterminedWithin` (`H2.isDeterminedWithin_addApex`).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

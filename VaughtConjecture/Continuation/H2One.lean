@@ -6,9 +6,12 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.H2Engine
 
 /-!
-# h2 at two points, top grade `1`: the state-level provisions (work file)
+# h2 at two points, top grade `1`: the state-level provisions
 
-WORK FILE (branch `research/work-twolift`).  Every declaration here is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; owner lowering at the grade `1` is a hypothesis (`hOL`), refuted at a
+legal context by `VaughtConjecture.Continuation.H2OwnerOne`.
 
 At top grade `1` the clause `H2.SelfLowG o r 1 Lo Tops` is an admission of states from donor
 raising and owner lowering at the grade `1` (`H2.stateAdmission_one`): the order law at the owner
@@ -28,6 +31,10 @@ above `h` lies below every cell of graded index `(univ, 1)`, the owner's, so som
 graded index other than the owner must carry it.  That is the configuration owner lowering at
 grade `1` has to handle.  The designation `Tops` is a parameter, so the
 statement serves any designation (in particular one without the root-determined cells).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

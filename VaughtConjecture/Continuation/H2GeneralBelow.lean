@@ -7,9 +7,11 @@ import VaughtConjecture.Continuation.H2GeneralEngine
 import VaughtConjecture.Extension.RowCompletionZero
 
 /-!
-# h2 at every arity: the engine below the full grade (work file)
+# h2 at every arity: the engine below the full grade
 
-WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the extension above `K` (`H2.ExtAbove`) is a hypothesis.
 
 **The engine below the full grade** (`H2.exists_completion_below`): for a context of top grade
 `K ≤ k` on `k + 1` points, an admission of states of the clause between the grade-`K` faces gives
@@ -34,6 +36,10 @@ the root cells of grade in `(K, j]` are prescribed as well (the analogue at high
 `H2.coatomCutoffDeterminationLast_of_ext`): the engine below the full grade on `k + 1 ≥ 2` points
 from the extension above `K` for `K < k` (`H2.ExtAboveAt`); at `K = k` it needs nothing.  At three
 points (`k = 2`) the residual is the extension above the grade `1` (`H2.extAboveAt_two_iff`).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

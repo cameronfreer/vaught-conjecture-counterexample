@@ -9,9 +9,11 @@ import VaughtConjecture.Extension.LevelOn
 import VaughtConjecture.Extension.RowCompletionZero
 
 /-!
-# h2 at every arity: the engine at the full grade (work file)
+# h2 at every arity: the engine at the full grade
 
-WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the open inputs listed below are hypotheses.
 
 **The engine at the full grade** (`H2.admittedCompletionsAt_full`): for a context on `k + 1 ≥ 3`
 points of top grade `K = k + 1`, an admission of states of the clause between the lawful faces
@@ -32,6 +34,10 @@ designated tops below the full grade (`H2.OwnerLoweringBelowAt`, every arity), t
 point (`H2.AdmittedCompletionsAt 0`), and the engine below the full grade on at least three points
 (`H2.AdmittedCompletionsBelowAt`): there the rows at the grades above `K` are read on faces of
 grade above `K`, which the admission between the grade-`K` faces does not reach.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

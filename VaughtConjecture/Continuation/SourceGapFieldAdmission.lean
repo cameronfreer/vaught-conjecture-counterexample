@@ -17,7 +17,7 @@ obstruction of `VaughtConjecture.Continuation.SourceGapOwnerPartnerObstruction`.
 cells designated below the top and `Tops` the designated tops.  If the maximum of `R` over `Lo` is
 below `b`, every designated top is at least `max b (frontier L)`, with the **frontier**
 `min (L o) (visibilityReplace 2 2 (L r))` (`FieldAdmission.frontier`).  This is
-`SourceGapRequests.AdmitsLowAt` of the admission lane at these data.  The field is a coordinate of
+`SourceGapRequests.AdmitsLowAt` at these data.  The field is a coordinate of
 the state, not the value at a cell of the faces (prospective: the value at a field cell of an
 entry, recovered at a reader; not compiled).  So the lift provisions carry it: a provision returns,
 with the face, a field self-visible at `2` agreeing with the given one capped at `h`

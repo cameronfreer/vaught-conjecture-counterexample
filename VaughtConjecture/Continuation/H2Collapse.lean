@@ -7,9 +7,11 @@ import VaughtConjecture.Continuation.H2ArityOne
 import VaughtConjecture.Extension.CapTransport
 
 /-!
-# h2: donor raising by a band raise (work file)
+# h2: donor raising by a band raise
 
-WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the tie at the cap (`H2.TieAtCap`) is a hypothesis where it enters.
 
 **The band raise** (`H2.bandRaise B h c`): the label `c` on the band of labels above `B`, at least
 `h` and below `c`; the identity elsewhere.  For `B` and `c` self-visible at `K` and either `h ≤ B`
@@ -29,6 +31,10 @@ clause every designated top above the replaced low maximum is at least `min c h`
 (`H2.IsRootDet`), then at a cap `h = μ + K` and a frontier cap `c > h` no cell of the capped lift
 has a label in `[μ, h)`, and the band raise of `[μ, c)` to `c` (a witness: replacement does not
 cross `μ`, `H2.coe_le_visibilityReplace_iff`) finishes; at `c ≤ h` the capped lift finishes.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

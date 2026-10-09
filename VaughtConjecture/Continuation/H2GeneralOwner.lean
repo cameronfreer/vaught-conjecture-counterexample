@@ -7,9 +7,12 @@ import VaughtConjecture.Continuation.H2GeneralRaise
 import VaughtConjecture.Continuation.H2OwnerOne
 
 /-!
-# h2 at every arity: owner lowering on the grade-`K` faces (work file)
+# h2 at every arity: owner lowering on the grade-`K` faces
 
-WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; below the full grade owner lowering below the designated tops
+(`H2.OwnerLoweringBelowAt`) is a hypothesis.
 
 **Owner lowering at the full grade** (`H2.ownerLoweringAt_full`): at `K = k + 1` the grade-`K`
 faces are the lawful labellings (`H2.lawfulAt_iff_isLawful`), and owner lowering is
@@ -21,6 +24,10 @@ alone suffices.
 would move; there owner lowering itself fails at some legal context (`OwnerGradeOne`), and the
 named input is owner lowering below the designated tops (`H2.OwnerLoweringBelowAt`, in the form
 `H2.OwnerLoweringBelow`).  `H2.hasRecCompletions_of_below` assembles it with the full grade.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

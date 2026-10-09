@@ -6,9 +6,12 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.H2OwnerAt
 
 /-!
-# Owner lowering below the designated tops on the grade-`K` faces at every arity (work file)
+# Owner lowering below the designated tops on the grade-`K` faces at every arity
 
-WORK FILE (branch `research/work-owner-general`).  Every declaration here is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; at general arity the condition `H2.TopsAtLeastGradeAt` is a
+hypothesis.
 
 On `k + 1` points with the lost point last, below the full grade (`K ≤ k`), **owner lowering
 below the designated tops on the grade-`K` faces** (`H2.OwnerLoweringBelowAt k`) holds with no
@@ -49,16 +52,19 @@ The two claims are separate: **two-point owner lowering is unconditional**
 (`H2.ownerLoweringBelowAt_one`); **general-arity owner lowering assumes `H2.TopsAtLeastGradeAt k`**
 (`H2.ownerLoweringBelowAt_of_topsAtLeastGradeAt`).
 
-**The residual** (the conditional refutation is compiled in
-`VaughtConjecture.Continuation.H2OwnerResidual`; the legal instance is argued): `h = ⊥`, low maximum
-`⊥`, and a designated top `t` of grade below `K` with `⊥ < g t < K`.  The frontier, self-visible at
-`K`, must then be `⊥`.  Capping at `⊥` fails: if the owner reads the lost top at `μ + j` and a root
-top at `μ + j'` in the same block (`j < K < j'`, so the strict gap `μ + K < μ + j'` holds), a
-witness sending `μ + j` to `⊥` sends `μ + j'` to `⊥` (replacement at a threshold above `j'`), so the
-lost top at `⊥` forces the root top or the owner to `⊥`; when the owner is the only cell of its
-graded index above that root top of grade `K`, availability keeps the owner above `⊥`.  So a context
-on three points with these readings and such a donor would refute owner lowering below the
-designated tops there.
+**The residual** (argued; neither the refutation nor a legal instance is compiled in this library):
+`h = ⊥`, low maximum `⊥`, and a designated top `t` of grade below `K` with `⊥ < g t < K`.  The
+frontier, self-visible at `K`, must then be `⊥`.  Capping at `⊥` fails: if the owner reads the lost
+top at `μ + j` and a root top at `μ + j'` in the same block (`j < K < j'`, so the strict gap `μ + K
+< μ + j'` holds), a witness sending `μ + j` to `⊥` sends `μ + j'` to `⊥` (replacement at a threshold
+above `j'`), so the lost top at `⊥` forces the root top or the owner to `⊥`; when the owner is the
+only cell of its graded index above that root top of grade `K`, availability keeps the owner above
+`⊥`.  So a context on three points with these readings and such a donor would refute owner lowering
+below the designated tops there.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

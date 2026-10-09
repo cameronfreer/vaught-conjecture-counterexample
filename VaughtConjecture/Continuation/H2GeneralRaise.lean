@@ -6,9 +6,11 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.H2General
 
 /-!
-# h2 at every arity: donor raising on the grade-`K` faces (work file)
+# h2 at every arity: donor raising on the grade-`K` faces
 
-WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved, with no hypothesis beyond the designation.
 
 **Donor raising with the gap on the grade-`K` faces** (`H2.donorRaisingAt`, the input
 `H2.DonorRaisingAt` at every arity), generalizing `H2.donorRaisingGap_oneFace` (two points, grade
@@ -21,6 +23,10 @@ WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
   grade-`K` faces (`H2.RootDetAt`; cells of grade above `K` are `⊥` there);
 * the band raise (`H2.donorRaisingGap_of_cappedLift`), with the low cells unfiltered, and then
   filtered at the grades at most `K` (the cells above are `⊥`: `H2.donorRaisingGap_congr_sup`).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

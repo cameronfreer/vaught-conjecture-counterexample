@@ -8,10 +8,13 @@ import VaughtConjecture.Continuation.StableRecoveryDonorLive
 import VaughtConjecture.Extension.AdmittedFieldLayerCells
 
 /-!
-# The admitted completion at the arity one for an admission of states (work file)
+# The admitted completion at the arity one for an admission of states
 
-WORK FILE (branch `research/work-h2`).  Every declaration here is proved; the two-coatom lift on
-the lower layer (`Seed.HasTwoCoatomLift`, the open hypothesis of the (R4) lane) is a hypothesis.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the two-coatom lift on the lower layer (`Seed.HasTwoCoatomLift`) is
+a hypothesis of the statements here, and every seed on three points has it
+(`Seed.hasTwoCoatomLift`, `VaughtConjecture.Continuation.TwoCoatomLift`).
 
 For a seed `I` on three points and a predicate `A` on labellings of the canonical lower layer
 (`Seed.lowerFieldLayer`), the admitted layer at grade `2` (`Seed.admLayer I A`) is legal below the
@@ -20,6 +23,10 @@ full grade from the two coatom lifts (`Seed.isLegalBelowFullGrade_admLayer`; the
 faces sharing the common face, `H2.IsStateAdmission`), read on the copies (`Seed.AdmL`), the lift
 provisions of `Scheme.cappedLift_admittedFieldLayer` follow from the state-level provisions, the
 gluing `Seed.exists_isLawful_lower_two` (cap `⊥`) and the two-coatom lift (positive caps).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

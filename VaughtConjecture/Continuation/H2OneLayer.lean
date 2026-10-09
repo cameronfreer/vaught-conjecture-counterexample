@@ -6,9 +6,11 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.H2One
 
 /-!
-# Top grade `1` at two points: the admitted layer at grade `1` (work file)
+# Top grade `1` at two points: the admitted layer at grade `1`
 
-WORK FILE (branch `research/work-twolift`).
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved; the admission of states at the grade `1` is a hypothesis.
 
 For a seed `I` on three points and an admission of states `Adm` at the grade `1`
 (`H2.IsStateAdmission … 1 …`) reading only the cells of grade at most `1` (`Seed.ReadsOne`), the
@@ -16,6 +18,10 @@ admitted field layer at grade `1` over the amalgam, on the admission read on the
 (`Seed.AdmA`), lifts capped from each coatom to `(univ, 1)` (`Seed.cappedLift_layerOne_left`,
 `Seed.cappedLift_layerOne_right`).  The provisions are those of the admission, applied to the
 splices at `1` with bottom (the cells of grade `2` at `⊥`), glued on the amalgam.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u

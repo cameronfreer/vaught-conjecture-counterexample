@@ -9,9 +9,11 @@ import VaughtConjecture.Continuation.StableRecoveryDonorLive
 /-!
 # The two-coatom lift on the lower layer
 
-WORK FILE (branch `research/work-twolift`).  **`Seed.hasTwoCoatomLift`: every seed on three
-points has the two-coatom lift** (`Seed.HasTwoCoatomLift`), at every positive cap self-visible at
-`2`, with no further hypothesis.
+Roadmap, Layer 3 ((R2) of the table of 3.4: coatom cutoff determination at source-gap contexts,
+`Realization.CoatomCutoffDetermination`, written **h2** in the names of this family of modules).
+Every declaration is proved.  **`Seed.hasTwoCoatomLift`: every seed on three points has the
+two-coatom lift** (`Seed.HasTwoCoatomLift`), at every positive cap self-visible at `2`, with no
+further hypothesis.
 
 The proof is the two-face lift at the grade one (`Seed.twoFaceLift_one`, module
 `VaughtConjecture.Extension.TwoFaceLift`) with its ambient a lawful labelling of the layer at the
@@ -40,6 +42,10 @@ So the admitted layer with a donor, both coatoms live at grade `1`, is legal bel
 under the raise and the capped exact lift alone (`Seed.isLegalBelowFullGrade_donorLayer_live'`),
 and the h2 assembly at two points no longer rests on the two-coatom lift
 (`H2.hasTwoCoatomLift_two`, module `VaughtConjecture.Continuation.H2Two`).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u
