@@ -51,6 +51,18 @@ at `a₁`.  So no lawful labelling below `(univ, j)` keeping the ambient at `c` 
   coatom type (for instance its labels): two cells of one grade `2 ≤ k ≤ m + 1` carrying ordinals
   of different blocks.
 
+* **Every positive pair** (no condition on the blocks or the finite parts): the ambient may be the
+  writing of the positive constant `m + 2` on the support of a state (`Label.posConst`, a witness
+  bounded by `m + 2`; the value `Seed.tieValue m` lies in the code set, in the block `0` above its
+  grid point `k ≤ m + 1`), and the prescription the state shifted by one block
+  (`Label.omegaShift`, a witness at every grade, all positive values above `ω`).  So
+  `Seed.not_towerExtensionPos_of_pair` (a lawful admitted state with `⊥ < P₀ a₂ < P₀ a₁` at two
+  cells of one grade `2 ≤ k ≤ j`), `Seed.not_cappedLift_context_of_pair` (two context cells) and
+  `Seed.not_cappedLift_context_of_section_pair` (a lawful section of the first coatom type with
+  `⊥ < u' x₂ < u' x₁` at two cells of one grade `2 ≤ k ≤ m + 1`).  These subsume the conditions
+  on blocks and visibility above.  A tie needs both values positive: below a positive cap a value
+  `⊥` of the prescription is `⊥` in the ambient.
+
 The hypotheses on the requests (`ClassCalibrated`, the labels pair admitted, the relative lift on
 the exact class) and on the values (`codeSet ⊆ Γ ≤ gridPoint 2 B'`) are those under which the
 context lift is reduced to the extension over the tower (`Seed.hasContextLift_attachAdmits_pos`).
@@ -141,6 +153,80 @@ theorem finRaise_lt_finRaise {K : ℕ} {a b : Ordinal.{u}} (h : blockOf a < bloc
     finRaise K (a : Label.{u}) < finRaise K (b : Label.{u}) := by
   rw [finRaise, blockwise_coe, blockwise_coe, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
   exact (add_natCast_lt_of_lt (isSuccPrelimit_blockOf b) h _).trans_le le_self_add
+
+/-- **The shift by one block**: `a ↦ ω + a` on ordinals; `⊥` and the formal top are fixed. -/
+noncomputable def omegaShift : Label.{u} → Label.{u} :=
+  WithBot.map (WithTop.map fun a ↦ Ordinal.omega0 + a)
+
+/-- **The shift by one block is a witness** bounded by every `K`: visibility replacement acts on
+the part after the limit `ω`. -/
+theorem isWitness_omegaShift (K : ℕ) : IsWitness (stepSuppressor K) (omegaShift.{u}) where
+  antitone := (IsWitness.id_step K).antitone
+  isSelfVisible := (IsWitness.id_step K).isSelfVisible
+  map_bot := rfl
+  monotone := Monotone.withBot_map (Monotone.withTop_map fun _ _ h ↦ add_le_add_right h _)
+  visibilityReplace_comm x k _ i _ := by
+    induction x using recBotCoeTop with
+    | bot => rfl
+    | top => rfl
+    | coe a =>
+      change ((Ordinal.omega0 + Ordinal.visibilityReplace k i a : Ordinal.{u}) : Label.{u}) =
+        ((Ordinal.visibilityReplace k i (Ordinal.omega0 + a) : Ordinal.{u}) : Label.{u})
+      rw [Ordinal.visibilityReplace_add Ordinal.isSuccLimit_omega0.isSuccPrelimit]
+
+theorem omegaShift_eq_bot_iff {x : Label.{u}} : omegaShift x = ⊥ ↔ x = ⊥ := by
+  induction x using recBotCoeTop with
+  | bot => simp [omegaShift]
+  | top => simp [omegaShift]
+  | coe a => simp [omegaShift]
+
+theorem omegaShift_strictMono : StrictMono (omegaShift.{u}) :=
+  WithBot.strictMono_map_iff.mpr (WithTop.strictMono_map_iff.mpr fun _ _ h ↦
+    (add_lt_add_iff_left _).mpr h)
+
+/-- A shifted label other than `⊥` is at least every ordinal below `ω`. -/
+theorem le_omegaShift {x : Label.{u}} (hx : x ≠ ⊥) {o : Ordinal.{u}} (ho : o < Ordinal.omega0) :
+    (o : Label.{u}) ≤ omegaShift x := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd rfl hx
+  | top => exact le_top
+  | coe a =>
+    change (o : Label.{u}) ≤ ((Ordinal.omega0 + a : Ordinal.{u}) : Label.{u})
+    exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (ho.le.trans le_self_add))
+
+/-- **The positive constant** `v`: `⊥` at `⊥`, `v` elsewhere. -/
+noncomputable def posConst (v : Label.{u}) (x : Label.{u}) : Label.{u} := if x = ⊥ then ⊥ else v
+
+/-- **The positive constant at a label self-visible at `K` is a witness bounded by `K`**:
+visibility replacement keeps `⊥` and the other labels apart and fixes `v`. -/
+theorem isWitness_posConst {K : ℕ} {v : Label.{u}} (hv : IsSelfVisible K v) :
+    IsWitness (stepSuppressor K) (posConst v) where
+  antitone := (IsWitness.id_step K).antitone
+  isSelfVisible := (IsWitness.id_step K).isSelfVisible
+  map_bot := ite_eq_left rfl
+  monotone x y hxy := by
+    unfold posConst
+    by_cases hx : x = ⊥
+    · rw [ite_eq_left hx]; exact bot_le
+    · rw [ite_eq_right hx, ite_eq_right (show ¬ y = ⊥ from fun hy ↦ hx (le_bot_iff.mp
+        (hy ▸ hxy)))]
+  visibilityReplace_comm x k hx i hi := by
+    have hinv : posConst v (visibilityReplace k i x) = posConst v x := by
+      simp only [posConst, visibilityReplace_eq_bot_iff]
+    rw [hinv]
+    by_cases hk : k ≤ K
+    · unfold posConst
+      split_ifs
+      · rfl
+      · exact ((hv.mono hk).visibilityReplace_eq i).symm
+    · rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff] at hx
+      rw [hx, visibilityReplace_bot]
+
+theorem posConst_eq_bot_iff {v x : Label.{u}} (hv : v ≠ ⊥) : posConst v x = ⊥ ↔ x = ⊥ := by
+  unfold posConst
+  split_ifs with h
+  · exact ⟨fun _ ↦ h, fun _ ↦ rfl⟩
+  · exact ⟨fun h' ↦ absurd h' hv, fun h' ↦ absurd h' h⟩
 
 end Label
 
@@ -460,7 +546,7 @@ least a value `y ≠ ⊥` of `Γ` self-visible at `m + 2`: the prescription is t
 the context coatom, the ambient the writing of the cap of `P` at `y`; they agree at `y` below the
 coatom, and the lift would break the tie of the ambient at `a₁` and `a₂` above `y`
 (`Seed.not_lawful_of_tie`). -/
-theorem not_hasContextLift_attachAdmits (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+theorem not_cappedLift_context_attachAdmits (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
     {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
@@ -473,7 +559,9 @@ theorem not_hasContextLift_attachAdmits (hH : 0 < H) (hcard : (I.attachmentBase 
     (hs₁ : (I.attachment g).toCellScheme.scope a₁ ⊆ ctxCoatom m)
     (hs₂ : (I.attachment g).toCellScheme.scope a₂ ⊆ ctxCoatom m)
     (hy2 : y ≤ P a₂) (h21 : P a₂ < P a₁) :
-    ¬ I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' := by
+    ¬ (I.replicated g H Γ (I.attachAdmits g hd Q) B').rows.CappedLift
+      (X := (univ.erase (Fin.last (m + 1)), k)) (Y := ((univ : Finset (Fin (m + 2))), k))
+      ⟨erase_subset _ _, le_rfl⟩ := by
   intro hlift
   have hA : ∀ k R, I.attachAdmits g hd Q (k + 3) R → I.attachAdmits g hd Q (k + 2) R :=
     fun k R h ↦ I.attachAdmits_succ g hd Q k R h
@@ -487,7 +575,7 @@ theorem not_hasContextLift_attachAdmits (hH : 0 < H) (hcard : (I.attachmentBase 
   have hlawP := isLawful_replicatedWriting hH hcard hΓ hA hP
   have hlawR := isLawful_replicatedWriting hH hcard hΓ hA hR'
   obtain ⟨q', hq', hq'q, hq'p⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists _).mp
-    (hlift k (by omega) hkm) y (hyv.mono (by omega)) (fun d ↦ wP d) (fun d ↦ wR d)
+    hlift y (hyv.mono (by omega)) (fun d ↦ wP d) (fun d ↦ wR d)
     (hlawP.isLawfulBelow _) (hlawR.isLawfulBelow _) fun e ↦ by
       obtain ⟨a, ha⟩ := exists_attachEmb_eq_of_mem_below_ctx e.2
       change min (wR e.1) y = min (wP e.1) y
@@ -591,9 +679,53 @@ theorem not_towerExtensionPos_of_state (hH : 0 < H) (hcard : (I.attachmentBase g
     (lt_of_not_ge fun h ↦ ?_)
   exact absurd ((hσR a₁).symm.le.trans ((hσm h).trans (hσR a₂).le)) (not_le.mpr h21)
 
+/-- **The context lift fails for the admission predicate** at the grade `k` of
+`Seed.not_cappedLift_context_attachAdmits`. -/
+theorem not_hasContextLift_attachAdmits (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
+    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte) {k : ℕ} (hk2 : 2 ≤ k)
+    (hkm : k ≤ m + 1) {P : Fin (I.attachment g).card → Label.{u}}
+    (hP : P ∈ (I.attachmentBase g).towerCat Γ (I.attachAdmits g hd Q) (m + 2)) {y : Label.{u}}
+    (hy : y ∈ Γ) (hy0 : y ≠ ⊥) (hyv : IsSelfVisible (m + 2) y)
+    {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
+    (ha₂ : (I.attachment g).toCellScheme.grade a₂ = k)
+    (hs₁ : (I.attachment g).toCellScheme.scope a₁ ⊆ ctxCoatom m)
+    (hs₂ : (I.attachment g).toCellScheme.scope a₂ ⊆ ctxCoatom m)
+    (hy2 : y ≤ P a₂) (h21 : P a₂ < P a₁) :
+    ¬ I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' := fun h ↦
+  not_cappedLift_context_attachAdmits hH hcard hΓ hd hQ hk2 hkm hP hy hy0 hyv ha₁ ha₂ hs₁ hs₂ hy2
+    h21 (h k (by omega) hkm)
+
 /-- **The context lift fails for the admission predicate at a lawful admitted state with two
 values at one grade of the context**: as `Seed.not_towerExtensionPos_of_state`, with `a₁`, `a₂`
 cells of the context (`Seed.not_hasContextLift_attachAdmits` at the code of `P₀`). -/
+theorem not_cappedLift_context_of_state (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ)
+    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte) {k : ℕ} (hk2 : 2 ≤ k)
+    (hkm : k ≤ m + 1) {P₀ : Fin (I.attachment g).card → Label.{u}}
+    (hP₀ : (I.attachment g).rows.IsLawful P₀) (hP₀A : I.attachAdmits g hd Q (m + 2) P₀)
+    {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
+    (ha₂ : (I.attachment g).toCellScheme.grade a₂ = k)
+    (hs₁ : (I.attachment g).toCellScheme.scope a₁ ⊆ ctxCoatom m)
+    (hs₂ : (I.attachment g).toCellScheme.scope a₂ ⊆ ctxCoatom m) (h21 : P₀ a₂ < P₀ a₁)
+    (h20 : P₀ a₂ ≠ ⊥) (h2v : IsSelfVisible (m + 2) (P₀ a₂)) :
+        ¬ (I.replicated g H Γ (I.attachAdmits g hd Q) B').rows.CappedLift
+      (X := (univ.erase (Fin.last (m + 1)), k)) (Y := ((univ : Finset (Fin (m + 2))), k))
+      ⟨erase_subset _ _, le_rfl⟩ := by
+  obtain ⟨R, hR, σ, hσm, hσ0, hσR, hvis⟩ := exists_stateCode_isSelfVisible hd hQ hΓc hP₀ hP₀A
+  have hRΓ := (Scheme.LadderBaseData.mem_towerCat.mp hR).1
+  refine not_cappedLift_context_attachAdmits hH hcard hΓ hd hQ hk2 hkm hR (hRΓ a₂)
+    (fun h ↦ h20 ((hσR a₂).symm.trans ((congrArg σ h).trans hσ0))) (hvis a₂ h2v) ha₁ ha₂ hs₁ hs₂
+    le_rfl
+    (lt_of_not_ge fun h ↦ ?_)
+  exact absurd ((hσR a₁).symm.le.trans ((hσm h).trans (hσR a₂).le)) (not_le.mpr h21)
+
+/-- **The context lift fails for the admission predicate at a lawful admitted state with two
+values at one grade of the context** (`Seed.not_cappedLift_context_of_state`). -/
 theorem not_hasContextLift_of_state (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ)
     {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
@@ -606,14 +738,9 @@ theorem not_hasContextLift_of_state (hH : 0 < H) (hcard : (I.attachmentBase g).S
     (hs₁ : (I.attachment g).toCellScheme.scope a₁ ⊆ ctxCoatom m)
     (hs₂ : (I.attachment g).toCellScheme.scope a₂ ⊆ ctxCoatom m) (h21 : P₀ a₂ < P₀ a₁)
     (h20 : P₀ a₂ ≠ ⊥) (h2v : IsSelfVisible (m + 2) (P₀ a₂)) :
-    ¬ I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' := by
-  obtain ⟨R, hR, σ, hσm, hσ0, hσR, hvis⟩ := exists_stateCode_isSelfVisible hd hQ hΓc hP₀ hP₀A
-  have hRΓ := (Scheme.LadderBaseData.mem_towerCat.mp hR).1
-  refine not_hasContextLift_attachAdmits hH hcard hΓ hd hQ hk2 hkm hR (hRΓ a₂)
-    (fun h ↦ h20 ((hσR a₂).symm.trans ((congrArg σ h).trans hσ0))) (hvis a₂ h2v) ha₁ ha₂ hs₁ hs₂
-    le_rfl
-    (lt_of_not_ge fun h ↦ ?_)
-  exact absurd ((hσR a₁).symm.le.trans ((hσm h).trans (hσR a₂).le)) (not_le.mpr h21)
+        ¬ I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' := fun h ↦
+  not_cappedLift_context_of_state hH hcard hΓ hΓc hd hQ hk2 hkm hP₀ hP₀A ha₁ ha₂ hs₁ hs₂ h21 h20
+    h2v (h k (by omega) hkm)
 
 /-- **The extension over the tower at a positive cap fails for the admission predicate at a
 lawful admitted state with two blocks at one grade**: as `Seed.not_towerExtensionPos_of_state`,
@@ -645,6 +772,184 @@ theorem not_towerExtensionPos_of_blocks (hH : 0 < H) (hcard : (I.attachmentBase 
   · change IsSelfVisible (m + 2) (finRaise (m + 2) (P₀ a₂))
     rw [h₂]; exact isSelfVisible_finRaise _ _
 
+/-! ### Every positive pair at one grade -/
+
+/-- The value `m + 2` of the code set, self-visible at `m + 2`: the positive constant of the
+ambient's tie. -/
+noncomputable abbrev tieValue (m : ℕ) : Label.{u} :=
+  ((Ordinal.omega0 * ((0 : ℕ) : Ordinal.{u}) + ((m + 2 : ℕ) : Ordinal.{u}) : Ordinal.{u}) :
+    Label.{u})
+
+theorem tieValue_ne_bot (m : ℕ) : tieValue.{u} m ≠ ⊥ := WithBot.coe_ne_bot
+
+theorem isSelfVisible_tieValue (m : ℕ) : IsSelfVisible (m + 2) (tieValue.{u} m) :=
+  isSelfVisible_coe_add (Label.isSuccPrelimit_omega0_mul _) le_rfl
+
+theorem tieValue_le_omegaShift (m : ℕ) {x : Label.{u}} (hx : x ≠ ⊥) :
+    tieValue.{u} m ≤ omegaShift x :=
+  le_omegaShift hx (by
+    rw [Nat.cast_zero, mul_zero, zero_add]; exact Ordinal.natCast_lt_omega0 _)
+
+theorem tieValue_mem_codeSet (C m : ℕ) : tieValue.{u} m ∈ codeSet C (m + 2) :=
+  mem_codeSet (Nat.zero_le _) (by omega)
+
+/-- The ambient's tie: the positive constant `m + 2` on the support of a state. -/
+theorem posConst_mem_towerCat
+    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
+    (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ)
+    {P : Fin (I.attachment g).card → Label.{u}} (hP : (I.attachment g).rows.IsLawful P)
+    (hPA : I.attachAdmits g hd Q (m + 2) P) :
+    (posConst (tieValue m) ∘ P) ∈
+      (I.attachmentBase g).towerCat Γ (I.attachAdmits g hd Q) (m + 2) := by
+  have hgr (a : Fin (I.attachment g).card) : (I.attachment g).toCellScheme.grade a ≤ m + 2 :=
+    (I.attachmentType g).grade_le a
+  have hw := isWitness_posConst (isSelfVisible_tieValue.{u} m)
+  have hb (a) : posConst (tieValue m) (P a) = ⊥ ↔ P a = ⊥ := posConst_eq_bot_iff (tieValue_ne_bot m)
+  refine Scheme.LadderBaseData.mem_towerCat.mpr ⟨fun a ↦ hΓc ?_,
+    hP.map_of_bot_iff hP hgr hw hb, attachAdmits_comp hd hQ hPA hw hb _⟩
+  change posConst (tieValue m) (P a) ∈ _
+  unfold posConst
+  split_ifs
+  · exact mem_insert_self _ _
+  · exact tieValue_mem_codeSet _ m
+
+/-- The shifted state agrees with the tie at `m + 2`, capped there. -/
+theorem min_omegaShift_tieValue (m : ℕ) (x : Label.{u}) :
+    min (omegaShift x) (tieValue m) = min (posConst (tieValue m) x) (tieValue m) := by
+  by_cases hx : x = ⊥
+  · rw [hx]; rfl
+  · rw [min_eq_right (tieValue_le_omegaShift m hx), posConst, ite_eq_right hx, min_self]
+
+/-- No grid point at a grade `k ≤ m + 1` lies at or below the tie except below it. -/
+theorem lt_tieValue_of_mem_grid {k : ℕ} (hk : k ≤ m + 1) {x : Label.{u}} (hx : x ∈ grid k B')
+    (hxv : x ≤ tieValue m) : x < tieValue m := by
+  refine lt_of_le_of_ne hxv ?_
+  rcases mem_grid.mp hx with rfl | ⟨b, -, rfl⟩
+  · exact (tieValue_ne_bot m).symm
+  · exact gridPoint_ne_of_isSelfVisible (by omega) b (isSelfVisible_tieValue m)
+
+/-- **The extension over the tower at a positive cap fails for the admission predicate at every
+lawful admitted state with two positive values at one grade**: if `P₀` carries
+`⊥ < P₀ a₂ < P₀ a₁` at two cells of one grade `2 ≤ k ≤ j`, the prescription is `P₀` shifted by one
+block (`Label.omegaShift`, all positive values above `ω`), the ambient the writing of the positive
+constant `m + 2` on the support of `P₀` (`Label.posConst`), which ties `a₁` and `a₂` at `m + 2`,
+strictly inside the block `0` of the grid at `k`, and the cap is `m + 2`
+(`Seed.not_towerExtensionPos_of_tie`).  No condition on the blocks or the finite parts. -/
+theorem not_towerExtensionPos_of_pair (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ)
+    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
+    {j k : ℕ} (hk2 : 2 ≤ k) (hkj : k ≤ j) (hjm : j ≤ m + 1)
+    {P₀ : Fin (I.attachment g).card → Label.{u}} (hP₀ : (I.attachment g).rows.IsLawful P₀)
+    (hP₀A : I.attachAdmits g hd Q (m + 2) P₀)
+    {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
+    (ha₂ : (I.attachment g).toCellScheme.grade a₂ = k) (h20 : P₀ a₂ ≠ ⊥) (h21 : P₀ a₂ < P₀ a₁) :
+    ¬ TowerExtensionPos I g H Γ (I.attachAdmits g hd Q) B' j := by
+  have hgr (a : Fin (I.attachment g).card) : (I.attachment g).toCellScheme.grade a ≤ m + 2 :=
+    (I.attachmentType g).grade_le a
+  have h10 : P₀ a₁ ≠ ⊥ := fun h ↦ absurd (h ▸ h21) (not_lt_bot)
+  have hv2 := tieValue_le_omegaShift m h20
+  refine not_towerExtensionPos_of_tie (R' := posConst (tieValue m) ∘ P₀) (σ := id)
+    (c := tieValue m) (P := omegaShift ∘ P₀) hH hcard hΓ
+    (fun k R h ↦ I.attachAdmits_succ g hd Q k R h) hk2 hkj hjm
+    (posConst_mem_towerCat hd hQ hΓc hP₀ hP₀A) (IsWitness.id_step j) (fun _ h ↦ h)
+    ((isSelfVisible_tieValue m).mono (by omega)) (tieValue_ne_bot m)
+    (hP₀.map_of_bot_iff hP₀ hgr (isWitness_omegaShift (m + 2)) fun _ ↦ omegaShift_eq_bot_iff)
+    (attachAdmits_comp hd hQ hP₀A (isWitness_omegaShift (m + 2))
+      (fun _ ↦ omegaShift_eq_bot_iff) _)
+    (fun a _ ↦ min_omegaShift_tieValue m (P₀ a)) ha₁ ha₂ ?_ (omegaShift_strictMono h21)
+    (not_le.mpr (hv2.trans_lt (omegaShift_strictMono h21)))
+    fun x hx hxv ↦ lt_tieValue_of_mem_grid (by omega) hx (by
+      change x ≤ posConst (tieValue m) (P₀ a₂) at hxv
+      rwa [posConst, ite_eq_right h20] at hxv)
+  change posConst (tieValue m) (P₀ a₁) ≤ posConst (tieValue m) (P₀ a₂)
+  rw [posConst, posConst, ite_eq_right h10, ite_eq_right h20]
+
+/-- **The context lift fails for the admission predicate at every lawful admitted state with two
+positive values at one grade of the context**, at that grade: the prescription is the decoded
+writing of the code of `P₀` shifted by one block, below the context coatom; the ambient the
+writing of the positive constant `m + 2` on the support of `P₀` (`Seed.not_lawful_of_tie`). -/
+theorem not_cappedLift_context_of_pair (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ)
+    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte) {k : ℕ} (hk2 : 2 ≤ k)
+    (hkm : k ≤ m + 1) {P₀ : Fin (I.attachment g).card → Label.{u}}
+    (hP₀ : (I.attachment g).rows.IsLawful P₀) (hP₀A : I.attachAdmits g hd Q (m + 2) P₀)
+    {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
+    (ha₂ : (I.attachment g).toCellScheme.grade a₂ = k)
+    (hs₁ : (I.attachment g).toCellScheme.scope a₁ ⊆ ctxCoatom m)
+    (hs₂ : (I.attachment g).toCellScheme.scope a₂ ⊆ ctxCoatom m) (h20 : P₀ a₂ ≠ ⊥)
+    (h21 : P₀ a₂ < P₀ a₁) :
+    ¬ (I.replicated g H Γ (I.attachAdmits g hd Q) B').rows.CappedLift
+      (X := (univ.erase (Fin.last (m + 1)), k)) (Y := ((univ : Finset (Fin (m + 2))), k))
+      ⟨erase_subset _ _, le_rfl⟩ := by
+  intro hlift
+  have hA : ∀ k R, I.attachAdmits g hd Q (k + 3) R → I.attachAdmits g hd Q (k + 2) R :=
+    fun k R h ↦ I.attachAdmits_succ g hd Q k R h
+  have hgr (a : Fin (I.attachment g).card) : (I.attachment g).toCellScheme.grade a ≤ m + 2 :=
+    (I.attachmentType g).grade_le a
+  have h10 : P₀ a₁ ≠ ⊥ := fun h ↦ absurd (h ▸ h21) (not_lt_bot)
+  -- the shifted state and its code
+  set P := omegaShift ∘ P₀ with hPdef
+  have hPl : (I.attachment g).rows.IsLawful P :=
+    hP₀.map_of_bot_iff hP₀ hgr (isWitness_omegaShift (m + 2)) fun _ ↦ omegaShift_eq_bot_iff
+  have hPA : I.attachAdmits g hd Q (m + 2) P :=
+    attachAdmits_comp hd hQ hP₀A (isWitness_omegaShift (m + 2)) (fun _ ↦ omegaShift_eq_bot_iff) _
+  obtain ⟨RP, hRP, σ, hσ, hσb, hσR⟩ := exists_stateCode hd hQ hΓc hPl hPA
+  have hRPl : (I.attachment g).rows.IsLawful RP :=
+    (Scheme.LadderBaseData.mem_towerCat.mp hRP).2.1
+  -- the tie
+  have hR' := posConst_mem_towerCat hd hQ hΓc hP₀ hP₀A
+  have hR'l : (I.attachment g).rows.IsLawful (posConst (tieValue m) ∘ P₀) :=
+    (Scheme.LadderBaseData.mem_towerCat.mp hR').2.1
+  set wP := I.replicatedWriting g H Γ (I.attachAdmits g hd Q) B' RP with hwP
+  set wR := I.replicatedWriting g H Γ (I.attachAdmits g hd Q) B'
+    (posConst (tieValue m) ∘ P₀) with hwR
+  have hlawP := isLawfulBelow_map_replicatedWriting hH hcard hΓ hA hRP
+    (univ.erase (Fin.last (m + 1)), k) (hσ k (by omega)) hσb
+  have hlawR := isLawful_replicatedWriting hH hcard hΓ hA hR'
+  obtain ⟨q', hq', hq'q, hq'p⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists _).mp
+    hlift (tieValue m) ((isSelfVisible_tieValue m).mono (by omega)) (fun d ↦ σ (wP d))
+    (fun d ↦ wR d) hlawP (hlawR.isLawfulBelow _) fun e ↦ by
+      obtain ⟨a, ha⟩ := exists_attachEmb_eq_of_mem_below_ctx e.2
+      change min (wR e.1) (tieValue m) = min (σ (wP e.1)) (tieValue m)
+      rw [← ha, hwR, hwP, replicatedWriting_attachEmb (Γ := Γ) (A := I.attachAdmits g hd Q)
+        (B' := B') hcard hR'l a, replicatedWriting_attachEmb (Γ := Γ)
+        (A := I.attachAdmits g hd Q) (B' := B') hcard hRPl a, hσR a]
+      exact (min_omegaShift_tieValue m (P₀ a)).symm
+  have hmem (a : Fin (I.attachment g).card) (ha : (I.attachment g).toCellScheme.grade a = k)
+      (hs : (I.attachment g).toCellScheme.scope a ⊆ ctxCoatom m) :
+      I.attachEmb g H Γ (I.attachAdmits g hd Q) B' a ∈
+        (I.replicated g H Γ (I.attachAdmits g hd Q) B').toCellScheme.below
+          (univ.erase (Fin.last (m + 1)), k) :=
+    (attachEmb_mem_below_iff a _).mpr ⟨hs, ha.le⟩
+  have hval (a : Fin (I.attachment g).card) (ha : (I.attachment g).toCellScheme.grade a = k)
+      (hs : (I.attachment g).toCellScheme.scope a ⊆ ctxCoatom m) (e) (he : e.1 =
+        I.attachEmb g H Γ (I.attachAdmits g hd Q) B' a) : q' e = P a := by
+    have h := hq'p ⟨_, hmem a ha hs⟩
+    rw [show (Set.inclusion _ ⟨_, hmem a ha hs⟩ : (I.replicated g H Γ (I.attachAdmits g hd Q)
+      B').toCellScheme.below ((univ : Finset (Fin (m + 2))), k)) = e from Subtype.ext he.symm]
+      at h
+    rw [h]
+    change σ (wP _) = P a
+    rw [hwP, replicatedWriting_attachEmb (Γ := Γ) (A := I.attachAdmits g hd Q) (B' := B') hcard
+      hRPl a]
+    exact hσR a
+  exact not_lawful_of_tie (R' := posConst (tieValue m) ∘ P₀) (σ := id) (c := tieValue m) hcard hA
+    hk2 le_rfl hkm hR' ha₁ ha₂
+    (by change posConst _ (P₀ a₁) ≤ posConst _ (P₀ a₂); rw [posConst, posConst, ite_eq_right h10,
+      ite_eq_right h20])
+    (fun x hx hxv ↦ lt_tieValue_of_mem_grid hkm hx (by
+      change x ≤ posConst (tieValue m) (P₀ a₂) at hxv
+      rwa [posConst, ite_eq_right h20] at hxv))
+    (omegaShift_strictMono h21)
+    (not_le.mpr ((tieValue_le_omegaShift m h20).trans_lt (omegaShift_strictMono h21))) hq'
+    (hval a₁ ha₁ hs₁) (hval a₂ ha₂ hs₂) hq'q
+
 /-- **The context lift fails for the admission predicate at a lawful context section with two
 values at one grade**: for requests calibrated on the class with the labels pair admitted and the
 relative lift on the exact class (the hypotheses of the state lift), and values containing the
@@ -652,6 +957,35 @@ code set, a lawful section `u'` of the first coatom type carrying `u' x₂ < u' 
 one grade `2 ≤ k ≤ m + 1`, with `u' x₂ ≠ ⊥` self-visible at `m + 2`, defeats the context lift:
 its admitted completion over the attachment (`Seed.exists_admitted_completion_attachment`) is a
 state as in `Seed.not_hasContextLift_of_state`. -/
+theorem not_cappedLift_context_of_section (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ)
+    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
+    (hdp : restrictFace Fin.castSuccEmb d = some p₀)
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
+    (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
+    {u' : Fin I.left.card → Label.{u}} (hu' : I.left.rows.IsLawful u') {k : ℕ} (hk2 : 2 ≤ k)
+    (hkm : k ≤ m + 1) {x₁ x₂ : Fin I.left.card} (hx₁ : I.left.toCellScheme.grade x₁ = k)
+    (hx₂ : I.left.toCellScheme.grade x₂ = k) (h21 : u' x₂ < u' x₁) (h20 : u' x₂ ≠ ⊥)
+    (h2v : IsSelfVisible (m + 2) (u' x₂)) :
+        ¬ (I.replicated g H Γ (I.attachAdmits g hd Q) B').rows.CappedLift
+      (X := (univ.erase (Fin.last (m + 1)), k)) (Y := ((univ : Finset (Fin (m + 2))), k))
+      ⟨erase_subset _ _, le_rfl⟩ := by
+  obtain ⟨R, hRl, hRu, hadm⟩ := I.exists_admitted_completion_attachment hte hdp hd hpair hrel hu'
+  have hRc (x : Fin I.left.card) : R (I.attachCtxCell g x) = u' x := hRu x
+  have hRA : I.attachAdmits g hd Q (m + 2) R :=
+    attachAdmits_of_admitsOnClass hd hQ (m + 2) (by
+      rw [show (fun x ↦ R (I.attachCtxCell g x)) = u' from funext hRc]
+      exact hadm)
+  refine not_cappedLift_context_of_state hH hcard hΓ hΓc hd hQ hk2 hkm hRl hRA
+    ((grade_attachCtxCell x₁).trans hx₁) ((grade_attachCtxCell x₂).trans hx₂)
+    (scope_attachCtxCell_subset x₁) (scope_attachCtxCell_subset x₂) ?_ ?_ ?_
+  · rw [hRc, hRc]; exact h21
+  · rw [hRc]; exact h20
+  · rw [hRc]; exact h2v
+
+/-- **The context lift fails for the admission predicate at a lawful context section with two
+values at one grade** (`Seed.not_cappedLift_context_of_section`). -/
 theorem not_hasContextLift_of_section (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ)
     (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
@@ -663,19 +997,42 @@ theorem not_hasContextLift_of_section (hH : 0 < H) (hcard : (I.attachmentBase g)
     (hkm : k ≤ m + 1) {x₁ x₂ : Fin I.left.card} (hx₁ : I.left.toCellScheme.grade x₁ = k)
     (hx₂ : I.left.toCellScheme.grade x₂ = k) (h21 : u' x₂ < u' x₁) (h20 : u' x₂ ≠ ⊥)
     (h2v : IsSelfVisible (m + 2) (u' x₂)) :
-    ¬ I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' := by
+        ¬ I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' := fun h ↦
+  not_cappedLift_context_of_section hH hcard hΓ hΓc hte hdp hd hQ hpair hrel hu' hk2 hkm hx₁ hx₂
+    h21 h20 h2v (h k (by omega) hkm)
+
+/-- **The context lift fails for the admission predicate at every lawful context section with two
+positive values at one grade**, at that grade: for requests calibrated on the class with the
+labels pair admitted and the relative lift on the exact class, and values containing the code set,
+a lawful section `u'` of the first coatom type with `⊥ < u' x₂ < u' x₁` at two cells of one grade
+`2 ≤ k ≤ m + 1`: its admitted completion over the attachment
+(`Seed.exists_admitted_completion_attachment`) is a state as in
+`Seed.not_cappedLift_context_of_pair`. -/
+theorem not_cappedLift_context_of_section_pair (hH : 0 < H)
+    (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ)
+    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
+    (hdp : restrictFace Fin.castSuccEmb d = some p₀)
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
+    (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
+    {u' : Fin I.left.card → Label.{u}} (hu' : I.left.rows.IsLawful u') {k : ℕ} (hk2 : 2 ≤ k)
+    (hkm : k ≤ m + 1) {x₁ x₂ : Fin I.left.card} (hx₁ : I.left.toCellScheme.grade x₁ = k)
+    (hx₂ : I.left.toCellScheme.grade x₂ = k) (h20 : u' x₂ ≠ ⊥) (h21 : u' x₂ < u' x₁) :
+    ¬ (I.replicated g H Γ (I.attachAdmits g hd Q) B').rows.CappedLift
+      (X := (univ.erase (Fin.last (m + 1)), k)) (Y := ((univ : Finset (Fin (m + 2))), k))
+      ⟨erase_subset _ _, le_rfl⟩ := by
   obtain ⟨R, hRl, hRu, hadm⟩ := I.exists_admitted_completion_attachment hte hdp hd hpair hrel hu'
   have hRc (x : Fin I.left.card) : R (I.attachCtxCell g x) = u' x := hRu x
   have hRA : I.attachAdmits g hd Q (m + 2) R :=
     attachAdmits_of_admitsOnClass hd hQ (m + 2) (by
       rw [show (fun x ↦ R (I.attachCtxCell g x)) = u' from funext hRc]
       exact hadm)
-  refine not_hasContextLift_of_state hH hcard hΓ hΓc hd hQ hk2 hkm hRl hRA
+  refine not_cappedLift_context_of_pair hH hcard hΓ hΓc hd hQ hk2 hkm hRl hRA
     ((grade_attachCtxCell x₁).trans hx₁) ((grade_attachCtxCell x₂).trans hx₂)
-    (scope_attachCtxCell_subset x₁) (scope_attachCtxCell_subset x₂) ?_ ?_ ?_
-  · rw [hRc, hRc]; exact h21
+    (scope_attachCtxCell_subset x₁) (scope_attachCtxCell_subset x₂) ?_ ?_
   · rw [hRc]; exact h20
-  · rw [hRc]; exact h2v
+  · rw [hRc, hRc]; exact h21
 
 /-- **The context lift fails for the admission predicate at a lawful context section with two
 blocks at one grade**: as `Seed.not_hasContextLift_of_section`, for a lawful section `u'` of the
