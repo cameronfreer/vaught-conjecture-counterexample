@@ -33,7 +33,11 @@ grade below `k`; in particular a tie of two cells of the grade `k` at a value of
 (the obstruction of the grid alone, refuted at commit `86a30a0` for the seed choice, see
 `VaughtConjecture.MainTheorem.ReplicatedTieInstance`) is broken by the height set.  For the ambient
 read literally, the cap of a pin is not a height: a pin exploits a cap with no coded
-representative in the height set.
+representative in the height set.  The cells that may serve above the cap are selected by the
+ambient's own values at the cells of full scope, which are heights
+(`Seed.replicatedWriting_castAdd_mem_heightSet`); the lift's decoder at such a cell enters only
+through its monotonicity, so no decoder depending on the cap rescues a pin.  A realized pin at the
+seed position: `VaughtConjecture.MainTheorem.ReplicatedPinInstance`.
 
 **Witnesses** (`Label`): the raise of the finite parts to `K` (`Label.finRaise`), the shift by
 one block (`Label.omegaShift`) and the positive constant (`Label.posConst`), witnesses bounded by
@@ -491,6 +495,23 @@ theorem cap_not_mem_heightSet_of_pin {k : ℕ} {R' : Fin (I.attachment g).card �
     (hpin : ∀ x ∈ Scheme.heightSet Γ B' k, c ≤ id x → R' a < x) :
     c ∉ Scheme.heightSet Γ B' k := fun h ↦
   absurd (hpin c h le_rfl) (not_lt.mpr hc)
+
+/-- **The literal ambient at a cell of full scope is a height**: the writing of a lawful state at
+a cell of the tower at `(univ, k)`, `2 ≤ k ≤ m + 1`, read in the replicated scheme, lies in the
+height set at `k`.  So in `Seed.not_lawful_of_pin` the cells that may serve above the cap are
+selected by the ambient's own values, heights, whatever decoder a lift uses at them (the argument
+uses only the monotonicity of the lift's capped decoder). -/
+theorem replicatedWriting_castAdd_mem_heightSet (hcard : (I.attachmentBase g).S.card ≤ H)
+    {k : ℕ} (hk2 : 2 ≤ k) (hkm : k ≤ m + 1) (f : Fin (𝕋).card)
+    (hf : (𝕋).toCellScheme.gradedIndex f = ((univ : Finset (Fin (m + 2))), k))
+    {R' : Fin (I.attachment g).card → Label.{u}} (hR' : (I.attachment g).rows.IsLawful R') :
+    I.replicatedWriting g H Γ A B' R' (Fin.castAdd _ f) ∈ Scheme.heightSet Γ B' k := by
+  obtain ⟨-, -, -, hW, -, -⟩ := exists_reading_of_writing (Γ := Γ) (A := A) (B' := B') hcard hk2
+    hkm f hf hR'
+  change ((I.attachmentBase g).ladderTower H Γ A B' m).v R'
+    ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ f)) ∈ _
+  rw [Scheme.mirrorOrig_castAdd]
+  exact hW
 
 end Seed
 
