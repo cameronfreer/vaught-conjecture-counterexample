@@ -9,7 +9,7 @@ import VaughtConjecture.Continuation.H2OneRaise
 /-!
 # h2 at every arity: the engine at two points (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
 
 **The engine at two points** (`H2.admittedCompletionsAt_one`, the input `H2.AdmittedCompletionsAt`
 at `k = 1`): at the grade `1` it is `H2.exists_completion_recProp_one_of_admission` (the grade-`1`
@@ -17,11 +17,10 @@ faces are `H2.LawfulOne`), and at the grade `2` it is `H2.exists_completion_of_s
 (the grade-`2` faces are the lawful labellings, `H2.lawfulAt_iff_isLawful`).
 
 So **at two points the completions with the reading property follow from owner lowering below the
-full grade alone** (`H2.hasRecCompletions_one_of_below`): the SCAFFOLD
-`H2.exists_completion_recProp_one` of `VaughtConjecture.Continuation.H2Two` is not needed once
-`H2.OwnerLoweringBelowAt 1` (owner lowering below the designated tops between the grade-`1` faces
-at grade `1`) holds.
--/
+full grade alone** (`H2.hasRecCompletions_one_of_below`): the case of top grade `1`
+`H2.exists_completion_recProp_one` (on the research branch `research/port-low-padded`) is not needed
+once `H2.OwnerLoweringBelowAt 1` (owner lowering below the designated tops between the grade-`1`
+faces at grade `1`) holds. -/
 
 universe u
 
@@ -65,7 +64,7 @@ theorem admittedCompletionsAt_one : AdmittedCompletionsAt.{u} 1 := by
         (fun _ ↦ lawfulAt_iff_isLawful tb.grade_le) hS)
 
 /-- **Completions with the reading property at two points from owner lowering below the full
-grade** (no SCAFFOLD). -/
+grade**. -/
 theorem hasRecCompletions_one_of_below (hOL : OwnerLoweringBelowAt.{u} 1) :
     HasRecCompletions.{u} 1 :=
   hasRecCompletions_of_below hOL admittedCompletionsAt_one

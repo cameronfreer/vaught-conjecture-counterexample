@@ -9,7 +9,7 @@ import VaughtConjecture.Continuation.H2OneRaise
 /-!
 # Owner lowering at grade `1` between the grade-`1` faces (work file)
 
-WORK FILE (branch `research/work-owner-one`).  No `sorry`.
+WORK FILE (branch `research/work-owner-one`).  Every declaration here is proved.
 
 The engine of top grade `1` runs on the **grade-`1` faces** (`H2.LawfulOne`: lawful below
 `(univ, 1)` and `⊥` at the cells of grade `2`).  Between them, owner lowering below the designated
@@ -400,9 +400,9 @@ theorem stateAdmission_oneFace_of_owner {t' : StageType.{u} α 2} (hleg : t'.IsL
     (donorRaisingGap_oneFace hleg hp htbleg htbp hLo hTops hroot)
     (ownerLoweringBelow_oneFace hleg hs honly hp htbleg htbp hA hroot1)
 
-/-- **h2 at two points, top grade `1`, at a context whose owner is alone at its graded index**:
-the conclusion of `H2.exists_completion_recProp_one` from the state admission between the
-grade-`1` faces (`H2.stateAdmission_oneFace_of_owner`,
+/-- **h2 at two points, top grade `1`, at a context whose owner is alone at its graded index**: the
+conclusion of `H2.exists_completion_recProp_one` (on the research branch `research/port-low-padded`)
+from the state admission between the grade-`1` faces (`H2.stateAdmission_oneFace_of_owner`,
 `H2.exists_completion_recProp_one_of_admission`). -/
 theorem exists_completion_recProp_one_of_owner {t' : StageType.{u} α 2} (hleg : t'.IsLegal)
     {n : ℕ} {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}

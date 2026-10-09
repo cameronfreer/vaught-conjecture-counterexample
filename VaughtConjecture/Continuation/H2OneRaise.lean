@@ -9,21 +9,22 @@ import VaughtConjecture.Continuation.H2Collapse
 /-!
 # Top grade `1` at two points: donor raising at grade `1` (work file)
 
-WORK FILE (branch `research/work-twolift`).  No `sorry`.
+WORK FILE (branch `research/work-twolift`).  Every declaration here is proved.
 
-At grade `1` on two points the capped lift `H2.hasCappedLifts_of_isLegal` (which needs the arity
-of the root below the grade) and the witness closure of the lawful labellings of the donor (a
-witness bounded by the grade `1` need not keep the labels of the cells of grade `2` self-visible
-at `2`) are not available.  Both hold on the **grade-`1` faces** (`H2.LawfulOne`: lawful below
-`(univ, 1)`, `⊥` at the cells of grade `2`): the capped lift from the root is bountifulness
-(`H2.hasCappedLifts_lawfulOne_one`) and witnesses bounded by `1` keep them (`H2.lawfulOne_map`).
-So **donor raising with the gap between the grade-`1` faces holds with no hypothesis beyond the
+At grade `1` on two points the capped lift `H2.hasCappedLifts_of_isLegal` (which needs the arity of
+the root below the grade) and the witness closure of the lawful labellings of the donor (a witness
+bounded by the grade `1` need not keep the labels of the cells of grade `2` self-visible at `2`) are
+not available.  Both hold on the **grade-`1` faces** (`H2.LawfulOne`: lawful below `(univ, 1)`, `⊥`
+at the cells of grade `2`): the capped lift from the root is bountifulness
+(`H2.hasCappedLifts_lawfulOne_one`) and witnesses bounded by `1` keep them (`H2.lawfulOne_map`). So
+**donor raising with the gap between the grade-`1` faces holds with no hypothesis beyond the
 designation** (`H2.donorRaisingGap_oneFace`), the order law and the frontier bound hold there
 (`H2.frontier_le_lawfulOne`), and the clause is an admission of states between the grade-`1` faces
 under owner lowering there (`H2.stateAdmission_oneFace`).  The engine of
 `VaughtConjecture.Continuation.H2OneEngine` runs on exactly these faces, and
 `H2.exists_completion_recProp_one_of_admission` gives the conclusion of
-`H2.exists_completion_recProp_one` from any such admission.
+`H2.exists_completion_recProp_one` (on the research branch `research/port-low-padded`) from any such
+admission.
 
 Donor raising between the full lawful labellings (`H2.donorRaisingGap_one`) passes through the
 extension from `(univ, 1)` to `(univ, 2)` capped at `h`: bountifulness when `h` is self-visible at
@@ -241,9 +242,10 @@ theorem donorRaisingGap_one {t' : StageType.{u} α 2}
 /-! ### The completion at top grade `1` from any admission of states -/
 
 /-- **h2 at two points, top grade `1`, from the state admission at grade `1`**: the conclusion of
-`H2.exists_completion_recProp_one` from any admission of states at grade `1` of the clause with the
-designated cells below the top read on their cells of grade `1` (for instance from donor raising
-with the gap, `H2.donorRaisingGap_one`, and owner lowering below the designated tops). -/
+`H2.exists_completion_recProp_one` (on the research branch `research/port-low-padded`) from any
+admission of states at grade `1` of the clause with the designated cells below the top read on their
+cells of grade `1` (for instance from donor raising with the gap, `H2.donorRaisingGap_one`, and
+owner lowering below the designated tops). -/
 theorem exists_completion_recProp_one_of_admission {t' : StageType.{u} α 2} (hleg : t'.IsLegal)
     {n : ℕ} {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
     (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r)

@@ -8,7 +8,7 @@ import VaughtConjecture.Continuation.H2Two
 /-!
 # h2 at every arity, with the lost point last (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry` in this file.
+WORK FILE (branch `research/work-h2`).  Every declaration of this file is proved.
 
 **The target** (`H2.CoatomCutoffDeterminationLast`): the coatom form of cutoff determination
 (`Realization.CoatomCutoffDetermination`, on `main`) for source-gap contexts with the lost point
@@ -29,9 +29,8 @@ and the engine (`H2.AdmittedCompletionsAt`: an admission of states between the g
 gives the completion).  The order law at the owner and the frontier bound there are compiled
 (`H2.frontier_le_lawfulAt`, through the extension at the cap `⊥`, `H2.exists_ext_bot_at`).
 
-**At two points** the completions are `H2.exists_completion_recProp` at the lost point `1`
-(`H2.hasRecCompletions_one`, modulo the SCAFFOLD `H2.exists_completion_recProp_one` of
-`VaughtConjecture.Continuation.H2Two`).
+**At two points** the completions are `H2.exists_completion_recProp` at the lost point `1`, given
+the case of top grade `1` (on the research branch `research/port-low-padded`).
 -/
 
 universe u
@@ -180,18 +179,6 @@ theorem coatomCutoffDeterminationLast_of_hasRecCompletions
     (hrec : ∀ k, HasRecCompletions.{u} k) : CoatomCutoffDeterminationLast.{u} := by
   intro α K n k t' g p hα hleg ⟨o, r, hs⟩ hp tb ⟨htbleg, htbp⟩ d hd hdK
   exact exists_coface_last (hrec k) hα hleg hs hp htbleg htbp hd hdK
-
-/-! ### Two points -/
-
-/-- **Completions with the reading property at two points** (`H2.exists_completion_recProp` at the
-lost point `1`, modulo the SCAFFOLD `H2.exists_completion_recProp_one`). -/
-theorem hasRecCompletions_one : HasRecCompletions.{u} 1 := by
-  intro α K n t' hleg g o r hs p hp tb htbleg htbp Lo Tops hLo hLo' hTops hTops' _
-  refine exists_completion_recProp hleg hs hp htbleg htbp hTops hTops' (fun hK ↦ ?_)
-    fun _ hT ↦ donorRaising_two_one hp htbleg htbp hLo' hT
-  subst hK
-  exact exists_completion_recProp_one hleg hs hp htbleg htbp hLo hLo' hTops hTops'
-    (root_one hp htbp hLo')
 
 /-- The root cells of the coatom face carrying `⊤` (on `k + 1` points with the lost point last,
 every root cell avoids the lost point). -/

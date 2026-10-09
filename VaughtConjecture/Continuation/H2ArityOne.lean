@@ -9,8 +9,8 @@ import VaughtConjecture.Continuation.SourceGapFieldFace
 /-!
 # h2 at two points: coatom cutoff determination for source-gap contexts (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry` here; the assembly with the remaining
-SCAFFOLD statements is `VaughtConjecture.Continuation.H2Two`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved; the assembly at two
+points is `VaughtConjecture.Continuation.H2Two`.
 
 **The clause** (`H2.SelfLowG`): the LOW clause with every designated top as its own field:
 `∀ t ∈ Tops, Lo.sup R < R t → frontierAt o r K L ≤ R t`.  At a reader with the context at its
@@ -21,10 +21,10 @@ below it, so every top is `⊤`; no field cell is needed.
 first point, and a legal coface `tb` of its coatom face `p`:
 * a completion below the full grade of the seed `Seed.ofCoatoms` of `t'` and `tb` whose lawful
   labellings with the owner at `⊤` satisfy the clause on their old cells
-  (`H2.RecProp`; SCAFFOLD `H2.exists_completion_recProp`);
+  (`H2.RecProp`; `H2.exists_completion_recProp`);
 * the coface `F.completion` (faces `t'` and `tb`);
 * a permitted cutoff above the labels of `tb` other than `⊤` (`H2.exists_cutoff`);
-* determination of the donor face from the clause (`H2.key_completion`, SCAFFOLD) and the generic
+* determination of the donor face from the clause (`H2.key_completion`) and the generic
   passage to `IsDeterminedWithin` (`H2.isDeterminedWithin_addApex`).
 -/
 
