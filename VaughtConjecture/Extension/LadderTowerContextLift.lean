@@ -23,15 +23,16 @@ coatom** to two statements, each a finite statement about the seed and the tower
   grade, with the observation of `q` at `c` on the cells of the amalgam below the grade;
 * **the coding of states** (`Seed.StateCoding j`): such a state is the decoded reading of a state
   `R` of the catalogue (values in `Γ`, lawful, satisfying `A (m + 2)`) by a witness `ν` bounded by
-  the grade `j` that sends no non-bottom label to bottom, on the cells of the amalgam below the
-  grade; and the decoded writing `ν ∘ T.v R` of `R` in the tower has the observation of `q` at `c`
+  the grade `j` (sending no non-bottom label to bottom when the cap is `⊥`), on the cells of the
+  amalgam below the grade; and the decoded writing `ν ∘ T.v R` of `R` in the tower has the observation of `q` at `c`
   at every cell below `(univ, j)`: on the ladder and on the layers of full scope as well.
 
 **The reduction** (`Seed.cappedLift_context_of_stateLift`): the two give the capped lift of `T`
 from `(univ.erase (Fin.last (m + 1)), j)` to `(univ, j)`, in the shape of
 `Seed.isBountiful_ladderTower_of_coatomLifts`.  The lift is `ν ∘ T.v R`: the writing of a state of
-the catalogue is lawful on the tower (`Seed.ladderTower_lawful`), and decoding keeps lawfulness
-(`CellScheme.Rows.IsLawfulBelow.map_of_apply_eq_bot`), so it is lawful below `(univ, j)`
+the catalogue is lawful on the tower (`Seed.ladderTower_lawful`), and decoding keeps lawfulness,
+with the ambient as lawful companion at a positive cap
+(`CellScheme.Rows.IsLawfulBelow.map_of_min_eq`) and by bottom reflection at the cap `⊥`
 (`Seed.isLawfulBelow_map_writing`); at the cells of the amalgam the writing of a lawful state is
 the state (`Seed.ladderTower_v_towerAmalgamEmb`), and every cell below the context coatom is a cell
 of the amalgam (`Seed.exists_towerAmalgamEmb_eq_of_mem_below`).
@@ -145,9 +146,11 @@ variable (I H Γ A B') in
 /-- **The coding of states at the grade `j`**: every complete lawful state `P` of the amalgam
 satisfying `A (m + 2)` with the observation at a cap `c` of an ambient `q` lawful below
 `(univ, j)` on the cells of the amalgam below the grade is the decoded reading, on those cells, of
-a state `R` of the catalogue by a witness `ν` bounded by `j` that sends no non-bottom label to
-bottom; and the decoded writing of `R` has the observation of `q` at `c` at every cell below
-`(univ, j)`. -/
+a state `R` of the catalogue by a witness `ν` bounded by `j`, which sends no non-bottom label to
+bottom when the cap is `⊥`; and the decoded writing of `R` has the observation of `q` at `c` at
+every cell below `(univ, j)`.  At a positive cap the witness may send positive labels to bottom
+(the writing of a state is positive at the first rung of its table, where the ambient may be
+`⊥`); lawfulness then comes from the ambient as lawful companion. -/
 def StateCoding (j : ℕ) : Prop :=
   ∀ c : Label.{u}, IsSelfVisible j c →
     ∀ (q : (I.ladderTower H Γ A B' m).S.toCellScheme.below
@@ -158,7 +161,7 @@ def StateCoding (j : ℕ) : Prop :=
           ((univ : Finset (Fin (m + 2))), j)) a,
         I.towerAmalgamEmb H Γ A B' a = d.1 → min (P a) c = min (q d) c) →
       ∃ R ∈ I.towerCat Γ A (m + 2), ∃ ν : Label.{u} → Label.{u},
-        IsWitness (stepSuppressor j) ν ∧ (∀ x, ν x = ⊥ → x = ⊥) ∧
+        IsWitness (stepSuppressor j) ν ∧ (c ≠ ⊥ ∨ ∀ x, ν x = ⊥ → x = ⊥) ∧
         (∀ a, I.amalgam.toCellScheme.grade a ≤ j → ν (R a) = P a) ∧
         ∀ d : (I.ladderTower H Γ A B' m).S.toCellScheme.below
           ((univ : Finset (Fin (m + 2))), j),
@@ -176,8 +179,13 @@ theorem cappedLift_context_of_stateLift (hH : 0 < H) (hcard : I.amalgam.card ≤
   obtain ⟨P, hPl, hPA, hPp, hPq⟩ := hS c hc p q hp hq hpq
   obtain ⟨R, hR, ν, hν, hbot, hνR, hνq⟩ := hC c hc q hq P hPl hPA hPq
   have hRl : I.amalgam.rows.IsLawful R := (mem_towerCat.mp hR).2.1
-  refine ⟨fun d ↦ ν ((I.ladderTower H Γ A B' m).v R d),
-    isLawfulBelow_map_writing hH hcard hΓ hA hR hν hbot, hνq, fun d ↦ ?_⟩
+  have hlaw : (I.ladderTower H Γ A B' m).S.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j)
+      fun d ↦ ν ((I.ladderTower H Γ A B' m).v R d) := by
+    rcases hbot with hc0 | hbot
+    · exact (((I.ladderTower_lawful hH hcard hΓ hA m).2 R hR).1.isLawfulBelow _).map_of_min_eq
+        hq (fun d ↦ d.2.2) hν hc0 hνq
+    · exact isLawfulBelow_map_writing hH hcard hΓ hA hR hν hbot
+  refine ⟨fun d ↦ ν ((I.ladderTower H Γ A B' m).v R d), hlaw, hνq, fun d ↦ ?_⟩
   obtain ⟨a, ha⟩ := exists_towerAmalgamEmb_eq_of_mem_below (by simp [ctxCoatom]) d.2
   have hag : I.amalgam.toCellScheme.grade a ≤ j := by
     have h := (towerAmalgamEmb_mem_below_iff (H := H) (Γ := Γ) (A := A) (B' := B') a
