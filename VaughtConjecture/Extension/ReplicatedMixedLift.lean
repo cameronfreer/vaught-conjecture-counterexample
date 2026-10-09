@@ -6,17 +6,20 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.ReplicatedLiftUniv
 
 /-!
-# The lift from a mixed face into the full face at every grade
+# The lift from a mixed face into a larger face at every grade
 
 Roadmap, Layer 3 ((R3) and (R4), the mixed-coatom lift of the replicated carrier).
 
-**The lift** (`Seed.cappedLift_mixed_univ`).  For a mixed face `U` and a grade `j` with
-`1 ≤ j ≤ m + 1` and `j ≤ |U|`, the replicated scheme lifts capped from `(U, j)` into
-`(univ, j)`.  Given a prescription `P` lawful below `(U, j)`, pick at every grade `k ≤ j` a cell
-`u k` of full scope whose copy at `U` carries the largest label among the copies at its grade (at
-the grade one, the top rung of the member of the shape of the copied ladder), and a capped decoder
-`θ k` of `P` at that copy.  The lift reads every cell `d` through the cell of its grade:
-`r d = θ k (row of u k at d)`.
+**The lift** (`Seed.cappedLift_mixed_face`).  For a mixed face `U`, a face `W ⊇ U` and a grade
+`j` with `1 ≤ j ≤ m + 1` and `j ≤ |U|`, the replicated scheme lifts capped from `(U, j)` into
+`(W, j)`, provided every cell of full scope of grade at most `j` has a cell at `W` with it as
+original: the cell itself for `W` the ground set (`Seed.cappedLift_mixed_univ`), its copy at `W`
+for `W` mixed (`Seed.cappedLift_mixed_mixed`).  Given a prescription `P` lawful below `(U, j)`,
+pick at every grade `k ≤ j` a cell `u k` of full scope whose copy at `U` carries the largest label
+among the copies at its grade (at the grade one, the top rung of the member of the shape of the
+copied ladder), and a capped decoder `θ k` of `P` at that copy.  The lift reads every cell `d`
+through the cell at `W` of the original `u k` of its grade: `r d = θ k (row of τ (u k) at d)`;
+below that cell the row is the row of `u k` in the tower at the original of `d`.
 
 * At the cells of full scope and their copies it is the prescription at the copy at `U`; below
   `(U, j)` it is the prescription (`Seed.le_max_copy`).
@@ -66,20 +69,26 @@ theorem cpy_eq (hU : U ∈ I.mixedFaces g) {v : Fin (𝕋).card} {k : ℕ}
   rw [dite_eq_left ⟨congrArg Prod.fst hv, (congrArg Prod.snd hv).trans_le hk⟩]
   rfl
 
-/-- **The lift from a mixed face into the full face.**  For a mixed face `U` and a grade `j` with
-`1 ≤ j ≤ m + 1` and `j ≤ |U|`, the replicated scheme lifts capped from `(U, j)` to `(univ, j)`. -/
-theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+
+/-- **The lift from a mixed face into a larger face** carrying cells of full scope or their copies:
+for a mixed face `U ⊆ W` and a grade `j` with `1 ≤ j ≤ m + 1` and `j ≤ |U|`, given a choice `τ` of
+a cell at `W` with original `v` for every cell `v` of full scope of the tower of grade at most `j`
+(the cell itself when `W` is the ground set, its copy at `W` when `W` is mixed), the replicated
+scheme lifts capped from `(U, j)` to `(W, j)`. -/
+theorem cappedLift_mixed_face (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
-    (hA0 : ∀ k, A k fun _ ↦ ⊥) (hU : U ∈ I.mixedFaces g) {j : ℕ} (hj1 : 1 ≤ j)
+    (hA0 : ∀ k, A k fun _ ↦ ⊥) (hU : U ∈ I.mixedFaces g) {W : Finset (Fin (m + 2))}
+    (hUW : U ⊆ W) (τ : Fin (𝕋).card → Fin (𝔼).card)
+    (hτo : ∀ v, (𝕋).mirrorOrig (I.mixedFaces g) (τ v) = v) {j : ℕ}
+    (hτg : ∀ v k, (𝕋).toCellScheme.gradedIndex v = ((univ : Finset (Fin (m + 2))), k) → k ≤ j →
+      (𝔼).toCellScheme.gradedIndex (τ v) = (W, k)) (hj1 : 1 ≤ j)
     (hjm : j ≤ m + 1) (hjU : j ≤ #U) :
-    (𝔼).rows.CappedLift (X := (U, j)) (Y := ((univ : Finset (Fin (m + 2))), j))
-      ⟨subset_univ _, le_rfl⟩ := by
+    (𝔼).rows.CappedLift (X := (U, j)) (Y := (W, j)) ⟨hUW, le_rfl⟩ := by
   classical
   have hne : ∀ k, ((I.attachmentBase g).towerCat Γ A (k + 2)).Nonempty := fun _ ↦
     ⟨fun _ ↦ ⊥, Scheme.LadderBaseData.mem_towerCat.mpr
       ⟨fun _ ↦ hΓ0, CellScheme.Rows.isLawful_const_bot, hA0 _⟩⟩
-  have hXY : ((U, j) : Finset (Fin (m + 2)) × ℕ) ≤ ((univ : Finset (Fin (m + 2))), j) :=
-    ⟨subset_univ _, le_rfl⟩
+  have hXY : ((U, j) : Finset (Fin (m + 2)) × ℕ) ≤ (W, j) := ⟨hUW, le_rfl⟩
   have hU1 : 1 ≤ #U := hj1.trans hjU
   refine (CellScheme.Rows.cappedLift_iff_forall_exists _).mpr fun c hc p q hp hq hpq ↦ ?_
   -- total labellings
@@ -87,14 +96,14 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
       ∀ d (hd : d ∈ (𝔼).toCellScheme.below (U, j)), P d = p ⟨d, hd⟩ :=
     ⟨CellScheme.Rows.extendBot _ p, fun d hd ↦ CellScheme.Rows.extendBot_of_mem p hd⟩
   obtain ⟨Q, hQd⟩ : ∃ Q : Fin (𝔼).card → Label.{u},
-      ∀ d (hd : d ∈ (𝔼).toCellScheme.below ((univ : Finset (Fin (m + 2))), j)),
+      ∀ d (hd : d ∈ (𝔼).toCellScheme.below (W, j)),
         Q d = q ⟨d, hd⟩ :=
     ⟨CellScheme.Rows.extendBot _ q, fun d hd ↦ CellScheme.Rows.extendBot_of_mem q hd⟩
   have hP : (𝔼).rows.IsLawfulBelow (U, j) fun d ↦ P d := by
     have e : (fun d : (𝔼).toCellScheme.below (U, j) ↦ P d) = p := funext fun d ↦ hPd d d.2
     rw [e]; exact hp
-  have hQ : (𝔼).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j) fun d ↦ Q d := by
-    have e : (fun d : (𝔼).toCellScheme.below ((univ : Finset (Fin (m + 2))), j) ↦ Q d) = q :=
+  have hQ : (𝔼).rows.IsLawfulBelow (W, j) fun d ↦ Q d := by
+    have e : (fun d : (𝔼).toCellScheme.below (W, j) ↦ Q d) = q :=
       funext fun d ↦ hQd d d.2
     rw [e]; exact hq
   have hpq' (d) (hd : d ∈ (𝔼).toCellScheme.below (U, j)) : min (Q d) c = min (P d) c := by
@@ -173,17 +182,16 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
   choose θ hθ using hexθ
   -- the lift
   set r : Fin (𝔼).card → Label.{u} := fun d ↦ θ ((𝔼).toCellScheme.grade d)
-    ((𝔼).rowAt (Fin.castAdd _ (u ((𝔼).toCellScheme.grade d))) d) with hr
+    ((𝔼).rowAt (τ (u ((𝔼).toCellScheme.grade d))) d) with hr
   have hrdef (d) : r d = θ ((𝔼).toCellScheme.grade d)
-      ((𝔼).rowAt (Fin.castAdd _ (u ((𝔼).toCellScheme.grade d))) d) := rfl
-  have hgY (d) (hd : d ∈ (𝔼).toCellScheme.below ((univ : Finset (Fin (m + 2))), j)) :
+      ((𝔼).rowAt (τ (u ((𝔼).toCellScheme.grade d))) d) := rfl
+  have hgY (d) (hd : d ∈ (𝔼).toCellScheme.below (W, j)) :
       1 ≤ (𝔼).toCellScheme.grade d ∧ (𝔼).toCellScheme.grade d ≤ j :=
     ⟨(isWellFormed_replicated (I := I) (g := g) (H := H) (Γ := Γ) (A := A)
       (B' := B')).isWellFormed.grade_pos d, hd.2⟩
   have hgiu (k) (h1 : 1 ≤ k) (h2 : k ≤ j) :
-      (𝔼).toCellScheme.gradedIndex (Fin.castAdd _ (u k)) =
-        ((univ : Finset (Fin (m + 2))), k) :=
-    (Scheme.gradedIndex_mirror_castAdd _).trans (hu k h1 h2).1
+      (𝔼).toCellScheme.gradedIndex (τ (u k)) = (W, k) :=
+    hτg _ k (hu k h1 h2).1 h2
   have hθc (k) (h1 : 1 ≤ k) (h2 : k ≤ j) : ∀ d ∈ (𝔼).toCellScheme.below
       ((𝔼).toCellScheme.gradedIndex (copyFull H Γ A B' hU (u k) (hu k h1 h2).1 (h2.trans hjU))),
       θ k ((𝔼).rowAt (copyFull H Γ A B' hU (u k) (hu k h1 h2).1 (h2.trans hjU)) d) =
@@ -201,43 +209,46 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
     rw [← cpy_eq hU hw (h2.trans hjU), ← cpy_eq hU (hu k h1 h2).1 (h2.trans hjU)]
     exact (hu k h1 h2).2.2 w hw
   -- the values of the lift
-  have hr_full (d) (hd : d ∈ (𝔼).toCellScheme.below ((univ : Finset (Fin (m + 2))), j))
+  have hr_full (d) (hd : d ∈ (𝔼).toCellScheme.below (W, j))
       (v : Fin (𝕋).card) (hv : (𝕋).mirrorOrig (I.mixedFaces g) d = v) (k : ℕ)
       (hk : (𝔼).toCellScheme.grade d = k)
       (hgv : (𝕋).toCellScheme.gradedIndex v = ((univ : Finset (Fin (m + 2))), k)) :
       r d = P (cpy H Γ A B' hU v) := by
     obtain ⟨h1, h2⟩ := hk ▸ hgY d hd
     have hdu : d ∈ (𝔼).toCellScheme.below
-        ((𝔼).toCellScheme.gradedIndex (Fin.castAdd _ (u k))) := by
+        ((𝔼).toCellScheme.gradedIndex (τ (u k))) := by
       rw [hgiu k h1 h2, CellScheme.mem_below]
-      exact ⟨subset_univ _, hk.le⟩
-    rw [hrdef, hk, Scheme.rowAt_mirror_of_mem hdu, Scheme.mirrorOrig_castAdd, hv,
+      exact ⟨hd.1, hk.le⟩
+    rw [hrdef, hk, Scheme.rowAt_mirror_of_mem hdu, hτo, hv,
       decode_copyFull hU (hu k h1 h2).1 (h2.trans hjU) (hθc k h1 h2) hgv le_rfl,
       cpy_eq hU hgv (h2.trans hjU)]
     exact min_eq_left (hmaxc k h1 h2 v hgv)
   have hr_att (e : Fin (I.attachment g).card) (k : ℕ)
-      (hk : (I.attachment g).toCellScheme.grade e = k) :
+      (hk : (I.attachment g).toCellScheme.grade e = k)
+      (hem : I.attachEmb g H Γ A B' e ∈ (𝔼).toCellScheme.below (W, j)) :
       r (I.attachEmb g H Γ A B' e) =
         θ k ((𝕋).rowAt (u k) ((I.attachmentBase g).baseCellEmb m e)) := by
     have hg : (𝔼).toCellScheme.grade (I.attachEmb g H Γ A B' e) = k :=
       (congrArg Prod.snd (gradedIndex_attachEmb e)).trans hk
-    rw [hrdef, hg]
-    exact congrArg (θ k) (Scheme.rowAt_mirror_castAdd _ _)
+    obtain ⟨h1, h2⟩ := hg ▸ hgY _ hem
+    have hmem : I.attachEmb g H Γ A B' e ∈ (𝔼).toCellScheme.below
+        ((𝔼).toCellScheme.gradedIndex (τ (u k))) := by
+      rw [hgiu k h1 h2, CellScheme.mem_below]
+      exact ⟨hem.1, hg.le⟩
+    rw [hrdef, hg, Scheme.rowAt_mirror_of_mem hmem, hτo, mirrorOrig_attachEmb]
   -- copies and originals carry the same label
-  have hsame (W : Fin (𝔼).card → Label.{u})
-      (hW : (𝔼).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j) fun d ↦ W d)
+  have hsame (L : Fin (𝔼).card → Label.{u})
+      (hL : (𝔼).rows.IsLawfulBelow (W, j) fun d ↦ L d)
       (v : Fin (𝕋).card) (k : ℕ)
       (hgv : (𝕋).toCellScheme.gradedIndex v = ((univ : Finset (Fin (m + 2))), k)) (hkj : k ≤ j)
-      (z : Fin (𝔼).card) (hz : (𝕋).mirrorOrig (I.mixedFaces g) z = v) :
-      W z = W (Fin.castAdd _ v) := by
-    have hcY : (Fin.castAdd _ v : Fin (𝔼).card) ∈
-        (𝔼).toCellScheme.below ((univ : Finset (Fin (m + 2))), j) := by
-      rw [CellScheme.mem_below, Scheme.gradedIndex_mirror_castAdd, hgv]
+      (z : Fin (𝔼).card) (hzY : z ∈ (𝔼).toCellScheme.below (W, j))
+      (hz : (𝕋).mirrorOrig (I.mixedFaces g) z = v) :
+      L z = L (τ v) := by
+    have hcY : τ v ∈ (𝔼).toCellScheme.below (W, j) := by
+      rw [CellScheme.mem_below, hτg v k hgv hkj]
       exact ⟨subset_rfl, hkj⟩
-    refine Scheme.eq_of_mirrorOrig_eq hW (by rw [hz, Scheme.mirrorOrig_castAdd]) ?_ hcY
-    exact subset_trans (subset_univ _) (le_of_eq (congrArg Prod.fst
-      ((Scheme.gradedIndex_mirror_castAdd (hmix := I.not_subset_scope_tower g H Γ A B') v).trans
-        hgv)).symm)
+    refine Scheme.eq_of_mirrorOrig_eq hL (by rw [hz, hτo]) ?_ hcY
+    exact hzY.1.trans (le_of_eq (congrArg Prod.fst (hτg v k hgv hkj)).symm)
   have hcfY (v : Fin (𝕋).card) (k : ℕ)
       (hgv : (𝕋).toCellScheme.gradedIndex v = ((univ : Finset (Fin (m + 2))), k)) (hkj : k ≤ j) :
       cpy H Γ A B' hU v ∈ (𝔼).toCellScheme.below (U, j) := by
@@ -249,12 +260,12 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
     rw [cpy_eq hU hgv (hkj.trans hjU), mirrorOrig_copyFull]
   -- the rows of the dominating cells
   have hρ (k) (h1 : 1 ≤ k) (h2 : k ≤ j) :
-      (𝔼).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), k)
-        fun e ↦ (𝔼).rowAt (Fin.castAdd _ (u k)) e.1 :=
+      (𝔼).rows.IsLawfulBelow (W, k)
+        fun e ↦ (𝔼).rowAt (τ (u k)) e.1 :=
     Scheme.isLawfulBelow_rowAt (isConsistent_replicated hH hcard hΓ hA) (hgiu k h1 h2)
-  have hbelowk (d) : d ∈ (𝔼).toCellScheme.below
-      ((univ : Finset (Fin (m + 2))), (𝔼).toCellScheme.grade d) :=
-    ⟨subset_univ _, le_rfl⟩
+  have hbelowk (d) (hd : d ∈ (𝔼).toCellScheme.below (W, j)) : d ∈ (𝔼).toCellScheme.below
+      (W, (𝔼).toCellScheme.grade d) :=
+    ⟨hd.1, le_rfl⟩
   -- the decoder at the top rung
   have hu1 : u 1 = ladCell H Γ A B' top := (hu 1 le_rfl hj1).2.1 rfl
   have hmaxl (K : ℕ) (hK1 : 1 ≤ K) (hKU : K ≤ #U) (v) :
@@ -298,14 +309,14 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
       fun s t ht hst hg ↦ ?_⟩
     · -- order
       obtain ⟨h1, h2⟩ := hgY d hd
-      have hvis := (CellScheme.Rows.isLawfulBelow_iff_forall.mp (hρ _ h1 h2)).1 d (hbelowk d)
+      have hvis := (CellScheme.Rows.isLawfulBelow_iff_forall.mp (hρ _ h1 h2)).1 d (hbelowk d hd)
       rw [hrdef]
       exact (hθ _ h1 h2).1.isSelfVisible_apply hvis (by simp)
     · -- locality
       obtain ⟨h1, h2⟩ := hgY s hs
       set K := (𝔼).toCellScheme.grade s with hKdef
       have hbs (d : (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex s)) :
-          d.1 ∈ (𝔼).toCellScheme.below ((univ : Finset (Fin (m + 2))), j) :=
+          d.1 ∈ (𝔼).toCellScheme.below (W, j) :=
         CellScheme.Rows.mem_below_of_le d.2 hs
       have hdK (d : (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex s)) :
           (𝔼).toCellScheme.grade d.1 ≤ K := d.2.2
@@ -330,7 +341,7 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
           exact congrArg₂ min (congrArg P (cpy_eq hU hgv _)) rfl
         · have hek : (I.attachment g).toCellScheme.grade e = (𝔼).toCellScheme.grade d.1 := by
             rw [he]; exact (congrArg Prod.snd (gradedIndex_attachEmb e)).symm
-          rw [he, hr_att e _ hek]
+          rw [he, hr_att e _ hek (he ▸ hbs d)]
           change _ = θf ((𝕋).rowAt f ((𝕋).mirrorOrig (I.mixedFaces g)
             (Fin.castAdd _ ((I.attachmentBase g).baseCellEmb m e))))
           rw [Scheme.mirrorOrig_castAdd]
@@ -349,38 +360,44 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
           have := hdK d
           rw [← he] at this
           exact (congrArg Prod.snd (gradedIndex_attachEmb e)).symm.trans_le this
-        have hρd (e : Fin (I.attachment g).card) :
-            (𝔼).rowAt (Fin.castAdd _ (u K)) (I.attachEmb g H Γ A B' e) =
-              (𝕋).rowAt (u K) ((I.attachmentBase g).baseCellEmb m e) :=
-          Scheme.rowAt_mirror_castAdd _ _
-        have hrs : r s = θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) s) := hrdef s
+        have hρd (e : Fin (I.attachment g).card)
+            (hem : I.attachEmb g H Γ A B' e ∈ (𝔼).toCellScheme.below (W, j))
+            (hek : (I.attachment g).toCellScheme.grade e ≤ K) :
+            (𝔼).rowAt (τ (u K)) (I.attachEmb g H Γ A B' e) =
+              (𝕋).rowAt (u K) ((I.attachmentBase g).baseCellEmb m e) := by
+          have hmem : I.attachEmb g H Γ A B' e ∈ (𝔼).toCellScheme.below
+              ((𝔼).toCellScheme.gradedIndex (τ (u K))) := by
+            rw [hgiu K h1 h2, CellScheme.mem_below, gradedIndex_attachEmb]
+            exact ⟨(congrArg Prod.fst (gradedIndex_attachEmb e)).symm.trans_le hem.1, hek⟩
+          rw [Scheme.rowAt_mirror_of_mem hmem, hτo, mirrorOrig_attachEmb]
+        have hrs : r s = θ K ((𝔼).rowAt (τ (u K)) s) := hrdef s
         -- the lift below `s` is the decoded row of the dominating cell
         have hclaim (d : (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex s)) :
-            min (r d.1) (r s) = min (θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) d.1))
-              (θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) s)) := by
+            min (r d.1) (r s) = min (θ K ((𝔼).rowAt (τ (u K)) d.1))
+              (θ K ((𝔼).rowAt (τ (u K)) s)) := by
           obtain ⟨e, he, hek⟩ := hds d
-          rw [← hrs, he, hr_att e _ rfl, hρd e]
+          rw [← hrs, he, hr_att e _ rfl (he ▸ hbs d), hρd e (he ▸ hbs d) hek]
           have h := hSC K h1 h2 (u K) (hu K h1 h2).1 (hθ K h1 h2).1.monotone (hθcle K h1 h2)
             (hθc K h1 h2) e _ rfl hek
           have hrsle : r s ≤ P (copyFull H Γ A B' hU (u K) (hu K h1 h2).1 (h2.trans hjU)) := by
             rw [hrs]; exact hθcle K h1 h2 _
           rw [← h, min_assoc, min_eq_right hrsle]
         have hlocρ := (CellScheme.Rows.isLawfulBelow_iff_forall.mp (hρ K h1 h2)).2.1 s
-          (hbelowk s)
+          (hbelowk s hs)
         have hvisρ := (CellScheme.Rows.isLawfulBelow_iff_forall.mp (hρ K h1 h2)).1 s
-          (hbelowk s)
+          (hbelowk s hs)
         have hfun : (fun d : (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex s) ↦
-            min (r d.1) (r s)) = fun d ↦ min (θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) d.1))
-              (θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) s)) := funext hclaim
+            min (r d.1) (r s)) = fun d ↦ min (θ K ((𝔼).rowAt (τ (u K)) d.1))
+              (θ K ((𝔼).rowAt (τ (u K)) s)) := funext hclaim
         change TransformsTo (fun d : (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex s) ↦
           (𝔼).toCellScheme.grade d.1) ((𝔼).rows.row s) fun d ↦ min (r d.1) (r s)
         rw [hfun]
         -- the bottom pattern of the decoded row
         have hdich : (∀ d : (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex s),
-              θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) d.1) = ⊥) ∨
+              θ K ((𝔼).rowAt (τ (u K)) d.1) = ⊥) ∨
             ∀ d : (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex s),
-              (θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) d.1) = ⊥ ↔
-                (𝔼).rowAt (Fin.castAdd _ (u K)) d.1 = ⊥) := by
+              (θ K ((𝔼).rowAt (τ (u K)) d.1) = ⊥ ↔
+                (𝔼).rowAt (τ (u K)) d.1 = ⊥) := by
           rcases Nat.lt_or_ge K 2 with hK | hK2
           · have hK1 : K = 1 := by omega
             have huK : u K = ladCell H Γ A B' top := by rw [hK1, hu1]
@@ -393,31 +410,31 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
             · left
               intro d
               obtain ⟨e, he, hek⟩ := hds d
-              rw [he, hρd, huK, hθK]
+              rw [he, hρd e (he ▸ hbs d) hek, huK, hθK]
               exact hall e (he1 e hek)
             · right
               intro d
               obtain ⟨e, he, hek⟩ := hds d
-              rw [he, hρd, huK, hθK]
+              rw [he, hρd e (he ▸ hbs d) hek, huK, hθK]
               exact hiff e (he1 e hek)
           · rcases decode_controller_dichotomy hU hH hcard hP hj1 hK2 (h2.trans hjm) (h2.trans hjU)
                 (hu K h1 h2).1 (hθ K h1 h2).1.map_bot (hθc K h1 h2) with hall | hiff
             · left
               intro d
               obtain ⟨e, he, hek⟩ := hds d
-              rw [he, hρd]
+              rw [he, hρd e (he ▸ hbs d) hek]
               exact hall e hek
             · right
               intro d
               obtain ⟨e, he, hek⟩ := hds d
-              rw [he, hρd]
+              rw [he, hρd e (he ▸ hbs d) hek]
               exact hiff e hek
         rcases hdich with hall | hiff
-        · have hs0 : θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) s) = ⊥ :=
+        · have hs0 : θ K ((𝔼).rowAt (τ (u K)) s) = ⊥ :=
             hall ⟨s, CellScheme.mem_below_gradedIndex _ s⟩
           have hfun0 : (fun d : (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex s) ↦
-              min (θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) d.1))
-                (θ K ((𝔼).rowAt (Fin.castAdd _ (u K)) s))) = fun _ ↦ ⊥ :=
+              min (θ K ((𝔼).rowAt (τ (u K)) d.1))
+                (θ K ((𝔼).rowAt (τ (u K)) s))) = fun _ ↦ ⊥ :=
             funext fun d ↦ by rw [hall d, min_eq_left bot_le]
           rw [hfun0]
           exact TransformsTo.bot _ _
@@ -425,14 +442,14 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
             (grade := fun d : (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex s) ↦
               (𝔼).toCellScheme.grade d.1)
             (E := (𝔼).rows.row s)
-            (p := fun d ↦ (𝔼).rowAt (Fin.castAdd _ (u K)) d.1)
-            (q := fun d ↦ (𝔼).rowAt (Fin.castAdd _ (u K)) d.1)
+            (p := fun d ↦ (𝔼).rowAt (τ (u K)) d.1)
+            (q := fun d ↦ (𝔼).rowAt (τ (u K)) d.1)
             (c := ⟨s, CellScheme.mem_below_gradedIndex _ s⟩) (fun d ↦ hdK d) le_rfl hvisρ hlocρ
             hvisρ hlocρ (hθ K h1 h2).1 hiff
     · -- availability
       obtain ⟨h1, h2⟩ := hgY t ht
       obtain ⟨-, -, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp (hρ _ h1 h2)
-      obtain ⟨z, hz, hle⟩ := havail s t (hbelowk t) hst hg
+      obtain ⟨z, hz, hle⟩ := havail s t (hbelowk t ht) hst hg
       have hgz : (𝔼).toCellScheme.grade z = (𝔼).toCellScheme.grade t := congrArg Prod.snd hz
       refine ⟨z, hz, ?_⟩
       rw [hrdef s, hrdef z, hg, hgz]
@@ -442,8 +459,9 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
     rw [← hQd d.1 d.2]
     obtain ⟨h1, h2⟩ := hgY d.1 d.2
     rcases cell_cases d.1 with ⟨v, hv, hgv⟩ | ⟨e, he⟩
-    · rw [hr_full d.1 d.2 v hv _ rfl hgv, hsame Q hQ v _ hgv h2 d.1 hv,
-        ← hsame Q hQ v _ hgv h2 _ (hcfo v _ hgv h2), hpq' _ (hcfY v _ hgv h2)]
+    · rw [hr_full d.1 d.2 v hv _ rfl hgv, hsame Q hQ v _ hgv h2 d.1 d.2 hv,
+        ← hsame Q hQ v _ hgv h2 _ (le_trans (hcfY v _ hgv h2) hXY) (hcfo v _ hgv h2),
+        hpq' _ (hcfY v _ hgv h2)]
     · set k := (I.attachment g).toCellScheme.grade e with hkdef
       have hdk : (𝔼).toCellScheme.grade d.1 = k := by
         rw [he]; exact congrArg Prod.snd (gradedIndex_attachEmb e)
@@ -454,48 +472,62 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
       have hgl := gradedIndex_ladCell (Γ := Γ) (A := A) (B' := B') v
       have hrd : r d.1 = min (P (cpy H Γ A B' hU (ladCell H Γ A B' v)))
           (P (cpy H Γ A B' hU (u k))) := by
-        rw [he, hr_att e k rfl, hv,
+        rw [he, hr_att e k rfl (he ▸ d.2), hv,
           decode_copyFull hU (hu k hk1 hkj).1 (hkj.trans hjU) (hθc k hk1 hkj) hgl hk1]
         exact congrArg₂ min (congrArg P (cpy_eq hU hgl (hk1.trans (hkj.trans hjU))).symm)
           (congrArg P (cpy_eq hU (hu k hk1 hkj).1 (hkj.trans hjU)).symm)
       rw [hrd]
-      have hcuY : (Fin.castAdd _ (u k) : Fin (𝔼).card) ∈
-          (𝔼).toCellScheme.below ((univ : Finset (Fin (m + 2))), j) := by
+      have hcuY : (τ (u k) : Fin (𝔼).card) ∈
+          (𝔼).toCellScheme.below (W, j) := by
         rw [CellScheme.mem_below, hgiu k hk1 hkj]; exact ⟨subset_rfl, hkj⟩
       have hdu : d.1 ∈ (𝔼).toCellScheme.below
-          ((𝔼).toCellScheme.gradedIndex (Fin.castAdd _ (u k))) := by
+          ((𝔼).toCellScheme.gradedIndex (τ (u k))) := by
         rw [hgiu k hk1 hkj, CellScheme.mem_below]
-        exact ⟨subset_univ _, hdk.le⟩
-      have hlu : (Fin.castAdd _ (ladCell H Γ A B' v) : Fin (𝔼).card) ∈ (𝔼).toCellScheme.below
-          ((𝔼).toCellScheme.gradedIndex (Fin.castAdd _ (u k))) := by
-        rw [hgiu k hk1 hkj, CellScheme.mem_below, Scheme.gradedIndex_mirror_castAdd, hgl]
+        exact ⟨d.2.1, hdk.le⟩
+      have hτl : (𝔼).toCellScheme.gradedIndex (τ (ladCell H Γ A B' v)) = (W, 1) :=
+        hτg _ 1 hgl hj1
+      have hlu : τ (ladCell H Γ A B' v) ∈ (𝔼).toCellScheme.below
+          ((𝔼).toCellScheme.gradedIndex (τ (u k))) := by
+        rw [hgiu k hk1 hkj, CellScheme.mem_below, hτl]
         exact ⟨subset_rfl, hk1⟩
       have hdz := Scheme.min_eq_min_of_rowAt_eq hQ hcuY hdu hlu (by
-        rw [he]
-        change (𝔼).rowAt (Fin.castAdd _ (u k))
-          (Fin.castAdd _ ((I.attachmentBase g).baseCellEmb m e)) = _
-        rw [Scheme.rowAt_mirror_castAdd, Scheme.rowAt_mirror_castAdd, hv])
-      have hℓ : min (Q (Fin.castAdd _ (ladCell H Γ A B' v))) c =
+        rw [Scheme.rowAt_mirror_of_mem hdu, Scheme.rowAt_mirror_of_mem hlu, hτo, hτo, he,
+          mirrorOrig_attachEmb, hv])
+      have hℓ : min (Q (τ (ladCell H Γ A B' v))) c =
           min (P (cpy H Γ A B' hU (ladCell H Γ A B' v))) c := by
-        rw [← hsame Q hQ _ 1 hgl hj1 _ (hcfo _ 1 hgl hj1), hpq' _ (hcfY _ 1 hgl hj1)]
-      have hzM : min (Q (Fin.castAdd _ (u k))) c = min (P (cpy H Γ A B' hU (u k))) c := by
-        rw [← hsame Q hQ _ k (hu k hk1 hkj).1 hkj _ (hcfo _ k (hu k hk1 hkj).1 hkj),
+        rw [← hsame Q hQ _ 1 hgl hj1 _ (le_trans (hcfY _ 1 hgl hj1) hXY) (hcfo _ 1 hgl hj1),
+          hpq' _ (hcfY _ 1 hgl hj1)]
+      have hzM : min (Q (τ (u k))) c = min (P (cpy H Γ A B' hU (u k))) c := by
+        rw [← hsame Q hQ _ k (hu k hk1 hkj).1 hkj _ (le_trans (hcfY _ k (hu k hk1 hkj).1 hkj) hXY)
+            (hcfo _ k (hu k hk1 hkj).1 hkj),
           hpq' _ (hcfY _ k (hu k hk1 hkj).1 hkj)]
       obtain ⟨-, -, havailQ⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hQ
       obtain ⟨z, hz, hle⟩ := havailQ d.1 _ hcuY
-        (subset_trans (subset_univ _) (le_of_eq (congrArg Prod.fst (hgiu k hk1 hkj)).symm))
+        (subset_trans d.2.1 (le_of_eq (congrArg Prod.fst (hgiu k hk1 hkj)).symm))
         (hdk.trans (congrArg Prod.snd (hgiu k hk1 hkj)).symm)
-      obtain ⟨w', rfl, hw'⟩ := exists_eq_castAdd_of_scope z
-        ((congrArg Prod.fst hz).trans (congrArg Prod.fst (hgiu k hk1 hkj)))
-      have hgw' : (𝕋).toCellScheme.gradedIndex w' = ((univ : Finset (Fin (m + 2))), k) :=
-        hw'.trans (hz.trans (hgiu k hk1 hkj))
-      have hwM : min (Q (Fin.castAdd _ w')) c ≤ min (P (cpy H Γ A B' hU (u k))) c := by
-        rw [← hsame Q hQ _ k hgw' hkj _ (hcfo _ k hgw' hkj), hpq' _ (hcfY _ k hgw' hkj)]
+      have hzW := hz.trans (hgiu k hk1 hkj)
+      have hzY : z ∈ (𝔼).toCellScheme.below (W, j) := by
+        rw [CellScheme.mem_below, hzW]; exact ⟨subset_rfl, hkj⟩
+      obtain ⟨w', hw'o, hgw'⟩ : ∃ w', (𝕋).mirrorOrig (I.mixedFaces g) z = w' ∧
+          (𝕋).toCellScheme.gradedIndex w' = ((univ : Finset (Fin (m + 2))), k) := by
+        rcases cell_cases z with ⟨w', hw'o, hgw'⟩ | ⟨ez, hez⟩
+        · exact ⟨w', hw'o, hgw'.trans (congrArg _ (congrArg Prod.snd hzW))⟩
+        · exfalso
+          obtain ⟨-, -, hc, hd⟩ := (I.mem_mixedFaces g).mp hU
+          have hsz : U ⊆ (𝔼).toCellScheme.scope z :=
+            hUW.trans (le_of_eq (congrArg Prod.fst hzW).symm)
+          rw [hez, scope_attachEmb] at hsz
+          exact (I.scope_attachment g ez).elim (fun h ↦ hc (hsz.trans h))
+            fun h ↦ hd (hsz.trans h)
+      have hwM : min (Q z) c ≤ min (P (cpy H Γ A B' hU (u k))) c := by
+        rw [hsame Q hQ _ k hgw' hkj z hzY hw'o,
+          ← hsame Q hQ _ k hgw' hkj _ (le_trans (hcfY _ k hgw' hkj) hXY) (hcfo _ k hgw' hkj),
+          hpq' _ (hcfY _ k hgw' hkj)]
         exact min_le_min_right _ ((hu k hk1 hkj).2.2 w' hgw')
       exact Label.min_min_eq_of_reader hdz hℓ hzM hle hwM
   · -- the prescription below `(U, j)`
     change r d.1 = p d
-    have hdY : d.1 ∈ (𝔼).toCellScheme.below ((univ : Finset (Fin (m + 2))), j) :=
+    have hdY : d.1 ∈ (𝔼).toCellScheme.below (W, j) :=
       le_trans d.2 hXY
     obtain ⟨h1, h2⟩ := hgY d.1 hdY
     rw [← hPd d.1 d.2]
@@ -523,12 +555,47 @@ theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
             (copyFull H Γ A B' hU (u k) (hu k hk1 hkj).1 (hkj.trans hjU))) := by
         rw [CellScheme.mem_below, gradedIndex_copyFull, gradedIndex_attachEmb]
         exact ⟨hes, le_rfl⟩
-      rw [he, hr_att e k rfl, ← hrow]
+      rw [he, hr_att e k rfl (he ▸ hdY), ← hrow]
       change θ k ((𝔼).rowAt (copyFull H Γ A B' hU (u k) (hu k hk1 hkj).1 (hkj.trans hjU))
         (I.attachEmb g H Γ A B' e)) = _
       rw [hθc k hk1 hkj _ hmem]
       exact min_eq_left (le_max_copy hU hP hkj (hkj.trans hjU) (hu k hk1 hkj).1
         (hmaxc k hk1 hkj) (he ▸ d.2) (congrArg Prod.snd (gradedIndex_attachEmb e)))
+
+theorem mirrorOrig_cpy (hU : U ∈ I.mixedFaces g) (v : Fin (𝕋).card) :
+    (𝕋).mirrorOrig (I.mixedFaces g) (cpy H Γ A B' hU v) = v := by
+  classical
+  unfold cpy
+  split_ifs with h
+  · exact mirrorOrig_copyAt hU _ _ _
+  · exact Scheme.mirrorOrig_castAdd _ _ _
+
+/-- **The lift from a mixed face into the full face.**  For a mixed face `U` and a grade `j` with
+`1 ≤ j ≤ m + 1` and `j ≤ |U|`, the replicated scheme lifts capped from `(U, j)` to `(univ, j)`. -/
+theorem cappedLift_mixed_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hA0 : ∀ k, A k fun _ ↦ ⊥) (hU : U ∈ I.mixedFaces g) {j : ℕ} (hj1 : 1 ≤ j)
+    (hjm : j ≤ m + 1) (hjU : j ≤ #U) :
+    (𝔼).rows.CappedLift (X := (U, j)) (Y := ((univ : Finset (Fin (m + 2))), j))
+      ⟨subset_univ _, le_rfl⟩ :=
+  cappedLift_mixed_face hH hcard hΓ0 hΓ hA hA0 hU (subset_univ _) (Fin.castAdd _)
+    (fun v ↦ Scheme.mirrorOrig_castAdd _ _ v)
+    (fun v _ hv _ ↦ (Scheme.gradedIndex_mirror_castAdd
+      (hmix := I.not_subset_scope_tower g H Γ A B') v).trans hv) hj1 hjm hjU
+
+/-- **The lift between mixed faces at a grade.**  For mixed faces `U ⊆ V` and a grade `j` with
+`1 ≤ j ≤ m + 1` and `j ≤ |U|`, the replicated scheme lifts capped from `(U, j)` to `(V, j)`; the
+dominating cells are read at their copies at `V`. -/
+theorem cappedLift_mixed_mixed (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hA0 : ∀ k, A k fun _ ↦ ⊥) (hU : U ∈ I.mixedFaces g) {V : Finset (Fin (m + 2))}
+    (hV : V ∈ I.mixedFaces g) (hUV : U ⊆ V) {j : ℕ} (hj1 : 1 ≤ j) (hjm : j ≤ m + 1)
+    (hjU : j ≤ #U) :
+    (𝔼).rows.CappedLift (X := (U, j)) (Y := (V, j)) ⟨hUV, le_rfl⟩ :=
+  cappedLift_mixed_face hH hcard hΓ0 hΓ hA hA0 hU hUV (cpy H Γ A B' hV) (mirrorOrig_cpy hV)
+    (fun _ _ hv hk ↦ by
+      rw [cpy_eq hV hv (hk.trans (hjU.trans (card_le_card hUV)))]
+      exact gradedIndex_copyFull hV _ _ _) hj1 hjm hjU
 
 end Seed
 

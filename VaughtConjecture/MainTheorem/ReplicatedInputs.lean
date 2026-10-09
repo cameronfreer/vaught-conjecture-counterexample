@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.MainTheorem.ReplicatedLadderCarrier
 import VaughtConjecture.MainTheorem.SeedLadderInputs
 import VaughtConjecture.Extension.ReplicatedMixedLift
+import VaughtConjecture.Extension.ReplicatedAttachedLift
 
 /-!
 # Ladder carriers at the seed position from the inputs of the replicated scheme
@@ -16,7 +17,12 @@ The **inputs of the replicated scheme** at a seed for requests `Q` (`Seed.Replic
 height, a finite set of values containing `⊥` and a grid bound, and, for the replicated scheme over
 the attachment with the admission predicate of `Q`,
 
-* the capped lifts into the mixed faces (`Seed.HasMixedLifts`, open),
+* the capped lifts into the mixed faces (`Seed.HasMixedLifts`, open).  They factor through the
+  same grade (`Seed.hasMixedLifts_of_sameGrade`); the same-grade lifts between mixed faces hold
+  (`Seed.hasMixedSameGradeLifts`), so what remains are the same-grade lifts from the faces inside
+  the context face or the donor face (`Seed.HasAttachedMixedLifts`, open above the grade one; at
+  the grade one they hold when the donor face and the root are faces of the amalgam,
+  `Seed.attachedMixedLifts_one`),
 * the capped lifts from the two coatoms into the full faces of the grades `1, …, m + 1`: the
   context lift (`Seed.HasContextLift`, open) and the mixed-coatom lift
   (`Seed.HasMixedCoatomLift`; when the root is not onto the second coatom is a mixed face
@@ -71,6 +77,25 @@ def HasMixedLifts : Prop :=
   ∀ ⦃X Y : Finset (Fin (m + 2)) × ℕ⦄, X ∈ (I.replicated g H Γ A B').toCellScheme.gradedFaces →
     Y ∈ (I.replicated g H Γ A B').toCellScheme.gradedFaces → ∀ h : X ≤ Y,
     Y.1 ∈ I.mixedFaces g → (I.replicated g H Γ A B').rows.CappedLift h
+
+/-- **The same-grade lifts between mixed faces**: the replicated scheme lifts capped from `(V, k)`
+to `(U, k)` for mixed faces `V ⊆ U` and `1 ≤ k ≤ |V|` (they hold, `Seed.hasMixedSameGradeLifts`). -/
+def HasMixedSameGradeLifts : Prop :=
+  ∀ ⦃V U : Finset (Fin (m + 2))⦄ ⦃k : ℕ⦄, V ∈ I.mixedFaces g → U ∈ I.mixedFaces g →
+    ∀ h : V ⊆ U, 1 ≤ k → k ≤ #V →
+      (I.replicated g H Γ A B').rows.CappedLift (X := (V, k)) (Y := (U, k)) ⟨h, le_rfl⟩
+
+/-- **The same-grade lifts from the faces of the attachment into the mixed faces** (open above
+the grade one): the replicated scheme lifts capped from `(V, k)` to `(U, k)` for a face `V`
+inside the context face or the donor face, a mixed face `U ⊇ V`, and `1 ≤ k ≤ |V|`.  Below
+`(V, k)` lie only cells of the attachment; below `(U, k)` lie also the copies at the mixed faces
+inside `U`, whose labels must extend the prescription. -/
+def HasAttachedMixedLifts : Prop :=
+  ∀ ⦃V U : Finset (Fin (m + 2))⦄ ⦃k : ℕ⦄, V ∈ (I.replicated g H Γ A B').toCellScheme.faces →
+    (V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∨
+      V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb))) →
+    U ∈ I.mixedFaces g → ∀ h : V ⊆ U, 1 ≤ k → k ≤ #V →
+      (I.replicated g H Γ A B').rows.CappedLift (X := (V, k)) (Y := (U, k)) ⟨h, le_rfl⟩
 
 /-- **The context lift** (open): the replicated scheme lifts capped from the context coatom (the
 points other than the new one) into the full face at every grade `1, …, m + 1`.  Below the context
@@ -170,6 +195,65 @@ theorem hasMixedCoatomLift (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤
     I.HasMixedCoatomLift g H Γ A B' := fun j hj1 hjm ↦
   cappedLift_mixed_univ hH hcard hΓ0 hΓ hA hA0 (mem_mixedFaces_coatom hg) hj1 hjm
     (by rw [card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin]; omega)
+
+/-- **The lifts into the mixed faces factor through the same grade**: a lift from `(V, k)` to
+`(U, k')` with `U` mixed is the same-grade lift from `(V, k)` to `(U, k)` followed by the raise of
+the grade within `U` (`CellScheme.Rows.cappedLift_of_fst_eq`); the face `V` is mixed or, being a
+face other than the ground set and not mixed, lies inside the context face or the donor face. -/
+theorem hasMixedLifts_of_sameGrade (hmm : I.HasMixedSameGradeLifts g H Γ A B')
+    (hat : I.HasAttachedMixedLifts g H Γ A B') : I.HasMixedLifts g H Γ A B' := by
+  rintro ⟨V, k⟩ ⟨U, k'⟩ hX - h hU
+  have hsame : (I.replicated g H Γ A B').rows.CappedLift (X := (V, k)) (Y := (U, k))
+      ⟨h.1, le_rfl⟩ := by
+    by_cases hVm : V ∈ I.mixedFaces g
+    · exact hmm hVm hU h.1 hX.2.1 hX.2.2
+    · have hVu : V ≠ univ := fun he ↦
+        ((I.mem_mixedFaces g).mp hU).2.1 (univ_subset_iff.mp (he ▸ h.1))
+      have hc : V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∨
+          V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb)) := by
+        by_contra hc
+        push Not at hc
+        exact hVm ((I.mem_mixedFaces g).mpr ⟨faces_replicated ▸ hX.1, hVu, hc.1, hc.2⟩)
+      exact hat hX.1 hc hU h.1 hX.2.1 hX.2.2
+  exact hsame.trans (CellScheme.Rows.cappedLift_of_fst_eq (R := (I.replicated g H Γ A B').rows)
+    (X := (U, k)) (Y := (U, k')) ⟨subset_rfl, h.2⟩ rfl)
+
+/-- **The same-grade lifts between mixed faces hold** (`Seed.cappedLift_mixed_mixed`). -/
+theorem hasMixedSameGradeLifts (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hA0 : ∀ k, A k fun _ ↦ ⊥) : I.HasMixedSameGradeLifts g H Γ A B' :=
+  fun V _ k hV hU h hk1 hkV ↦ by
+    have hVu : #V < m + 2 := by
+      have hlt : V ⊂ univ := ssubset_univ_iff.mpr ((I.mem_mixedFaces g).mp hV).2.1
+      simpa using card_lt_card hlt
+    exact cappedLift_mixed_mixed hH hcard hΓ0 hΓ hA hA0 hV hU h hk1 (by omega) hkV
+
+/-- **The lifts into the mixed faces from the lifts out of the faces of the attachment**: the
+same-grade lifts between mixed faces hold, so the lifts into the mixed faces are exactly asked
+from the faces inside the context face or the donor face. -/
+theorem hasMixedLifts_of_attachedMixedLifts (hH : 0 < H)
+    (hcard : (I.attachmentBase g).S.card ≤ H) (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
+    (hA : ∀ k R, A (k + 3) R → A (k + 2) R) (hA0 : ∀ k, A k fun _ ↦ ⊥)
+    (hat : I.HasAttachedMixedLifts g H Γ A B') : I.HasMixedLifts g H Γ A B' :=
+  hasMixedLifts_of_sameGrade (hasMixedSameGradeLifts hH hcard hΓ0 hΓ hA hA0) hat
+
+/-- **The same-grade lifts from the faces of the attachment at the grade one**, when the donor
+face and the root (its intersection with the context face) are faces of the amalgam and the root
+is nonempty (`Seed.cappedLift_attached_mixed_one_of_faces`). -/
+theorem attachedMixedLifts_one (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hdF : univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
+    (hrF : univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+      univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
+    (hr1 : 1 ≤ #(univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+      univ.map (extendByLast (g.trans Fin.castSuccEmb))))
+    {V U : Finset (Fin (m + 2))} (hVF : V ∈ (I.replicated g H Γ A B').toCellScheme.faces)
+    (hV : V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∨
+      V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb)))
+    (hU : U ∈ I.mixedFaces g) (h : V ⊆ U) (hV1 : 1 ≤ #V) :
+    (I.replicated g H Γ A B').rows.CappedLift (X := (V, 1)) (Y := (U, 1)) ⟨h, le_rfl⟩ :=
+  cappedLift_attached_mixed_one_of_faces hH hcard hΓ hA hdF hrF hr1 hU
+    (faces_replicated ▸ hVF) hV1 h hV
 
 variable (I g) {d : StageType.{u} α (n + 1)}
   (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
