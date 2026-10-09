@@ -407,13 +407,13 @@ theorem gradeGate_fails (I : Seed.{u} ω 1) (hI : I.left = ctx ω)
     (hdA : restrictFace (extendByLast ((𝕣).trans Fin.castSuccEmb)) I.amalgam = some (don ω)) :
     ∃ R₀ ∈ (I.attachmentBase 𝕣).towerCat (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ req ω))
         (1 + 2),
-      (∀ x : Fin (ctx ω).card,
+      (∀ x : Fin (ctx.{u} ω).card,
         R₀ (I.attachCtxCell 𝕣 (Fin.cast (congrArg (fun t ↦ t.card) hI.symm) x)) =
           Label.twoLevel (topCode (I.attachment 𝕣).card 3) (topCode (I.attachment 𝕣).card 4)
             (sep ω x)) ∧
       I.ReachableCut 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ req ω))
         (I.seedGridBound 𝕣) 2 (topCode (I.attachment 𝕣).card 4) ∧
-      (∀ x, topCode (I.attachment 𝕣).card 3 < x → x ≤ topCode (I.attachment 𝕣).card 4 →
+      (∀ x : Label.{u}, topCode (I.attachment 𝕣).card 3 < x → x ≤ topCode (I.attachment 𝕣).card 4 →
         x = topCode (I.attachment 𝕣).card 4) ∧
       (ctx ω).rows.IsLawful (topSection.{u} (I.attachment 𝕣).card) ∧
       ¬ IsSelfVisible 2 (topSection.{u} (I.attachment 𝕣).card 0) ∧
