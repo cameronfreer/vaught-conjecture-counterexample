@@ -19,9 +19,14 @@ the attachment with the admission predicate of `Q`,
 * the capped lifts from the two coatoms into the full faces of the grades `1, …, m + 1`: the
   context lift (`Seed.HasContextLift`, open) and the mixed-coatom lift
   (`Seed.HasMixedCoatomLift`, open; the second coatom is a mixed face when the root is not onto),
-* a lawful labelling extending the labels of the attachment (`Seed.HasExtendingLabel`, open; it
-  follows from a lawful labelling of the ladder tower extending them,
-  `Seed.hasExtendingLabel_of_tower`, the copies reading the labels of their originals).
+* a lawful labelling extending the labels of the attachment (`Seed.HasExtendingLabel`, open): a
+  mathematical hypothesis on the replicated scheme, not a step of the assembly; it follows from a
+  lawful labelling of the ladder tower extending them (`Seed.hasExtendingLabel_of_tower`, the
+  copies reading the labels of their originals).
+
+The inputs are kept separate: the lifts into the mixed faces, the coatom lifts (the context lift,
+whose target below the full face contains the copies, and the mixed-coatom lift), and the extending
+lawful labelling.
 
 From them the ladder carrier exists (`Seed.exists_ladderCarrier_of_replicatedInputs`: the
 replicated scheme is bountiful by `Seed.isBountiful_replicated_of_lifts`, and
@@ -30,8 +35,12 @@ context face or the donor face no lift is asked: there the replicated scheme is 
 
 **At the seed position** the inputs at some seed of the context
 (`StageType.HasReplicatedInputsAtSeed`, open) give ladder carriers
-(`StageType.HasReplicatedInputsAtSeed.hasLadderGrowthCarriersStableAtSeed`).  Only the requests'
-threshold `≥ 2` is used; no exactness, no root cleanness.
+(`StageType.HasReplicatedInputsAtSeed.hasLadderGrowthCarriersStableAtSeed`).  Of the hypotheses
+of the contract the implication itself uses exactly: the stage is a limit (`Order.IsSuccLimit α`,
+for the completion at a stage that is zero or a limit), and the threshold of the requests is at
+least `2`, from `ClassCalibrated.arity` (`n + 1 ≤` the threshold) together with the positive arity
+of the root (`0 < n`).  Every other hypothesis is handed to the inputs at the seed.  No exactness,
+no root cleanness, no bound on the donor's top grade.
 
 ## References
 
@@ -57,7 +66,9 @@ def HasMixedLifts : Prop :=
     Y.1 ∈ I.mixedFaces g → (I.replicated g H Γ A B').rows.CappedLift h
 
 /-- **The context lift** (open): the replicated scheme lifts capped from the context coatom (the
-points other than the new one) into the full face at every grade `1, …, m + 1`. -/
+points other than the new one) into the full face at every grade `1, …, m + 1`.  Below the context
+coatom lie only cells of the context; below the full face lie also the cells of full scope and
+their copies at the mixed faces, which the lift must label. -/
 def HasContextLift : Prop :=
   ∀ j, 1 ≤ j → j ≤ m + 1 →
     (I.replicated g H Γ A B').rows.CappedLift (X := (univ.erase (Fin.last (m + 1)), j))

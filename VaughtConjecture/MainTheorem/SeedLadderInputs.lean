@@ -25,8 +25,12 @@ completion).
 coatom and the root inside it; no bound on the donor's top grade): the inputs at some
 seed of the context (`StageType.HasLadderTowerInputsAtSeed`, open; the second coatom type is free)
 give it
-(`StageType.HasLadderTowerInputsAtSeed.hasLadderGrowthCarriersStableAtSeed`).  Only the requests'
-threshold `≥ 2` is used (from `ClassCalibrated.arity`); no exactness, no root cleanness.
+(`StageType.HasLadderTowerInputsAtSeed.hasLadderGrowthCarriersStableAtSeed`).  Of the hypotheses
+of the contract the implication itself uses exactly: the stage is a limit (`Order.IsSuccLimit α`,
+for the completion at a stage that is zero or a limit), and the threshold of the requests is at
+least `2`, from `ClassCalibrated.arity` (`n + 1 ≤` the threshold) together with the positive arity
+of the root (`0 < n`).  Every other hypothesis is handed to the inputs at the seed.  No exactness,
+no root cleanness, no bound on the donor's top grade.
 
 ## References
 
