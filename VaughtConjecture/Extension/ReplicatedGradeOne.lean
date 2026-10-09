@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthCappedDecoder
+import VaughtConjecture.Extension.FlattenedSource
 import VaughtConjecture.Extension.ReplicatedCopies
 
 /-!
@@ -38,6 +39,37 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label
+
+namespace Label
+
+/-- **Agreement at the cap through a dominating reader.**  The arithmetic of the lift at the grade
+one: if `a` and `b` agree capped at `c`, a reader of value `z` agreeing with `m` at `c` reads `d`
+and `b` alike, `a ≤ m`, and `d ≤ z` whenever `z < c`, then `a` and `d` agree capped at `c`. -/
+theorem min_eq_min_of_reader {a b d z m c : Label.{u}} (hab : min a c = min b c)
+    (hzm : min z c = min m c) (hdb : min d z = min b z) (ham : a ≤ m)
+    (hdz : z < c → d ≤ z) : min a c = min d c := by
+  rcases le_or_gt c z with hcz | hzc
+  · have h1 : min d c = min (min d z) c := by rw [min_assoc, min_eq_right hcz]
+    have h2 : min b c = min (min b z) c := by rw [min_assoc, min_eq_right hcz]
+    rw [hab, h2, ← hdb, ← h1]
+  · rw [min_eq_left hzc.le] at hzm
+    have hmc : m < c := by
+      by_contra h
+      rw [min_eq_right (not_lt.mp h)] at hzm
+      exact hzc.ne hzm
+    rw [min_eq_left hmc.le] at hzm
+    have hac : a < c := lt_of_le_of_lt ham hmc
+    rw [min_eq_left hac.le] at hab ⊢
+    have hb : b = a := by
+      rcases le_or_gt c b with hcb | hbc
+      · rw [min_eq_right hcb] at hab
+        exact absurd hab hac.ne
+      · rw [min_eq_left hbc.le] at hab
+        exact hab.symm
+    rw [min_eq_left (hdz hzc), hb, min_eq_left (ham.trans hzm.symm.le)] at hdb
+    rw [hdb, min_eq_left hac.le]
+
+end Label
 
 namespace Scheme
 
@@ -324,6 +356,221 @@ theorem rowAt_castAdd_ladCell_copyLadder (hU : U ∈ I.mixedFaces g)
           (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H)) p.1 v) := by
   rw [rowAt_castAdd_ladCell_copyLadder_eq, rowAt_ladCell_ladCell, Scheme.baseIndex_natAdd,
     Equiv.symm_apply_apply]
+
+theorem mirrorOrig_copyLadder (hU : U ∈ I.mixedFaces g)
+    (v : Scheme.LadderPt (I.attachmentBase g).S (Scheme.RankMember (I.attachmentBase g).S H) H) :
+    (I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (copyLadder H Γ A B' hU v) =
+      ladCell H Γ A B' v :=
+  mirrorOrig_copyAt hU _ _ _
+
+/-- The cells below `(univ, 1)` have grade one. -/
+theorem grade_eq_one_of_mem_below_univ_one {z : Fin (I.replicated g H Γ A B').card}
+    (hz : z ∈ (I.replicated g H Γ A B').toCellScheme.below ((univ : Finset (Fin (m + 2))), 1)) :
+    (I.replicated g H Γ A B').toCellScheme.grade z = 1 := by
+  have h1 : (I.replicated g H Γ A B').toCellScheme.grade z ≤ 1 := hz.2
+  have h2 := (isWellFormed_replicated (I := I) (g := g) (H := H) (Γ := Γ) (A := A)
+    (B' := B')).isWellFormed.grade_pos z
+  omega
+
+/-! ### The lift -/
+
+/-- The replicated scheme, in the lift at the grade one. -/
+local notation "𝔼" => Seed.replicated I g H Γ A B'
+
+/-- The full face at the grade one. -/
+local notation "𝕌₁" => ((univ : Finset (Fin (m + 2))), 1)
+
+/-- **The lift from a mixed face into the full face at the grade one.**  For a mixed face `U`, the
+replicated scheme lifts capped from `(U, 1)` to `(univ, 1)`.  If the prescription is `⊥` on the
+copied ladder at `U`, it is `⊥` below `(U, 1)` (availability), and the ambient capped at the cap
+is the lift.  Otherwise its shape picks a member `a`; the lift is the capped decoder at the copied
+top rung of `a` applied to the row of the original top rung of `a`: lawful by the bottom pattern of
+that row, equal to the prescription below `(U, 1)`, and keeping the observation of the ambient at
+the cap (`Label.min_eq_min_of_reader`, through the capped decoder of the ambient at the original
+top rung). -/
+theorem cappedLift_mixed_univ_one (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hU : U ∈ I.mixedFaces g) :
+    (𝔼).rows.CappedLift (X := (U, 1)) (Y := 𝕌₁)
+      ⟨subset_univ _, le_rfl⟩ := by
+  classical
+  have hXY : ((U, 1) : Finset (Fin (m + 2)) × ℕ) ≤ 𝕌₁ :=
+    ⟨subset_univ _, le_rfl⟩
+  refine (CellScheme.Rows.cappedLift_iff_forall_exists _).mpr fun c hc p q hp hq hpq ↦ ?_
+  -- total labellings
+  obtain ⟨P, hPd⟩ : ∃ P : Fin (𝔼).card → Label.{u},
+      ∀ d (hd : d ∈ (𝔼).toCellScheme.below (U, 1)), P d = p ⟨d, hd⟩ :=
+    ⟨CellScheme.Rows.extendBot _ p, fun d hd ↦ CellScheme.Rows.extendBot_of_mem p hd⟩
+  obtain ⟨Q, hQd⟩ : ∃ Q : Fin (𝔼).card → Label.{u},
+      ∀ d (hd : d ∈ (𝔼).toCellScheme.below 𝕌₁),
+        Q d = q ⟨d, hd⟩ :=
+    ⟨CellScheme.Rows.extendBot _ q, fun d hd ↦ CellScheme.Rows.extendBot_of_mem q hd⟩
+  have hP : (𝔼).rows.IsLawfulBelow (U, 1) fun d ↦ P d := by
+    have e : (fun d : (𝔼).toCellScheme.below (U, 1) ↦ P d) = p := funext fun d ↦ hPd d d.2
+    rw [e]; exact hp
+  have hQ : (𝔼).rows.IsLawfulBelow 𝕌₁ fun d ↦ Q d := by
+    have e : (fun d : (𝔼).toCellScheme.below 𝕌₁ ↦ Q d) = q :=
+      funext fun d ↦ hQd d d.2
+    rw [e]; exact hq
+  have hpq' (d) (hd : d ∈ (𝔼).toCellScheme.below (U, 1)) : min (Q d) c = min (P d) c := by
+    rw [hQd d (le_trans hd hXY), hPd d hd]
+    exact hpq ⟨d, hd⟩
+  have hcl (v : Scheme.LadderPt (I.attachmentBase g).S
+      (Scheme.RankMember (I.attachmentBase g).S H) H) :
+      copyLadder H Γ A B' hU v ∈ (𝔼).toCellScheme.below (U, 1) := by
+    rw [CellScheme.mem_below, gradedIndex_copyLadder]
+  have hgX (d) (hd : d ∈ (𝔼).toCellScheme.below (U, 1)) : (𝔼).toCellScheme.grade d = 1 :=
+    grade_eq_one_of_mem_below_univ_one (le_trans hd hXY)
+  have hsX (d) (hd : d ∈ (𝔼).toCellScheme.below (U, 1)) (v) :
+      (𝔼).toCellScheme.scope d ⊆ (𝔼).toCellScheme.scope (copyLadder H Γ A B' hU v) := by
+    exact hd.1.trans (le_of_eq (congrArg Prod.fst
+      (gradedIndex_copyLadder (Γ := Γ) (A := A) (B' := B') hU v)).symm)
+  obtain ⟨-, -, havailP⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hP
+  obtain ⟨-, -, havailQ⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hQ
+  rcases copyLadder_exists_shape hH hU hP le_rfl with hall | ⟨a, gg, σ, hwit, hch, hbot⟩
+  · -- the prescription is `⊥` below `(U, 1)`
+    obtain ⟨a0⟩ := (inferInstance : Nonempty (Scheme.RankMember (I.attachmentBase g).S H))
+    have hp0 (d) (hd : d ∈ (𝔼).toCellScheme.below (U, 1)) : P d = ⊥ := by
+      let v0 : Scheme.LadderPt (I.attachmentBase g).S
+          (Scheme.RankMember (I.attachmentBase g).S H) H := (a0, Sum.inl ⟨0, hH⟩)
+      obtain ⟨u, hu, hle⟩ := havailP d _ (hcl v0) (hsX d hd v0)
+        ((hgX d hd).trans (congrArg Prod.snd (gradedIndex_copyLadder hU v0)).symm)
+      obtain ⟨v, rfl⟩ := exists_eq_copyLadder hU u (hu.trans (gradedIndex_copyLadder hU v0))
+      exact le_bot_iff.mp (hle.trans (hall v).le)
+    refine ⟨fun d ↦ min (q d) c, ?_, fun d ↦ by rw [min_assoc, min_self], fun d ↦ ?_⟩
+    · by_cases hc0 : c = ⊥
+      · have e : (fun d : (𝔼).toCellScheme.below 𝕌₁ ↦
+            min (q d) c) = fun _ ↦ ⊥ := funext fun d ↦ by rw [hc0, min_bot_right]
+        rw [e]
+        exact CellScheme.Rows.isLawfulBelow_const_bot _
+      · exact hq.map_of_bot_iff hq (fun d ↦ (grade_eq_one_of_mem_below_univ_one d.2).le)
+          ((IsWitness.id_step 1).min_const hc)
+          fun d ↦ ⟨fun h ↦ (min_eq_bot.mp h).resolve_right hc0, fun h ↦ by simp [h]⟩
+    · have h0 : p d = ⊥ := by rw [← hp0 d.1 d.2, hPd d.1 d.2]
+      change min (q (Set.inclusion _ d)) c = p d
+      rw [hpq d, h0, min_eq_left bot_le]
+  · -- the shape: the member `a`
+    let top : Scheme.LadderPt (I.attachmentBase g).S
+        (Scheme.RankMember (I.attachmentBase g).S H) H := (a, Sum.inl ⟨H - 1, by omega⟩)
+    have hidxtop : ladderIndex H (Scheme.rankProf (I.attachmentBase g).S H) Prod.fst
+        (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H)) a top = H := by
+      have h := ladderIndex_parent (H := H) (prof := Scheme.rankProf (I.attachmentBase g).S H)
+        (parent := Prod.fst) (Scheme.ladderCeil_le (Scheme.rankProf_le _ H)) top
+      simp only [top, Scheme.ladderCeil, Sum.elim_inl] at h
+      rw [h]
+      omega
+    have hMv (v) : P (copyLadder H Γ A B' hU v) ≤ P (copyLadder H Γ A B' hU top) := by
+      rw [hch v, hch top, hidxtop]
+      exact min_le_min_right _ (hwit.monotone (monotone_ladderSource H (ladderIndex_le a v)))
+    have hMX (d) (hd : d ∈ (𝔼).toCellScheme.below (U, 1)) :
+        P d ≤ P (copyLadder H Γ A B' hU top) := by
+      obtain ⟨u, hu, hle⟩ := havailP d _ (hcl top) (hsX d hd top)
+        ((hgX d hd).trans (congrArg Prod.snd (gradedIndex_copyLadder hU top)).symm)
+      obtain ⟨v, rfl⟩ := exists_eq_copyLadder hU u (hu.trans (gradedIndex_copyLadder hU top))
+      exact hle.trans (hMv v)
+    obtain ⟨θ, hθ, -, hθrow⟩ := Scheme.exists_cappedDecoder_below hP (hcl top)
+      (congrArg Prod.snd (gradedIndex_copyLadder hU top))
+    have hTst := gradedIndex_castAdd_ladCell (Γ := Γ) (A := A) (B' := B') top
+    have hTstY : (Fin.castAdd _ (ladCell H Γ A B' top) : Fin (𝔼).card) ∈
+        (𝔼).toCellScheme.below 𝕌₁ := le_of_eq hTst
+    have horig : (I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g)
+        (copyLadder H Γ A B' hU top) = (I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g)
+          (Fin.castAdd _ (ladCell H Γ A B' top)) :=
+      (mirrorOrig_copyLadder hU top).trans (mirrorOrig_castAdd_ladCell top).symm
+    have hsT : (𝔼).toCellScheme.scope (copyLadder H Γ A B' hU top) ⊆
+        (𝔼).toCellScheme.scope (Fin.castAdd _ (ladCell H Γ A B' top)) :=
+      subset_trans (subset_univ _) (le_of_eq (congrArg Prod.fst hTst).symm)
+    -- the copied and the original top rung read alike below the copy
+    have hρT (d) (hd : d ∈ (𝔼).toCellScheme.below (U, 1)) :
+        (𝔼).rowAt (copyLadder H Γ A B' hU top) d =
+          (𝔼).rowAt (Fin.castAdd _ (ladCell H Γ A B' top)) d := by
+      have hd1 : d ∈ (𝔼).toCellScheme.below
+          ((𝔼).toCellScheme.gradedIndex (copyLadder H Γ A B' hU top)) := by
+        rw [gradedIndex_copyLadder]; exact hd
+      have hd2 : d ∈ (𝔼).toCellScheme.below
+          ((𝔼).toCellScheme.gradedIndex (Fin.castAdd _ (ladCell H Γ A B' top))) := by
+        rw [hTst]; exact le_trans hd hXY
+      rw [Scheme.rowAt_mirror_of_mem hd1, Scheme.rowAt_mirror_of_mem hd2, horig]
+    have hrX (d) (hd : d ∈ (𝔼).toCellScheme.below (U, 1)) :
+        θ ((𝔼).rowAt (Fin.castAdd _ (ladCell H Γ A B' top)) d) = P d := by
+      have hd1 : d ∈ (𝔼).toCellScheme.below
+          ((𝔼).toCellScheme.gradedIndex (copyLadder H Γ A B' hU top)) := by
+        rw [gradedIndex_copyLadder]; exact hd
+      rw [← hρT d hd, hθrow d hd1, min_eq_left (hMX d hd)]
+    have hρlaw : (𝔼).rows.IsLawfulBelow 𝕌₁
+        fun d ↦ (𝔼).rowAt (Fin.castAdd _ (ladCell H Γ A B' top)) d := by
+      have h := Scheme.isLawfulBelow_rowAt (isConsistent_replicated hH hcard hΓ hA) hTst
+      exact h
+    have hbotρ (d) (hd : d ∈ (𝔼).toCellScheme.below 𝕌₁) :
+        θ ((𝔼).rowAt (Fin.castAdd _ (ladCell H Γ A B' top)) d) = ⊥ ↔
+          (𝔼).rowAt (Fin.castAdd _ (ladCell H Γ A B' top)) d = ⊥ := by
+      obtain ⟨v, hv⟩ := exists_rowAt_eq_copyLadder hU top hd
+      rw [hv, hrX _ (hcl v), hbot v, rowAt_castAdd_ladCell_copyLadder hU top v,
+        ladderSource_eq_bot_iff]
+      simp only [top, Scheme.ladderCeil, Sum.elim_inl]
+      constructor
+      · intro h; rw [h]; simp
+      · intro h
+        rcases Nat.min_eq_zero_iff.mp h with h' | h'
+        · exact h'
+        · omega
+    refine ⟨fun d ↦ θ ((𝔼).rowAt (Fin.castAdd _ (ladCell H Γ A B' top)) d),
+      hρlaw.map_of_bot_iff hρlaw (fun d ↦ (grade_eq_one_of_mem_below_univ_one d.2).le) hθ
+        (fun d ↦ hbotρ d d.2), fun d ↦ ?_, fun d ↦ ?_⟩
+    · -- the observation of the ambient at the cap
+      obtain ⟨v, hv⟩ := exists_rowAt_eq_copyLadder hU top d.2
+      have hl : min (θ ((𝔼).rowAt (Fin.castAdd _ (ladCell H Γ A B' top)) d)) c =
+          min (P (copyLadder H Γ A B' hU v)) c := by
+        rw [hv, hrX _ (hcl v)]
+      rw [hl, ← hQd d.1 d.2]
+      have hab := (hpq' _ (hcl v)).symm
+      have he : Q (copyLadder H Γ A B' hU top) = Q (Fin.castAdd _ (ladCell H Γ A B' top)) :=
+        Scheme.eq_of_mirrorOrig_eq hQ horig hsT hTstY
+      have hZM : min (Q (Fin.castAdd _ (ladCell H Γ A B' top))) c =
+          min (P (copyLadder H Γ A B' hU top)) c := by
+        rw [← he]; exact hpq' _ (hcl top)
+      obtain ⟨θq, -, -, hθq⟩ := Scheme.exists_cappedDecoder_below hQ hTstY
+        (congrArg Prod.snd hTst)
+      have hdb : min (Q d) (Q (Fin.castAdd _ (ladCell H Γ A B' top))) =
+          min (Q (copyLadder H Γ A B' hU v)) (Q (Fin.castAdd _ (ladCell H Γ A B' top))) := by
+        have hd2 : d.1 ∈ (𝔼).toCellScheme.below
+            ((𝔼).toCellScheme.gradedIndex (Fin.castAdd _ (ladCell H Γ A B' top))) := by
+          rw [hTst]; exact d.2
+        have hv2 : copyLadder H Γ A B' hU v ∈ (𝔼).toCellScheme.below
+            ((𝔼).toCellScheme.gradedIndex (Fin.castAdd _ (ladCell H Γ A B' top))) := by
+          rw [hTst]; exact le_trans (hcl v) hXY
+        rw [← hθq _ hd2, ← hθq _ hv2, hv]
+      have hdz : Q (Fin.castAdd _ (ladCell H Γ A B' top)) < c →
+          Q d ≤ Q (Fin.castAdd _ (ladCell H Γ A B' top)) := by
+        intro hzc
+        obtain ⟨u, hu, hle⟩ := havailQ d.1 _ hTstY
+          (subset_trans (subset_univ _) (le_of_eq (congrArg Prod.fst hTst).symm))
+          ((grade_eq_one_of_mem_below_univ_one d.2).trans (congrArg Prod.snd hTst).symm)
+        obtain ⟨v', rfl⟩ := exists_eq_castAdd_ladCell u (hu.trans hTst)
+        have huY : (Fin.castAdd _ (ladCell H Γ A B' v') : Fin (𝔼).card) ∈
+            (𝔼).toCellScheme.below 𝕌₁ := le_of_eq (hu.trans hTst)
+        have e' : Q (copyLadder H Γ A B' hU v') = Q (Fin.castAdd _ (ladCell H Γ A B' v')) :=
+          Scheme.eq_of_mirrorOrig_eq hQ
+            ((mirrorOrig_copyLadder hU v').trans (mirrorOrig_castAdd_ladCell v').symm)
+            (subset_trans (subset_univ _) (le_of_eq
+              (congrArg Prod.fst (gradedIndex_castAdd_ladCell v')).symm)) huY
+        have h1 : min (Q (copyLadder H Γ A B' hU v')) c ≤
+            Q (Fin.castAdd _ (ladCell H Γ A B' top)) := by
+          rw [hpq' _ (hcl v')]
+          calc min (P (copyLadder H Γ A B' hU v')) c
+              ≤ min (P (copyLadder H Γ A B' hU top)) c := min_le_min_right _ (hMv v')
+            _ = min (Q (Fin.castAdd _ (ladCell H Γ A B' top))) c := hZM.symm
+            _ = Q (Fin.castAdd _ (ladCell H Γ A B' top)) := min_eq_left hzc.le
+        have h2 : Q (copyLadder H Γ A B' hU v') ≤ Q (Fin.castAdd _ (ladCell H Γ A B' top)) := by
+          rcases le_or_gt c (Q (copyLadder H Γ A B' hU v')) with h' | h'
+          · rw [min_eq_right h'] at h1
+            exact absurd h1 (not_le.mpr hzc)
+          · rwa [min_eq_left h'.le] at h1
+        exact hle.trans (e' ▸ h2)
+      exact Label.min_eq_min_of_reader hab hZM hdb (hMv v) hdz
+    · -- the prescription below `(U, 1)`
+      rw [← hPd d.1 d.2]
+      exact hrX d.1 d.2
 
 end Seed
 
