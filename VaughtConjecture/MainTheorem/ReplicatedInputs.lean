@@ -16,9 +16,9 @@ height, a finite set of values containing `⊥` and a grid bound, and, for the r
 the attachment with the admission predicate of `Q`,
 
 * the capped lifts into the mixed faces (`Seed.HasMixedLifts`, open),
-* the capped lifts from the two coatoms into the full faces of the grades `1, …, m + 1`
-  (`Seed.HasCoatomLifts`, open: the lift from the first coatom is the context lift, the lift from
-  the second coatom, a mixed face, is the lift by recognition on the copies),
+* the capped lifts from the two coatoms into the full faces of the grades `1, …, m + 1`: the
+  context lift (`Seed.HasContextLift`, open) and the mixed-coatom lift
+  (`Seed.HasMixedCoatomLift`, open; the second coatom is a mixed face when the root is not onto),
 * a lawful labelling extending the labels of the attachment (`Seed.HasExtendingLabel`, open; it
   follows from a lawful labelling of the ladder tower extending them,
   `Seed.hasExtendingLabel_of_tower`, the copies reading the labels of their originals).
@@ -56,13 +56,36 @@ def HasMixedLifts : Prop :=
     Y ∈ (I.replicated g H Γ A B').toCellScheme.gradedFaces → ∀ h : X ≤ Y,
     Y.1 ∈ I.mixedFaces g → (I.replicated g H Γ A B').rows.CappedLift h
 
-/-- **The coatom lifts** (open): the replicated scheme lifts capped from each of the two coatoms
-into the full face at every grade `1, …, m + 1`. -/
+/-- **The context lift** (open): the replicated scheme lifts capped from the context coatom (the
+points other than the new one) into the full face at every grade `1, …, m + 1`. -/
+def HasContextLift : Prop :=
+  ∀ j, 1 ≤ j → j ≤ m + 1 →
+    (I.replicated g H Γ A B').rows.CappedLift (X := (univ.erase (Fin.last (m + 1)), j))
+      (Y := ((univ : Finset (Fin (m + 2))), j)) ⟨erase_subset _ _, le_rfl⟩
+
+/-- **The mixed-coatom lift** (open): the replicated scheme lifts capped from the second coatom
+(the points other than `m`) into the full face at every grade `1, …, m + 1`.  When the root is not
+onto, the second coatom is a mixed face, carrying copies of the cells of full scope. -/
+def HasMixedCoatomLift : Prop :=
+  ∀ j, 1 ≤ j → j ≤ m + 1 →
+    (I.replicated g H Γ A B').rows.CappedLift (X := (univ.erase (Fin.castSucc (Fin.last m)), j))
+      (Y := ((univ : Finset (Fin (m + 2))), j)) ⟨erase_subset _ _, le_rfl⟩
+
+/-- **The coatom lifts**: the context lift and the mixed-coatom lift. -/
 def HasCoatomLifts : Prop :=
   ∀ x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))),
     ∀ j, 1 ≤ j → j ≤ m + 1 →
       (I.replicated g H Γ A B').rows.CappedLift (X := (univ.erase x, j))
         (Y := ((univ : Finset (Fin (m + 2))), j)) ⟨erase_subset _ _, le_rfl⟩
+
+variable {I g H Γ A B'} in
+theorem hasCoatomLifts_of_lifts (hc : I.HasContextLift g H Γ A B')
+    (hm : I.HasMixedCoatomLift g H Γ A B') : I.HasCoatomLifts g H Γ A B' := by
+  intro x hx
+  rcases mem_insert.mp hx with rfl | hx
+  · exact hc
+  · rw [mem_singleton.mp hx]
+    exact hm
 
 /-- **A labelling extending the labels of the attachment** (open): a lawful section of the
 replicated scheme that is the labelling of the attachment on its cells. -/
@@ -101,7 +124,8 @@ def ReplicatedInputs (Q : GrowthRequests I.left d.toScheme) : Prop :=
     (∀ x ∈ Γ, x ≤ gridPoint 2 B') ∧
     (∀ x ∈ Γ, x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u})) ∧
     I.HasMixedLifts g H Γ (I.attachAdmits g hd Q) B' ∧
-    I.HasCoatomLifts g H Γ (I.attachAdmits g hd Q) B' ∧
+    I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' ∧
+    I.HasMixedCoatomLift g H Γ (I.attachAdmits g hd Q) B' ∧
     I.HasExtendingLabel g H Γ (I.attachAdmits g hd Q) B'
 
 variable {I g}
@@ -119,9 +143,9 @@ theorem exists_ladderCarrier_of_replicatedInputs (hα : Order.IsSuccPrelimit α)
           G.scheme.rowAt (r a i) (r a (i - 1)) = Label.ladderSource (i + 1) i) ∧
         ∀ u, G.scheme.toCellScheme.gradedIndex u = (univ, Q.threshold) →
           ∃ (a : Mb) (F : ℕ → Label.{u}), G.IsLadderController Q (H := H) r u a F := by
-  obtain ⟨H, Γ, B', hH, hcard, hΓ0, hΓ, hΓω, hmixed, hlift, hlab⟩ := h
+  obtain ⟨H, Γ, B', hH, hcard, hΓ0, hΓ, hΓω, hmixed, hctx, hmc, hlab⟩ := h
   exact exists_replicatedCarrier hα hd Q hN hH hcard hΓ0 hΓ hΓω rfl
-    (isBountiful_replicated_of_lifts hmixed hlift) hlab
+    (isBountiful_replicated_of_lifts hmixed (hasCoatomLifts_of_lifts hctx hmc)) hlab
 
 end Seed
 
