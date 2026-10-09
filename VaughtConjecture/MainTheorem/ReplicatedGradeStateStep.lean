@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedGradeLevel
+import VaughtConjecture.Extension.LadderTowerContextLiftAmbient
 
 /-!
 # The state step at a grade
@@ -258,6 +259,59 @@ theorem exists_stateStep_threshold
       d.toCellScheme.grade y from Scheme.grade_faceCell (I.comap_donor_attachment_scheme g hd) y]
   rw [← e1, ← e2]
   exact hA
+
+/-- **The state step at every grade for an anchor of the catalogue**: when the anchor is a state
+of the catalogue of the replicated scheme (its writing a lawful section,
+`Seed.isLawful_replicatedWriting`),
+the admission of its truncation at `k` is that of the ambient state of its writing
+(`Seed.ambientAdmitted`: the controller above the cap cell carries the reads), so the premise
+`hamb` of `Seed.exists_stateStep` holds at every grade. -/
+theorem exists_stateStep_of_mem_towerCat {H : ℕ} {Γ : Finset Label.{u}} {B' : ℕ}
+    (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H) (hΓ0 : ⊥ ∈ Γ)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
+    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
+    (hdp : restrictFace Fin.castSuccEmb d = some p₀) (hdL : d.IsLegal) (hn : 0 < n)
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
+    (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
+    {k : ℕ} (hk : 1 ≤ k) {R₀ : Fin (I.attachment g).card → Label.{u}}
+    (hR₀ : R₀ ∈ (I.attachmentBase g).towerCat Γ (I.attachAdmits g hd Q) (m + 2))
+    {h : Label.{u}} (hh : IsSelfVisible k h) {w : Fin I.left.card → Label.{u}}
+    (hw : I.left.rows.IsLawfulBelow ((univ : Finset (Fin (m + 1))), k) fun x ↦ w x)
+    (hwR : ∀ x, I.left.toCellScheme.grade x ≤ k →
+      min (w x) h = min (R₀ (I.attachCtxCell g x)) h) :
+    ∃ W : Fin (I.attachment g).card → Label.{u},
+      (∀ x, I.left.toCellScheme.grade x ≤ k → W (I.attachCtxCell g x) = w x) ∧
+      (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), k) (fun a ↦ W a) ∧
+      I.attachAdmits g hd Q k W ∧
+      ∀ a, min (W a) h = min (R₀ a) h := by
+  have hR₀l : (I.attachment g).rows.IsLawful R₀ := (Scheme.LadderBaseData.mem_towerCat.mp hR₀).2.1
+  refine exists_stateStep hte hdp hdL hn hd hQ hpair hrel hk hR₀l hh hw hwR fun hN _ ↦ ?_
+  set q : (I.replicated g H Γ (I.attachAdmits g hd Q) B').toCellScheme.below
+      ((univ : Finset (Fin (m + 2))), k) → Label.{u} :=
+    fun z ↦ I.replicatedWriting g H Γ (I.attachAdmits g hd Q) B' R₀ z with hq
+  have hql : (I.replicated g H Γ (I.attachAdmits g hd Q) B').rows.IsLawfulBelow
+      ((univ : Finset (Fin (m + 2))), k) q :=
+    (isLawful_replicatedWriting hH hcard hΓ (fun k R h ↦ I.attachAdmits_succ g hd Q k R h)
+      hR₀).isLawfulBelow _
+  have hamb := ambientAdmitted (B' := B') hH hcard hΓ0 hd hQ hn k hN q hql
+  have hst (a : Fin (I.attachment g).card) :
+      ambientState H Γ (I.attachAdmits g hd Q) B' q a =
+        if (I.attachment g).toCellScheme.grade a ≤ k then R₀ a else ⊥ := by
+    by_cases ha : (I.attachment g).toCellScheme.grade a ≤ k
+    · simp only [ambientState, ha, dite_true, ite_true]
+      exact replicatedWriting_attachEmb hcard hR₀l a
+    · simp only [ambientState, ha, dite_false, ite_false]
+  have e1 : (fun x ↦ ambientState H Γ (I.attachAdmits g hd Q) B' q (I.attachCtxCell g x)) =
+      fun x ↦ if I.left.toCellScheme.grade x ≤ k then R₀ (I.attachCtxCell g x) else ⊥ := by
+    funext x; rw [hst, grade_attachCtxCell]
+  have e2 : (fun y ↦ ambientState H Γ (I.attachAdmits g hd Q) B' q (I.attachDonCell g hd y)) =
+      fun y ↦ if d.toCellScheme.grade y ≤ k then R₀ (I.attachDonCell g hd y) else ⊥ := by
+    funext y
+    rw [hst, show (I.attachment g).toCellScheme.grade (I.attachDonCell g hd y) =
+      d.toCellScheme.grade y from Scheme.grade_faceCell (I.comap_donor_attachment_scheme g hd) y]
+  rw [← e1, ← e2]
+  exact hamb
 
 end Seed
 
