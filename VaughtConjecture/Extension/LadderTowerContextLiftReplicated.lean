@@ -110,7 +110,9 @@ def ContextStateLiftR (j : ℕ) : Prop :=
           I.attachEmb g H Γ A B' a = d.1 → min (P a) c = min (q d) c
 
 variable (I g H Γ A B') in
-/-- **The coding of states at the grade `j`** over the replicated scheme: every complete lawful
+/-- **The coding of states at the grade `j`** over the replicated scheme (single-writing form,
+kept as a record: it has the necessary condition `Seed.exists_member_of_stateCodingR`; the form
+was replaced by the extension over the tower, `Seed.TowerExtension`): every complete lawful
 state of the attachment satisfying `A (m + 2)`, with the observation at a cap `c` of an ambient
 `q` on the cells of the attachment below the grade, is the decoded reading below the grade of a
 state of the catalogue, by a witness bounded by `j` whose decoded writing has the bottom pattern of

@@ -125,7 +125,9 @@ theorem ladderCellE_mem_below {j : ℕ} (hj : 1 ≤ j)
   rw [CellScheme.mem_below, hgt]
   exact ⟨subset_rfl, hj⟩
 
-/-- **The coding of states forces the ambient's member**: if `Seed.StateCodingR j` holds
+/-- **The coding of states forces the ambient's member** (necessary condition; the form was
+replaced by `Seed.TowerExtension`, which this instance does not hit,
+`Seed.exists_towerExtension_top`): if `Seed.StateCodingR j` holds
 (`j ≥ 1`, `H ≥ 2`), then for every ambient `q` lawful below `(univ, j)` separating the last two
 rungs of a member `b`, and every complete lawful state `P` satisfying `A (m + 2)` and equal to `q`
 on the cells of the attachment below the grade, some state of the catalogue satisfying
