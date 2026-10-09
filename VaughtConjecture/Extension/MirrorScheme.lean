@@ -219,4 +219,58 @@ theorem rowAt_mirror_of_mem {k t : Fin (T.card + T.copyCount 𝒰)}
   rw [rowAt_of_mem ht]
   exact (rowAt_of_mem (S := T) ((mirrorData hmix).orig_mem_below ht)).symm
 
+/-- Two cells with the same original have the same grade. -/
+theorem grade_mirror_eq_of_orig {d₁ d₂ : Fin (T.card + T.copyCount 𝒰)}
+    (horig : T.mirrorOrig 𝒰 d₁ = T.mirrorOrig 𝒰 d₂) :
+    (mirror hmix).toCellScheme.grade d₁ = (mirror hmix).toCellScheme.grade d₂ := by
+  change T.toCellScheme.grade (T.mirrorOrig 𝒰 d₁) = T.toCellScheme.grade (T.mirrorOrig 𝒰 d₂)
+  rw [horig]
+
+/-- **Cells with the same original carry the same label.**  In a section lawful below `Y`, two
+cells with the same original, the scope of the first inside that of the second and the second below
+`Y`, have the same label: the second reads the first as itself (its row is that of the original),
+so the first is at least the second; availability gives a cell of the graded index of the second
+at least the first, which reads both alike, so the first is at most the second.  In particular a
+copy carries the label of its original, and nested copies of one cell carry one label. -/
+theorem eq_of_mirrorOrig_eq {Y : Finset (Fin n) × ℕ} {w : Fin (T.card + T.copyCount 𝒰) → Label.{u}}
+    (hw : (mirror hmix).rows.IsLawfulBelow Y fun d ↦ w d) {d₁ d₂ : Fin (T.card + T.copyCount 𝒰)}
+    (horig : T.mirrorOrig 𝒰 d₁ = T.mirrorOrig 𝒰 d₂)
+    (hsc : (mirror hmix).toCellScheme.scope d₁ ⊆ (mirror hmix).toCellScheme.scope d₂)
+    (h₂ : d₂ ∈ (mirror hmix).toCellScheme.below Y) : w d₁ = w d₂ := by
+  obtain ⟨-, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hw
+  have hg := grade_mirror_eq_of_orig (hmix := hmix) horig
+  have hle : d₁ ∈ (mirror hmix).toCellScheme.below
+      ((mirror hmix).toCellScheme.gradedIndex d₂) :=
+    (CellScheme.gradedIndex_le_iff _).mpr ⟨hsc, hg.le⟩
+  -- the reading of a cell `u` at a cell `d` below it, through the rows of the originals
+  have hread {u : Fin (T.card + T.copyCount 𝒰)} (hu : u ∈ (mirror hmix).toCellScheme.below Y)
+      {d d' : Fin (T.card + T.copyCount 𝒰)}
+      (hd : d ∈ (mirror hmix).toCellScheme.below ((mirror hmix).toCellScheme.gradedIndex u))
+      (hd' : d' ∈ (mirror hmix).toCellScheme.below ((mirror hmix).toCellScheme.gradedIndex u))
+      (ho : T.mirrorOrig 𝒰 d = T.mirrorOrig 𝒰 d') : min (w d) (w u) = min (w d') (w u) := by
+    obtain ⟨g, σ, -, hq⟩ := hloc u hu
+    have e := hq ⟨d, hd⟩
+    have e' := hq ⟨d', hd'⟩
+    simp only at e e'
+    rw [← rowAt_of_mem hd, rowAt_mirror_of_mem hd] at e
+    rw [← rowAt_of_mem hd', rowAt_mirror_of_mem hd'] at e'
+    rw [e, e', ho, grade_mirror_eq_of_orig (hmix := hmix) ho]
+  -- the second reads the first as itself
+  have h1 : w d₂ ≤ w d₁ := by
+    have e := hread h₂ hle (CellScheme.mem_below_gradedIndex _ _) horig
+    rw [min_self] at e
+    rw [← e]
+    exact min_le_left _ _
+  -- availability above the first
+  obtain ⟨u, hu, hle₁⟩ := havail d₁ d₂ h₂ hsc hg
+  have huY : u ∈ (mirror hmix).toCellScheme.below Y :=
+    CellScheme.Rows.mem_below_of_le (le_of_eq hu) h₂
+  have hd₁ : d₁ ∈ (mirror hmix).toCellScheme.below ((mirror hmix).toCellScheme.gradedIndex u) :=
+    le_trans (show (mirror hmix).toCellScheme.gradedIndex d₁ ≤ _ from hle) (le_of_eq hu.symm)
+  have hd₂ : d₂ ∈ (mirror hmix).toCellScheme.below ((mirror hmix).toCellScheme.gradedIndex u) :=
+    le_of_eq hu.symm
+  have e := hread huY hd₁ hd₂ horig
+  rw [min_eq_left hle₁] at e
+  exact le_antisymm (e ▸ min_le_left _ _) h1
+
 end VaughtConjecture.Scheme

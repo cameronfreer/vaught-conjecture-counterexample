@@ -378,6 +378,144 @@ theorem not_writingLift_mixed (hH : 0 < H) (hcard : (I.attachmentBase g).S.card 
   erw [mirrorOrig_copyAt] at h
   exact h
 
+/-! ### The copied top rung is positive wherever the ambient is positive -/
+
+/-- **A copy carries the label of its original**, in every section lawful below a pair containing
+the original (`Scheme.eq_of_mirrorOrig_eq`). -/
+theorem eq_copyAt (hU : U ∈ I.mixedFaces g) {Y : Finset (Fin (m + 2)) × ℕ}
+    {w : Fin (I.replicated g H Γ A B').card → Label.{u}}
+    (hw : (I.replicated g H Γ A B').rows.IsLawfulBelow Y fun d ↦ w d)
+    {f : Fin (I.attachTower g H Γ A B').card}
+    (hf : (I.attachTower g H Γ A B').toCellScheme.scope f = univ)
+    (hfg : (I.attachTower g H Γ A B').toCellScheme.grade f ≤ #U)
+    (hfY : (Fin.castAdd _ f : Fin (I.replicated g H Γ A B').card) ∈
+      (I.replicated g H Γ A B').toCellScheme.below Y) :
+    w (copyAt H Γ A B' hU f hf hfg) = w (Fin.castAdd _ f) := by
+  refine Scheme.eq_of_mirrorOrig_eq hw ?_ ?_ hfY
+  · rw [mirrorOrig_copyAt, Scheme.mirrorOrig_castAdd]
+  · exact subset_trans (subset_univ _) (le_of_eq ((congrArg Prod.fst
+      (Scheme.gradedIndex_mirror_castAdd (hmix := I.not_subset_scope_tower g H Γ A B') f)).trans
+        hf).symm)
+
+/-- **Positivity of the copied top rung from the ambient.**  Let `q` be lawful below the full face
+at a grade `j`, and `x` a cell of the attachment of grade `N`, `2 ≤ N ≤ j`, `N ≤ m + 1`, with
+`q` positive at `x`.  Then some cell of full scope at the grade `N` (a controller, of state `R`)
+carries at least the label of `x`, and `q` is positive at the top rung of the member of `R` and at
+each of its copies: the controller reads the top rung at least as high as `x`
+(`Scheme.LadderBaseData.ladderController_clauses`), and the copies carry the label of the rung
+(`Seed.eq_copyAt`).  This holds wherever `x` lies, in particular when its scope contains the point
+`m`, outside the mixed coatom. -/
+theorem exists_copiedTopRung_ne_bot (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hne : ∀ k, ((I.attachmentBase g).towerCat Γ A (k + 2)).Nonempty) {j N : ℕ}
+    (hN2 : 2 ≤ N) (hNj : N ≤ j) (hNm : N ≤ m + 1)
+    {q : Fin (I.replicated g H Γ A B').card → Label.{u}}
+    (hq : (I.replicated g H Γ A B').rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j)
+      fun d ↦ q d)
+    {x : Fin (I.attachment g).card} (hxN : (I.attachment g).toCellScheme.grade x = N)
+    (hx0 : q (I.attachEmb g H Γ A B' x) ≠ ⊥) :
+    ∃ R ∈ (I.attachmentBase g).towerCat Γ A N, ∃ hR : (I.attachment g).rows.IsLawful R,
+      q (Fin.castAdd _ (ladCell H Γ A B'
+        (Scheme.RankMember.ofLawful (I.attachmentBase g).wf hcard hR, Sum.inl ⟨H - 1, by omega⟩)))
+        ≠ ⊥ ∧
+      ∀ (V : Finset (Fin (m + 2))) (hV : V ∈ I.mixedFaces g),
+        q (copyLadder H Γ A B' hV (Scheme.RankMember.ofLawful (I.attachmentBase g).wf hcard hR,
+          Sum.inl ⟨H - 1, by omega⟩)) ≠ ⊥ := by
+  obtain ⟨-, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hq
+  -- a cell of full scope at the grade `N`
+  obtain ⟨f, hf⟩ := (I.attachmentBase g).exists_gradedIndex_univ_ladderTower (B' := B') hH hne m N
+    (by omega) (by omega)
+  have hfE : (I.replicated g H Γ A B').toCellScheme.gradedIndex (Fin.castAdd _ f) =
+      ((univ : Finset (Fin (m + 2))), N) := (Scheme.gradedIndex_mirror_castAdd _).trans hf
+  have hfY : (Fin.castAdd _ f : Fin (I.replicated g H Γ A B').card) ∈
+      (I.replicated g H Γ A B').toCellScheme.below ((univ : Finset (Fin (m + 2))), j) := by
+    rw [CellScheme.mem_below, hfE]
+    exact ⟨subset_rfl, hNj⟩
+  have hxg : (I.replicated g H Γ A B').toCellScheme.grade (I.attachEmb g H Γ A B' x) = N :=
+    (congrArg Prod.snd (gradedIndex_attachEmb x)).trans hxN
+  -- availability above `x`
+  obtain ⟨u', hu', hxu⟩ := havail (I.attachEmb g H Γ A B' x) _ hfY
+    (subset_trans (subset_univ _) (le_of_eq (congrArg Prod.fst hfE).symm))
+    (hxg.trans (congrArg Prod.snd hfE).symm)
+  have hu'E : (I.replicated g H Γ A B').toCellScheme.gradedIndex u' =
+      ((univ : Finset (Fin (m + 2))), N) := hu'.trans hfE
+  have hu'Y : u' ∈ (I.replicated g H Γ A B').toCellScheme.below
+      ((univ : Finset (Fin (m + 2))), j) := CellScheme.Rows.mem_below_of_le (le_of_eq hu') hfY
+  obtain ⟨u, rfl⟩ : ∃ u : Fin (I.attachTower g H Γ A B').card, u' = Fin.castAdd _ u := by
+    induction u' using Fin.addCases with
+    | left u => exact ⟨u, rfl⟩
+    | right jj =>
+      exfalso
+      exact ((I.mem_mixedFaces g).mp (scope_replicated_natAdd jj)).2.1 (congrArg Prod.fst hu'E)
+  have hu : (I.attachTower g H Γ A B').toCellScheme.gradedIndex u =
+      ((univ : Finset (Fin (m + 2))), N - 2 + 2) := by
+    rw [show N - 2 + 2 = N by omega]
+    exact (Scheme.gradedIndex_mirror_castAdd u).symm.trans hu'E
+  obtain ⟨R, hRC, hR, hrowA, hrowL⟩ :=
+    Scheme.LadderBaseData.exists_controller_ladderTower (B := I.attachmentBase g) (A := A)
+      (Γ := Γ) (B' := B') hcard (N - 2) m (by omega) u hu
+  obtain ⟨-, htop, -⟩ := Scheme.LadderBaseData.ladderController_clauses hH hcard hR
+  set a := Scheme.RankMember.ofLawful (I.attachmentBase g).wf hcard hR with ha
+  set pt : Scheme.LadderPt (I.attachmentBase g).S (Scheme.RankMember (I.attachmentBase g).S H) H :=
+    (a, Sum.inl ⟨H - 1, by omega⟩) with hpt
+  -- the reading of the controller
+  obtain ⟨gg, σ, hwit, hqu⟩ := hloc _ hu'Y
+  have hugE : (I.replicated g H Γ A B').toCellScheme.gradedIndex (Fin.castAdd _ u) =
+      ((univ : Finset (Fin (m + 2))), N) := hu'E
+  have hxm : I.attachEmb g H Γ A B' x ∈ (I.replicated g H Γ A B').toCellScheme.below
+      ((I.replicated g H Γ A B').toCellScheme.gradedIndex (Fin.castAdd _ u)) := by
+    rw [CellScheme.mem_below, hugE, gradedIndex_attachEmb]
+    exact ⟨subset_univ _, hxN.le⟩
+  have hgl : (I.replicated g H Γ A B').toCellScheme.gradedIndex
+      (Fin.castAdd _ (ladCell H Γ A B' pt)) = ((univ : Finset (Fin (m + 2))), 1) :=
+    (Scheme.gradedIndex_mirror_castAdd _).trans (gradedIndex_ladCell pt)
+  have hlm : (Fin.castAdd _ (ladCell H Γ A B' pt) : Fin (I.replicated g H Γ A B').card) ∈
+      (I.replicated g H Γ A B').toCellScheme.below
+        ((I.replicated g H Γ A B').toCellScheme.gradedIndex (Fin.castAdd _ u)) := by
+    rw [CellScheme.mem_below, hugE, hgl]
+    exact ⟨subset_rfl, by omega⟩
+  have ex := hqu ⟨_, hxm⟩
+  have el := hqu ⟨_, hlm⟩
+  simp only at ex el
+  rw [← Scheme.rowAt_of_mem hxm, hxg] at ex
+  have hgl1 : (I.replicated g H Γ A B').toCellScheme.grade
+      (Fin.castAdd _ (ladCell H Γ A B' pt)) = 1 := congrArg Prod.snd hgl
+  rw [← Scheme.rowAt_of_mem hlm, hgl1] at el
+  have hrx : (I.replicated g H Γ A B').rowAt (Fin.castAdd _ u) (I.attachEmb g H Γ A B' x) = R x :=
+    (Scheme.rowAt_mirror_castAdd _ _).trans
+      (hrowA x (show (I.attachment g).toCellScheme.grade x ≤ N - 2 + 2 by omega))
+  have hrl : (I.replicated g H Γ A B').rowAt (Fin.castAdd _ u)
+      (Fin.castAdd _ (ladCell H Γ A B' pt)) = posTable R H := by
+    refine (Scheme.rowAt_mirror_castAdd _ _).trans ((hrowL pt).trans ?_)
+    have h := Scheme.baseIndex_self (Scheme.rankProf_le _ H) pt
+    simp only [hpt, Scheme.ladderCeil, Sum.elim_inl] at h
+    rw [h, show H - 1 + 1 = H by omega]
+  rw [hrx, min_eq_left hxu] at ex
+  rw [hrl] at el
+  -- the top rung is positive
+  have htop0 : q (Fin.castAdd _ (ladCell H Γ A B' pt)) ≠ ⊥ := by
+    intro h0
+    have h1 : q (I.attachEmb g H Γ A B' x) ≤ min (q (Fin.castAdd _ (ladCell H Γ A B' pt)))
+        (q (Fin.castAdd _ u)) := by
+      rw [el, ex]
+      exact min_le_min (hwit.monotone (htop x)) (hwit.antitone (by omega))
+    rw [h0, min_eq_left bot_le, le_bot_iff] at h1
+    exact hx0 h1
+  have hlY : (Fin.castAdd _ (ladCell H Γ A B' pt) : Fin (I.replicated g H Γ A B').card) ∈
+      (I.replicated g H Γ A B').toCellScheme.below ((univ : Finset (Fin (m + 2))), j) := by
+    rw [CellScheme.mem_below, hgl]
+    exact ⟨subset_rfl, by omega⟩
+  refine ⟨R, ?_, hR, htop0, fun V hV ↦ ?_⟩
+  · have hm := Scheme.LadderBaseData.mem_towerCat.mp hRC
+    rw [show N - 2 + 2 = N by omega] at hm
+    exact Scheme.LadderBaseData.mem_towerCat.mpr hm
+  · have e := eq_copyAt (H := H) (Γ := Γ) (A := A) (B' := B') hV hq
+      (f := ladCell H Γ A B' pt) (congrArg Prod.fst (gradedIndex_ladCell pt))
+      ((grade_ladCell pt).trans_le (one_le_card_of_mem_mixedFaces hV)) hlY
+    intro h0
+    apply htop0
+    rw [← e]
+    exact h0
+
 end Seed
 
 end VaughtConjecture
