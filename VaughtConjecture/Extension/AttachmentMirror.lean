@@ -263,6 +263,12 @@ theorem rowAt_attachEmb (z x : Fin (I.attachment g).card) :
       (I.attachment g).rowAt z x :=
   (Scheme.rowAt_mirror_castAdd _ _).trans ((I.attachmentBase g).rowAt_baseCellEmb m z x)
 
+/-- The original of a cell of the attachment in the replicated scheme is its cell in the tower. -/
+theorem mirrorOrig_attachEmb (e : Fin (I.attachment g).card) :
+    (I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (I.attachEmb g H Γ A B' e) =
+      (I.attachmentBase g).baseCellEmb m e :=
+  Scheme.mirrorOrig_castAdd _ _ _
+
 /-- **The rows of the replicated scheme pull back to those of the attachment.** -/
 theorem comap_rows_attachEmb :
     (I.replicated g H Γ A B').rows.comap isLowerEmbedding_attachEmb = (I.attachment g).rows := by
