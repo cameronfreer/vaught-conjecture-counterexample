@@ -32,6 +32,14 @@ So the two canonical writings, decoded by the identity, disagree capped at `N`. 
 the pin itself seen on two writings: above a cap with no representative among the heights the
 layer cells are selected by heights, and a height at most `ω + 1` reads below the cap.
 
+**Realized at a cap that is a height**
+(`StageType.not_capCompatibleRenderingAtSeed_seedChoice_of_collapse`, via
+`Seed.not_capCompatibleRendering_of_glued_collapse`): at the same input, the prescription and
+its truncation at `ω + 3` (a value of the choice, a height at the grade `2`) are states of the
+catalogue; the identity and the collapse at `2` agree on the values of the prescription (finite
+parts at most `2`), but at the layer cell of the truncation the prescription is written as the
+height `ω + 3`, kept by the identity and lowered to `ω + 2` by the collapse.
+
 ## References
 
 Lawful sections are [Kni26, Definition 2.5.4]; agreement heights are those of the coatom
@@ -108,6 +116,68 @@ theorem not_capCompatibleRendering_of_glued_split (hcard : (I.attachmentBase g).
   intro x hx hcx
   rw [hP1, hR1]
   exact hgap x hx hcx
+
+/-- **Two glued states and the collapse defeat cap-compatible rendering at a cap that is a
+height**: lawful sections glue to a state `P` and a state `C` with values in `Γ`, admitted off the
+exact class at `x₀`; `C` agrees with `P` capped at a value `h ≠ ⊥` of `Γ` self-visible at `j` and
+lowered by the collapse at `j`, and is separated from it at a context cell `xa` where `C` is at
+most `h`; the collapse keeps the values of `P` capped at `h`.  Then cap-compatible rendering at `j`
+fails (`Seed.not_capCompatibleRendering_of_collapse`). -/
+theorem not_capCompatibleRendering_of_glued_collapse (hcard : (I.attachmentBase g).S.card ≤ H)
+    {t' : StageType.{u} α (m + 1)} (hI : I.left = t')
+    {p : StageType.{u} α n} (hte : restrictFace (g.trans Fin.castSuccEmb) t' = some p)
+    {d : StageType.{u} α (n + 1)} (hdp : restrictFace Fin.castSuccEmb d = some p)
+    (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests t' d.toScheme} (hQ : Q.ClassCalibrated hte) {j k : ℕ} (hkj : k + 2 ≤ j)
+    (hkm : k + 1 ≤ m)
+    {uP uC : Fin t'.card → Label.{u}} (huP : t'.rows.IsLawful uP) (huC : t'.rows.IsLawful uC)
+    {wP wC : Fin d.card → Label.{u}} (hwP : d.rows.IsLawful wP) (hwC : d.rows.IsLawful wC)
+    (hrP : ∀ i, wP (d.faceCell hdp i) = uP (t'.faceCell hte i))
+    (hrC : ∀ i, wC (d.faceCell hdp i) = uC (t'.faceCell hte i))
+    (hΓuP : ∀ x, uP x ∈ Γ) (hΓwP : ∀ y, wP y ∈ Γ) (hΓuC : ∀ x, uC x ∈ Γ) (hΓwC : ∀ y, wC y ∈ Γ)
+    {x₀ : Fin t'.card} (hx₀ : x₀ ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap))
+    (hx₀l : t'.label x₀ = ⊥) (hP0 : uP x₀ ≠ ⊥) (hC0 : uC x₀ ≠ ⊥) {h : Label.{u}}
+    (hhΓ : h ∈ Γ) (hh0 : h ≠ ⊥) (hhv : IsSelfVisible j h) (hhc : finCollapse j h < h)
+    (hcu : ∀ x, min (uC x) h = min (uP x) h) (hcw : ∀ y, min (wC y) h = min (wP y) h)
+    {xa : Fin t'.card} (hxa : uC xa ≤ h) (hlt : uC xa < uP xa)
+    (hfu : ∀ x, min (finCollapse j (uP x)) h = min (uP x) h)
+    (hfw : ∀ y, min (finCollapse j (wP y)) h = min (wP y) h) :
+    ¬ I.CapCompatibleRendering g H Γ (I.attachAdmits g hdA (hI ▸ Q)) B' j := by
+  subst hI
+  have h₁ := I.restrictFace_left_attachmentType g
+  have h₂ := I.restrictFace_donor_attachmentType g hdA
+  obtain ⟨P, hP, hP1, hP2⟩ := StageType.exists_joint_extension h₁ h₂ hte hdp
+    (I.attachment_cover g) huP hwP hrP
+  obtain ⟨C, hC, hC1, hC2⟩ := StageType.exists_joint_extension h₁ h₂ hte hdp
+    (I.attachment_cover g) huC hwC hrC
+  have hcases (D : Fin (I.attachmentType g).card → Prop)
+      (h1 : ∀ x, D ((I.attachmentType g).faceCell h₁ x))
+      (h2 : ∀ y, D ((I.attachmentType g).faceCell h₂ y)) (a) : D a := by
+    rcases I.attachment_cover g a with ha | ha
+    · obtain ⟨x, rfl⟩ := StageType.exists_faceCell_eq h₁ ha; exact h1 x
+    · obtain ⟨y, rfl⟩ := StageType.exists_faceCell_eq h₂ ha; exact h2 y
+  have hadm {S : Fin (I.attachmentType g).card → Label.{u}}
+      (hS1 : S ((I.attachmentType g).faceCell h₁ x₀) ≠ ⊥) :
+      I.attachAdmits g hdA Q (m + 2) S :=
+    attachAdmits_of_admitsOnClass hdA hQ (m + 2) fun hcls _ ↦
+      absurd ((hcls x₀ hx₀).mpr hx₀l) hS1
+  have hPmem : P ∈ (I.attachmentBase g).towerCat Γ (I.attachAdmits g hdA Q) (m + 2) :=
+    Scheme.LadderBaseData.mem_towerCat.mpr ⟨hcases (fun a ↦ P a ∈ Γ)
+      (fun x ↦ (hP1 x).symm ▸ hΓuP x) (fun y ↦ (hP2 y).symm ▸ hΓwP y), hP,
+      hadm (by rw [hP1]; exact hP0)⟩
+  have hCmem : C ∈ (I.attachmentBase g).towerCat Γ (I.attachAdmits g hdA Q) (m + 2) :=
+    Scheme.LadderBaseData.mem_towerCat.mpr ⟨hcases (fun a ↦ C a ∈ Γ)
+      (fun x ↦ (hC1 x).symm ▸ hΓuC x) (fun y ↦ (hC2 y).symm ▸ hΓwC y), hC,
+      hadm (by rw [hC1]; exact hC0)⟩
+  refine not_capCompatibleRendering_of_collapse (R := P) (R'' := C) hcard hkj hkm hhΓ hh0 hhv hhc
+    hPmem (Scheme.LadderBaseData.towerCat_subset_of_le
+      (fun k S h ↦ I.attachAdmits_succ g hdA Q k S h) (show k ≤ m by omega) hCmem)
+    (hcases (fun a ↦ min (C a) h = min (P a) h) (fun x ↦ by rw [hC1, hP1]; exact hcu x)
+      fun y ↦ by rw [hC2, hP2]; exact hcw y)
+    (a := (I.attachmentType g).faceCell h₁ xa) (by rw [hC1]; exact hxa)
+    (by rw [hC1, hP1]; exact hlt)
+    (hcases (fun a ↦ min (finCollapse j (P a)) h = min (P a) h) (fun x ↦ by rw [hP1]; exact hfu x)
+      fun y ↦ by rw [hP2]; exact hfw y)
 
 end Seed
 
@@ -224,6 +294,109 @@ theorem not_capCompatibleRenderingAtSeed_seedChoice :
     change min (gridPoint 1 2) valY < x
     rw [min_eq_right hYlt.le]
     exact pin_heightSet _ _ x hx hcx
+
+/-- The collapse at `j` fixes a grid point of finite part at most `j`. -/
+theorem finCollapse_gridPoint {j f : ℕ} (hf : f ≤ j) (b : ℕ) :
+    finCollapse j (gridPoint.{u} f b) = gridPoint f b :=
+  finCollapse_eq_self (by rw [finNat_add_natCast (isSuccPrelimit_omega0_mul' _)]; exact hf)
+
+/-- The section of the context capped at `ω + 3`: `ω + 3` at `y` and `z`, `⊥` elsewhere. -/
+noncomputable def capCtx (x : Fin (ctxP ω).card) : Label.{u} :=
+  lab (gridPoint 3 1) ⊥ ⊥ ((ctx ω).faceCell (restrictFace_ctx_swap ω) x)
+
+/-- The section of the donor capped at `ω + 3`: `ω + 2` at `y`, `z`, `o` and `ω + 3` at `r`. -/
+noncomputable def capDon (y : Fin (donP ω).card) : Label.{u} :=
+  lab valZ valZ (gridPoint 3 1) ((don ω).faceCell (restrictFace_don_swap ω) y)
+
+theorem isLawful_capCtx : (ctxP ω).rows.IsLawful capCtx.{u} :=
+  GrowthRequests.isLawful_root (restrictFace_ctx_swap ω)
+    (isLawful_lab ((isSelfVisible_gridPoint 3 1).mono (by omega)) (isSelfVisible_bot 2)
+      (isSelfVisible_bot 2) bot_le rfl)
+
+theorem isLawful_capDon : (donP ω).rows.IsLawful capDon.{u} :=
+  GrowthRequests.isLawful_root (restrictFace_don_swap ω)
+    (isLawful_lab ((isSelfVisible_gridPoint 2 1).mono (by omega)) (isSelfVisible_gridPoint 2 1)
+      ((isSelfVisible_gridPoint 3 1).mono (by omega)) le_rfl rfl)
+
+theorem root_cap (i : Fin (pt1 ω).card) :
+    capDon.{u} ((donP ω).faceCell (donP_mem_cofaces ω).2 i) =
+      capCtx ((ctxP ω).faceCell (restrictFace_ctxP_root ω) i) :=
+  (lab_eq_bot_of_scope (scope_root ω (restrictFace_don_swap ω) hf0_castSucc
+    (donP_mem_cofaces ω).2 i)).trans (lab_eq_bot_of_scope (scope_root ω (restrictFace_ctx_swap ω)
+      hf0_root (restrictFace_ctxP_root ω) i)).symm
+
+/-- The collapse at `2` keeps a labelling `lab v w s` whose values it keeps. -/
+theorem finCollapse_lab {v w s : Label.{u}} (hv : finCollapse 2 v = v) (hw : finCollapse 2 w = w)
+    (hs : finCollapse 2 s = s) (x : Fin 5) : finCollapse 2 (lab v w s x) = lab v w s x := by
+  fin_cases x <;> first | exact hv | exact hw | exact hs | rfl
+
+/-- **Cap-compatible rendering fails at the pinned seed also at a cap that is a height**, when the
+decoders agree only on the values of the states: at the input of the pin, the prescription (values
+of finite part at most `2`) and its truncation at `ω + 3` (`ω + 3` at the context's `y`, `z`;
+`ω + 2`, `ω + 2`, `ω + 2`, `ω + 3` at the donor's) are states of the catalogue; the identity and
+the collapse at `2` agree on the values of the prescription, and at the layer cell of the
+truncation the prescription is written as the height `ω + 3`, which the collapse lowers to
+`ω + 2`. -/
+theorem not_capCompatibleRenderingAtSeed_seedChoice_of_collapse :
+    ¬ CapCompatibleRenderingAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound := by
+  intro h
+  have hα : Order.IsSuccLimit (ω : Ordinal.{u}) := Ordinal.isSuccLimit_omega0
+  have hp : restrictFace (Function.Embedding.refl (Fin 1)) (pt1 ω) = some (pt1 ω) :=
+    (restrictFace_trans (ctxP ω) _ _ (restrictFace_ctxP ω)).trans (restrictFace_ctxP_root ω)
+  obtain ⟨I, hI, hdA⟩ := exists_growthSeed_of_isSuccLimit hα (t' := ctxP ω) (isLegal_ctxP ω)
+    (restrictFace_ctxP ω) hp (donP_mem_cofaces ω)
+  set g := Function.Embedding.refl (Fin 1) with hg
+  have key := capCompatibleRendering_of_atSeed h hα I g hI (restrictFace_ctxP ω)
+    (restrictFace_ctxP_root ω) (donP_mem_cofaces ω) hdA Nat.one_pos (reqP ω) (correctAt_reqP ω)
+    (classCalibrated_reqP ω) (hasRelativeLiftOnClass_reqP ω) 2 le_rfl le_rfl
+  have hC : 2 ≤ (I.attachment g).card := by
+    have hne : cellC ω 0 ≠ cellC ω 4 := fun h' ↦ by
+      have := grade_cellC ω 0
+      rw [h', grade_cellC] at this
+      exact absurd this (by decide)
+    have h2 : 2 ≤ (ctxP ω).card := by
+      by_contra hlt
+      exact hne (Fin.ext (by have := (cellC ω 0).2; have := (cellC ω 4).2; omega))
+    have hinj := Fintype.card_le_of_injective (I.attachCtxCell g)
+      (Scheme.faceCell_injective (I.comap_left_attachment_scheme g))
+    simp only [Fintype.card_fin] at hinj
+    rw [hI] at hinj
+    omega
+  have hZ : valZ ∈ I.seedValues g :=
+    I.codeSet_subset_seedValues g (mem_codeSet (i := 1) (f := 2) (by omega) (by omega))
+  have hH : gridPoint 3 1 ∈ I.seedValues g :=
+    I.codeSet_subset_seedValues g (mem_codeSet (i := 1) (f := 3) (by omega) (by omega))
+  have h12 : gridPoint 1 2 ∈ I.seedValues g :=
+    I.codeSet_subset_seedValues g (mem_codeSet (i := 2) (f := 1) hC (by omega))
+  have h22 : gridPoint 2 2 ∈ I.seedValues g :=
+    I.codeSet_subset_seedValues g (mem_codeSet (i := 2) (f := 2) hC (by omega))
+  have h0Γ := I.bot_mem_seedValues g
+  have hH12 : gridPoint.{u} 3 1 ≤ gridPoint 1 2 :=
+    gridPoint_le_gridPoint_iff_lex.mpr (.inl (by omega))
+  have hH22 : gridPoint.{u} 3 1 ≤ gridPoint 2 2 :=
+    gridPoint_le_gridPoint_iff_lex.mpr (.inl (by omega))
+  refine Seed.not_capCompatibleRendering_of_glued_collapse (I.card_le_seedHeight g) hI
+    (restrictFace_ctxP_root ω) (donP_mem_cofaces ω).2 hdA (classCalibrated_reqP ω) (k := 0)
+    le_rfl le_rfl (isLawful_preCtx ω) isLawful_capCtx (isLawful_preDon ω) isLawful_capDon
+    (root_pre ω) root_cap (fun x ↦ lab_mem h12 h0Γ h0Γ h0Γ _)
+    (fun y ↦ lab_mem hZ hZ h22 h0Γ _) (fun x ↦ lab_mem hH h0Γ h0Γ h0Γ _)
+    (fun y ↦ lab_mem hZ hZ hH h0Γ _) (x₀ := cellC ω 0)
+    (GrowthRequests.mem_below_cap (reqP ω) (classCalibrated_reqP ω).scope_cap
+      (((ctxP ω).grade_le _).trans_eq (threshold_reqP ω).symm))
+    (by rw [label_ctxP]; rfl) (by rw [preCtx, faceCell_cellC]; exact gridPoint_ne_bot 1 2)
+    (by rw [capCtx, faceCell_cellC]; exact gridPoint_ne_bot 3 1) hH (gridPoint_ne_bot 3 1)
+    ((isSelfVisible_gridPoint 3 1).mono (by omega)) (Seed.finCollapse_gridPoint_lt 2 1)
+    (fun x ↦ min_lab_eq (by rw [min_self, min_eq_right hH12]) rfl rfl _)
+    (fun y ↦ min_lab_eq rfl rfl (by rw [min_self, min_eq_right hH22]) _) (xa := cellC ω 0) ?_ ?_
+    (fun x ↦ congrArg (fun v ↦ min v (gridPoint 3 1))
+      (finCollapse_lab (finCollapse_gridPoint (by omega) 2) rfl rfl _))
+    (fun y ↦ congrArg (fun v ↦ min v (gridPoint 3 1))
+      (finCollapse_lab (finCollapse_gridPoint le_rfl 1) (finCollapse_gridPoint le_rfl 1)
+        (finCollapse_gridPoint le_rfl 2) _)) key
+  · rw [capCtx, faceCell_cellC]
+    exact le_rfl
+  · rw [capCtx, preCtx, faceCell_cellC]
+    exact gridPoint_lt_gridPoint_iff_lex.mpr (.inl (by omega))
 
 end StageType
 
