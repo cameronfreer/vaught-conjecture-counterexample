@@ -26,8 +26,9 @@ LOW displays exist (`ProfileTower.readsActualOn_sTower`), with no condition on t
 faces above `K`: the display reads every controller through the cutoff of the state of each cell
 of full scope above `K`, so the separator is labelled `⊤` while the faces carry their own labels.
 
-**Not claimed.**  `StageType.HasLowDisplays` is not proved.  The lifts of the state tower are not
-proved here: at `K` the lift of the state catalogue (the analogue of
+**Status.**  `StageType.HasLowDisplays` is proved (`StageType.hasLowDisplays_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`, through the padded tower).  The lifts of the state
+tower are not proved here: at `K` the lift of the state catalogue (the analogue of
 `ProfileTower.Lvl.Good.cappedLift_lowS_seed` for states not normalized by the orbit code of the
 amalgam part), above `K` the LOW step at each grade.  The families with `K = k` are covered by
 `StageType.hasLowDisplaysOn_lowBot` when they have a donor top of grade `K`; `K = k + 1` is not

@@ -73,15 +73,16 @@ with the same face `p` (the root) along `Fin.castSuccEmb`.  The root is shared
 private copies of the root tops (`StageType.IsLowFamily.gap_root`).
 
 **LOW displays at source-gap contexts** (`StageType.HasLowDisplays`, in
-`VaughtConjecture.MainTheorem.LowDisplayRoute`, a statement about stage types; open). At a limit
+`VaughtConjecture.MainTheorem.LowDisplayRoute`, a statement about stage types; proved by
+`StageType.hasLowDisplays_of_padded` in `VaughtConjecture.MainTheorem.LowPaddedRoute`). At a limit
 stage, every LOW family `(t', tb)` has a LOW display at a threshold occurring at the stage. This is
 the finite theorem of the LOW construction [Kni26, §3.3]: the display is built on the coatom amalgam
 of `t'` and `tb` with full-scope rows of every grade up to `k + 2` added, the separator among the
 new full-scope cells of grade `K`, and the separator reading from the strict source gaps of the
 context. Its proof is the construction of that scheme, its legality for the two-coface geometry, and
-the reading; not formalized here. The coding of the rows is the native one (`Scheme.IsCoded`, row
-values below `ω²`): the construction keeps the rows of `t'` and `tb` literally and codes only its
-new rows.
+the reading; formalized through the padded tower (`VaughtConjecture.Continuation.LowPaddedTower`).
+The coding of the rows is the native one (`Scheme.IsCoded`, row values below `ω²`): the
+construction keeps the rows of `t'` and `tb` literally and codes only its new rows.
 
 ## Placement
 

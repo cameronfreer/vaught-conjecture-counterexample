@@ -13,8 +13,10 @@ Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3) and Lay
 the hypotheses of the main theorem"); semantic contract, items 4, 5 and 8.
 
 **LOW displays at source-gap contexts** (`StageType.HasLowDisplays`, a statement about stage
-types; open).  At a limit stage, every LOW family (`StageType.IsLowFamily`: a legal source-gap
-context `t'` of grade `K` on `k + 1` points with the lost point last, along `Fin.castSuccEmb` at
+types; proved by `StageType.hasLowDisplays_of_padded` in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`).  At a limit stage, every LOW family
+(`StageType.IsLowFamily`: a legal source-gap context `t'` of grade `K` on `k + 1` points with the
+lost point last, along `Fin.castSuccEmb` at
 `Fin.last k`, with coatom face `p` along `Fin.castSuccEmb`, and a legal coface `tb` of `p` of top
 grade at most `K`) has a LOW display (`StageType.IsLowDisplay`) at a
 threshold occurring at the stage: a legal `D` on `k + 2` points with faces `t'` and `tb`, such
@@ -59,8 +61,12 @@ extension of `t'` through `tb` is a LOW display (`StageType.IsLowDisplay.of_fora
 source-gap clause is used; the separator reading is needed only for the donor tops through the
 new point.
 
-**Not claimed.**  `StageType.HasLowDisplays` is not proved; the bounded receiving hypothesis
-remains open.
+**Status.**  `StageType.HasLowDisplays` is proved (`StageType.hasLowDisplays_of_padded`), and so are
+its stronger forms (`StageType.hasLowLayers_of_padded`,
+`StageType.hasControlledLowDisplays_of_padded`, `StageType.hasSeparatedLowDisplays_of_padded`) and
+(R2) for receiving models (`Realization.receivingResidualReceiving_of_padded`), all in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`.  (R4) and (R3) for receiving models remain
+hypotheses of the main theorem (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_padded`).
 
 ## Placement
 
@@ -93,32 +99,33 @@ theorem IsSourceGapContextAt.castSuccEmb {t' : StageType.{u} α (k + 1)}
   gap_owner := hs.gap_owner
   gap_retained := hs.gap_retained
 
-/-- **LOW displays at source-gap contexts** (open): at every limit stage, every LOW family
+/-- **LOW displays at source-gap contexts**: at every limit stage, every LOW family
 (`IsLowFamily`: a legal source-gap context `t'` of grade `K` on `k + 1` points with the lost point
 last, and a legal donor `tb` of top grade at most `K` with the same face `p` along
 `Fin.castSuccEmb`) has a LOW display at a threshold occurring at the stage.
 
-Not proved.  It holds on the LOW families with a donor top of grade `K`, `K ≤ k`, and
-the context and the donor labelled `⊥` at every grade in `(K, k]`
-(`StageType.hasLowDisplaysOn_lowBot`, in `VaughtConjecture.MainTheorem.LowDisplayReadingRoute`:
-the completed display over the LOW layer with the actual labels).  Outside that class it is open:
-without a donor top of grade `K` the LOW step is the named case `StageType.LowStepTieLow`, and with
-a label other than `⊥` above `K < k` the completed display carries no separator labelled `⊤`
-(`StageType.not_lowReadingFamily`); the acquisition produces such families
-(`Realization.exists_acquired_not_lowBotClass`). -/
+Proved: `StageType.hasLowDisplays_of_padded`, in `VaughtConjecture.MainTheorem.LowPaddedRoute`
+(`K < k` through the padded tower of the LOW clause over the proper donor fields of every grade,
+`K = k` and `K = k + 1` by `StageType.hasLowDisplaysOn_ge`).  With a label other than `⊥` above
+`K < k` the completed display over the LOW layer with the actual labels carries no separator
+labelled `⊤` (`StageType.not_lowReadingFamily`); the padded tower reads the actual state through
+the cutoff of the state of each cell of full scope above `K` instead. -/
 def HasLowDisplays : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
       ∃ (D : StageType.{u} α (k + 2)) (a : Label.{u}), AtStage α a ∧ IsLowDisplay t' tb D a
 
-/-- **Separated LOW displays at source-gap contexts** (open): the statement of `HasLowDisplays`
-with a separated display (`IsSeparatedLowDisplay`). -/
+/-- **Separated LOW displays at source-gap contexts**: the statement of `HasLowDisplays` with a
+separated display (`IsSeparatedLowDisplay`).  Proved: `StageType.hasSeparatedLowDisplays_of_padded`,
+in `VaughtConjecture.MainTheorem.LowPaddedRoute`. -/
 def HasSeparatedLowDisplays : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
       ∃ (D : StageType.{u} α (k + 2)) (lo hi : Fin D.card), IsSeparatedLowDisplay t' tb D lo hi
 
-/-- **Controlled LOW displays at source-gap contexts** (open): the statement of
+/-- **Controlled LOW displays at source-gap contexts** (proved:
+`StageType.hasControlledLowDisplays_of_padded`, in `VaughtConjecture.MainTheorem.LowPaddedRoute`):
+the statement of
 `HasSeparatedLowDisplays` with the separator reading given by the controller reading
 (`IsControllerReading`) at grade `K`: every LOW family `(t', tb)` with owner `o` and lost top `r`
 has a legal display `D` with separator cells `lo`, `hi` of grade at most `K`, labelled by a proper
@@ -144,9 +151,10 @@ theorem HasControlledLowDisplays.hasSeparatedLowDisplays (h : HasControlledLowDi
   exact ⟨D, lo, hi, IsSeparatedLowDisplay.of_controllerReading hF.isSourceGapContextAt
     hF.topGrade_donor hD h₁ h₂ hlo hhi hlog hhig hX⟩
 
-/-- **LOW layers at source-gap contexts** (open): every LOW family `(t', tb)` with owner `o` and
-lost top `r` has a legal display `D` with a LOW layer at grade `K` (`IsLowLayer`) whose separator
-`lo`, `hi` is labelled by a proper label and by `⊤`. -/
+/-- **LOW layers at source-gap contexts**: every LOW family `(t', tb)` with owner `o` and lost top
+`r` has a legal display `D` with a LOW layer at grade `K` (`IsLowLayer`) whose separator `lo`, `hi`
+is labelled by a proper label and by `⊤`.  Proved: `StageType.hasLowLayers_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`. -/
 def HasLowLayers : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
@@ -231,7 +239,8 @@ open FirstOrder Language baseLanguage Realization StageType Expansion
 given by LOW displays at source-gap contexts
 (`Realization.receivingResidualReceiving_of_hasLowDisplays`).  Conditional on (R4) for receiving
 models (`hR4`), LOW displays at source-gap contexts (`hlow`), and (R3) for receiving models
-(`hhol`); none of the three is proved here. -/
+(`hhol`).  The second is proved (`StageType.hasLowDisplays_of_padded`); the form without it is
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_padded`. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_lowDisplays
     (hR4 : ReceivingStableCappedReceiving.{0}) (hlow : HasLowDisplays.{0})
     (hhol : HollowReceiving.{0, 0} IsReceivingCoverHollowAtBlock) :

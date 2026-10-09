@@ -44,9 +44,12 @@ compiled separately:
   states on the amalgam **above the controllers only** (`StageType.StateStepsAbove`: at the grades
   `K + 1, …, k`, for `K < k`): the step at the grade `K` is `ProfileTower.stateCatStep_low_seed`.
 
-**Not claimed.**  `StageType.HasLowDisplays` is not proved: the lifts of the state tower
-(`StageType.StateTowerLifts`) are open, and so are the steps for states above the controllers
-(`StageType.StateStepsAbove`).
+**Status.**  `StageType.HasLowDisplays` is proved (`StageType.hasLowDisplays_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`, through the padded tower), with no hypothesis.  The
+hypotheses of this file are not proved: the lifts of the state tower (`StageType.StateTowerLifts`)
+and the steps for states above the controllers (`StageType.StateStepsAbove`) are statements about
+the state tower, whose code splices the fields above each layer; the configurations of
+`VaughtConjecture.Continuation.LowStateContract` refute them wherever they occur.
 
 ## References
 
@@ -121,8 +124,8 @@ lifts of the state tower (`StageType.StateTowerLifts K t' tb p o r`: for every d
 `K = g + 1`, `k = g + J + 2`, `ProfileTower.STowerLifts (lvlZero I g) (lowPred (g + 1) (lowN I
 (g + 1)) (lowT I) o r) (J + 2)` on the seed `I` of the family, i.e. every layer of the state tower
 at a grade `g + J' + 1`, `J' < J + 2`, lifts capped from the two coatoms into `(univ, g + J' + 1)`)
-give LOW displays (`StageType.hasLowDisplaysOn_stateLifts`).  The hypothesis is open, so
-`StageType.HasLowDisplays` stays open. -/
+give LOW displays (`StageType.hasLowDisplaysOn_stateLifts`).  The hypothesis is not proved;
+`StageType.HasLowDisplays` itself is (`StageType.hasLowDisplays_of_padded`). -/
 theorem hasLowDisplays_of_stateTowerLifts
     (h : ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
       (o r : Fin t'.card), K < k → StateTowerLifts K t' tb p o r) :
@@ -135,7 +138,8 @@ theorem hasLowDisplays_of_stateTowerLifts
 /-- **The composition from the steps above the controllers**: LOW displays for every LOW family,
 from the steps for states on the amalgam at the grades `K + 1, …, k` when `K < k`
 (`StageType.StateStepsAbove`; the step at `K` is `ProfileTower.stateCatStep_low_seed`).  The
-hypothesis is open, so `StageType.HasLowDisplays` stays open. -/
+hypothesis is not proved; `StageType.HasLowDisplays` itself is
+(`StageType.hasLowDisplays_of_padded`). -/
 theorem hasLowDisplays_of_stateStepsAbove
     (habove : ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1))
       (p : StageType.{u} α k) (o r : Fin t'.card), K < k → StateStepsAbove K t' tb p o r) :

@@ -24,10 +24,12 @@ controllers of the state tower holds with no hypothesis (`ProfileTower.sTowerLif
 amalgam at every grade in `(K, k]` (`StageType.StateAboveSteps`), LOW layers and LOW displays exist,
 with no condition on the labels of the faces above `K`.
 
-**Not claimed.**  `StageType.HasLowDisplays` is not proved.  The steps for states above `K` are
-proved in the lower-top lane only at the states whose labels at the cells of grade in `(K, j]` lie
-below the cap (`ProfileTower.stateCatStep_low_seed_of_lt_cap`); the lift needs them at every state
-of the catalogue.
+**Status.**  `StageType.HasLowDisplays` is proved (`StageType.hasLowDisplays_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`, through the padded tower).  The steps for states
+above `K` (for the clause over the proper donor fields of grade at most `K`) are proved in the
+lower-top lane only at the states whose labels at the cells of grade in `(K, j]` lie below the cap
+(`ProfileTower.stateCatStep_low_seed_of_lt_cap`); the lift needs them at every state of the
+catalogue.
 
 ## Placement
 

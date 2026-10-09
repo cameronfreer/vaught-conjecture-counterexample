@@ -77,7 +77,9 @@ losses, from the coface instances, (R4), (R2) and (R3) for receiving models, are
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'`; on all countable
 carriers, `MainTheorem.vaughtCounterexample_allCarriers_of_receivingModels'`): the four-hypothesis
 form with `hext` given by its proof (`StageType.hasApexCoatomExtensions_blockStage`), conditional
-on exactly (R4), (R2) and (R3) for receiving models.  These three hypotheses are open.  Building
+on exactly (R4), (R2) and (R3) for receiving models.  (R2) for receiving models is proved
+(`Realization.receivingResidualReceiving_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`); (R4) and (R3) are open.  Building
 receiving into the class does not prove (R1): (R1) asks that every model at a countable limit
 stage receive, and the receiving shown here is that of particular models (the realizations of
 models of the density sentence, the top-free witnesses, glued limits of receiving models, and
@@ -318,7 +320,8 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_receivingModels'
 the conclusion of `vaughtCounterexample_allCarriers_of_expansionDomains` for the receiving
 expansion domains, conditional on exactly the three hypotheses of
 `densitySentence_hasThinAlephOneSpectrum_of_receivingModels'` ((R4), (R2) and (R3) for receiving
-models), which are open.  The cap-to-model theorem on the carriers of the universe `w`, for the
+models); (R2) for receiving models is proved (`Realization.receivingResidualReceiving_of_padded`),
+(R4) and (R3) are open.  The cap-to-model theorem on the carriers of the universe `w`, for the
 reduction to `ℕ`, is `MainTheorem.capToModel`; the other statements are derived as for the
 spectrum.  (R1) is not a hypothesis and is not proved. -/
 theorem vaughtCounterexample_allCarriers_of_receivingModels'

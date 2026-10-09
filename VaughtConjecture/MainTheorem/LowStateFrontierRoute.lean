@@ -32,13 +32,14 @@ step stated on amalgam labellings below the coatom with an uncoded conclusion
 form in which the LOW step for states at `K` is proved for every LOW family of top grade at most
 `K` in the lower-top lane (`ProfileTower.stateCatStep_low_seed`); there the grades above `K` remain.
 
-**Not claimed.**  `StageType.HasLowDisplays` is not proved.  The frontier steps are not proved
-here.  At the layer of controllers the frontier step is what the LOW steps of the catalogue layer
-(`ProfileTower.Lvl.Good.lowStep_donor`, `ProfileTower.Lvl.Good.lowStep_private`) build before they
-code the cutoff, for a state normalized over all fields in place of a profile normalized on its
-amalgam part; above `K` it is the LOW step at each grade.  The families with `K ≥ k` are outside the
-class; `K = 1` is included (the level at the grade `0` is readable at the canonical states,
-`ProfileTower.readableS_base₀`).
+**Status.**  `StageType.HasLowDisplays` is proved (`StageType.hasLowDisplays_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`, through the padded tower).  The frontier steps are
+not proved here.  At the layer of controllers the frontier step is what the LOW steps of the
+catalogue layer (`ProfileTower.Lvl.Good.lowStep_donor`, `ProfileTower.Lvl.Good.lowStep_private`)
+build before they code the cutoff, for a state normalized over all fields in place of a profile
+normalized on its amalgam part; above `K` it is the LOW step at each grade.  The families with `K ≥
+k` are outside the class; `K = 1` is included (the level at the grade `0` is readable at the
+canonical states, `ProfileTower.readableS_base₀`).
 
 ## Placement
 

@@ -24,7 +24,9 @@ of one growth construction (`GrowthCarrier`, in `VaughtConjecture.Realization.Gr
   (`StageType.HasExactGrowthCarriers` for `StageType.HollowReferenceCalibration'`, evaluated by
   the actual labels; the acquisition is compiled).
 
-Both finite statements are open.  The second hypothesis, (R2) for receiving models, is kept.
+Both finite statements are open.  The second hypothesis, (R2) for receiving models, is kept here;
+it is proved (`Realization.receivingResidualReceiving_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`).
 Neither (R3) nor (R4) is proved here: each is reduced to one finite statement about stage types.
 -/
 
@@ -51,7 +53,8 @@ open FirstOrder Language Structure baseLanguage Expansion
 /-- **The thin `ℵ₁` spectrum from growth carriers**: the three-hypothesis receiving route with
 (R4) replaced by stable growth carriers for the margin calibration at every `ξ < ω₁` (`hstab`)
 and (R3) replaced by exact growth carriers for the bounded reference calibration (`hexact`); (R2)
-for receiving models (`hres`) is kept.  The three hypotheses are open. -/
+for receiving models (`hres`) is kept.  The first and the third hypotheses are open; the second is
+proved (`Realization.receivingResidualReceiving_of_padded`). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_growthCarriers
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})

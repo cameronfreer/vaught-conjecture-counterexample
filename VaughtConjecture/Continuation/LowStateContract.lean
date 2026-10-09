@@ -71,8 +71,12 @@ ranges over fields above the grade of the layer could be met by an inactive real
 field the layer does not read may carry the maximum), but such a clause is not kept by the state
 code, whose splice erases those fields (`ProfileTower.not_lowPred_scode_of_high`).
 
-Whether a legal family realizes the configuration is not compiled here.  `StageType.HasLowDisplays`
-remains OPEN.
+Whether a legal family realizes the configuration is not compiled here.  The negatives are
+conditional obstructions to the state tower (whose code splices the fields above each layer and
+whose clause reads the proper donor fields of grade at most `K`); the padded tower of
+`VaughtConjecture.Continuation.LowPaddedTower` avoids them (the clause over every grade excludes
+their hypothesis, `ProfileTower.not_donorMax_lt_of_subset_coatD`), and `StageType.HasLowDisplays`
+is proved through it (`StageType.hasLowDisplays_of_padded`).
 
 ## References
 

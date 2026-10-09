@@ -55,8 +55,9 @@ displays exist; with the donors whose tops avoid the new point
 (`StageType.exists_isLowDisplay_of_forall_top_root`), LOW displays exist on the union
 (`StageType.hasLowDisplaysOn_lowBot_or_root`).
 
-**Not claimed.**  `StageType.HasLowDisplays` is not proved.  Outside that union the LOW families
-left are those with a donor top through the new point but none of grade `K`
+**Status.**  `StageType.HasLowDisplays` is proved (`StageType.hasLowDisplays_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`, through the padded tower).  Outside the union of this
+file the LOW families left are those with a donor top through the new point but none of grade `K`
 (`StageType.LowStepTieLow`), those with `K = k + 1` (the grade of a LOW family is positive,
 `StageType.IsLowFamily.grade_pos`), and those with a label other than `⊥` above `K < k`, for which
 the completed display carries no separator labelled `⊤` (`StageType.not_lowReadingFamily`).  The

@@ -25,9 +25,10 @@ display over the LOW layer with the actual labels (`ProfileTower.lowReading_of_b
 `ProfileTower.LowReading.exists_isLowLayer`); with the donors whose tops avoid the new point, on
 the union.
 
-**Not claimed.**  `StageType.HasLowDisplays` is not proved.  The LOW families left outside the union
-are those with `K = k + 1` and those with a label other than `⊥` at a grade in `(K, k]`, `K < k`
-(for which the completed display carries no separator labelled `⊤`,
+**Status.**  `StageType.HasLowDisplays` is proved (`StageType.hasLowDisplays_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`, through the padded tower).  The LOW families left
+outside the union of this file are those with `K = k + 1` and those with a label other than `⊥` at a
+grade in `(K, k]`, `K < k` (for which the completed display carries no separator labelled `⊤`,
 `StageType.not_lowReadingFamily`).  The donors without a top of grade `K` are no longer a separate
 case.
 
