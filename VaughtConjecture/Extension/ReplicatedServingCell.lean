@@ -120,7 +120,7 @@ theorem exists_cell_of_mem_towerCat (hcard : B.S.card ≤ H) (k K : ℕ) (hK : k
           (RankMember.ofLawful B.wf hcard hR)
           (Fin.natAdd _ (ladderEquiv _ _ H p))) := by
   obtain ⟨u, hu, hrow⟩ := exists_layerTower_cell_of_mem (B := B.towerBase H)
-    (C := B.towerCat Γ A) (G := fun k ↦ grid k B') k hRC K hK
+    (C := B.towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) k hRC K hK
   have hRl := (mem_towerCat.mp hRC).2.1
   refine ⟨u, hRl, hu, fun d hd ↦ ?_, fun p ↦ ?_⟩
   · have h := hrow (Fin.castAdd _ d) (by

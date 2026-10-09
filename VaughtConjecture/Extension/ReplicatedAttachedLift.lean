@@ -276,14 +276,14 @@ theorem cappedLift_attachTower_one (hH : 0 < H) (hcard : (I.attachmentBase g).S.
       ((I.attachmentBase g).towerEmb (H := H) (Γ := Γ) (A := A) (B' := B') m)
       ((univ : Finset (Fin (m + 2))), 1) :=
     ⟨Scheme.isLowerEmbedding_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-        (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') m,
+        (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) m,
       fun t ↦ Scheme.scope_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-        (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') t m,
+        (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) t m,
       fun d hd ↦ Scheme.mem_range_layerTowerEmb_of_grade (B := (I.attachmentBase g).towerBase H)
-        (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') m d hd.2⟩
+        (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) m d hd.2⟩
   rw [← hpre.cappedLift_iff hXU le_rfl]
   have hrows := Scheme.comap_rows_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') m
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) m
   rw [show (𝕋).rows.comap hpre.isLowerEmbedding = ((I.attachmentBase g).ladderBase H).rows
     from hrows]
   exact Scheme.cappedLift_ladderBase_rankMember (I.attachmentBase g).wf hH hcard hXU hX hold
