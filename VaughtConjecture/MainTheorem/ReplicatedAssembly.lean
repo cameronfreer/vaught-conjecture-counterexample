@@ -150,6 +150,27 @@ before reuse.  Every (iii) here mentions only the grid point: the side condition
 | `Seed.copy_recognition` | (i) |
 | `Scheme.LadderBaseData.ladderTower_lawful` | (ii), (iii) |
 
+**The threshold against the arity of the donor.**  Calibration on the class asks only
+`n + 1 ≤ Q.threshold` (`StageType.GrowthRequests.ClassCalibrated.arity`), and the chain above
+covers both `n + 1 = Q.threshold` and `n + 1 < Q.threshold`: no statement on it asks
+`n + 1 < Q.threshold`.  The two places where the cases differ are case splits in compiled proofs.
+
+* The lift from a face inside the donor face (`Seed.cappedLift_donor_univ_attachAdmits`) splits on
+  `k < Q.threshold`: below the threshold by the vanishing states (`Seed.attachAdmits_of_vanishing`,
+  strict in `k`, any threshold); otherwise `k ≤ n + 1 ≤ Q.threshold` forces
+  `k = n + 1 = Q.threshold` and the donor face, by `Seed.attachedStateLift_donor`, which is stated
+  only at `Q.threshold = n + 1`.  For `n + 1 < Q.threshold` that branch is empty.
+* The onto root (`Seed.hasMixedCoatomLift_of_two` splits on `Function.Surjective g`) occurs only at
+  equality: `n = m` and `Q.threshold ≤ m + 1`, the grade of the cap in the context, give
+  `Q.threshold = n + 1`.  Its lifts (`Seed.cappedLift_coatom_one_of_surjective`,
+  `StageType.hasOntoRootCoatomLiftAtSeed_of_towerExtension`) carry no threshold hypothesis.
+
+The other threshold hypotheses on the chain permit equality: `n + 1 ≤ N`
+(`StageType.GrowthRequests.templateImage_isLawful`), `2 ≤ Q.threshold`
+(`Seed.exists_replicatedCarrier`, `Seed.exists_ladderCarrier_of_replicatedInputs`, from the arity
+and `0 < n`), `1 ≤ Q.threshold` (`GrowthCarrier.recognizes_of_ladder`), and the complete case
+splits `Q.threshold ≤ j` (`StageType.exists_donorStep`) and `k ≤ Q.threshold` (the relative lift).
+
 ## References
 
 The growth construction is that of [Kni26, §4].
