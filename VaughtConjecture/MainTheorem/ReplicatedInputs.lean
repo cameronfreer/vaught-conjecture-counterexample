@@ -153,7 +153,7 @@ namespace StageType
 
 /-- **The inputs of the replicated scheme at some seed** (open): for every legal context on
 `m + 1` points with a closed first coatom and the root inside it, every legal one-point coface `d`
-of the root face of top grade at most the context's, and all requests calibrated on the class with
+of the root face (no bound on its top grade), and all requests calibrated on the class with
 the labels pair admitted and the relative lift on the exact class, SOME seed with the context as
 its first coatom type and the donor as the face of its amalgam along the root followed by the new
 point carries the inputs of its replicated scheme. -/
@@ -162,7 +162,7 @@ def HasReplicatedInputsAtSeed : Prop :=
     (p' : StageType.{u} α m), Order.IsSuccLimit α → t'.IsLegal →
     restrictFace Fin.castSuccEmb t' = some p' → ∀ (p : StageType.{u} α n)
       (hte : restrictFace (g.trans Fin.castSuccEmb) t' = some p) (d : StageType.{u} α (n + 1))
-      (hd : d ∈ p.cofaces), d.topGrade ≤ t'.topGrade → 0 < n →
+      (hd : d ∈ p.cofaces), 0 < n →
       ∀ Q : GrowthRequests t' d.toScheme,
         (∀ j, Q.CorrectAt t'.label j (d.label j)) → Q.ClassCalibrated hte →
         Q.HasRelativeLiftOnClass hte hd.2 →
@@ -174,8 +174,8 @@ def HasReplicatedInputsAtSeed : Prop :=
 seed. -/
 theorem HasReplicatedInputsAtSeed.hasLadderGrowthCarriersStableAtSeed
     (h : HasReplicatedInputsAtSeed.{u}) : HasLadderGrowthCarriersStableAtSeed.{u} := by
-  intro α n m t' g p' hα ht' hp' p hte d hd hdK hn Q hpair hQ hrel
-  obtain ⟨I, rfl, hdA, hin⟩ := h t' g p' hα ht' hp' p hte d hd hdK hn Q hpair hQ hrel
+  intro α n m t' g p' hα ht' hp' p hte d hd hn Q hpair hQ hrel
+  obtain ⟨I, rfl, hdA, hin⟩ := h t' g p' hα ht' hp' p hte d hd hn Q hpair hQ hrel
   exact Seed.exists_ladderCarrier_of_replicatedInputs hdA hα.isSuccPrelimit Q
     (by have := hQ.arity; omega) hin
 

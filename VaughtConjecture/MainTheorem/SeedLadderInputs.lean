@@ -22,7 +22,7 @@ completion).
 
 **At the seed position** (`StageType.HasLadderGrowthCarriersStableAtSeed`, the body of
 `StageType.HasLadderGrowthCarriersStable` for a context on `m + 1` points with a closed first
-coatom, the root inside it, and the donor's top grade at most the context's): the inputs at some
+coatom and the root inside it; no bound on the donor's top grade): the inputs at some
 seed of the context (`StageType.HasLadderTowerInputsAtSeed`, open; the second coatom type is free)
 give it
 (`StageType.HasLadderTowerInputsAtSeed.hasLadderGrowthCarriersStableAtSeed`).  Only the requests'
@@ -85,13 +85,14 @@ namespace StageType
 
 /-- **Ladder growth carriers at the seed position for requests calibrated on the class** (the body
 of `StageType.HasLadderGrowthCarriersStable` at a context on `m + 1` points with a closed first
-coatom, the root inside it, and the donor's top grade at most the context's). -/
+coatom and the root inside it).  No bound on the donor's top grade is asked: the seed exists
+without it (`StageType.exists_growthSeed_of_isSuccLimit`). -/
 def HasLadderGrowthCarriersStableAtSeed : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n m : ℕ⦄ (t' : StageType.{u} α (m + 1)) (g : Fin n ↪ Fin m)
     (p' : StageType.{u} α m), Order.IsSuccLimit α → t'.IsLegal →
     restrictFace Fin.castSuccEmb t' = some p' → ∀ (p : StageType.{u} α n)
       (hte : restrictFace (g.trans Fin.castSuccEmb) t' = some p) (d : StageType.{u} α (n + 1))
-      (hd : d ∈ p.cofaces), d.topGrade ≤ t'.topGrade → 0 < n →
+      (hd : d ∈ p.cofaces), 0 < n →
       ∀ Q : GrowthRequests t' d.toScheme,
         (∀ j, Q.CorrectAt t'.label j (d.label j)) → Q.ClassCalibrated hte →
         Q.HasRelativeLiftOnClass hte hd.2 →
@@ -107,7 +108,7 @@ def HasLadderGrowthCarriersStableAtSeed : Prop :=
 
 /-- **The inputs of the ladder tower at some seed** (open): for every legal context on `m + 1`
 points with a closed first coatom and the root inside it, every legal one-point coface `d` of the
-root face of top grade at most the context's, and all requests calibrated on the class with the
+root face, and all requests calibrated on the class with the
 labels pair admitted and the relative lift on the exact class, SOME seed with the context as its
 first coatom type and the donor as the face of its amalgam along the root followed by the new point
 carries the inputs of its ladder tower.  The choice of the second coatom type is free: over the
@@ -118,7 +119,7 @@ def HasLadderTowerInputsAtSeed : Prop :=
     (p' : StageType.{u} α m), Order.IsSuccLimit α → t'.IsLegal →
     restrictFace Fin.castSuccEmb t' = some p' → ∀ (p : StageType.{u} α n)
       (hte : restrictFace (g.trans Fin.castSuccEmb) t' = some p) (d : StageType.{u} α (n + 1))
-      (hd : d ∈ p.cofaces), d.topGrade ≤ t'.topGrade → 0 < n →
+      (hd : d ∈ p.cofaces), 0 < n →
       ∀ Q : GrowthRequests t' d.toScheme,
         (∀ j, Q.CorrectAt t'.label j (d.label j)) → Q.ClassCalibrated hte →
         Q.HasRelativeLiftOnClass hte hd.2 →
@@ -129,10 +130,32 @@ def HasLadderTowerInputsAtSeed : Prop :=
 /-- **Ladder carriers at the seed position from the inputs of the ladder tower** at some seed. -/
 theorem HasLadderTowerInputsAtSeed.hasLadderGrowthCarriersStableAtSeed
     (h : HasLadderTowerInputsAtSeed.{u}) : HasLadderGrowthCarriersStableAtSeed.{u} := by
-  intro α n m t' g p' hα ht' hp' p hte d hd hdK hn Q hpair hQ hrel
-  obtain ⟨I, rfl, hdA, hin⟩ := h t' g p' hα ht' hp' p hte d hd hdK hn Q hpair hQ hrel
+  intro α n m t' g p' hα ht' hp' p hte d hd hn Q hpair hQ hrel
+  obtain ⟨I, rfl, hdA, hin⟩ := h t' g p' hα ht' hp' p hte d hd hn Q hpair hQ hrel
   exact Seed.exists_ladderCarrier_of_inputs hdA hα.isSuccPrelimit Q (by have := hQ.arity; omega)
     hin
+
+/-- **The growth seed without a bound on the top grades**: at a limit stage, for a legal
+context `t'` on `m + 1` points with face `p'` along the first `m` points, a root `e₀` of `p'`
+with face `p`, and a legal coface `d` of `p`, some seed has `t'` as its first coatom type and `d`
+as the face of its amalgam along the root followed by the new point.  The second coatom type is
+the exact pinned extension (`StageType.exists_pinned_extension_of_isSuccPrelimit`); no top grade
+is compared. -/
+theorem exists_growthSeed_of_isSuccLimit {α : Ordinal.{u}} {m n : ℕ}
+    (hα : Order.IsSuccLimit α) {t' : StageType.{u} α (m + 1)} (ht' : t'.IsLegal)
+    {p' : StageType.{u} α m}
+    (hp' : restrictFace Fin.castSuccEmb t' = some p') {e₀ : Fin n ↪ Fin m}
+    {p : StageType.{u} α n} (hp : restrictFace e₀ p' = some p) {d : StageType.{u} α (n + 1)}
+    (hd : d ∈ p.cofaces) :
+    ∃ I : Seed.{u} α m, I.left = t' ∧
+      restrictFace (extendByLast (e₀.trans Fin.castSuccEmb)) I.amalgam = some d := by
+  obtain ⟨Q, hQ, hQp', hQd⟩ := exists_pinned_extension_of_isSuccPrelimit hα.isSuccPrelimit
+    (ht'.restrictFace _ hp') hp hd.1 hd.2
+  let I : Seed.{u} α m := Seed.ofCoatoms ht' hQ hp' hQp'
+  refine ⟨I, rfl, ?_⟩
+  have hright : restrictFace (Coatom.right m) I.amalgam = some Q := I.restrictFace_right
+  rw [← extendByLast_trans, ← restrictFace_trans I.amalgam _ _ hright]
+  exact hQd
 
 end StageType
 
