@@ -22,10 +22,14 @@ the attachment with the admission predicate of `Q`,
   (`Seed.HasMixedCoatomLift`; when the root is not onto the second coatom is a mixed face
   (`Seed.mem_mixedFaces_coatom`) and the lift holds, `Seed.hasMixedCoatomLift`, by the lift from a
   mixed face into the full face `Seed.cappedLift_mixed_univ`),
-* a lawful labelling extending the labels of the attachment (`Seed.HasExtendingLabel`, open): a
+* a lawful labelling extending the labels of the attachment (`Seed.HasExtendingLabel`): a
   mathematical hypothesis on the replicated scheme, not a step of the assembly; it follows from a
   lawful labelling of the ladder tower extending them (`Seed.hasExtendingLabel_of_tower`, the
-  copies reading the labels of their originals).
+  copies reading the labels of their originals), and it holds for the admission predicate of
+  requests calibrated on the class with the labels pair admitted, once the values contain the
+  compressed labels of the attachment (`Seed.hasExtendingLabel_attachAdmits` in
+  `VaughtConjecture.MainTheorem.ReplicatedLabel`: the block expansion of the writing of the
+  compressed labels).
 
 The inputs are kept separate: the lifts into the mixed faces, the coatom lifts (the context lift,
 whose target below the full face contains the copies, and the mixed-coatom lift), and the extending
@@ -101,8 +105,9 @@ theorem hasCoatomLifts_of_lifts (hc : I.HasContextLift g H Γ A B')
   · rw [mem_singleton.mp hx]
     exact hm
 
-/-- **A labelling extending the labels of the attachment** (open): a lawful section of the
-replicated scheme that is the labelling of the attachment on its cells. -/
+/-- **A labelling extending the labels of the attachment**: a lawful section of the replicated
+scheme that is the labelling of the attachment on its cells.  For the admission predicate of
+calibrated requests it holds (`Seed.hasExtendingLabel_attachAdmits`). -/
 def HasExtendingLabel : Prop :=
   ∃ q : Fin (I.replicated g H Γ A B').card → Label.{u},
     (I.replicated g H Γ A B').rows.IsLawful q ∧
