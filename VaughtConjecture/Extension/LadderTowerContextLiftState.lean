@@ -170,10 +170,6 @@ theorem grade_attachCtxCell (x : Fin I.left.card) :
     (I.attachment g).toCellScheme.grade (I.attachCtxCell g x) = I.left.toCellScheme.grade x :=
   Scheme.grade_faceCell (I.comap_left_attachment_scheme g) x
 
-theorem attachCtxCell_eq (x : Fin I.left.card) :
-    I.attachCtxCell g x = (I.attachmentType g).faceCell (I.restrictFace_left_attachmentType g) x :=
-  rfl
-
 variable (H Γ A B') in
 /-- **The context section of a prescription**: the prescription's state at the context cells. -/
 noncomputable def ctxSection {j : ℕ}
@@ -202,13 +198,6 @@ theorem isLawful_ctxSection {j : ℕ}
 /-! ### The truncation is admitted -/
 
 variable {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
-
-theorem attachDonCell_eq
-    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
-    (y : Fin d.card) :
-    I.attachDonCell g hd y =
-      (I.attachmentType g).faceCell (I.restrictFace_donor_attachmentType g hd) y :=
-  rfl
 
 /-- **The truncation at the threshold of a state admitted on its context and donor cells is
 admitted**: the requests read the context only at cells of grade at most the threshold (the cap,

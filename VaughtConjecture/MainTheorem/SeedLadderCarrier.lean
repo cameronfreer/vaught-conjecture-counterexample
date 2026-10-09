@@ -41,12 +41,12 @@ theorem rowAt_completion_castSucc (z x : Fin F.scheme.card) :
   Scheme.rowAt_appendFullCell_castSucc (h := F.isLegalBelowFullGrade.not_le) z x
 
 /-- The old cells keep their graded indices in the completion. -/
-theorem gradedIndex_completion_castSucc (z : Fin F.scheme.card) :
+theorem completion_gradedIndex_castSucc (z : Fin F.scheme.card) :
     (F.completion hα).toCellScheme.gradedIndex z.castSucc = F.scheme.toCellScheme.gradedIndex z :=
   Scheme.appendFullCellScheme_gradedIndex_castSucc _ _ z
 
 /-- The apex has the full grade. -/
-theorem gradedIndex_completion_last :
+theorem completion_gradedIndex_last :
     (F.completion hα).toCellScheme.gradedIndex (Fin.last _) =
       ((univ : Finset (Fin (m + 2))), m + 2) :=
   Scheme.appendFullCellScheme_gradedIndex_last _ _
@@ -117,7 +117,7 @@ noncomputable def ctxCell (x : Fin I.left.card) : Fin I.amalgam.card :=
   I.amalgam.toScheme.faceCell Fin.castSuccEmb I.comap_left_amalgam_scheme x
 
 /-- The cell of the amalgam at a cell of the donor. -/
-noncomputable def donCell (j : Fin d.card) : Fin I.amalgam.card :=
+noncomputable def donorFaceCell (j : Fin d.card) : Fin I.amalgam.card :=
   I.amalgam.toScheme.faceCell (extendByLast (e₀.trans Fin.castSuccEmb))
     (I.comap_donor_amalgam_scheme hd) j
 
@@ -132,7 +132,7 @@ admitted on the exact class. -/
 def towerAdmits (Q : GrowthRequests I.left d.toScheme) (k : ℕ)
     (R : Fin I.amalgam.card → Label.{u}) : Prop :=
   Q.threshold ≤ k → Q.AdmitsOnClass (fun x ↦ I.hatAt Q.threshold R (I.ctxCell x))
-    (fun j ↦ I.hatAt Q.threshold R (I.donCell hd j))
+    (fun j ↦ I.hatAt Q.threshold R (I.donorFaceCell hd j))
 
 theorem towerAdmits_succ (Q : GrowthRequests I.left d.toScheme) (k : ℕ)
     (R : Fin I.amalgam.card → Label.{u}) (h : I.towerAdmits hd Q (k + 3) R) :
@@ -213,7 +213,7 @@ theorem exists_ladderCarrier (hα : Order.IsSuccPrelimit α) (Q : GrowthRequests
       t).castSucc
   have hgi (t : Fin (I.towerBase H).S.card) :
       G.scheme.toCellScheme.gradedIndex (emb t) = (I.ladderBase H).toCellScheme.gradedIndex t := by
-    exact (F.gradedIndex_completion_castSucc hα _).trans
+    exact (F.completion_gradedIndex_castSucc hα _).trans
       (Scheme.gradedIndex_layerTowerEmb (B := I.towerBase H) (C := I.towerCat Γ A)
         (G := fun k ↦ grid k B') t m)
   have hrowB (z t : Fin (I.towerBase H).S.card) :
@@ -246,7 +246,7 @@ theorem exists_ladderCarrier (hα : Order.IsSuccPrelimit α) (Q : GrowthRequests
     F.cellMap_completion hα Fin.castSuccEmb Coatom.univ_map_left_ne
       (i := Fin.cast (congrArg Scheme.card I.comap_left_amalgam_scheme).symm x)
       (j := Fin.cast (congrArg Scheme.card G.comap_context).symm x) rfl
-  have hdon (j : Fin d.card) : G.donorCell j = emb (Fin.castAdd _ (I.donCell hd j)) :=
+  have hdon (j : Fin d.card) : G.donorCell j = emb (Fin.castAdd _ (I.donorFaceCell hd j)) :=
     F.cellMap_completion hα _ hdonne
       (i := Fin.cast (congrArg Scheme.card (I.comap_donor_amalgam_scheme hd)).symm j)
       (j := Fin.cast (congrArg Scheme.card G.comap_donor).symm j) rfl
@@ -256,7 +256,7 @@ theorem exists_ladderCarrier (hα : Order.IsSuccPrelimit α) (Q : GrowthRequests
     rw [I.faces_ladderTower]
     exact I.amalgam.isWellFormed.univ_mem_faces
   obtain ⟨w, hw⟩ := hfullT
-  refine ⟨G, ⟨w.castSucc, (F.gradedIndex_completion_castSucc hα w).trans hw⟩,
+  refine ⟨G, ⟨w.castSucc, (F.completion_gradedIndex_castSucc hα w).trans hw⟩,
     Scheme.RankMember I.amalgam.toScheme H, H, r, hH, fun a i hi ↦ ?_, fun a i hi ↦ ?_,
     fun a i hi hi0 ↦ ?_, fun u hu ↦ ?_⟩
   · refine (hgi _).trans ?_
@@ -278,13 +278,13 @@ theorem exists_ladderCarrier (hα : Order.IsSuccPrelimit α) (Q : GrowthRequests
           ∃ u' : Fin T.S.card, u = Fin.castSucc u') ?_ (fun u' _ ↦ ⟨u', rfl⟩) u
       intro hu
       exfalso
-      have h1 := congrArg Prod.snd (hu.symm.trans (F.gradedIndex_completion_last hα))
+      have h1 := congrArg Prod.snd (hu.symm.trans (F.completion_gradedIndex_last hα))
       simp only at h1
       omega
     have hu' : T.S.toCellScheme.gradedIndex u' =
         ((univ : Finset (Fin (m + 2))), N - 2 + 2) := by
       rw [show N - 2 + 2 = N by omega]
-      exact (F.gradedIndex_completion_castSucc hα u').symm.trans hu
+      exact (F.completion_gradedIndex_castSucc hα u').symm.trans hu
     obtain ⟨R, hRC, hR, hrowA, hrowL⟩ :=
       exists_controller_ladderTower (A := A) (Γ := Γ) (B' := B') hcard (N - 2) m (by omega) u' hu'
     have hread (c : Fin I.amalgam.card) :
@@ -327,7 +327,7 @@ theorem exists_ladderCarrier (hα : Order.IsSuccPrelimit α) (Q : GrowthRequests
       have e1 : (fun x ↦ G.scheme.rowAt u'.castSucc (G.contextCell x)) =
           fun x ↦ I.hatAt N R (I.ctxCell x) := funext fun x ↦ by rw [hctx]; exact hread _
       have e2 : (fun j ↦ G.scheme.rowAt u'.castSucc (G.donorCell j)) =
-          fun j ↦ I.hatAt N R (I.donCell hd j) := funext fun j ↦ by rw [hdon]; exact hread _
+          fun j ↦ I.hatAt N R (I.donorFaceCell hd j) := funext fun j ↦ by rw [hdon]; exact hread _
       rw [e1, e2]
       exact hadm
     · rw [hctx, hread, hrung (H - 1) (by omega), show H - 1 + 1 = H by omega]
