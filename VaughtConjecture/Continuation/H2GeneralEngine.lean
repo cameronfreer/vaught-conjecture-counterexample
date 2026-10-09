@@ -11,7 +11,7 @@ import VaughtConjecture.Extension.RowCompletionZero
 /-!
 # h2 at every arity: the engine at the full grade (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
 
 **The engine at the full grade** (`H2.admittedCompletionsAt_full`): for a context on `k + 1 ≥ 3`
 points of top grade `K = k + 1`, an admission of states of the clause between the lawful faces

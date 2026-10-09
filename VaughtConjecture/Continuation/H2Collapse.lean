@@ -9,7 +9,7 @@ import VaughtConjecture.Extension.CapTransport
 /-!
 # h2: donor raising by a band raise (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
 
 **The band raise** (`H2.bandRaise B h c`): the label `c` on the band of labels above `B`, at least
 `h` and below `c`; the identity elsewhere.  For `B` and `c` self-visible at `K` and either `h ≤ B`

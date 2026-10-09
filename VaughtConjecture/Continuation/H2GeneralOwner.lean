@@ -9,7 +9,7 @@ import VaughtConjecture.Continuation.H2OwnerOne
 /-!
 # h2 at every arity: owner lowering on the grade-`K` faces (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
 
 **Owner lowering at the full grade** (`H2.ownerLoweringAt_full`): at `K = k + 1` the grade-`K`
 faces are the lawful labellings (`H2.lawfulAt_iff_isLawful`), and owner lowering is

@@ -8,7 +8,7 @@ import VaughtConjecture.Continuation.H2Engine
 /-!
 # h2 at two points, top grade `1`: the state-level provisions (work file)
 
-WORK FILE (branch `research/work-twolift`).  No `sorry`.
+WORK FILE (branch `research/work-twolift`).  Every declaration here is proved.
 
 At top grade `1` the clause `H2.SelfLowG o r 1 Lo Tops` is an admission of states from donor
 raising and owner lowering at the grade `1` (`H2.stateAdmission_one`): the order law at the owner

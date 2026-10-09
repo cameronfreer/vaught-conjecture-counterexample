@@ -9,7 +9,7 @@ import VaughtConjecture.Continuation.H2OwnerOneFace
 /-!
 # h2 with the lost point last: the assembled statement (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
 
 **The owner alone at its graded index** (`H2.OwnerOnlyAtIndex`): the condition under which owner
 lowering below the designated tops between the grade-`1` faces holds at two points
@@ -56,7 +56,7 @@ theorem exists_completion_recProp_one_of_only {t' : StageType.{u} α 2} (hleg : 
     (fun _ ha ↦ ha) (root_one hp htbp hLo')
 
 /-- **h2 at two points with the lost point last, when the owner is alone at its graded index at
-the top grade `1`** (no `sorry`). -/
+the top grade `1`** (proved). -/
 theorem exists_coface_two_last {K n : ℕ} {t' : StageType.{u} α 2} {g : Fin n ↪ Fin 1}
     {p : StageType.{u} α 1} (hα : Order.IsSuccLimit α) (hleg : t'.IsLegal) {o r : Fin t'.card}
     (hs : t'.IsSourceGapContextAt K (g.trans Fin.castSuccEmb) 1 o r)

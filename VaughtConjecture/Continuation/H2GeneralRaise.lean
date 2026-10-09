@@ -8,7 +8,7 @@ import VaughtConjecture.Continuation.H2General
 /-!
 # h2 at every arity: donor raising on the grade-`K` faces (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
 
 **Donor raising with the gap on the grade-`K` faces** (`H2.donorRaisingAt`, the input
 `H2.DonorRaisingAt` at every arity), generalizing `H2.donorRaisingGap_oneFace` (two points, grade

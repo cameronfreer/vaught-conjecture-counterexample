@@ -8,7 +8,7 @@ import VaughtConjecture.Continuation.H2OwnerGeneral
 /-!
 # The residual of owner lowering below the designated tops at grade `2` (work file)
 
-WORK FILE (branch `research/work-owner-general`).  No `sorry`.
+WORK FILE (branch `research/work-owner-general`).  Every declaration here is proved.
 
 General-arity owner lowering below the designated tops (`H2.ownerLoweringBelow_of_topsAtLeastGrade`)
 assumes the named condition `H2.TopsAtLeastGrade`; two-point owner lowering is unconditional

@@ -10,8 +10,8 @@ import VaughtConjecture.Extension.AdmittedFieldLayerCells
 /-!
 # The admitted completion at the arity one for an admission of states (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry`; the two-coatom lift on the lower layer
-(`Seed.HasTwoCoatomLift`, the open hypothesis of the (R4) lane) is a hypothesis.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved; the two-coatom lift on
+the lower layer (`Seed.HasTwoCoatomLift`, the open hypothesis of the (R4) lane) is a hypothesis.
 
 For a seed `I` on three points and a predicate `A` on labellings of the canonical lower layer
 (`Seed.lowerFieldLayer`), the admitted layer at grade `2` (`Seed.admLayer I A`) is legal below the

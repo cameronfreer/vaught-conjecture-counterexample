@@ -8,7 +8,7 @@ import VaughtConjecture.Continuation.H2OwnerAt
 /-!
 # Owner lowering below the designated tops on the grade-`K` faces at every arity (work file)
 
-WORK FILE (branch `research/work-owner-general`).  No `sorry`.
+WORK FILE (branch `research/work-owner-general`).  Every declaration here is proved.
 
 On `k + 1` points with the lost point last, below the full grade (`K ≤ k`), **owner lowering
 below the designated tops on the grade-`K` faces** (`H2.OwnerLoweringBelowAt k`) holds with no

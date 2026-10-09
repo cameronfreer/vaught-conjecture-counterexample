@@ -9,7 +9,7 @@ import VaughtConjecture.Extension.RowCompletionZero
 /-!
 # h2 at every arity: the engine below the full grade (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
 
 **The engine below the full grade** (`H2.exists_completion_below`): for a context of top grade
 `K ≤ k` on `k + 1` points, an admission of states of the clause between the grade-`K` faces gives

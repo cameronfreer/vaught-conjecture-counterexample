@@ -8,7 +8,7 @@ import VaughtConjecture.Continuation.H2ArityOne
 /-!
 # One clause for both donors of the input `T`
 
-WORK FILE (branch `research/work-h2`).  No `sorry`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
 
 The clause `H2.SelfLowG` (every designated top its own field), with the designation read off the
 donor, runs through the admitted completion at the seed of the input `SeparationObstruction.T`

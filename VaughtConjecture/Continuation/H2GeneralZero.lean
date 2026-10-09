@@ -8,7 +8,7 @@ import VaughtConjecture.Continuation.H2GeneralBelow
 /-!
 # h2 at every arity: the engine on one point (work file)
 
-WORK FILE (branch `research/work-h2`).  No `sorry`.
+WORK FILE (branch `research/work-h2`).  Every declaration here is proved.
 
 **The completion from the grade `N ≤ 1` on every seed** (`H2.exists_rowCompletion₀_of_le_one`):
 `Seed.exists_rowCompletion₀` asks `0 < m` only for the canonical lifts below the grade `N`; from

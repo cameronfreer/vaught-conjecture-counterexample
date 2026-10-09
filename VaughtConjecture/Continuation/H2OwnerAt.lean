@@ -8,7 +8,7 @@ import VaughtConjecture.Continuation.H2GeneralOwner
 /-!
 # Owner lowering below the designated tops on the grade-`K` faces (work file)
 
-WORK FILE (branch `research/work-ownerAt`).  No `sorry`.
+WORK FILE (branch `research/work-ownerAt`).  Every declaration here is proved.
 
 On `k + 1` points with the lost point last, below the full grade (`K ≤ k`), the root (the cells of
 the common face, which avoid the lost point) has cells of grade `K`, so the cap at the grade `K` of

@@ -11,7 +11,7 @@ import VaughtConjecture.Continuation.H2OwnerResidual
 /-!
 # A context of grade `2` on three points at the residual (work file)
 
-WORK FILE (branch `research/work-owner-general`).  No `sorry`.
+WORK FILE (branch `research/work-owner-general`).  Every declaration here is proved.
 
 The witnesses for a context on three points at the residual of
 `VaughtConjecture.Continuation.H2OwnerResidual`: the constant shifter (`constShift`) and the shifter

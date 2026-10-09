@@ -9,7 +9,7 @@ import VaughtConjecture.Continuation.AvailableTopDetermination
 /-!
 # Source-gap contexts of grade at least two: the acquisition (work file)
 
-WORK FILE (branch `research/work-twolift`).  No `sorry`.
+WORK FILE (branch `research/work-twolift`).  Every declaration here is proved.
 
 The grade `K` of an acquired source-gap context is the top-grade supremum of the model
 (`Realization.exists_covers_isSourceGapContextAt`: every occurrence above the tail has top grade
