@@ -24,8 +24,9 @@ coatom** to two statements, each a finite statement about the seed and the tower
 * **the coding of states** (`Seed.StateCoding j`): such a state is the decoded reading of a state
   `R` of the catalogue (values in `Γ`, lawful, satisfying `A (m + 2)`) by a witness `ν` bounded by
   the grade `j` (sending no non-bottom label to bottom when the cap is `⊥`), on the cells of the
-  amalgam below the grade; and the decoded writing `ν ∘ T.v R` of `R` in the tower has the observation of `q` at `c`
-  at every cell below `(univ, j)`: on the ladder and on the layers of full scope as well.
+  amalgam below the grade; and the decoded writing `ν ∘ T.v R` of `R` in the tower has the
+  observation of `q` at `c` at every cell below `(univ, j)`: on the ladder and on the layers of
+  full scope as well.
 
 **The reduction** (`Seed.cappedLift_context_of_stateLift`): the two give the capped lift of `T`
 from `(univ.erase (Fin.last (m + 1)), j)` to `(univ, j)`, in the shape of
