@@ -1,0 +1,98 @@
+/-
+Copyright (c) 2026 Cameron Freer. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Cameron Freer
+-/
+import VaughtConjecture.Continuation.LowStateLift
+import VaughtConjecture.MainTheorem.LowStateRoute
+
+/-!
+# LOW displays from the frontier steps of the state tower
+
+Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3) and Layer 6 ("Status:
+the hypotheses of the main theorem"); semantic contract, items 4, 5 and 8.
+
+**The frontier steps of a LOW family** (`StageType.StateFrontierSteps`, a hypothesis).  For a LOW
+family at `K = g + 2` with `K < k = g + J + 3`, the frontier step
+(`ProfileTower.SLvl.SFrontierStep`) from the two coatoms at every layer of the state tower of the
+LOW clause over the levels from the grade `0` at `g + 1`: at the layer of controllers `K` and at
+every grade above, up to `k`.
+
+**LOW layers on the class of the frontier steps** (`StageType.hasLowLayersOn_stateFrontier`,
+`StageType.hasLowDisplaysOn_stateFrontier`, compiled in this repository).  The frontier steps give
+the lifts of the state tower (`ProfileTower.sTowerLifts_of_frontier`: the base level, a canonical
+next level, is readable at the canonical states, `ProfileTower.Lvl.Good.readableS_toS_next`), hence
+LOW layers and LOW displays (`ProfileTower.readsActualOn_sTower`), with no condition on the face
+labels above `K`.
+
+**Not claimed.**  `StageType.HasLowDisplays` is not proved.  The frontier steps are not proved
+here.  At the layer of controllers the frontier step is what the LOW steps of the catalogue layer
+(`ProfileTower.Lvl.Good.lowStep_donor`, `ProfileTower.Lvl.Good.lowStep_private`) build before they
+code the cutoff, for a state normalized over all fields in place of a profile normalized on its
+amalgam part; above `K` it is the LOW step at each grade.  The families with `K = 1` (the base level
+is then the level at the grade `0`) and `K ≥ k` are outside the class.
+
+## Placement
+
+This file belongs to Layer 6 of `roadmap/README.md`.
+-/
+
+universe u
+
+namespace VaughtConjecture.StageType
+
+open Finset Label
+
+variable {α : Ordinal.{u}} {k : ℕ}
+
+/-- **The frontier steps of the state tower of a LOW family** (a hypothesis): for every
+decomposition `K = g + 2`, `k = g + 1 + J + 2`, the frontier step from the two coatoms at every
+layer of the state tower of the LOW clause over the levels from the grade `0` at `g + 1`, on the
+seed of the family. -/
+def StateFrontierSteps (K : ℕ) (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
+    (o r : Fin t'.card) : Prop :=
+  ∀ (hF : IsLowFamily K t' tb p o r) (g J : ℕ) (hK : K = g + 2) (hk : k = g + 1 + J + 2), by
+    subst hK hk
+    exact ProfileTower.STowerFrontier
+      (I := Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private hF.face_donor)
+      (ProfileTower.lvlZero _ (g + 1)) (g + 2) (ProfileTower.lowN _ (g + 2)) (ProfileTower.lowT _)
+      (StageType.faceCell (Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private
+        hF.face_donor).restrictFace_left o)
+      (StageType.faceCell (Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private
+        hF.face_donor).restrictFace_left r) (J + 2)
+
+/-- **The class of the frontier steps**: the LOW families with `2 ≤ K < k` whose state tower has
+the frontier steps. -/
+def StateFrontierClass (α : Ordinal.{u}) (K k : ℕ) (t' tb : StageType.{u} α (k + 1))
+    (p : StageType.{u} α k) (o r : Fin t'.card) : Prop :=
+  2 ≤ K ∧ K < k ∧ StateFrontierSteps K t' tb p o r
+
+/-- **LOW layers on the class of the frontier steps**: no condition on the labels of the faces
+above `K`. -/
+theorem hasLowLayersOn_stateFrontier : HasLowLayersOn.{u} StateFrontierClass := by
+  intro α K k t' tb p o r hα hF ⟨hK2, hKk, hfr⟩
+  obtain ⟨g, rfl⟩ : ∃ g, K = g + 2 := ⟨K - 2, by omega⟩
+  obtain ⟨J, rfl⟩ : ∃ J, k = g + 1 + J + 2 := ⟨k - (g + 3), by omega⟩
+  have hs := hF.isSourceGapContextAt
+  have htb := hF.topGrade_donor
+  set I := Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private hF.face_donor
+  have hF' := ProfileTower.fieldsLE_low (I := I) hs htb
+  have hr := (ProfileTower.lost_copy (I := I) hs).2
+  have hNi : Sum.inr () ∉ ProfileTower.lowN I (g + 2) := fun h ↦ by
+    obtain ⟨t, -, ht⟩ := mem_image.mp h
+    cases ht
+  have hTi : Sum.inr () ∉ ProfileTower.lowT I := fun h ↦ by
+    obtain ⟨t, -, ht⟩ := h
+    cases ht
+  have hL := ProfileTower.lvlZero_good (I := I) (g + 1) (by omega)
+  have hRL := (ProfileTower.lvlZero_good (I := I) g (by omega)).readableS_toS_next
+  exact ProfileTower.readsActualOn_sTower hα.isSuccPrelimit hs htb
+    (ProfileTower.sTowerLifts_of_frontier hL hRL le_rfl hNi hTi
+      (fun j hj P h ↦ ProfileTower.lowPred_scode hF' hr hj h) (J + 2) (by omega)
+      (hfr hF g J rfl rfl))
+
+/-- **LOW displays on the class of the frontier steps.** -/
+theorem hasLowDisplaysOn_stateFrontier : HasLowDisplaysOn.{u} StateFrontierClass :=
+  hasLowLayersOn_stateFrontier.hasLowDisplaysOn
+
+end VaughtConjecture.StageType

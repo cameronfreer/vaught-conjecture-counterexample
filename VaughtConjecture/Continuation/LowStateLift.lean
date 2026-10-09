@@ -470,4 +470,45 @@ theorem SLvl.sCatStep_of_frontier {N : SLvl I g} (hK : K ≤ g + 1) (hN : Sum.in
 
 end Frontier
 
+
+/-! ### The lifts of the state tower from the frontier steps -/
+
+section TowerLifts
+
+variable {L : Lvl I g}
+
+/-- **The frontier steps of the state tower of the LOW clause** below the layer `J₀`: every layer at
+a grade `g + J + 1` with `J < J₀` has the frontier step from the two coatoms. -/
+def STowerFrontier (L : Lvl I g) (K : ℕ) (Nf : Finset (Fin I.amalgam.card ⊕ Unit))
+    (T : Set (Fin I.amalgam.card ⊕ Unit)) (o r : Fin I.amalgam.card) (J₀ : ℕ) : Prop :=
+  ∀ J < J₀, ∀ x ∈ (Pts : Finset (Fin (m + 2))),
+    (sTower L (lowPred K Nf T o r) J).SFrontierStep K Nf T o r x
+
+/-- **The state tower of the LOW clause lifts from its frontier steps**, over a good level read as a
+state level readable at the canonical states, up to the grade `m`, when the LOW clause is at
+`K ≤ g + 1`, is kept by the state codes from `g + 1` on, and its cutoff is neither a proper donor
+field nor a donor top. -/
+theorem sTowerLifts_of_frontier (hL : L.Good) (hRL : L.toS.ReadableS) {K : ℕ}
+    {Nf : Finset (Fin I.amalgam.card ⊕ Unit)} {T : Set (Fin I.amalgam.card ⊕ Unit)}
+    {o r : Fin I.amalgam.card} (hK : K ≤ g + 1) (hN : Sum.inr () ∉ Nf) (hT : Sum.inr () ∉ T)
+    (hAc : ∀ j, g + 1 ≤ j → ∀ P : CProf I, lowPred K Nf T o r P →
+      lowPred K Nf T o r (scode j P)) :
+    ∀ J₀, g + J₀ ≤ m → STowerFrontier L K Nf T o r J₀ →
+      STowerLifts L (lowPred K Nf T o r) J₀
+  | 0, _, _ => fun J hJ ↦ absurd hJ (Nat.not_lt_zero J)
+  | J₀ + 1, hm, hfr => by
+    have ih := sTowerLifts_of_frontier hL hRL hK hN hT hAc J₀ (by omega)
+      (fun J hJ ↦ hfr J (by omega))
+    intro J hJ x hx
+    have hgood := sTower_good hL (fun W ↦ lowPred_withCut_bot W) hAc ih J (by omega) (by omega)
+    have hR : (sTower L (lowPred K Nf T o r) J).ReadableS := by
+      rcases J with _ | J
+      · exact hRL
+      · exact (sTower_good hL (fun W ↦ lowPred_withCut_bot W) hAc ih J (by omega)
+          (by omega)).readableS_next _
+    exact hgood.cappedLift_sS hR (by omega) hx (fun W ↦ lowPred_withCut_bot W)
+      (SLvl.sCatStep_of_frontier (by omega) hN hT (hfr J hJ x hx))
+
+end TowerLifts
+
 end VaughtConjecture.ProfileTower
