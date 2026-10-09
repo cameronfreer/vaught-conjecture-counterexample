@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.LadderTowerContextLiftCap
+import VaughtConjecture.Extension.ReplicatedRankAgreement
 
 /-!
 # The extension over the tower at a positive cap, from a serving code
@@ -32,6 +33,16 @@ has the observation of the ambient `q` at `c` on the ladder and on the layers
 * **The copies** read their originals (`Seed.exists_orig_mem_below_univ`).
 * **Lawfulness**: at a positive cap the ambient is a lawful companion
   (`CellScheme.Rows.IsLawfulBelow.map_of_min_eq`).
+
+**Serving at the top grade** (`Seed.towerExtensionPos_of_serveTop`): the serving code is asked at
+the largest grade `K` where the state exceeds the cap, with a decoder bounded by `K`; above `K` the
+state is at most the cap and the ambient capped at the cap is spliced on
+(`CellScheme.Rows.IsLawfulBelow.splice`).  Rank agreement then pins the state only at `K`
+(`Seed.isSelfVisible_of_serving_twin`): two cells of one rank in `b` below the cap rank, one of
+grade at least `K`, ask the value at the other to be self-visible at `K`, not at the grade of the
+first
+(the obstruction `Seed.not_exists_coded_rankAgree` is for a code reading a lawful state at every
+cell, which the serving code is not asked to be).
 
 The serving code is an explicit hypothesis here; it is not proved.
 
@@ -214,7 +225,7 @@ the ladder (rank agreement through `ladderIndex_agree`), the layers and the copi
 theorem towerExtensionPos_of_serve (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
     (hne : ∀ k, ((I.attachmentBase g).towerCat Γ A (k + 2)).Nonempty) {j : ℕ}
-    (hj2 : 2 ≤ j) (hjm : j ≤ m + 1) (hS : HasServingCode I g H Γ A B' hcard j) :
+    (hj1 : 1 ≤ j) (hjm : j ≤ m + 1) (hS : HasServingCode I g H Γ A B' hcard j) :
     TowerExtensionPos I g H Γ A B' j := by
   classical
   intro c hc hc0 q hq P hP hPA hPq hhigh
@@ -312,11 +323,82 @@ theorem towerExtensionPos_of_serve (hH : 0 < H) (hcard : (I.attachmentBase g).S.
   change σ (I.replicatedWriting g H Γ A B' R d.1) = P a
   rw [← ha, replicatedWriting_attachEmb hcard hR, hσR a hag]
 
+/-! ### Serving at the top grade where the state exceeds the cap -/
+
+/-- **The extension over the tower at a positive cap from serving codes at the top grade where
+the state exceeds the cap**: let `K` be the largest grade of a cell of the attachment where the
+state exceeds the cap.  The serving code at `K` extends the state below `(univ, K)`
+(`Seed.towerExtensionPos_of_serve`); above `K` the state is at most the cap, and the ambient capped
+at the cap is spliced on (`CellScheme.Rows.IsLawfulBelow.splice`).  The decoder of the serving
+code is bounded by `K`, not by the grade of the extension. -/
+theorem towerExtensionPos_of_serveTop (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hne : ∀ k, ((I.attachmentBase g).towerCat Γ A (k + 2)).Nonempty) {j : ℕ}
+    (hjm : j ≤ m + 1)
+    (hS : ∀ k, 1 ≤ k → k ≤ j → HasServingCode I g H Γ A B' hcard k) :
+    TowerExtensionPos I g H Γ A B' j := by
+  classical
+  intro c hc hc0 q hq P hP hPA hPq hhigh
+  have hex : ∃ k, ∀ a, (I.attachment g).toCellScheme.grade a ≤ j →
+      k < (I.attachment g).toCellScheme.grade a → P a ≤ c :=
+    ⟨j, fun a h1 h2 ↦ absurd h1 (not_le.mpr h2)⟩
+  have hKspec := Nat.find_spec hex
+  have hKj : Nat.find hex ≤ j := Nat.find_min' hex fun a h1 h2 ↦ absurd h1 (not_le.mpr h2)
+  set K := Nat.find hex with hKdef
+  obtain ⟨a0, ha0j, ha0⟩ := hhigh
+  have ha0K : (I.attachment g).toCellScheme.grade a0 ≤ K := by
+    by_contra h
+    exact ha0 (hKspec a0 ha0j (not_le.mp h))
+  have hK1 : 1 ≤ K := ((I.isWellFormed_attachment g).isWellFormed.grade_pos a0).trans_le ha0K
+  have hKY : (((univ : Finset (Fin (m + 2))), K) : Finset (Fin (m + 2)) × ℕ) ≤
+      ((univ : Finset (Fin (m + 2))), j) := ⟨subset_rfl, hKj⟩
+  -- the serving code below `(univ, K)`
+  obtain ⟨v, hv, hvP, hvc⟩ := towerExtensionPos_of_serve hH hcard hΓ hA hne hK1
+    (hKj.trans hjm) (hS K hK1 hKj) c (hc.mono hKj) hc0
+    (fun d ↦ q (Set.inclusion (CellScheme.below_mono _ hKY) d)) (hq.mono hKY) P hP hPA
+    (fun d a ha ↦ hPq _ a ha) ⟨a0, ha0K, ha0⟩
+  -- the splice with the ambient capped above `K`
+  set qt : Fin (I.replicated g H Γ A B').card → Label.{u} := CellScheme.Rows.extendBot _ q
+  set vt : Fin (I.replicated g H Γ A B').card → Label.{u} := CellScheme.Rows.extendBot _ v
+  have hqtd (d) (hd : d ∈ (I.replicated g H Γ A B').toCellScheme.below
+      ((univ : Finset (Fin (m + 2))), j)) : qt d = q ⟨d, hd⟩ :=
+    CellScheme.Rows.extendBot_of_mem q hd
+  have hvtd (d) (hd : d ∈ (I.replicated g H Γ A B').toCellScheme.below
+      ((univ : Finset (Fin (m + 2))), K)) : vt d = v ⟨d, hd⟩ :=
+    CellScheme.Rows.extendBot_of_mem v hd
+  have hup : (I.replicated g H Γ A B').rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j)
+      fun d ↦ min (qt d) c :=
+    (CellScheme.Rows.isLawfulBelow_extendBot.mpr hq).min_const_of_isSelfVisible hc
+  have hvt : (I.replicated g H Γ A B').rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), K)
+      fun d ↦ vt d := CellScheme.Rows.isLawfulBelow_extendBot.mpr hv
+  have hag (d) (hd : d ∈ (I.replicated g H Γ A B').toCellScheme.below
+      ((univ : Finset (Fin (m + 2))), K)) : min (vt d) c = min (min (qt d) c) c := by
+    rw [hvtd d hd, hvc ⟨d, hd⟩, min_assoc, min_self, hqtd d (CellScheme.below_mono _ hKY hd)]
+  have hsp := CellScheme.Rows.IsLawfulBelow.splice hup hvt (fun _ _ _ ↦ min_le_right _ _) hag
+  refine ⟨fun d ↦ (I.replicated g H Γ A B').toCellScheme.splice K (fun d ↦ min (qt d) c) vt d,
+    hsp, fun d a ha ↦ ?_, fun d ↦ ?_⟩
+  · have hga : (I.replicated g H Γ A B').toCellScheme.grade d.1 =
+        (I.attachment g).toCellScheme.grade a := by
+      rw [← ha]; exact congrArg Prod.snd (gradedIndex_attachEmb a)
+    have haj : (I.attachment g).toCellScheme.grade a ≤ j := hga ▸ d.2.2
+    by_cases hk : (I.attachment g).toCellScheme.grade a ≤ K
+    · have hdK : d.1 ∈ (I.replicated g H Γ A B').toCellScheme.below
+          ((univ : Finset (Fin (m + 2))), K) := ⟨subset_univ _, (hga.trans_le hk :)⟩
+      change (I.replicated g H Γ A B').toCellScheme.splice K _ vt d.1 = P a
+      rw [CellScheme.splice_of_le (hga ▸ hk), hvtd _ hdK]
+      exact hvP ⟨d.1, hdK⟩ a ha
+    · change (I.replicated g H Γ A B').toCellScheme.splice K _ vt d.1 = P a
+      rw [CellScheme.splice_of_lt (hga ▸ not_le.mp hk), hqtd _ d.2, ← hPq d a ha,
+        min_eq_left (hKspec a haj (not_le.mp hk))]
+  · change min ((I.replicated g H Γ A B').toCellScheme.splice K (fun d ↦ min (qt d) c) vt d.1)
+      c = min (q d) c
+    rw [CellScheme.min_splice_eq hag (subset_univ _), min_assoc, min_self, hqtd _ d.2]
+
 variable {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
 
-/-- **The context lift of the replicated scheme from serving codes at the grades `2, …, m + 1`**,
+/-- **The context lift of the replicated scheme from serving codes at the grades `1, …, m + 1`**,
 for a set of values containing `⊥` and the code set of the attachment
-(`Seed.hasContextLift_attachAdmits_pos`, `Seed.towerExtensionPos_of_serve`). -/
+(`Seed.hasContextLift_attachAdmits_pos`, `Seed.towerExtensionPos_of_serveTop`). -/
 theorem hasContextLift_attachAdmits_serve (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
     (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ)
@@ -329,15 +411,35 @@ theorem hasContextLift_attachAdmits_serve (hH : 0 < H) (hcard : (I.attachmentBas
       univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
     (hr1 : 1 ≤ #(univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
       univ.map (extendByLast (g.trans Fin.castSuccEmb))))
-    (hS : ∀ j, 2 ≤ j → j ≤ m + 1 →
-      HasServingCode I g H Γ (I.attachAdmits g hd Q) B' hcard j) :
+    (hS : ∀ k, 1 ≤ k → k ≤ m + 1 →
+      HasServingCode I g H Γ (I.attachAdmits g hd Q) B' hcard k) :
     I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' :=
   hasContextLift_attachAdmits_pos hH hcard hΓ0 hΓ hΓc hte hdp hdL hn hd hQ hpair hrel hrF hr1
-    fun j hj hjm ↦ towerExtensionPos_of_serve hH hcard hΓ
+    fun _ _ hjm ↦ towerExtensionPos_of_serveTop hH hcard hΓ
       (fun k R h ↦ I.attachAdmits_succ g hd Q k R h)
       (fun _ ↦ ⟨fun _ ↦ ⊥, Scheme.LadderBaseData.mem_towerCat.mpr
         ⟨fun _ ↦ hΓ0, Rows.isLawful_const_bot, I.attachAdmits_bot g hd Q _⟩⟩)
-      hj hjm (hS j hj hjm)
+      hjm fun k hk1 hkj ↦ hS k hk1 (hkj.trans hjm)
+
+/-! ### The pin of the serving code -/
+
+/-- **The serving code pins only at its grade**: if the rank vector of the lawful state `R`
+agrees with `b` below `k`, and two cells `d₁`, `d₂` have the same rank in `b` below `k`, with `d₂`
+of grade at least `K`, then a witness bounded by `K` reads `R d₁` as a label self-visible at `K`.
+The serving code at the top grade `K` where the state exceeds the cap thus asks the state at `d₁`
+to be self-visible at `K` only, not at the grade of `d₂` (compare
+`Seed.not_exists_coded_rankAgree`, where the code reads a lawful state at every cell). -/
+theorem isSelfVisible_of_serving_twin {R : Fin (I.attachment g).card → Label.{u}}
+    (hR : (I.attachment g).rows.IsLawful R) {σ : Label.{u} → Label.{u}} {K : ℕ}
+    (hσ : IsWitness (stepSuppressor K) σ) {b : Fin (I.attachment g).card → ℕ} {k : ℕ}
+    (hag : RankAgree (rankVector R) b k) {d₁ d₂ : Fin (I.attachment g).card}
+    (hb : b d₁ = b d₂) (hk : b d₂ < k) (hd₂ : K ≤ (I.attachment g).toCellScheme.grade d₂) :
+    IsSelfVisible K (σ (R d₁)) := by
+  have h1 := rankVector_eq_of_rankAgree hag (hb ▸ hk)
+  have h2 := rankVector_eq_of_rankAgree hag hk
+  have he : R d₁ = R d₂ := eq_of_rankVector_eq (h1.trans (hb.trans h2.symm))
+  rw [he]
+  exact hσ.isSelfVisible_apply ((hR.orderly d₂).mono hd₂) (by simp)
 
 end Seed
 
