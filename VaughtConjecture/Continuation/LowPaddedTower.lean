@@ -106,18 +106,6 @@ variable {N : SLvl I g} {A : CProf I → Prop}
 
 local notation "𝒮" => sCat I (g + 1) A
 
-/-- The orbit code over all fields of a state with amalgam part lawful on the cut lies in the state
-catalogue when it satisfies `A`. -/
-theorem orbitCode_mem_sCat {P : CProf I} (hP : IsCutLawful I (g + 1) (camal P))
-    (hA : A (orbitCode (g + 1) P)) : orbitCode (g + 1) P ∈ 𝒮 := by
-  have hB : 2 * Fintype.card (Fin I.amalgam.card ⊕ Unit) ≤ bound I := by
-    rw [card_fields]; simp only [bound]; omega
-  refine mem_sCat.mpr ⟨fun f ↦ orbitMap_mem_codeGrid hB _, ⟨?_, ?_⟩, orbitCode_orbitCode, hA⟩
-  · exact hP.1.map_of_apply_eq_bot (fun d ↦ d.2.2)
-      (isWitness_orbitMap (g + 1) P) fun _ ↦ orbitMap_eq_bot_iff.mp
-  · exact hP.2.map_of_apply_eq_bot (fun d ↦ d.2.2)
-      (isWitness_orbitMap (g + 1) P) fun _ ↦ orbitMap_eq_bot_iff.mp
-
 /-- The orbit code over all fields of a state lies in the code grid with the block bound of the
 seed. -/
 theorem orbitCode_mem_codeGrid (k : ℕ) (P : CProf I) (f : Fin I.amalgam.card ⊕ Unit) :

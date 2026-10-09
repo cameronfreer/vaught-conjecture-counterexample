@@ -348,18 +348,15 @@ theorem lowStateRaise_private {o' r' : Fin I.left.card}
     exact hWtc t ht hgt hvis
 
 
-/-- **The LOW step for states at the grade of the controllers**, for the LOW designations of a
-seed (`ProfileTower.lowN`, `ProfileTower.lowT`, the copies of the owner and the lost top), when the
-private context is a source-gap context of grade `g + 1 ≤ m` with the lost point last and the
-donor has top grade at most `g + 1`: the step for states holds from both coatoms
-(`ProfileTower.stateCatStep_low_of_raise`, `ProfileTower.lowStateRaise_donor`,
-`ProfileTower.lowStateRaise_private`). -/
-theorem stateCatStep_low_seed (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
+/-- **The repair at `K` for the LOW designations of a seed**, over the proper donor fields of grade
+at most `K` (`ProfileTower.lowStateRaise_private`, `ProfileTower.lowStateRaise_donor`), from both
+coatoms. -/
+theorem lowStateRepair_seed (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
     (htb : I.right.topGrade ≤ g + 1) {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
-    StateCatStep I (g + 1) (lowPred (g + 1) (lowN I (g + 1)) (lowT I)
-      (StageType.faceCell I.restrictFace_left o')
-      (StageType.faceCell I.restrictFace_left r')) x := by
+    LowStateRepair I (g + 1) (g + 1) (lowN I (g + 1)) (lowT I)
+      (StageType.faceCell I.restrictFace_left o') (StageType.faceCell I.restrictFace_left r')
+      x := by
   classical
   have hNQ : ∀ f ∈ lowN I (g + 1), ∃ d, f = Sum.inl d ∧
       d ∈ I.amalgam.toCellScheme.below (coatD, g + 1) := by
@@ -382,14 +379,32 @@ theorem stateCatStep_low_seed (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
       exact hit
     · rw [StageType.grade_faceCell, ← StageType.grade_faceCell I.restrictFace_face_left y]
       exact hi
-  have hN : Sum.inr () ∉ lowN I (g + 1) := fun hf ↦ by obtain ⟨d, hd, -⟩ := hNQ _ hf; cases hd
-  have hT : Sum.inr () ∉ lowT I := fun hf ↦ by obtain ⟨d, hd, -⟩ := hTQ _ hf; cases hd
-  refine stateCatStep_low_of_raise (Nat.succ_pos g) hgm le_rfl hN hT hx ?_
   simp only [Pts, mem_insert, mem_singleton] at hx
   rcases hx with rfl | rfl
-  · exact (lowStateRaise_private hs htb rfl rfl hNQ (fun f hf ↦ hf) (fun t ht ↦ ⟨t, ht, rfl⟩)
-      fun t ht htK ↦ mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, ht, htK⟩, rfl⟩).lowStateRaise
-        le_rfl
-  · exact (lowStateRaise_donor hgm hs rfl rfl hNQ hTQ hNroot).lowStateRaise le_rfl
+  · exact lowStateRaise_private hs htb rfl rfl hNQ (fun f hf ↦ hf) (fun t ht ↦ ⟨t, ht, rfl⟩)
+      fun t ht htK ↦ mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, ht, htK⟩, rfl⟩
+  · exact lowStateRaise_donor hgm hs rfl rfl hNQ hTQ hNroot
+
+/-- **The LOW step for states at the grade of the controllers**, for the LOW designations of a
+seed (`ProfileTower.lowN`, `ProfileTower.lowT`, the copies of the owner and the lost top), when the
+private context is a source-gap context of grade `g + 1 ≤ m` with the lost point last and the
+donor has top grade at most `g + 1`: the step for states holds from both coatoms
+(`ProfileTower.stateCatStep_low_of_raise`, `ProfileTower.lowStateRaise_donor`,
+`ProfileTower.lowStateRaise_private`, through `ProfileTower.lowStateRepair_seed`). -/
+theorem stateCatStep_low_seed (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
+    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
+    (htb : I.right.topGrade ≤ g + 1) {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
+    StateCatStep I (g + 1) (lowPred (g + 1) (lowN I (g + 1)) (lowT I)
+      (StageType.faceCell I.restrictFace_left o')
+      (StageType.faceCell I.restrictFace_left r')) x := by
+  classical
+  have hN : Sum.inr () ∉ lowN I (g + 1) := fun hf ↦ by
+    obtain ⟨t, -, ht⟩ := mem_image.mp hf
+    cases ht
+  have hT : Sum.inr () ∉ lowT I := fun hf ↦ by
+    obtain ⟨t, -, ht⟩ := hf
+    cases ht
+  exact stateCatStep_low_of_raise (Nat.succ_pos g) hgm le_rfl hN hT hx
+    ((lowStateRepair_seed hgm hs htb hx).lowStateRaise le_rfl)
 
 end VaughtConjecture.ProfileTower

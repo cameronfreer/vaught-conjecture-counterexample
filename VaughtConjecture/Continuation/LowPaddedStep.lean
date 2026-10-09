@@ -252,43 +252,6 @@ theorem lowStateRaise_of_repair {N : Finset (Fin I.amalgam.card ⊕ Unit)} (hK0 
 
 variable {g : ℕ}
 
-/-- **The repair at `K` for the LOW designations of a seed**, over the proper donor fields of grade
-at most `K` (`ProfileTower.lowStateRaise_private`, `ProfileTower.lowStateRaise_donor`), from both
-coatoms. -/
-theorem lowStateRepair_seed (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
-    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
-    (htb : I.right.topGrade ≤ g + 1) {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
-    LowStateRepair I (g + 1) (g + 1) (lowN I (g + 1)) (lowT I)
-      (StageType.faceCell I.restrictFace_left o') (StageType.faceCell I.restrictFace_left r')
-      x := by
-  classical
-  have hNQ : ∀ f ∈ lowN I (g + 1), ∃ d, f = Sum.inl d ∧
-      d ∈ I.amalgam.toCellScheme.below (coatD, g + 1) := by
-    intro f hf
-    obtain ⟨t, ht, rfl⟩ := mem_image.mp hf
-    exact ⟨_, rfl, faceCell_right_mem_below (mem_filter.mp ht).2.2⟩
-  have hTQ : ∀ f ∈ lowT I, ∃ d, f = Sum.inl d ∧
-      d ∈ I.amalgam.toCellScheme.below (coatD, g + 1) := by
-    rintro f ⟨t, ht, rfl⟩
-    exact ⟨_, rfl, faceCell_right_mem_below (StageType.topGrade_le_iff.mp htb t ht)⟩
-  have hNroot : ∀ i, I.left.toCellScheme.grade i ≤ g + 1 →
-      Fin.last m ∉ I.left.toCellScheme.scope i → I.left.label i ≠ ⊤ →
-        Sum.inl (StageType.faceCell I.restrictFace_left i) ∈ lowN I (g + 1) := by
-    intro i hi hl hit
-    obtain ⟨y, rfl⟩ := StageType.exists_faceCell_eq_of_last_notMem I.restrictFace_face_left hl
-    rw [StageType.faceCell_faceCell I.restrictFace_left I.restrictFace_right
-      I.restrictFace_face_left I.restrictFace_face_right y]
-    refine mem_image.mpr ⟨_, mem_filter.mpr ⟨mem_univ _, ?_, ?_⟩, rfl⟩
-    · rw [StageType.label_faceCell, ← StageType.label_faceCell I.restrictFace_face_left y]
-      exact hit
-    · rw [StageType.grade_faceCell, ← StageType.grade_faceCell I.restrictFace_face_left y]
-      exact hi
-  simp only [Pts, mem_insert, mem_singleton] at hx
-  rcases hx with rfl | rfl
-  · exact lowStateRaise_private hs htb rfl rfl hNQ (fun f hf ↦ hf) (fun t ht ↦ ⟨t, ht, rfl⟩)
-      fun t ht htK ↦ mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, ht, htK⟩, rfl⟩
-  · exact lowStateRaise_donor hgm hs rfl rfl hNQ hTQ hNroot
-
 /-- **The step for states at every grade `j ∈ [K, m]` for the LOW designations of a seed, over
 the proper donor fields of every grade**, when the private context is a source-gap context of
 grade `K = g + 1 ≤ m` with the lost point last and the donor has top grade at most `K`: from both

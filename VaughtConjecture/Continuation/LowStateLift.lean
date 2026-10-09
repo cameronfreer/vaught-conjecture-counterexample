@@ -257,17 +257,23 @@ def SLvl.SCatStep (x : Fin (m + 2)) : Prop :=
         I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (N.embed d))) ∧
       (∀ f, min (withCut W β f) h = min (P f) h) ∧ A (orbitCode (g + 1) (withCut W β))
 
-/-- The orbit code over all fields of a state with amalgam part lawful on the cut lies in the
-state catalogue when it satisfies `A`. -/
-theorem orbitCode_withCut_mem_sCat {W : Prof I} (hW : IsCutLawful I (g + 1) W) {β : Label.{u}}
-    (hA : A (orbitCode (g + 1) (withCut W β))) : orbitCode (g + 1) (withCut W β) ∈ 𝒮 := by
+/-- The orbit code over all fields of a state with amalgam part lawful on the cut lies in the state
+catalogue when it satisfies `A`. -/
+theorem orbitCode_mem_sCat {P : CProf I} (hP : IsCutLawful I (g + 1) (camal P))
+    (hA : A (orbitCode (g + 1) P)) : orbitCode (g + 1) P ∈ 𝒮 := by
   have hB : 2 * Fintype.card (Fin I.amalgam.card ⊕ Unit) ≤ bound I := by
     rw [card_fields]; simp only [bound]; omega
   refine mem_sCat.mpr ⟨fun f ↦ orbitMap_mem_codeGrid hB _, ⟨?_, ?_⟩, orbitCode_orbitCode, hA⟩
-  · exact hW.1.map_of_apply_eq_bot (fun d ↦ d.2.2)
-      (isWitness_orbitMap (g + 1) (withCut W β)) fun _ ↦ orbitMap_eq_bot_iff.mp
-  · exact hW.2.map_of_apply_eq_bot (fun d ↦ d.2.2)
-      (isWitness_orbitMap (g + 1) (withCut W β)) fun _ ↦ orbitMap_eq_bot_iff.mp
+  · exact hP.1.map_of_apply_eq_bot (fun d ↦ d.2.2)
+      (isWitness_orbitMap (g + 1) P) fun _ ↦ orbitMap_eq_bot_iff.mp
+  · exact hP.2.map_of_apply_eq_bot (fun d ↦ d.2.2)
+      (isWitness_orbitMap (g + 1) P) fun _ ↦ orbitMap_eq_bot_iff.mp
+
+/-- The orbit code over all fields of a state with amalgam part lawful on the cut lies in the
+state catalogue when it satisfies `A`: `ProfileTower.orbitCode_mem_sCat` at `withCut W β`. -/
+theorem orbitCode_withCut_mem_sCat {W : Prof I} (hW : IsCutLawful I (g + 1) W) {β : Label.{u}}
+    (hA : A (orbitCode (g + 1) (withCut W β))) : orbitCode (g + 1) (withCut W β) ∈ 𝒮 :=
+  orbitCode_mem_sCat hW hA
 
 /-- **The capped lift from a coatom into a state layer from the state step**, over a good state
 level readable at the canonical states, for `g + 1 ≤ m`, when `A` holds with the cutoff `⊥`: the
