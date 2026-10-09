@@ -43,7 +43,8 @@ section, and its cells of grade `2` read `y` and `z` alike, so a prescription at
 there is equal at `y` and `z`.  A realization needs two context cells read apart by the context's
 own cells of grade `2` while the state `R₀` takes one value there; at a context cell of grade `2`
 above both in `R₀` this forces that value to be self-visible at `2` (`Seed.not_context_pin`'s
-mechanism, `Label.isSelfVisible_of_witness_eq`), hence a height, against the gap.
+mechanism, `Label.isSelfVisible_of_witness_eq`), hence a height, against the gap (an argument not
+compiled here).
 
 ## References
 
