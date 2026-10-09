@@ -170,7 +170,7 @@ theorem min_decode_eq_decode (hU : U ∈ I.mixedFaces g) (hcard : (I.attachmentB
   -- the twin of `f` at the grade `k`
   obtain ⟨-, -, -, -, -, htwin⟩ :=
     Scheme.LadderBaseData.exists_controller_twin_ladderTower (B := I.attachmentBase g)
-      (H := H) (Γ := Γ) (A := A) (B' := B') hcard hA (K - 2) m (by omega) f hf'
+      (H := H) (Γ := Γ) (A := A) (B' := B') hcard hΓ hA (K - 2) m (by omega) f hf'
   obtain ⟨et, het, hrt⟩ := htwin (k - 2) (by omega)
   have het' : (𝕋).toCellScheme.gradedIndex et = ((univ : Finset (Fin (m + 2))), k) := by
     rw [het, show k - 2 + 2 = k by omega]

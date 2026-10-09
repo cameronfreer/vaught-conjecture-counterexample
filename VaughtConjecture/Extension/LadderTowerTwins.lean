@@ -50,8 +50,9 @@ theorem towerCat_mono (hA : ∀ k R, A (k + 3) R → A (k + 2) R) {k' k : ℕ} (
 scope at the grade `k + 2` is the cell of a lawful state `R` of the catalogue at `k + 2`, whose row
 reads `R` at the cells of the base of grade at most `k + 2`, the positive table of `R` at the base
 indices of its rank member on the ladder, and, at every grade `k' + 2 ≤ k + 2`, some cell of full
-scope at the top of the grid. -/
+scope at the top of the height set (the grid point, the values of `Γ` lying below it). -/
 theorem exists_controller_twin_ladderTower (hcard : B.S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
     (hA : ∀ k R, A (k + 3) R → A (k + 2) R) (k K : ℕ) (hK : k + 1 ≤ K)
     (u : Fin (B.ladderTower H Γ A B' K).S.card)
     (hu : (B.ladderTower H Γ A B' K).S.toCellScheme.gradedIndex u =
@@ -69,7 +70,7 @@ theorem exists_controller_twin_ladderTower (hcard : B.S.card ≤ H)
           ((univ : Finset (Fin n)), k' + 2) ∧
         (B.ladderTower H Γ A B' K).S.rowAt u e = gridPoint (k' + 2) B' := by
   obtain ⟨R, hRC, hrow, htwin⟩ := exists_layerTower_controller_twin (B := B.towerBase H)
-    (C := B.towerCat Γ A) (G := fun k ↦ grid k B') k K hK u hu
+    (C := B.towerCat Γ A) (G := fun k ↦ heightSet Γ B' k) k K hK u hu
   have hRl := (mem_towerCat.mp hRC).2.1
   refine ⟨R, hRC, hRl, fun d hd ↦ ?_, fun p ↦ ?_, fun k' hk' ↦ ?_⟩
   · have h := hrow (Fin.castAdd _ d) (by
@@ -82,7 +83,7 @@ theorem exists_controller_twin_ladderTower (hcard : B.S.card ≤ H)
     exact h.trans
       (stateExt_of_grade_one hRl hcard _ (appendFullCellsScheme_grade_natAdd _ _ _ _))
   · obtain ⟨e, he, hv⟩ := htwin k' hk' (towerCat_mono hA hk' hRC)
-    exact ⟨e, he, hv.trans (sup_grid (k' + 2) B')⟩
+    exact ⟨e, he, hv.trans (sup_heightSet hΓ (by omega))⟩
 
 /-- **A controller of the ladder tower reads a lower controller at a cap of agreement**: for cells
 `f` at `(univ, K + 2)` and `u` at `(univ, k + 2)`, `k ≤ K`, at a height `N ≥ K + 1`, there are
@@ -104,7 +105,7 @@ theorem exists_controller_agree_ladderTower (k K : ℕ) (hkK : k ≤ K)
         min (B.stateExt H Rf t) ((B.ladderTower H Γ A B' N).S.rowAt f u) =
           min (B.stateExt H Ru t) ((B.ladderTower H Γ A B' N).S.rowAt f u) :=
   exists_layerTower_controller_agree (B := B.towerBase H) (C := B.towerCat Γ A)
-    (G := fun k ↦ grid k B') (fun _ ↦ bot_mem_grid _ _) k K hkK N hN f u hf hu
+    (G := fun k ↦ heightSet Γ B' k) (fun _ ↦ bot_mem_heightSet _ _ _) k K hkK N hN f u hf hu
 
 /-- **The extension of a lawful state reads a cell at its shadow**: at the shadow of a cell `d`
 for the rank member of `R`, the extension of `R` is `R d`. -/

@@ -80,7 +80,7 @@ theorem replicatedWriting_attachEmb (hcard : (I.attachmentBase g).S.card ≤ H)
     ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ _)) = R c
   rw [Scheme.mirrorOrig_castAdd]
   refine (Scheme.layerTower_v_emb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') R _ m).trans ?_
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) R _ m).trans ?_
   exact Scheme.LadderBaseData.stateExt_castAdd hR hcard c
 
 /-- **The decoded writing of a state of the catalogue is lawful** below every pair of the grade of
@@ -138,7 +138,7 @@ theorem ladderTower_v_rung_ne_bot (hcard : (I.attachmentBase g).S.card ≤ H) (h
         (Scheme.RankMember.ofLawful (I.attachmentBase g).wf hcard hR, Sum.inl ⟨0, hH⟩)))) ≠
       ⊥ := by
   refine ne_of_eq_of_ne (Scheme.layerTower_v_emb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') R _ m) ?_
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) R _ m) ?_
   change (I.attachmentBase g).stateExt H R _ ≠ ⊥
   rw [Scheme.LadderBaseData.stateExt_of_isLawful hR hcard]
   erw [Fin.append_right]
@@ -170,7 +170,7 @@ theorem not_writingLift_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card �
       ((univ : Finset (Fin (m + 2))), 1) := by
     refine (Scheme.gradedIndex_mirror_castAdd _).trans ?_
     refine (Scheme.gradedIndex_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') _ m).trans ?_
+      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) _ m).trans ?_
     change ((I.attachmentBase g).S.appendFullCellsScheme 1 _).gradedIndex (Fin.natAdd _ _) = _
     exact Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ _
   have hmem : Fin.castAdd _ t ∈ (I.replicated g H Γ A B').toCellScheme.below
