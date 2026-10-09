@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.ReplicatedTieReading
+import VaughtConjecture.Extension.ReplicatedLiftUniv
 
 /-!
 # No pin inside the context
@@ -31,7 +32,12 @@ pin refuting it must have its three cells `a`, `a₁`, `a₃` in the context.  T
   section as prescription agreeing with it capped at `c` below the grade `k`, no context cell is
   pinned against a reversal by two context cells.
 
-So the pin technique cannot refute the context lift; this is not a proof of the context lift.
+* **A copy face asks nothing beyond the full face** (`Seed.exists_full_eq_of_copyFace`): a cell
+  at a mixed face `(U, k)` carries the label of a cell of the tower at `(univ, k)`; so availability
+  and ordering at copy faces are those of the cells of full scope.
+
+So the pin technique cannot refute the context lift, and copy faces add no obstruction; this is
+not a proof of the context lift.
 
 ## References
 
@@ -246,6 +252,25 @@ theorem not_context_pin {K k : ℕ} (hk1 : 1 ≤ k) (hkm : k ≤ m + 1)
     ⟨I.left.univ_mem_faces, hk1, by simpa using hkm⟩
   exact Scheme.false_of_face_pin (Γ := Γ) hu hw (fun x ↦ hRΓ _) hd₀ ha ha₁ ha₃ hcap h1 h3 hc3 hwa
     fun x hx hv hcx ↦ hpin x (Scheme.mem_heightSet.mpr (.inr ⟨hx, hv⟩)) hcx
+
+/-- **A copy face asks nothing beyond the full face**: in a section lawful below `(univ, j)`, a
+cell at a mixed face `(U, k)`, `k ≤ #U`, `k ≤ j`, carries the label of a cell of the tower at
+`(univ, k)` (it is the copy of one, `Seed.exists_eq_copyFull`, and copies carry their original's
+label, `Seed.eq_copyAt`).  So availability at a copy face is served by the cells of full scope,
+and an obstruction to a lift at a copy face is already one at the full face. -/
+theorem exists_full_eq_of_copyFace {U : Finset (Fin (m + 2))} (hU : U ∈ I.mixedFaces g)
+    {j k : ℕ} (hkU : k ≤ #U) (hkj : k ≤ j) {w : Fin (I.replicated g H Γ A B').card → Label.{u}}
+    (hw : (I.replicated g H Γ A B').rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j)
+      fun d ↦ w d)
+    (z : Fin (I.replicated g H Γ A B').card)
+    (hz : (I.replicated g H Γ A B').toCellScheme.gradedIndex z = (U, k)) :
+    ∃ v : Fin (I.attachTower g H Γ A B').card,
+      (I.attachTower g H Γ A B').toCellScheme.gradedIndex v =
+        ((univ : Finset (Fin (m + 2))), k) ∧ w z = w (Fin.castAdd _ v) := by
+  obtain ⟨v, hv, rfl⟩ := exists_eq_copyFull hU hkU z hz
+  refine ⟨v, hv, eq_copyAt hU hw _ _ ?_⟩
+  rw [CellScheme.mem_below, Scheme.gradedIndex_mirror_castAdd, hv]
+  exact ⟨subset_rfl, hkj⟩
 
 end Seed
 
