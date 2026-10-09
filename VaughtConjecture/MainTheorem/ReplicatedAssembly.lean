@@ -9,6 +9,7 @@ import VaughtConjecture.MainTheorem.GrowthRelabelStable
 import VaughtConjecture.Extension.LadderTowerContextLiftOne
 import VaughtConjecture.Extension.LadderTowerContextLiftCap
 import VaughtConjecture.Extension.ReplicatedOntoRoot
+import VaughtConjecture.MainTheorem.LowPaddedRoute
 
 /-!
 # The inputs of the replicated scheme at the seed position from the extension over the tower
@@ -91,6 +92,14 @@ type and the donor as the face along the root followed by the new point (the ass
 such seed).  These are implications; `StageType.HasReplicatedInputsAtSeed`,
 `StageType.TowerExtensionAtSeed`, the three lift statements and the main theorem stay
 conditional.
+
+**With (R2) for receiving models.**  (R2) for receiving models is compiled
+(`Realization.receivingResidualReceiving_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`), so the main theorem follows from ONE statement,
+the extension over the tower at a positive cap at the seed position
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos'`).  That statement,
+`StageType.TowerExtensionPosAtSeed Seed.seedHeight Seed.seedValues Seed.seedGridBound`, is open:
+it is not proved in this repository, and the main theorem stays conditional on it.
 
 ## References
 
@@ -675,6 +684,18 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed hres
     (hasReplicatedInputsAtSeed_of_seedTowerExtensionPos hE).hasLadderGrowthCarriersStableAtSeed
+
+/-- **The main theorem from the extension over the tower at a positive cap at the seed position**
+(one hypothesis, open): `StageType.TowerExtensionPosAtSeed` at the grades `2, …, m + 1`, at the
+choice `Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`.  (R2) for receiving models is
+`Realization.receivingResidualReceiving_of_padded`; the rest is
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos`.  The hypothesis is not
+proved here, so the thin `ℵ₁` spectrum stays conditional on it. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos'
+    (hE : TowerExtensionPosAtSeed.{0} Seed.seedHeight Seed.seedValues Seed.seedGridBound) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos
+    receivingResidualReceiving_of_padded hE
 
 end MainTheorem
 
