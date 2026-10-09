@@ -511,4 +511,82 @@ theorem sTowerLifts_of_frontier (hL : L.Good) (hRL : L.toS.ReadableS) {K : ℕ}
 
 end TowerLifts
 
+
+/-! ### The state step from the step on the amalgam -/
+
+section Amalgam
+
+variable {N : SLvl I g}
+
+/-- **The state step from the step for states on the amalgam**: a state step on amalgam
+labellings below the coatom (`ProfileTower.StateCatStep` of the lower-top lane has this form),
+whose conclusion satisfies `A` before coding, gives the state step of a good state level when `A`
+is kept by the orbit code over all fields. -/
+theorem SLvl.sCatStep_of_amalgam (hN : N.Good A)
+    (hAo : ∀ V : CProf I, A V → A (orbitCode (g + 1) V)) {x : Fin (m + 2)}
+    (hstep : ∀ P : CProf I, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) →
+      IsCutLawful I (g + 1) (camal P) → A P →
+      ∀ h : Label.{u}, IsSelfVisible (g + 1) h → IsShort (g + 1) h → ⊥ < h →
+      ∀ a : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase x, g + 1) (fun d ↦ a d) →
+      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, g + 1),
+        min (a d) h = min (P (Sum.inl d)) h) →
+      ∃ (W : Prof I) (β : Label.{u}), IsCutLawful I (g + 1) W ∧
+        (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, g + 1), W d = a d) ∧
+        (∀ d, min (W d) h = min (P (Sum.inl d)) h) ∧ β ∈ codeGrid (g + 1) (bound I) ∧
+        min β h = min (P (Sum.inr ())) h ∧ A (withCut W β)) :
+    N.SCatStep A x := by
+  intro P hP h hh hs hb w hw hwP
+  obtain ⟨hPB, hPC, -, hPA⟩ := mem_sCat.mp hP
+  have hX : ¬ ((univ : Finset (Fin (m + 2))), g + 1) ≤ (univ.erase x, g + 1) :=
+    fun h' ↦ Seed.ne_univ_erase x (univ_subset_iff.mp h'.1)
+  have ha : I.amalgam.rows.IsLawfulBelow (univ.erase x, g + 1)
+      (fun d ↦ w (Fin.castAdd _ (N.embed d))) :=
+    (SLvl.Good.isLawfulBelow_old_iff hN (X := (univ.erase x, g + 1)) (Seed.ne_univ_erase x)
+      (w := fun e ↦ w (Fin.castAdd _ e))).mp
+      ((Scheme.isLawfulBelow_appendFullCells_iff (v := w) hX).mp hw)
+  obtain ⟨W, β, hW, hWa, hWP, -, hβ, hA⟩ := hstep P hPB hPC hPA h hh hs hb _ ha
+    fun d hd ↦ hwP d hd.2 hd.1
+  refine ⟨W, β, hW, fun d hd hds ↦ hWa d ⟨hds, hd⟩, fun f ↦ ?_, hAo _ hA⟩
+  rcases f with d | z
+  · exact hWP d
+  · exact hβ
+
+/-- **The steps for states on the amalgam of the state tower** below the layer `J₀`: the step on
+the amalgam at every grade `g + J + 1` with `J < J₀`, from the two coatoms. -/
+def STowerAmalgamSteps (g : ℕ) (A : CProf I → Prop) (J₀ : ℕ) : Prop :=
+  ∀ J < J₀, ∀ x ∈ (Pts : Finset (Fin (m + 2))),
+    ∀ P : CProf I, (∀ f, P f ∈ codeGrid (g + J + 1) (bound I)) →
+      IsCutLawful I (g + J + 1) (camal P) → A P →
+      ∀ h : Label.{u}, IsSelfVisible (g + J + 1) h → IsShort (g + J + 1) h → ⊥ < h →
+      ∀ a : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase x, g + J + 1) (fun d ↦ a d) →
+      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, g + J + 1),
+        min (a d) h = min (P (Sum.inl d)) h) →
+      ∃ (W : Prof I) (β : Label.{u}), IsCutLawful I (g + J + 1) W ∧
+        (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, g + J + 1), W d = a d) ∧
+        (∀ d, min (W d) h = min (P (Sum.inl d)) h) ∧ β ∈ codeGrid (g + J + 1) (bound I) ∧
+        min β h = min (P (Sum.inr ())) h ∧ A (withCut W β)
+
+/-- **The state tower lifts from the steps for states on the amalgam**, over a good level read as
+a state level readable at the canonical states, up to the grade `m`, when `A` holds with the
+cutoff `⊥` and is kept by the state codes and the orbit codes over all fields from `g + 1` on. -/
+theorem sTowerLifts_of_amalgam {L : Lvl I g} (hL : L.Good) (hRL : L.toS.ReadableS)
+    (hA0 : ∀ W : Prof I, A (withCut W ⊥))
+    (hAc : ∀ j, g + 1 ≤ j → ∀ P : CProf I, A P → A (scode j P))
+    (hAo : ∀ j, g + 1 ≤ j → ∀ V : CProf I, A V → A (orbitCode j V)) :
+    ∀ J₀, g + J₀ ≤ m → STowerAmalgamSteps g A J₀ → STowerLifts L A J₀
+  | 0, _, _ => fun J hJ ↦ absurd hJ (Nat.not_lt_zero J)
+  | J₀ + 1, hm, hst => by
+    have ih := sTowerLifts_of_amalgam hL hRL hA0 hAc hAo J₀ (by omega)
+      (fun J hJ ↦ hst J (by omega))
+    intro J hJ x hx
+    have hgood := sTower_good hL hA0 hAc ih J (by omega) (by omega)
+    have hR : (sTower L A J).ReadableS := by
+      rcases J with _ | J
+      · exact hRL
+      · exact (sTower_good hL hA0 hAc ih J (by omega) (by omega)).readableS_next _
+    exact hgood.cappedLift_sS hR (by omega) hx hA0
+      (SLvl.sCatStep_of_amalgam hgood (hAo _ (by omega)) (hst J hJ x hx))
+
+end Amalgam
+
 end VaughtConjecture.ProfileTower

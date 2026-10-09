@@ -25,6 +25,13 @@ next level, is readable at the canonical states, `ProfileTower.Lvl.Good.readable
 LOW layers and LOW displays (`ProfileTower.readsActualOn_sTower`), with no condition on the face
 labels above `K`.
 
+**From the steps for states on the amalgam** (`StageType.StateAmalgamSteps`,
+`StageType.hasLowDisplaysOn_stateAmalgam`, compiled in this repository): the same with the state
+step stated on amalgam labellings below the coatom with an uncoded conclusion
+(`ProfileTower.SLvl.sCatStep_of_amalgam`; the orbit code over all fields keeps the LOW clause), the
+form in which the LOW step for states at `K` is proved for every LOW family of top grade at most
+`K` in the lower-top lane (`ProfileTower.stateCatStep_low_seed`); there the grades above `K` remain.
+
 **Not claimed.**  `StageType.HasLowDisplays` is not proved.  The frontier steps are not proved
 here.  At the layer of controllers the frontier step is what the LOW steps of the catalogue layer
 (`ProfileTower.Lvl.Good.lowStep_donor`, `ProfileTower.Lvl.Good.lowStep_private`) build before they
@@ -94,5 +101,52 @@ theorem hasLowLayersOn_stateFrontier : HasLowLayersOn.{u} StateFrontierClass := 
 /-- **LOW displays on the class of the frontier steps.** -/
 theorem hasLowDisplaysOn_stateFrontier : HasLowDisplaysOn.{u} StateFrontierClass :=
   hasLowLayersOn_stateFrontier.hasLowDisplaysOn
+
+
+/-- **The steps for states on the amalgam of a LOW family** (a hypothesis): for every
+decomposition `K = g + 2`, `k = g + 1 + J + 2`, the step for states on the amalgam of the seed of
+the family, for the LOW clause at `K`, at every grade from `K` to `k`, from the two coatoms (the
+form of `ProfileTower.StateCatStep` of the lower-top lane). -/
+def StateAmalgamSteps (K : ℕ) (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
+    (o r : Fin t'.card) : Prop :=
+  ∀ (hF : IsLowFamily K t' tb p o r) (g J : ℕ) (hK : K = g + 2) (hk : k = g + 1 + J + 2), by
+    subst hK hk
+    exact ProfileTower.STowerAmalgamSteps
+      (I := Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private hF.face_donor)
+      (g + 1) (ProfileTower.lowPred (g + 2) (ProfileTower.lowN _ (g + 2)) (ProfileTower.lowT _)
+        (StageType.faceCell (Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private
+          hF.face_donor).restrictFace_left o)
+        (StageType.faceCell (Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private
+          hF.face_donor).restrictFace_left r)) (J + 2)
+
+/-- **The class of the steps for states on the amalgam**: the LOW families with `2 ≤ K < k` with
+the steps for states on the amalgam at every grade from `K` to `k`. -/
+def StateAmalgamClass (α : Ordinal.{u}) (K k : ℕ) (t' tb : StageType.{u} α (k + 1))
+    (p : StageType.{u} α k) (o r : Fin t'.card) : Prop :=
+  2 ≤ K ∧ K < k ∧ StateAmalgamSteps K t' tb p o r
+
+/-- **LOW layers on the class of the steps for states on the amalgam**: no condition on the labels
+of the faces above `K` (`ProfileTower.sTowerLifts_of_amalgam`,
+`ProfileTower.readsActualOn_sTower`). -/
+theorem hasLowLayersOn_stateAmalgam : HasLowLayersOn.{u} StateAmalgamClass := by
+  intro α K k t' tb p o r hα hF ⟨hK2, hKk, hst⟩
+  obtain ⟨g, rfl⟩ : ∃ g, K = g + 2 := ⟨K - 2, by omega⟩
+  obtain ⟨J, rfl⟩ : ∃ J, k = g + 1 + J + 2 := ⟨k - (g + 3), by omega⟩
+  have hs := hF.isSourceGapContextAt
+  have htb := hF.topGrade_donor
+  set I := Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private hF.face_donor
+  have hF' := ProfileTower.fieldsLE_low (I := I) hs htb
+  have hr := (ProfileTower.lost_copy (I := I) hs).2
+  have hL := ProfileTower.lvlZero_good (I := I) (g + 1) (by omega)
+  have hRL := (ProfileTower.lvlZero_good (I := I) g (by omega)).readableS_toS_next
+  exact ProfileTower.readsActualOn_sTower hα.isSuccPrelimit hs htb
+    (ProfileTower.sTowerLifts_of_amalgam hL hRL (fun W ↦ ProfileTower.lowPred_withCut_bot W)
+      (fun j hj P h ↦ ProfileTower.lowPred_scode hF' hr hj h)
+      (fun j hj V h ↦ h.map (isWitness_orbitMap j V) (stepSuppressor_of_le hj)) (J + 2)
+      (by omega) (hst hF g J rfl rfl))
+
+/-- **LOW displays on the class of the steps for states on the amalgam.** -/
+theorem hasLowDisplaysOn_stateAmalgam : HasLowDisplaysOn.{u} StateAmalgamClass :=
+  hasLowLayersOn_stateAmalgam.hasLowDisplaysOn
 
 end VaughtConjecture.StageType
