@@ -136,12 +136,12 @@ theorem exists_ladder_shape (hH : 0 < H) {j : ℕ} (hj : 1 ≤ j)
   classical
   have hT := isLawfulBelow_castAdd_replicated hq
   have hφ := Scheme.isLowerEmbedding_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') m
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) m
   have hsc := fun t ↦ Scheme.scope_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') t m
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) t m
   have hB := Rows.IsLawfulBelow.comap_of_scope_eq hφ hsc hT
   rw [Scheme.comap_rows_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') m] at hB
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) m] at hB
   set v : Fin ((I.attachmentBase g).ladderBase H).card → Label.{u} := fun t ↦
     q (Fin.castAdd _ ((I.attachmentBase g).towerEmb (H := H) (Γ := Γ) (A := A) (B' := B') m t))
     with hv
