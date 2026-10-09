@@ -40,6 +40,9 @@ cap: the frontier capped at `h` is that of `P`, at most every donor top of `P` b
 some profile lawful on the cut, equal to `W₀` below the coatom and agreeing with `P` capped at
 `h`, reads every donor top at least at its frontier.  At the grade `K` it is the tie case (from
 the private coatom) and the unserved case (from the donor coatom) of the LOW step.
+`ProfileTower.LowStateRepair` is the same conclusion under weaker premises (no code grid, the cap
+self-visible at `K` only), so that a repair at `K` applies to truncations of data at `j ≥ K`
+(`ProfileTower.LowStateRepair.lowStateRaise`).
 
 ## Placement
 
@@ -145,6 +148,29 @@ def LowStateRaise (K j : ℕ) (N : Finset (Fin I.amalgam.card ⊕ Unit))
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, j), W d = W₀ d) ∧
       (∀ d, min (W d) h = min (P (Sum.inl d)) h) ∧
       ∀ y ∈ T, frontier K (Sum.inl o) (Sum.inl r) (withCut W ⊥) ≤ withCut W ⊥ y
+
+variable (I) in
+/-- **The repair of the failure mode** at the grade `j` from the coatom `univ.erase x`: the
+conclusion of `ProfileTower.LowStateRaise` under weaker premises (no code grid, the cap only
+self-visible at `K`). -/
+def LowStateRepair (K j : ℕ) (N : Finset (Fin I.amalgam.card ⊕ Unit))
+    (T : Set (Fin I.amalgam.card ⊕ Unit)) (o r : Fin I.amalgam.card) (x : Fin (m + 2)) : Prop :=
+  ∀ P : CProf I, IsCutLawful I j (camal P) → lowPred K N T o r P →
+    ∀ h : Label.{u}, IsSelfVisible K h → ⊥ < h →
+    ∀ W₀ : Prof I, IsCutLawful I j W₀ → (∀ d, min (W₀ d) h = min (P (Sum.inl d)) h) →
+    donorMax N (withCut W₀ ⊥) < min (P (Sum.inr ())) h →
+    h < frontier K (Sum.inl o) (Sum.inl r) (withCut W₀ ⊥) →
+    ∃ W : Prof I, IsCutLawful I j W ∧
+      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, j), W d = W₀ d) ∧
+      (∀ d, min (W d) h = min (P (Sum.inl d)) h) ∧
+      ∀ y ∈ T, frontier K (Sum.inl o) (Sum.inl r) (withCut W ⊥) ≤ withCut W ⊥ y
+
+/-- The repair gives the failure mode of the step, for `K ≤ j`. -/
+theorem LowStateRepair.lowStateRaise {K j : ℕ} {N : Finset (Fin I.amalgam.card ⊕ Unit)}
+    {T : Set (Fin I.amalgam.card ⊕ Unit)} {o r : Fin I.amalgam.card} {x : Fin (m + 2)}
+    (hKj : K ≤ j) (h : LowStateRepair I K j N T o r x) : LowStateRaise I K j N T o r x :=
+  fun P _ hPC hPlow h' hh _ hb W₀ hW₀ hW₀P hact hfh ↦
+    h P hPC hPlow h' (hh.mono hKj) hb W₀ hW₀ hW₀P hact hfh
 
 variable {K j : ℕ} {N : Finset (Fin I.amalgam.card ⊕ Unit)} {T : Set (Fin I.amalgam.card ⊕ Unit)}
   {o r : Fin I.amalgam.card}

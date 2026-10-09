@@ -47,7 +47,8 @@ open Finset Label CellScheme
 variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} {N : Finset (Fin I.amalgam.card ⊕ Unit)}
   {T : Set (Fin I.amalgam.card ⊕ Unit)} {o r : Fin I.amalgam.card} {g : ℕ}
 
-/-- **The failure mode of the LOW step for states at `K`, from the donor coatom.**  For the
+/-- **The repair of the failure mode of the LOW step for states at `K`, from the donor
+coatom** (`ProfileTower.LowStateRepair`).  For the
 private context a source-gap context of grade `g + 1 ≤ m` with the lost point last, owner and lost
 top the copies `o`, `r`, the proper donor fields and the donor tops cells below the donor coatom,
 and the proper root cells proper donor fields: the private face of `W₀` is lowered to frontier at
@@ -61,9 +62,9 @@ theorem lowStateRaise_donor (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
     (hNroot : ∀ i, I.left.toCellScheme.grade i ≤ g + 1 →
       Fin.last m ∉ I.left.toCellScheme.scope i → I.left.label i ≠ ⊤ →
         Sum.inl (StageType.faceCell I.restrictFace_left i) ∈ N) :
-    LowStateRaise I (g + 1) (g + 1) N T o r (Fin.castSucc (Fin.last m)) := by
+    LowStateRepair I (g + 1) (g + 1) N T o r (Fin.castSucc (Fin.last m)) := by
   classical
-  intro P hPB hPC hPlow h hh hsh hb A hA hAP hact hfh
+  intro P hPC hPlow h hh hb A hA hAP hact hfh
   have hU := StageType.lowStepUnserved_of_le I.isLegal_left hs hgm I.restrictFace_face_left
   have hAlC : I.amalgam.rows.IsLawfulBelow (coatC, g + 1) fun d ↦ A d := hA.1
   have hAlD : I.amalgam.rows.IsLawfulBelow (coatD, g + 1) fun d ↦ A d := hA.2
@@ -172,7 +173,8 @@ theorem lowStateRaise_donor (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
   exact hPx
 
 
-/-- **The failure mode of the LOW step for states at `K`, from the private coatom.**  For the
+/-- **The repair of the failure mode of the LOW step for states at `K`, from the private
+coatom** (`ProfileTower.LowStateRepair`).  For the
 private context a source-gap context of grade `g + 1 ≤ m` with the lost point last, the donor of
 top grade at most `g + 1`, owner and lost top the copies `o`, `r`, the donor tops the copies of the
 tops of the donor, the copies of the proper donor cells of grade at most `g + 1` proper donor
@@ -190,9 +192,9 @@ theorem lowStateRaise_private {o' r' : Fin I.left.card}
       Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ T)
     (hLoN : ∀ t, I.right.label t ≠ ⊤ → I.right.toCellScheme.grade t ≤ g + 1 →
       Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ N) :
-    LowStateRaise I (g + 1) (g + 1) N T o r (Fin.last (m + 1)) := by
+    LowStateRepair I (g + 1) (g + 1) N T o r (Fin.last (m + 1)) := by
   classical
-  intro P hPB hPC hPlow h hh hsh hb A hA hAP hact hfh
+  intro P hPC hPlow h hh hb A hA hAP hact hfh
   have hPD : I.amalgam.rows.IsLawfulBelow (coatD, g + 1) fun d ↦ P (Sum.inl d) := hPC.2
   have hAlC : I.amalgam.rows.IsLawfulBelow (coatC, g + 1) fun d ↦ A d := hA.1
   have hAlD : I.amalgam.rows.IsLawfulBelow (coatD, g + 1) fun d ↦ A d := hA.2
@@ -385,8 +387,9 @@ theorem stateCatStep_low_seed (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
   refine stateCatStep_low_of_raise (Nat.succ_pos g) hgm le_rfl hN hT hx ?_
   simp only [Pts, mem_insert, mem_singleton] at hx
   rcases hx with rfl | rfl
-  · exact lowStateRaise_private hs htb rfl rfl hNQ (fun f hf ↦ hf) (fun t ht ↦ ⟨t, ht, rfl⟩)
-      fun t ht htK ↦ mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, ht, htK⟩, rfl⟩
-  · exact lowStateRaise_donor hgm hs rfl rfl hNQ hTQ hNroot
+  · exact (lowStateRaise_private hs htb rfl rfl hNQ (fun f hf ↦ hf) (fun t ht ↦ ⟨t, ht, rfl⟩)
+      fun t ht htK ↦ mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, ht, htK⟩, rfl⟩).lowStateRaise
+        le_rfl
+  · exact (lowStateRaise_donor hgm hs rfl rfl hNQ hTQ hNroot).lowStateRaise le_rfl
 
 end VaughtConjecture.ProfileTower
