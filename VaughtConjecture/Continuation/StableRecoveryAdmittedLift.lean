@@ -12,7 +12,9 @@ Roadmap, Layer 3, 3.1 (a completion whose catalogue at the reading grade is rest
 the capped correctness at the private type `P` of
 `VaughtConjecture.Continuation.StableRecoveryCapCorrectness`.
 
-**Gluing** (`Seed.exists_isLawful_glue`).  For a seed whose two coatom types are equal (`T`), two
+**Gluing** (`Seed.exists_isLawful_glue`, in
+`VaughtConjecture.Continuation.SourceGapDoubledAmalgam`, with `Scheme.isLawfulBelow_faceCell_iff`
+in `VaughtConjecture.Stage.Scheme`).  For a seed whose two coatom types are equal (`T`), two
 lawful labellings `sL`, `sR` of `T` agreeing at the cells of `T` avoiding the last point glue to a
 lawful labelling of the amalgam, `sL` on the copies along the first coatom and `sR` on the copies
 along the second: lawful below each coatom pair through the faces
@@ -55,102 +57,6 @@ namespace VaughtConjecture
 
 open Finset Label CellScheme StageType
 open Ordinal hiding univ
-
-/-! ### Lawfulness through a face -/
-
-namespace Scheme
-
-variable {n m : ℕ} {S : Scheme.{u} n} {f : Fin m ↪ Fin n} {T : Scheme.{u} m}
-
-/-- **Lawfulness through a face**: a labelling of `S` read on the cells of a face `T` along `f` is
-lawful below `X` in `T` exactly when it is lawful below the image of `X` in `S`. -/
-theorem isLawfulBelow_faceCell_iff (he : S.comap f = T) (X : Finset (Fin m) × ℕ)
-    (x : Fin S.card → Label.{u}) :
-    T.rows.IsLawfulBelow X (fun i ↦ x (S.faceCell f he i)) ↔
-      S.rows.IsLawfulBelow (Prod.map (Finset.map f) id X) (fun d ↦ x d) := by
-  subst he
-  exact S.isLawfulBelow_comap_cellMap_iff f X x
-
-end Scheme
-
-/-! ### Gluing two labellings on the amalgam of a type with itself -/
-
-namespace Seed
-
-variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) (hLR : I.left = I.right)
-
-/-- A copy along the second coatom that also lies on the first is a cell of `T` avoiding the last
-point. -/
-theorem last_notMem_of_faceCell_right_mem {z : Fin I.left.card}
-    (hz : StageType.faceCell (I.restrictFace_right_left hLR) z ∈
-      I.amalgam.toScheme.visibleCells (Coatom.left m)) :
-    Fin.last m ∉ I.left.toCellScheme.scope z := by
-  intro hm
-  have h := I.faceCell_left_doublingCell hLR hz
-  rw [I.doublingCell_faceCell_right hLR] at h
-  have hs := congrArg (fun d ↦ I.amalgam.toCellScheme.scope d) h
-  simp only [StageType.scope_faceCell] at hs
-  have hl : Coatom.right m (Fin.last m) ∈ (I.left.toCellScheme.scope z).map (Coatom.left m) :=
-    hs ▸ mem_map_of_mem _ hm
-  obtain ⟨y, -, hy⟩ := mem_map.mp hl
-  rw [Coatom.right, extendByLast_last] at hy
-  exact (Fin.castSucc_lt_last y).ne hy
-
-open Classical in
-/-- **Gluing on the amalgam**: two lawful labellings of `T` agreeing at the cells avoiding the last
-point glue to a lawful labelling of the amalgam of `T` with itself, the first on the copies along
-the first coatom and the second on the copies along the second. -/
-theorem exists_isLawful_glue {sL sR : Fin I.left.card → Label.{u}}
-    (hL : I.left.rows.IsLawful sL) (hR : I.left.rows.IsLawful sR)
-    (hagree : ∀ z, Fin.last m ∉ I.left.toCellScheme.scope z → sL z = sR z) :
-    ∃ w : Fin I.amalgam.card → Label.{u}, I.amalgam.rows.IsLawful w ∧
-      (∀ z, w (StageType.faceCell I.restrictFace_left z) = sL z) ∧
-      ∀ z, w (StageType.faceCell (I.restrictFace_right_left hLR) z) = sR z := by
-  set w : Fin I.amalgam.card → Label.{u} := fun d ↦
-    if d ∈ I.amalgam.toScheme.visibleCells (Coatom.left m) then sL (I.doublingCell hLR d)
-    else sR (I.doublingCell hLR d)
-  have hwL (z : Fin I.left.card) : w (StageType.faceCell I.restrictFace_left z) = sL z := by
-    have h : StageType.faceCell I.restrictFace_left z ∈
-        I.amalgam.toScheme.visibleCells (Coatom.left m) :=
-      I.amalgam.toScheme.faceCell_mem_visibleCells _ z
-    simp only [w, h, ↓reduceIte, I.doublingCell_faceCell_left hLR]
-  have hwR (z : Fin I.left.card) :
-      w (StageType.faceCell (I.restrictFace_right_left hLR) z) = sR z := by
-    by_cases h : StageType.faceCell (I.restrictFace_right_left hLR) z ∈
-        I.amalgam.toScheme.visibleCells (Coatom.left m)
-    · simp only [w, h, ↓reduceIte, I.doublingCell_faceCell_right hLR]
-      exact hagree z (I.last_notMem_of_faceCell_right_mem hLR h)
-    · simp only [w, h, ↓reduceIte, I.doublingCell_faceCell_right hLR]
-  have hU : I.amalgam.rows.IsLawfulBelow ((univ : Finset (Fin (m + 1))).map (Coatom.left m),
-      m + 1) fun d ↦ w d := by
-    refine (Scheme.isLawfulBelow_faceCell_iff
-      (StageType.comap_toScheme_of_restrictFace I.restrictFace_left) (univ, m + 1) w).mp ?_
-    convert hL.isLawfulBelow ((univ : Finset (Fin (m + 1))), m + 1) using 1
-    funext i
-    exact hwL i
-  have hV : I.amalgam.rows.IsLawfulBelow ((univ : Finset (Fin (m + 1))).map (Coatom.right m),
-      m + 1) fun d ↦ w d := by
-    refine (Scheme.isLawfulBelow_faceCell_iff
-      (StageType.comap_toScheme_of_restrictFace (I.restrictFace_right_left hLR)) (univ, m + 1)
-        w).mp ?_
-    convert hR.isLawfulBelow ((univ : Finset (Fin (m + 1))), m + 1) using 1
-    funext i
-    exact hwR i
-  have hgrade (d : Fin I.amalgam.card) : I.amalgam.toCellScheme.grade d ≤ m + 1 :=
-    Nat.lt_succ_iff.mp (I.grade_lt d)
-  have hY : I.amalgam.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), m + 1)
-      fun d ↦ w d := by
-    refine CellScheme.Rows.IsLawfulBelow.glue hU hV fun d _ ↦ ?_
-    rcases I.mem_visibleCells_or d with hd | hd
-    · refine Or.inl ⟨fun x hx ↦ ?_, hgrade d⟩
-      obtain ⟨y, hy⟩ := Scheme.mem_visibleCells.mp hd hx
-      exact mem_map.mpr ⟨y, mem_univ _, hy⟩
-    · refine Or.inr ⟨fun x hx ↦ ?_, hgrade d⟩
-      obtain ⟨y, hy⟩ := Scheme.mem_visibleCells.mp hd hx
-      exact mem_map.mpr ⟨y, mem_univ _, hy⟩
-  exact ⟨w, hY.isLawful fun d ↦ ⟨subset_univ _, hgrade d⟩, hwL, hwR⟩
-
-end Seed
 
 /-! ### Recognition at a reader -/
 

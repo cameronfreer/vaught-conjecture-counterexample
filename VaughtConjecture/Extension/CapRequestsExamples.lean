@@ -7,6 +7,7 @@ import VaughtConjecture.Extension.CapRequests
 import VaughtConjecture.Continuation.StableRecoveryReading
 import VaughtConjecture.Stage.MarkedCap
 import VaughtConjecture.Extension.OrbitCode
+import VaughtConjecture.Extension.GatedExtensionRequests
 
 /-!
 # Cap requests at the reading type
@@ -220,25 +221,7 @@ example : capReq8.IsCorrect fun d : Below8 ↦
 
 /-! ### The private type `P` of the gated extension counterexample -/
 
-/-- The donor cells requested `⊥` at `P`: the dead cells on the new point. -/
-def selfZ : Finset (Fin 5) := {1, 2}
-
-/-- The donor cells requested high at `P`: the two cells of full scope. -/
-def selfT : Finset (Fin 5) := {3, 4}
-
-/-- **The bottom class** of the private side at `P`: `⊥` exactly at the dead cells. -/
-def InBottomClassP (sL : Fin 5 → Label.{u}) : Prop :=
-  ∀ d, sL d = ⊥ ↔ d ∈ ({0, 1, 2} : Finset (Fin 5))
-
-/-- **Capped correctness at `P`** of a state (`sL` on the private copy, `sR` on the donor copy)
-for the cap `C`, the marker `a` and the marker offset `R`, at the threshold `N = 2`. -/
-def IsCapCorrectP (C a : Fin 5) (R : ℕ) (sL sR : Fin 5 → Label.{u}) : Prop :=
-  (∀ z ∈ selfZ, min (sR z) (sL C) = ⊥) ∧
-    ∀ y ∈ selfT, min (visibilityReplace 2 R (sL a)) (sL C) ≤ min (sR y) (sL C)
-
-/-- **Admission at `P`**: correct as soon as the private side is in the bottom class. -/
-def IsAdmittedP (C a : Fin 5) (R : ℕ) (sL sR : Fin 5 → Label.{u}) : Prop :=
-  InBottomClassP sL → IsCapCorrectP C a R sL sR
+open GatedExtensionCounterexample
 
 /-- The requests at `P` on the private copy and the donor copy `Fin 5 ⊕ Fin 5`: the cap `C` and
 the marker `a` on the private copy, threshold `2`, offset `R < 2`, `Z` and `T` the donor copies of
@@ -353,5 +336,29 @@ example {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} {c r : Fin t'.card}
   ⟨hctx.1.2.1, hctx.2.1.1⟩
 
 end MarkedCap
+
+/-! ### Names of the request data at `P`
+
+The request data at `P` moved from this namespace to
+`VaughtConjecture.Extension.GatedExtensionRequests` (namespace `GatedExtensionCounterexample`);
+these names forward to it. -/
+
+/-- `GatedExtensionCounterexample.selfZ`, moved from this namespace. -/
+abbrev selfZ : Finset (Fin 5) := GatedExtensionCounterexample.selfZ
+
+/-- `GatedExtensionCounterexample.selfT`, moved from this namespace. -/
+abbrev selfT : Finset (Fin 5) := GatedExtensionCounterexample.selfT
+
+/-- `GatedExtensionCounterexample.InBottomClassP`, moved from this namespace. -/
+abbrev InBottomClassP (sL : Fin 5 → Label.{u}) : Prop :=
+  GatedExtensionCounterexample.InBottomClassP sL
+
+/-- `GatedExtensionCounterexample.IsCapCorrectP`, moved from this namespace. -/
+abbrev IsCapCorrectP (C a : Fin 5) (R : ℕ) (sL sR : Fin 5 → Label.{u}) : Prop :=
+  GatedExtensionCounterexample.IsCapCorrectP C a R sL sR
+
+/-- `GatedExtensionCounterexample.IsAdmittedP`, moved from this namespace. -/
+abbrev IsAdmittedP (C a : Fin 5) (R : ℕ) (sL sR : Fin 5 → Label.{u}) : Prop :=
+  GatedExtensionCounterexample.IsAdmittedP C a R sL sR
 
 end VaughtConjecture.CapRequestsExamples

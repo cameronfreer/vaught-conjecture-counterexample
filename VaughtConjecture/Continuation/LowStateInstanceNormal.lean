@@ -5,7 +5,6 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.LowStateInstance
 import VaughtConjecture.Continuation.LowStateLift
-import VaughtConjecture.Continuation.H2OwnerGeneral
 
 /-!
 # The rigid reading refutes the state step on the normalized catalogue
@@ -133,7 +132,7 @@ theorem isWitness_topAbove {j : ℕ} {θ : Label.{u} → Label.{u}}
         rw [topAbove_of_le hxh, topAbove_of_le hv,
           hθ.visibilityReplace_comm x k (by rw [stepSuppressor_of_le hk]; exact le_top) i hi]
       · have hv : h < visibilityReplace k i x :=
-          H2.lt_visibilityReplace_of_lt hi hhk (not_le.mp hxh)
+          lt_visibilityReplace_of_lt hi hhk (not_le.mp hxh)
         rw [topAbove_of_lt (not_le.mp hxh), topAbove_of_lt hv, visibilityReplace_top]
     · rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff] at hx
       have hx0 : x = ⊥ := by

@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.AdmittedFieldLayer
+import VaughtConjecture.Extension.AdmittedFieldLayerLift
 import VaughtConjecture.Continuation.StableRecoveryAdmittedLift
 
 /-!
@@ -14,10 +14,10 @@ reading grades), 3.3; the admitted field layer of `VaughtConjecture.Extension.Ad
 and the capped correctness at `P` of
 `VaughtConjecture.Continuation.StableRecoveryCapCorrectness`.
 
-**Extension through a field layer on a sub-catalogue, by a chosen template.**  The lifts of the
-canonical field layer extend a boundary labelling by the field row of the orbit code of the
-labelling itself.  On a sub-catalogue `C` the same proofs go through as soon as that orbit code
-lies in `C`:
+**Extension through a field layer on a sub-catalogue, by a chosen template**
+(`VaughtConjecture.Extension.AdmittedFieldLayerLift`).  The lifts of the canonical field layer
+extend a boundary labelling by the field row of the orbit code of the labelling itself.  On a
+sub-catalogue `C` the same proofs go through as soon as that orbit code lies in `C`:
 
 * `Scheme.exists_isLawfulBelow_fieldLayerOn` (cap `⊥`): a labelling `p` lawful below `(univ, k)`
   whose orbit code is in `C` extends, unchanged at the old cells, to a labelling lawful below
@@ -62,168 +62,6 @@ namespace VaughtConjecture
 
 open Finset Label CellScheme StageType
 open Ordinal hiding univ
-
-/-! ### Extension through a field layer on a sub-catalogue -/
-
-namespace Scheme
-
-variable {n k : ℕ} {S : Scheme.{u} n} {C : Finset (Fin S.card → Label.{u})}
-  {hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d}
-
-/-- An old cell of grade at most `k` lies below `(univ, k)` in the field layer on `C`. -/
-theorem castAdd_mem_below_fieldLayerOn {d : Fin S.card} (hd : S.toCellScheme.grade d ≤ k) :
-    Fin.castAdd C.card d ∈ (S.fieldLayerOn k C hS).toCellScheme.below (univ, k) :=
-  ⟨subset_univ _, (appendFullCellsScheme_grade_castAdd S k _ d).trans_le hd⟩
-
-/-- **Extension at the cap `⊥` through a field layer on a sub-catalogue**: a labelling of `S` whose
-orbit code (of its splice) lies in `C` (so the splice is lawful below `(univ, k)`) extends,
-unchanged at the old cells
-of grade at most `k`, to a labelling lawful below `(univ, k)` in the field layer on `C`: the field
-row of that code, read by the orbit decoder at the least grid point. -/
-theorem exists_isLawfulBelow_fieldLayerOn (hC : C ⊆ S.catalogue k) {p : Fin S.card → Label.{u}}
-    (hb : orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) p) ∈ C) :
-    ∃ r : (S.fieldLayerOn k C hS).toCellScheme.below (univ, k) → Label.{u},
-      (S.fieldLayerOn k C hS).rows.IsLawfulBelow (univ, k) r ∧
-        ∀ d (hd : S.toCellScheme.grade d ≤ k),
-          r ⟨Fin.castAdd _ d, castAdd_mem_below_fieldLayerOn hd⟩ = p d := by
-  set t := S.toCellScheme.splice k (fun _ ↦ ⊥) p
-  refine ⟨fun x ↦ orbitDecoder k t (gridPoint k 0) (S.fieldRowOn k C (orbitCode k t) x),
-    ((isLawful_fieldRowOn (hS := hS) (hC hb) hb).isLawfulBelow _).map_of_apply_eq_bot
-      (fun x ↦ x.2.2)
-      (isWitness_orbitDecoder (isSelfVisible_gridPoint k 0) (gridPoint_ne_bot k 0))
-      fun _ ↦ eq_bot_of_orbitDecoder_eq_bot (gridPoint_ne_bot k 0), fun d hd ↦ ?_⟩
-  change orbitDecoder k t (gridPoint k 0) (S.fieldRowOn k C (orbitCode k t) (Fin.castAdd _ d)) =
-    p d
-  rw [fieldRowOn_castAdd, orbitDecoder_orbitCode (fun e ↦ min_orbitCode_gridPoint_zero e)]
-  exact CellScheme.splice_of_le hd
-
-/-- **Extension through a field layer on a sub-catalogue at a short positive cap.**  Let `p` be a
-labelling of `S` with its orbit code in `C`, `a ∈ C` a catalogue entry, and `h`
-self-visible and short at `k` with `⊥ < h`, such that `p` agrees with `a` capped at `h` at the
-cells of grade at most `k`.  Then some labelling lawful below `(univ, k)` in the field layer on `C`
-reads `p` at the old cells of grade at most `k` and agrees with the field row of `a` capped at `h`
-at every cell below `(univ, k)` (the proof of `Scheme.exists_extension_fieldLayer`, short case). -/
-theorem exists_extension_fieldLayerOn (hC : C ⊆ S.catalogue k) {p : Fin S.card → Label.{u}}
-    (hb : orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) p) ∈ C)
-    {a : Fin S.card → Label.{u}} (haC : a ∈ C) {h : Label.{u}} (hh : IsSelfVisible k h)
-    (hs : IsShort k h) (hbot : ⊥ < h)
-    (hag : ∀ d, S.toCellScheme.grade d ≤ k → min (p d) h = min (a d) h) :
-    ∃ r : (S.fieldLayerOn k C hS).toCellScheme.below (univ, k) → Label.{u},
-      (S.fieldLayerOn k C hS).rows.IsLawfulBelow (univ, k) r ∧
-        (∀ d (hd : S.toCellScheme.grade d ≤ k),
-          r ⟨Fin.castAdd _ d, castAdd_mem_below_fieldLayerOn hd⟩ = p d) ∧
-          ∀ x, min (r x) h = min (S.fieldRowOn k C a x) h := by
-  set t := S.toCellScheme.splice k (fun _ ↦ ⊥) p with ht_def
-  have htle (d : Fin S.card) (hd : S.toCellScheme.grade d ≤ k) : t d = p d :=
-    CellScheme.splice_of_le hd
-  have htgt (d : Fin S.card) (hd : ¬ S.toCellScheme.grade d ≤ k) : t d = ⊥ :=
-    CellScheme.splice_of_lt (not_le.mp hd)
-  set b := orbitCode k t
-  have ha : a ∈ S.catalogue k := hC haC
-  obtain ⟨-, haup, haa⟩ := mem_catalogue.mp ha
-  have hagt (d : Fin S.card) : min (t d) h = min (a d) h := by
-    by_cases hd : S.toCellScheme.grade d ≤ k
-    · rw [htle d hd]
-      exact hag d hd
-    · rw [htgt d hd, haup d (not_le.mp hd)]
-  have hba (d : Fin S.card) : min (b d) h = min (a d) h := min_orbitCode_eq hh hs haa hagt d
-  have hrowh (x : Fin (S.card + C.card)) :
-      min (S.fieldRowOn k C b x) h = min (S.fieldRowOn k C a x) h := by
-    induction x using Fin.addCases with
-    | left d => rw [fieldRowOn_castAdd, fieldRowOn_castAdd]; exact hba d
-    | right j =>
-      rw [fieldRowOn_natAdd, fieldRowOn_natAdd]
-      exact min_agreementHeight_eq_of_isShort hh hs
-        (fun d ↦ ⟨codeGrid_mono (by omega) (mem_codeGrid_of_mem_catalogue (hC hb) d),
-          codeGrid_mono (by omega) (mem_codeGrid_of_mem_catalogue ha d)⟩) hba _
-  have hread (d : Fin S.card) : orbitDecoder k t h (b d) = t d :=
-    orbitDecoder_orbitCode (fun e ↦ (hba e).trans (hagt e).symm) d
-  have hcapr (x : Fin (S.card + C.card)) :
-      min (orbitDecoder k t h (S.fieldRowOn k C b x)) h = min (S.fieldRowOn k C a x) h := by
-    induction x using Fin.addCases with
-    | left d => rw [fieldRowOn_castAdd, fieldRowOn_castAdd, hread]; exact hagt d
-    | right j =>
-      rw [min_orbitDecoder_eq (by
-          rw [fieldRowOn_natAdd]
-          exact isSelfVisible_of_mem_grid (agreementHeight_spec (bot_mem_grid _ _) _ _).1)]
-      exact hrowh _
-  refine ⟨fun x ↦ orbitDecoder k t h (S.fieldRowOn k C b x),
-    ((isLawful_fieldRowOn (hS := hS) (hC hb) hb).isLawfulBelow _).map_of_min_eq
-      ((isLawful_fieldRowOn (hS := hS) ha haC).isLawfulBelow _) (fun x ↦ x.2.2)
-      (isWitness_orbitDecoder hh hbot.ne') hbot.ne' fun x ↦ hcapr x.1, fun d hd ↦ ?_,
-    fun x ↦ hcapr x.1⟩
-  change orbitDecoder k t h (S.fieldRowOn k C b (Fin.castAdd _ d)) = p d
-  rw [fieldRowOn_castAdd, hread, htle d hd]
-
-/-! ### The admitted field layer: extension by an admitted template -/
-
-variable {A : (Fin S.card → Label.{u}) → Prop}
-
-/-- **Extension through the admitted field layer at the cap `⊥`**: a labelling lawful below
-`(univ, k)` whose orbit code is admitted extends, unchanged at the old cells of grade at most `k`,
-to a labelling lawful below `(univ, k)` in the admitted field layer. -/
-theorem exists_lift_bot_admittedFieldLayer {g : Fin S.card → Label.{u}}
-    (hg : S.rows.IsLawfulBelow (univ, k) fun d ↦ g d)
-    (hA : A (orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) g))) :
-    ∃ v : Fin (S.card + (S.admittedCatalogue k A).card) → Label.{u},
-      (S.admittedFieldLayer k A hS).rows.IsLawfulBelow (univ, k) (fun x ↦ v x) ∧
-        ∀ d, S.toCellScheme.grade d ≤ k → v (Fin.castAdd _ d) = g d := by
-  classical
-  obtain ⟨r, hr, hre⟩ := exists_isLawfulBelow_fieldLayerOn (hS := hS) admittedCatalogue_subset
-    (mem_admittedCatalogue.mpr ⟨orbitCode_splice_bot_mem_catalogue hg, hA⟩)
-  refine ⟨fun x ↦ if hx : x ∈ (S.admittedFieldLayer k A hS).toCellScheme.below (univ, k)
-    then r ⟨x, hx⟩ else ⊥, ?_, fun d hd ↦ ?_⟩
-  · convert hr using 1
-    funext x
-    exact dite_eq_left x.2
-  · exact (dite_eq_left (castAdd_mem_below_fieldLayerOn hd)).trans (hre d hd)
-
-/-- **Extension through the admitted field layer at a short positive cap**: if moreover the orbit
-code `a` of a labelling `g₄` lawful below `(univ, k)` is admitted and agrees with `g` capped at
-`h`, the extension agrees with the field row of `a` capped at `h`. -/
-theorem exists_lift_admittedFieldLayer {g g₄ : Fin S.card → Label.{u}}
-    (hg : S.rows.IsLawfulBelow (univ, k) fun d ↦ g d)
-    (hA : A (orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) g)))
-    (hg₄ : S.rows.IsLawfulBelow (univ, k) fun d ↦ g₄ d)
-    (hA₄ : A (orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) g₄)))
-    {h : Label.{u}} (hh : IsSelfVisible k h) (hs : IsShort k h) (hbot : ⊥ < h)
-    (hag : ∀ d, S.toCellScheme.grade d ≤ k →
-      min (g d) h = min (orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) g₄) d) h) :
-    ∃ v : Fin (S.card + (S.admittedCatalogue k A).card) → Label.{u},
-      (S.admittedFieldLayer k A hS).rows.IsLawfulBelow (univ, k) (fun x ↦ v x) ∧
-        (∀ d, S.toCellScheme.grade d ≤ k → v (Fin.castAdd _ d) = g d) ∧
-        ∀ x ∈ (S.admittedFieldLayer k A hS).toCellScheme.below (univ, k),
-          min (v x) h = min (S.fieldRowOn k (S.admittedCatalogue k A)
-            (orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) g₄)) x) h := by
-  classical
-  obtain ⟨r, hr, hre, hcap⟩ := exists_extension_fieldLayerOn (hS := hS) admittedCatalogue_subset
-    (mem_admittedCatalogue.mpr ⟨orbitCode_splice_bot_mem_catalogue hg, hA⟩)
-    (mem_admittedCatalogue.mpr ⟨orbitCode_splice_bot_mem_catalogue hg₄, hA₄⟩) hh hs hbot hag
-  refine ⟨fun x ↦ if hx : x ∈ (S.admittedFieldLayer k A hS).toCellScheme.below (univ, k)
-    then r ⟨x, hx⟩ else ⊥, ?_, fun d hd ↦ ?_, fun x hx ↦ ?_⟩
-  · convert hr using 1
-    funext x
-    exact dite_eq_left x.2
-  · exact (dite_eq_left (castAdd_mem_below_fieldLayerOn hd)).trans (hre d hd)
-  · exact (congrArg (min · h) (dite_eq_left hx)).trans (hcap ⟨x, hx⟩)
-
-end Scheme
-
-/-! ### Every cell of the amalgam is a copy -/
-
-namespace Seed
-
-variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) (hLR : I.left = I.right)
-
-/-- Every cell of the amalgam of a type with itself is the copy of its cell of `T` along one of the
-two coatoms. -/
-theorem eq_faceCell_or (d : Fin I.amalgam.card) :
-    StageType.faceCell I.restrictFace_left (I.doublingCell hLR d) = d ∨
-      StageType.faceCell (I.restrictFace_right_left hLR) (I.doublingCell hLR d) = d :=
-  (I.mem_visibleCells_or d).imp (I.faceCell_left_doublingCell hLR)
-    (I.faceCell_right_doublingCell hLR)
-
-end Seed
 
 /-! ### The admitted layer at `P` -/
 

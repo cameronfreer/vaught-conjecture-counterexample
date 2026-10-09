@@ -676,6 +676,68 @@ theorem lawful_pair {ι : Type*} {D : CellScheme ι (Fin (m + 2))} {R : D.Rows.{
   rcases Seed.pair_cases hx hy hxy with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
   exacts [⟨hwx, hwy⟩, ⟨hwy, hwx⟩]
 
+/-- A profile lawful on the grade-`k` cut is lawful below either coatom. -/
+theorem IsCutLawful.erase {k : ℕ} {P : Prof I} (hP : IsCutLawful I k P) {y : Fin (m + 2)}
+    (hy : y ∈ (Pts : Finset (Fin (m + 2)))) :
+    I.amalgam.rows.IsLawfulBelow (univ.erase y, k) fun d ↦ P d := by
+  simp only [Pts, mem_insert, mem_singleton] at hy
+  rcases hy with rfl | rfl
+  exacts [hP.1, hP.2]
+
+/-- **The lift within the other coatom from the common face**, at a grade `0 < k ≤ m`: a profile
+`f` lawful below a coatom `(C, k)`, agreeing below it with a profile `P` lawful on the cut capped at
+`h` (self-visible at `k`), agrees below `(C, k)` with a profile lawful on the cut that agrees with
+`P` capped at `h` everywhere.  The other coatom `D` is filled by the capped lift of the amalgam from
+`(C ∩ D, k)` to `(D, k)` at the ambient `P`. -/
+theorem exists_isCutLawful_of_coatom {k : ℕ} (hk : 0 < k) (hkm : k ≤ m) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {h : Label.{u}} (hh : IsSelfVisible k h)
+    {P : Prof I} (hP : IsCutLawful I k P) {f : Prof I}
+    (hf : I.amalgam.rows.IsLawfulBelow (univ.erase x, k) fun d ↦ f d)
+    (hfP : ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), min (f d) h = min (P d) h) :
+    ∃ W : Prof I, IsCutLawful I k W ∧
+      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), W d = f d) ∧
+      ∀ d, min (W d) h = min (P d) h := by
+  classical
+  obtain ⟨y, hy, hxy⟩ := Seed.exists_other hx
+  obtain ⟨hOf, hOcard⟩ := inter_props (I := I) hx hy hxy
+  have hXf : ((univ.erase x ∩ univ.erase y, k) : Finset (Fin (m + 2)) × ℕ) ∈
+      I.amalgam.toCellScheme.gradedFaces := ⟨hOf, hk, by simp only; rw [hOcard]; exact hkm⟩
+  have hYf : ((univ.erase y, k) : Finset (Fin (m + 2)) × ℕ) ∈
+      I.amalgam.toCellScheme.gradedFaces :=
+    ⟨I.erase_mem_faces hy, hk, by simp only; rw [Seed.card_erase]; omega⟩
+  have hXY : ((univ.erase x ∩ univ.erase y, k) : Finset (Fin (m + 2)) × ℕ) ≤
+      (univ.erase y, k) := ⟨inter_subset_right, le_rfl⟩
+  have hXC : ((univ.erase x ∩ univ.erase y, k) : Finset (Fin (m + 2)) × ℕ) ≤
+      (univ.erase x, k) := ⟨inter_subset_left, le_rfl⟩
+  obtain ⟨v, hv, hvP, hvf⟩ := (Rows.cappedLift_iff_forall_exists hXY).mp
+    (I.isBountiful hXf hYf hXY) h hh (fun d ↦ f d) (fun d ↦ P d)
+    (hf.mono (X := (univ.erase x ∩ univ.erase y, k)) hXC) (hP.erase hy)
+    fun d ↦ (hfP d.1 (CellScheme.below_mono _ hXC d.2)).symm
+  set W : Prof I := fun d ↦
+    if d ∈ I.amalgam.toCellScheme.below (univ.erase x, k) then f d
+    else if hD : d ∈ I.amalgam.toCellScheme.below (univ.erase y, k) then v ⟨d, hD⟩ else P d
+    with hW
+  have hWC (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase x, k)) : W d = f d :=
+    ite_eq_left hd
+  have hWD (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase y, k)) : W d = v ⟨d, hd⟩ := by
+    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase x, k)
+    · rw [hWC d hdC]
+      exact (hvf ⟨d, ⟨subset_inter hdC.1 hd.1, hd.2⟩⟩).symm
+    · rw [hW]
+      simp only [hdC, hd, ite_false, dite_true]
+  have hlC : I.amalgam.rows.IsLawfulBelow (univ.erase x, k) fun d ↦ W d :=
+    (Rows.isLawfulBelow_congr fun d hd ↦ (hWC d hd).symm).mp hf
+  have hlD : I.amalgam.rows.IsLawfulBelow (univ.erase y, k) fun d ↦ W d := by
+    convert hv using 1
+    exact funext fun d ↦ hWD d d.2
+  refine ⟨W, lawful_pair hx hy hxy hlC hlD, hWC, fun d ↦ ?_⟩
+  by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase x, k)
+  · rw [hWC d hdC]; exact hfP d hdC
+  by_cases hdD : d ∈ I.amalgam.toCellScheme.below (univ.erase y, k)
+  · rw [hWD d hdD]; exact hvP ⟨d, hdD⟩
+  · rw [hW]
+    simp only [hdC, hdD, ite_false, dite_false]
+
 /-- A cell of the next scheme of graded index `(univ, g + 1)` is a cell of the new layer. -/
 theorem Lvl.exists_natAdd_eq (L : Lvl I g) {u : Fin L.nextS.card}
     (hu : L.nextS.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), g + 1)) :

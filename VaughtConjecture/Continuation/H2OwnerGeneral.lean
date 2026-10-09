@@ -75,13 +75,12 @@ open Finset Label StageType FieldAdmission CellScheme
 
 /-! ### Labels -/
 
-/-- Replacement keeps a label above a bound self-visible at the threshold above it. -/
+/-- Replacement keeps a label above a bound self-visible at the threshold above it
+(`Label.lt_visibilityReplace_of_lt`, moved from this namespace to
+`VaughtConjecture.Label.Visibility`; this name forwards to it). -/
 theorem lt_visibilityReplace_of_lt {k i : ℕ} (hi : i ≤ k) {θ y : Label.{u}}
-    (hθ : IsSelfVisible k θ) (hy : θ < y) : θ < visibilityReplace k i y := by
-  by_contra h
-  have h' := monotone_visibilityReplace (le_refl k) (not_lt.mp h)
-  rw [visibilityReplace_self_visibilityReplace hi, hθ] at h'
-  exact hy.not_ge ((le_visibilityReplace (by omega) y).trans h')
+    (hθ : IsSelfVisible k θ) (hy : θ < y) : θ < visibilityReplace k i y :=
+  Label.lt_visibilityReplace_of_lt hi hθ hy
 
 /-- **The next label self-visible at `K`**: above a label `⊥ < c < ⊤` self-visible at `K` there is a
 label `c'` self-visible at `K` with nothing strictly between. -/

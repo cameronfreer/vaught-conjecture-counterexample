@@ -85,47 +85,8 @@ theorem exists_cutLawful_of_coatom_cap' {j : ℕ} (hj0 : 0 < j) (hjm : j ≤ m) 
     (haP : ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, j), min (a d) h = min (P d) h) :
     ∃ W : Prof I, IsCutLawful I j W ∧
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, j), W d = a d) ∧
-      ∀ d, min (W d) h = min (P d) h := by
-  classical
-  obtain ⟨y, hy, hxy⟩ := Seed.exists_other hx
-  obtain ⟨hOf, hOcard⟩ := inter_props (I := I) hx hy hxy
-  have hcard (z : Fin (m + 2)) : #(univ.erase z) = m + 1 := Seed.card_erase z
-  set O : Finset (Fin (m + 2)) × ℕ := (univ.erase x ∩ univ.erase y, j) with hO
-  have hOV : O ≤ (univ.erase y, j) := ⟨inter_subset_right, le_rfl⟩
-  have hOU : O ≤ (univ.erase x, j) := ⟨inter_subset_left, le_rfl⟩
-  have hlift : I.amalgam.rows.CappedLift hOV := I.isBountiful
-    ⟨hOf, hj0, show j ≤ #(univ.erase x ∩ univ.erase y) by rw [hOcard]; omega⟩
-    ⟨I.erase_mem_faces hy, hj0, show j ≤ #(univ.erase y) by rw [hcard]; omega⟩ hOV
-  obtain ⟨q', hq', hq'P, hq'a⟩ := (Rows.cappedLift_iff_forall_exists hOV).mp hlift h hh
-    (fun d ↦ a d) (fun d ↦ P d) (ha.mono hOU) (hP.isLawfulBelow_erase hy)
-    fun d ↦ (haP d.1 (I.amalgam.toCellScheme.below_mono hOU d.2)).symm
-  set W : Prof I := fun d ↦
-    if hd : d ∈ I.amalgam.toCellScheme.below (univ.erase x, j) then a d
-    else if hd' : d ∈ I.amalgam.toCellScheme.below (univ.erase y, j) then q' ⟨d, hd'⟩
-    else P d with hW
-  have hWx (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase x, j)) :
-      W d = a d := dite_eq_left hd
-  have hWy (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase y, j)) :
-      W d = q' ⟨d, hd⟩ := by
-    by_cases hdx : d ∈ I.amalgam.toCellScheme.below (univ.erase x, j)
-    · rw [hWx d hdx]
-      exact (hq'a ⟨d, ⟨subset_inter hdx.1 hd.1, hdx.2⟩⟩).symm
-    · exact (dite_eq_right hdx).trans (dite_eq_left hd)
-  have hWlx : I.amalgam.rows.IsLawfulBelow (univ.erase x, j) fun d ↦ W d :=
-    (Rows.isLawfulBelow_congr fun d hd ↦ (hWx d hd).symm).mp ha
-  have hWly : I.amalgam.rows.IsLawfulBelow (univ.erase y, j) fun d ↦ W d := by
-    convert hq' using 1
-    funext d
-    exact hWy d.1 d.2
-  refine ⟨W, lawful_pair hx hy hxy hWlx hWly, hWx, fun d ↦ ?_⟩
-  by_cases hdx : d ∈ I.amalgam.toCellScheme.below (univ.erase x, j)
-  · rw [hWx d hdx]
-    exact haP d hdx
-  · by_cases hdy : d ∈ I.amalgam.toCellScheme.below (univ.erase y, j)
-    · rw [hWy d hdy]
-      exact hq'P ⟨d, hdy⟩
-    · have hWd : W d = P d := (dite_eq_right hdx).trans (dite_eq_right hdy)
-      rw [hWd]
+      ∀ d, min (W d) h = min (P d) h :=
+  exists_isCutLawful_of_coatom hj0 hjm hx hh hP ha haP
 
 /-! ### The LOW step for states and its failure mode -/
 

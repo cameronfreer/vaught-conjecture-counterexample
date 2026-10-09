@@ -423,6 +423,16 @@ theorem visibilityReplace_le_of_le (hi : i ≤ k) (hy : IsSelfVisible k y) (h : 
     visibilityReplace k i x ≤ y :=
   (monotone_visibilityReplace hi h).trans_eq (hy.visibilityReplace_eq i)
 
+/-- A label above a bound self-visible at `k` stays above it after visibility replacement at `k`
+with any value `i ≤ k`. -/
+theorem lt_visibilityReplace_of_lt {k i : ℕ} {δ y : Label.{u}} (hi : i ≤ k)
+    (hδ : IsSelfVisible k δ) (hy : δ < y) : δ < visibilityReplace k i y := by
+  by_contra hle
+  rw [not_lt] at hle
+  have h := visibilityReplace_le_of_le le_rfl hδ hle
+  rw [visibilityReplace_self_visibilityReplace hi] at h
+  exact hy.not_ge ((le_visibilityReplace (by omega) y).trans h)
+
 /-- Capping by a label self-visible at `k` commutes with visibility replacement at `k`. -/
 theorem visibilityReplace_min_of_isSelfVisible (hi : i ≤ k) (hc : IsSelfVisible k c)
     (x : Label.{u}) :

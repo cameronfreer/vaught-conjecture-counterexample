@@ -105,14 +105,6 @@ theorem extAbove_of_le {k K : ℕ} {t : StageType.{u} α (k + 1)} (hleg : t.IsLe
 
 /-! ### Truncations -/
 
-/-- Truncating above `K` a labelling lawful below `(univ, j)`, `K ≤ j`, gives a grade-`K` face. -/
-theorem lawfulAt_trunc {n K j : ℕ} {t : StageType.{u} α n} {f : Fin t.card → Label.{u}}
-    (hf : t.rows.IsLawfulBelow ((univ : Finset (Fin n)), j) (fun d ↦ f d)) (hKj : K ≤ j) :
-    LawfulAt t K (fun d ↦ if t.toCellScheme.grade d ≤ K then f d else ⊥) := by
-  refine ⟨?_, fun d hd ↦ ite_eq_right hd⟩
-  have h := hf.mono (X := ((univ : Finset (Fin n)), K)) ⟨subset_rfl, hKj⟩
-  exact (CellScheme.Rows.isLawfulBelow_congr fun d hd ↦ (ite_eq_left hd.2).symm).mp h
-
 /-- Truncating above `j` keeps a labelling lawful below `(univ, j)`. -/
 theorem isLawfulBelow_trunc {n j : ℕ} {t : StageType.{u} α n} {f : Fin t.card → Label.{u}}
     (hf : t.rows.IsLawfulBelow ((univ : Finset (Fin n)), j) (fun d ↦ f d)) :

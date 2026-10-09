@@ -54,6 +54,15 @@ def LawfulAt {α : Ordinal.{u}} {m : ℕ} (t : StageType.{u} α m) (K : ℕ)
   t.rows.IsLawfulBelow ((univ : Finset (Fin m)), K) (fun d ↦ W d) ∧
     ∀ d, ¬ t.toCellScheme.grade d ≤ K → W d = ⊥
 
+/-- Truncating above `K` a labelling lawful below `(univ, j)`, `K ≤ j`, gives a grade-`K` face. -/
+theorem lawfulAt_trunc {α : Ordinal.{u}} {n K j : ℕ} {t : StageType.{u} α n}
+    {f : Fin t.card → Label.{u}}
+    (hf : t.rows.IsLawfulBelow ((univ : Finset (Fin n)), j) (fun d ↦ f d)) (hKj : K ≤ j) :
+    LawfulAt t K (fun d ↦ if t.toCellScheme.grade d ≤ K then f d else ⊥) := by
+  refine ⟨?_, fun d hd ↦ ite_eq_right hd⟩
+  have h := hf.mono (X := ((univ : Finset (Fin n)), K)) ⟨subset_rfl, hKj⟩
+  exact (CellScheme.Rows.isLawfulBelow_congr fun d hd ↦ (ite_eq_left hd.2).symm).mp h
+
 /-- A grade-`K` face extends at the cap `⊥` to a lawful labelling, unchanged at the grades at most
 `K` (bountifulness from `(univ, K)` to `(univ, m)`). -/
 theorem exists_ext_bot_at {α : Ordinal.{u}} {m K : ℕ} {t : StageType.{u} α m} (hleg : t.IsLegal)
