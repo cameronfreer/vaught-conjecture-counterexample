@@ -420,6 +420,26 @@ theorem contextStateLiftR_attachAdmits
       rw [hR₂ y, hwc y hgy, hqa]
       exact congrArg (fun z ↦ min z c) e2
 
+/-- **The context lift of the replicated scheme from the ambient's admission and the coding of
+states**: for requests calibrated on the class with the labels pair admitted and the relative lift
+on the exact class over a legal donor with a nonempty root, the state lift holds at every grade
+(`Seed.contextStateLiftR_attachAdmits`), so the context lift follows from the ambient's admission
+from the threshold on and the coding of states at every grade (`Seed.hasContextLift_of_stateLift`).
+-/
+theorem hasContextLift_attachAdmits (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
+    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
+    (hdp : restrictFace Fin.castSuccEmb d = some p₀) (hdL : d.IsLegal) (hn : 0 < n)
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
+    (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
+    (hamb : ∀ j, 1 ≤ j → j ≤ m + 1 → AmbientAdmitted I g H Γ B' hd Q j)
+    (hC : ∀ j, 1 ≤ j → j ≤ m + 1 → StateCodingR I g H Γ (I.attachAdmits g hd Q) B' j) :
+    I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' :=
+  hasContextLift_of_stateLift hH hcard hΓ (fun k R h ↦ I.attachAdmits_succ g hd Q k R h)
+    fun j hj hjm ↦ ⟨contextStateLiftR_attachAdmits hte hdp hdL hn hd hQ hpair hrel hj
+      (hamb j hj hjm), hC j hj hjm⟩
+
 end Seed
 
 end VaughtConjecture
