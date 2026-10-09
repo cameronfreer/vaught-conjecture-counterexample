@@ -56,9 +56,12 @@ the bottom class.
 * `exists_admitted_reader_P` (**feasibility at `P`**): the state `sL = (⊥, ⊥, ⊥, 3, 2)`,
   `sR = (⊥, ⊥, ⊥, 3, 3)` is lawful on each face, coded, agrees at the shared cell, is in the bottom
   class, is admitted for the cap `3` with every marker and offset, and reads both high cells of
-  the donor exactly as the cap (uncapped).  Not compiled: that the glued state is lawful on the
-  amalgam (argued: the amalgam's lawful labellings are those lawful on both coatom faces, as in
-  `Coatom.isLawful_amalgamLabel`), and the bountifulness of any layer of admitted states at `P`.
+  the donor exactly as the cap (uncapped).  Compiled in later files: that the glued state is
+  lawful on the amalgam (`GatedExtensionCounterexample.exists_isLawful_glue_reader_P`, through
+  `Seed.exists_isLawful_glue`, in `VaughtConjecture.Continuation.StableRecoveryAdmittedLift`), and,
+  with the marker at the cap, a bountiful layer of admitted states at `P`
+  (`GatedExtensionCounterexample.isBountiful_admittedLayerP`, in
+  `VaughtConjecture.Continuation.StableRecoveryAdmittedBountiful`).
 
 ## Placement
 

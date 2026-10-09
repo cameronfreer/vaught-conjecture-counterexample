@@ -25,8 +25,9 @@ most the cap, or below the cap by the LOW clause of the serving state).
 **From the private coatom** (`ProfileTower.lowStateRaise_private`, compiled in this repository):
 the donor face is replaced by one literal on the root, agreeing with the serving state capped at
 the cap and reading every donor top off the root at least at the prescribed frontier
-(`StageType.IsLowFamily.exists_raised` with the tie case `StageType.IsLowFamily.lowStepTie`); the
-root tops are at least the frontier by the strict source gaps.
+(`StageType.IsLowFamily.exists_raised_of_gap`: the raise of the donor tops through a top of the
+largest grade, with the root restored by a capped lift, with no tie premise and no donor raising);
+the root tops are at least the frontier by the strict source gaps.
 
 **The step for states at `K`** (`ProfileTower.stateCatStep_low_seed`, compiled in this repository):
 for the LOW designations of a seed whose private context is a source-gap context of grade
@@ -179,7 +180,7 @@ private context a source-gap context of grade `g + 1 ≤ m` with the lost point 
 top grade at most `g + 1`, owner and lost top the copies `o`, `r`, the donor tops the copies of the
 tops of the donor, the copies of the proper donor cells of grade at most `g + 1` proper donor
 fields, and the proper donor fields below the donor coatom: the donor face is raised
-(`StageType.IsLowFamily.exists_raised`, `StageType.IsLowFamily.lowStepTie`). -/
+(`StageType.IsLowFamily.exists_raised_of_gap`). -/
 theorem lowStateRaise_private {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
     (htb : I.right.topGrade ≤ g + 1)
@@ -265,7 +266,7 @@ theorem lowStateRaise_private {o' r' : Fin I.left.card}
       rw [hRle t hg, hNP _ (hLoN t ht hg)]
       exact (le_donorMax (a := withCutoff A ⊥) (hLoN t ht hg)).trans_lt hMh
   obtain ⟨Wt, hWt, hWtr, hWtR, hWtc⟩ :=
-    hF.exists_raised hF.lowStepTie hh hb hhc hR hf hag hlow hcf htop
+    hF.exists_raised_of_gap hb hhc hR hf hag hlow hcf htop
   -- glue the raised donor face on the amalgam
   have he := StageType.comap_toScheme_of_restrictFace I.restrictFace_right
   have hX : Prod.map (Finset.map (Coatom.right m)) id ((univ : Finset (Fin (m + 1))), g + 1) =

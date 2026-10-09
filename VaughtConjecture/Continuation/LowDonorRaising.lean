@@ -23,8 +23,10 @@ gap hypothesis, it gives a donor face `W` equal to `f` at the root, agreeing wit
 of the low maximum of `W`.  With `c` the frontier of the private face, the second branch puts such
 a top exactly at the cap (`Label.le_or_eq_of_raise`), where the LOW clause at cutoff `h` asks that
 the frontier be at most `h` (`Label.max_le_of_raise`); that is what the lowering of the lost top
-provides (`StageType.IsSourceGapContextAt.exists_lowering`), and it is open when the private face
-is prescribed (a lift from the private coatom face).
+provides (`StageType.IsSourceGapContextAt.exists_lowering`), and it is not available when the
+private face is prescribed (a lift from the private coatom face).  That case is the tie case
+`StageType.LowStepTie`, proved at every LOW family (`StageType.IsLowFamily.lowStepTie`, in
+`VaughtConjecture.Continuation.LowStepLow`).
 
 ## Placement
 
@@ -57,12 +59,14 @@ top-grade or owner-lowering input enters it.
 * every donor cell low, designated, a root cell, or determined by the root: proved;
 * the caps `h`, `c` self-visible at `K`: given by the caps of the lift;
 * the faces `R`, `f` lawful at `K` and bottom above `K`: the splices of the ambient and of the
-  prescription; not compiled at a LOW lift;
+  prescription; compiled at a LOW lift (`ProfileTower.lawfulAt_left`,
+  `ProfileTower.lawfulAt_right`, in `VaughtConjecture.Continuation.LowStep`);
 * the root of `f` agreeing with that of `R` capped at `h`: the capped agreement of the lift;
 * the root tops of `f` at least `c`, for `c` the frontier of `f`: proved
   (`H2.frontier_le_lawfulAt`);
-* the gap, every designated top of `R` above the replaced low maximum at least `min c h`: not
-  compiled; argued from an active serving anchor (tops at least its cutoff, at least `h`).
+* the gap, every designated top of `R` above the replaced low maximum at least `min c h`:
+  compiled from an active serving profile (`Label.min_frontier_le_of_isLowAt`, in
+  `VaughtConjecture.Continuation.LowStep`).
 
 The conclusion leaves a designated top at least `c` or at most the replaced low maximum of `W`
 (exactly `h` at the tie, `Label.le_or_eq_of_raise`), and says nothing at the donor tops determined

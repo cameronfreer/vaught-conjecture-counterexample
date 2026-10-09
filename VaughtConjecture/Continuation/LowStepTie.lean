@@ -49,8 +49,9 @@ Domination is not needed: the ambient donor face `R` raised through the template
 least at the cap), and agrees with the private face on the root capped at `c`; the capped lift at
 `c` from the root of the private face with this ambient is literal on the root and reads every
 top at least at `c`.  So the tie case holds whenever the donor has a top of grade `K`; the case of a
-donor whose tops off the root all have grades below `K` is the one left (no top cell of graded
-index `(univ, K)` to read through).
+donor whose tops off the root all have grades below `K` is the one left here (no top cell of graded
+index `(univ, K)` to read through), proved in `VaughtConjecture.Continuation.LowStepLow`
+(`StageType.IsLowFamily.lowStepTieLow`).
 
 **The unserved case below the full grade** (`StageType.lowStepUnserved_of_le`, compiled in this
 repository): owner lowering at the cap (`H2.exists_lowered_at`: the face capped at the next label
@@ -238,9 +239,10 @@ variable {α : Ordinal.{u}} {k : ℕ}
 variable (K : ℕ) (t' tb : StageType.{u} α (k + 1)) {p : StageType.{u} α k}
   (hp : restrictFace Fin.castSuccEmb t' = some p) (hpb : restrictFace Fin.castSuccEmb tb = some p)
   in
-/-- **Donor domination** (open): for a private face `f` and a donor face `R` lawful at `K` agreeing
-on the root capped at a cap `h` self-visible at `K`, some donor face lawful at `K`, literal on the
-root and agreeing with `R` capped at `h`, is dominated at a cell of the donor labelled `⊤` of
+/-- **Donor domination** (open; the tie case is proved without it,
+`StageType.IsLowFamily.lowStepTie`): for a private face `f` and a donor face `R` lawful at `K`
+agreeing on the root capped at a cap `h` self-visible at `K`, some donor face lawful at `K`, literal
+on the root and agreeing with `R` capped at `h`, is dominated at a cell of the donor labelled `⊤` of
 graded index `(univ, K)`.  The donor-side counterpart of the domination by the owner. -/
 def DonorDomination : Prop :=
   ∀ {h : Label.{u}}, IsSelfVisible K h → ∀ {R : Fin tb.card → Label.{u}}
@@ -740,7 +742,9 @@ variable {α : Ordinal.{u}} {k : ℕ}
 variable (K : ℕ) (t' tb : StageType.{u} α (k + 1)) {p : StageType.{u} α k}
   (hp : restrictFace Fin.castSuccEmb t' = some p) (hpb : restrictFace Fin.castSuccEmb tb = some p)
   (o r : Fin t'.card) in
-/-- **The tie case for a donor without a top of grade `K`** (open): when no top of the donor has
+/-- **The tie case for a donor without a top of grade `K`** (proved at every LOW family,
+`StageType.IsLowFamily.lowStepTieLow`, in `VaughtConjecture.Continuation.LowStepLow`): when no top
+of the donor has
 grade `K`, the tie case `StageType.LowStepTie`.  There is then no cell labelled `⊤` of graded index
 `(univ, K)` in the donor to read through; the reading grade is the grade `K` of the owner of the
 context, which the controllers must read, so it cannot be lowered to the top grade of the donor. -/
