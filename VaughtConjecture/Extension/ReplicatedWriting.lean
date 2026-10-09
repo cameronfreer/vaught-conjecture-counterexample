@@ -22,12 +22,20 @@ that grade (`Seed.isLawfulBelow_map_replicatedWriting`).
 
 **Lifts from writings** (`Seed.cappedLift_replicated_of_writingLift`).  The replicated scheme lifts
 capped from `X` to `Y` when every lift problem is solved by a decoded writing
-(`Seed.WritingLift X Y`): a state of the catalogue and a decoder whose decoded writing reads the
-prescription below `X` and keeps the observation of the ambient at the cap below `Y`.  This is the
-common form of the lifts left open in `VaughtConjecture.MainTheorem.ReplicatedInputs`: from the
-context coatom (a state lift on the attachment and the coding of states), from the mixed coatom and
-into the mixed faces (in addition, the prescription at the copies must be read as a decoded writing:
-the recognition of the state on the copies).
+(`Seed.WritingLift X Y`): a state of the catalogue and a decoder sending no positive label to `⊥`
+whose decoded writing reads the prescription below `X` and keeps the observation of the ambient at
+the cap below `Y`.
+
+**This form is too strong** (`Seed.not_writingLift_univ`, and `Seed.not_writingLift_mixed` in
+`VaughtConjecture.Extension.ReplicatedCopies`).  The writing of a lawful state is positive at the
+first rung of its member (`Seed.ladderTower_v_rung_ne_bot`: the positive table has floor `1`), and
+such a decoder keeps it positive; but the bottom prescription with the bottom ambient at the cap
+`⊤` asks for a section that is `⊥` at every rung.  So no lift into a full face or a mixed face, from
+any face, is solved by such decoded writings in general: a decoded writing solving the lifts must
+be allowed to send positive labels to `⊥` where some lawful section is `⊥`
+(`CellScheme.Rows.IsLawfulBelow.map_of_bot_iff`).  The same instance refutes every coding of states
+that asks a decoder without positive-to-`⊥` collapse to match the ambient at the cap below a full
+face.
 
 ## References
 
@@ -118,6 +126,64 @@ theorem cappedLift_replicated_of_writingLift (hH : 0 < H)
   exact ⟨fun d ↦ ν (I.replicatedWriting g H Γ A B' R d),
     isLawfulBelow_map_replicatedWriting hH hcard hΓ hA hR Y hν hbot, hνq,
     fun d ↦ hνp d⟩
+
+/-! ### Decoded writings are positive on the ladder -/
+
+/-- **The writing of a lawful state is positive at the first rung of its own member**: the ladder
+reads the positive table, whose entries from the first on are at least `1`. -/
+theorem ladderTower_v_rung_ne_bot (hcard : (I.attachmentBase g).S.card ≤ H) (hH : 0 < H)
+    {R : Fin (I.attachment g).card → Label.{u}} (hR : (I.attachment g).rows.IsLawful R) :
+    ((I.attachmentBase g).ladderTower H Γ A B' m).v R
+      ((I.attachmentBase g).towerEmb m (Fin.natAdd _ (Scheme.ladderEquiv _ _ H
+        (Scheme.RankMember.ofLawful (I.attachmentBase g).wf hcard hR, Sum.inl ⟨0, hH⟩)))) ≠
+      ⊥ := by
+  refine ne_of_eq_of_ne (Scheme.layerTower_v_emb (B := (I.attachmentBase g).towerBase H)
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') R _ m) ?_
+  change (I.attachmentBase g).stateExt H R _ ≠ ⊥
+  rw [Scheme.LadderBaseData.stateExt_of_isLawful hR hcard]
+  erw [Fin.append_right]
+  have h := Scheme.baseIndex_self (Scheme.rankProf_le _ H)
+    ((Scheme.RankMember.ofLawful (I.attachmentBase g).wf hcard hR, Sum.inl ⟨0, hH⟩) :
+      Scheme.LadderPt (I.attachmentBase g).S (Scheme.RankMember (I.attachmentBase g).S H) H)
+  simp only [Scheme.ladderCeil, Sum.elim_inl] at h
+  rw [h]
+  exact posTable_ne_bot (by simp)
+
+/-- **No lift into a full face is solved by decoded writings in general**: the bottom prescription
+and the bottom ambient, at the cap `⊤`, ask for a decoded writing that is `⊥` at every cell below
+`(univ, j)`; but the writing of a lawful state is positive at the first rung of its member, and the
+decoder sends no positive label to `⊥`.  So `Seed.WritingLift X (univ, j)` fails for every
+`X ≤ (univ, j)` with `j ≥ 1`, at the context coatom and at the mixed coatom alike: the lifts must
+let the decoder send positive labels to `⊥` where a lawful section is `⊥`. -/
+theorem not_writingLift_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    {X : Finset (Fin (m + 2)) × ℕ} {j : ℕ} (hj : 1 ≤ j)
+    (hXY : X ≤ ((univ : Finset (Fin (m + 2))), j)) :
+    ¬ I.WritingLift g H Γ A B' X ((univ : Finset (Fin (m + 2))), j) hXY := by
+  intro hw
+  obtain ⟨R, hR, ν, -, hbot, -, hνq⟩ := hw ⊤ (isSelfVisible_top j) (fun _ ↦ ⊥) (fun _ ↦ ⊥)
+    (Rows.isLawfulBelow_const_bot _) (Rows.isLawfulBelow_const_bot _) (fun _ ↦ rfl)
+  have hRl : (I.attachment g).rows.IsLawful R := (Scheme.LadderBaseData.mem_towerCat.mp hR).2.1
+  let t : Fin (I.attachTower g H Γ A B').card := (I.attachmentBase g).towerEmb m
+    (Fin.natAdd _ (Scheme.ladderEquiv _ _ H
+      (Scheme.RankMember.ofLawful (I.attachmentBase g).wf hcard hRl, Sum.inl ⟨0, hH⟩)))
+  have hgt : (I.replicated g H Γ A B').toCellScheme.gradedIndex (Fin.castAdd _ t) =
+      ((univ : Finset (Fin (m + 2))), 1) := by
+    refine (Scheme.gradedIndex_mirror_castAdd _).trans ?_
+    refine (Scheme.gradedIndex_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
+      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') _ m).trans ?_
+    change ((I.attachmentBase g).S.appendFullCellsScheme 1 _).gradedIndex (Fin.natAdd _ _) = _
+    exact Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ _
+  have hmem : Fin.castAdd _ t ∈ (I.replicated g H Γ A B').toCellScheme.below
+      ((univ : Finset (Fin (m + 2))), j) := by
+    rw [CellScheme.mem_below, hgt]
+    exact ⟨subset_rfl, hj⟩
+  have h := hνq ⟨_, hmem⟩
+  simp only [min_top_right] at h
+  apply ladderTower_v_rung_ne_bot (Γ := Γ) (A := A) (B' := B') hcard hH hRl
+  apply hbot
+  change ν (((I.attachmentBase g).ladderTower H Γ A B' m).v R
+    ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ t))) = ⊥ at h
+  rwa [Scheme.mirrorOrig_castAdd] at h
 
 /-! ### The copies read the controllers -/
 

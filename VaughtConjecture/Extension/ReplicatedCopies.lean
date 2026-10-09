@@ -351,6 +351,33 @@ theorem copy_recognition (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H
     · exact hpos i hi h'
     · exact hk0 h'
 
+/-- **No lift into a mixed face is solved by decoded writings in general**: as for the full faces
+(`Seed.not_writingLift_univ`), the bottom prescription and ambient at the cap `⊤` ask for a decoded
+writing that is `⊥` at the copied first rung of the member of the state, where the writing is
+positive. -/
+theorem not_writingLift_mixed (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hU : U ∈ I.mixedFaces g) {X : Finset (Fin (m + 2)) × ℕ} {j : ℕ} (hj : 1 ≤ j)
+    (hXY : X ≤ (U, j)) : ¬ I.WritingLift g H Γ A B' X (U, j) hXY := by
+  intro hw
+  obtain ⟨R, hR, ν, -, hbot, -, hνq⟩ := hw ⊤ (isSelfVisible_top j) (fun _ ↦ ⊥) (fun _ ↦ ⊥)
+    (CellScheme.Rows.isLawfulBelow_const_bot _) (CellScheme.Rows.isLawfulBelow_const_bot _)
+    (fun _ ↦ rfl)
+  have hRl : (I.attachment g).rows.IsLawful R := (Scheme.LadderBaseData.mem_towerCat.mp hR).2.1
+  let pt : Scheme.LadderPt (I.attachmentBase g).S (Scheme.RankMember (I.attachmentBase g).S H) H :=
+    (Scheme.RankMember.ofLawful (I.attachmentBase g).wf hcard hRl, Sum.inl ⟨0, hH⟩)
+  have hmem : copyLadder H Γ A B' hU pt ∈ (I.replicated g H Γ A B').toCellScheme.below (U, j) := by
+    rw [CellScheme.mem_below, gradedIndex_copyLadder]
+    exact ⟨subset_rfl, hj⟩
+  have h := hνq ⟨_, hmem⟩
+  simp only [min_top_right] at h
+  apply ladderTower_v_rung_ne_bot (Γ := Γ) (A := A) (B' := B') hcard hH hRl
+  apply hbot
+  change ν (((I.attachmentBase g).ladderTower H Γ A B' m).v R
+    ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (copyLadder H Γ A B' hU pt))) = ⊥ at h
+  rw [copyLadder] at h
+  erw [mirrorOrig_copyAt] at h
+  exact h
+
 end Seed
 
 end VaughtConjecture
