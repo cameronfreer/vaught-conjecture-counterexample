@@ -79,12 +79,15 @@ noncomputable def SLvl.pnext : SLvl I (g + 1) where
 
 variable {N C}
 
+/-- The padded section at a cell of grade at most `g + 1` is the upper decoder of the state at the
+row labelling of its orbit code. -/
 theorem SLvl.pnextσ_of_le {P : CProf I} {z : Fin (N.S.card + C.card)}
     (hz : (N.S.appendFullCellsScheme (g + 1) C.card).grade z ≤ g + 1) :
     N.pnextσ C P z =
       upperDecoderAt (g + 1) (g + 2) (bound I) P (N.Φs C (orbitCode (g + 1) P) z) := by
   unfold SLvl.pnextσ; exact ite_eq_left hz
 
+/-- The padded section at an old cell of grade above `g + 1` is the state itself. -/
 theorem SLvl.Good.pnextσ_old_of_lt {A : CProf I → Prop} (hN : N.Good A) {P : CProf I}
     {d : Fin I.amalgam.card}
     (hd : ¬ (N.S.appendFullCellsScheme (g + 1) C.card).grade (Fin.castAdd _ (N.embed d)) ≤ g + 1) :
@@ -115,7 +118,9 @@ theorem orbitCode_mem_sCat {P : CProf I} (hP : IsCutLawful I (g + 1) (camal P))
   · exact hP.2.map_of_apply_eq_bot (fun d ↦ d.2.2)
       (isWitness_orbitMap (g + 1) P) fun _ ↦ orbitMap_eq_bot_iff.mp
 
-theorem orbitCode_mem_codeGrid' (k : ℕ) (P : CProf I) (f : Fin I.amalgam.card ⊕ Unit) :
+/-- The orbit code over all fields of a state lies in the code grid with the block bound of the
+seed. -/
+theorem orbitCode_mem_codeGrid (k : ℕ) (P : CProf I) (f : Fin I.amalgam.card ⊕ Unit) :
     orbitCode k P f ∈ codeGrid k (bound I) :=
   orbitMap_mem_codeGrid (by rw [card_fields]; simp only [bound]; omega) _
 
@@ -178,15 +183,17 @@ theorem SLvl.Good.pnext (hN : N.Good A) (hgm : g + 1 ≤ m) (hA0 : ∀ W : Prof 
         (N.Φs 𝒮 (orbitCode (g + 1) P) z)) (w' := N.pnextσ 𝒮 P) fun z hz ↦ ?_).mp h
     exact (SLvl.pnextσ_of_le hz.2).symm
   · -- mem
+    -- the section of the padded next level, by definition
     change N.pnextσ 𝒮 P z ∈ _
     by_cases hz : (N.S.appendFullCellsScheme (g + 1) (𝒮).card).grade z ≤ g + 1
     · rw [SLvl.pnextσ_of_le hz]
       exact upperDecoderAt_mem_codeGrid_of_mem (by omega) hP
-        (hN.Φs_mem_codeGrid (orbitCode_mem_codeGrid' _ _) z)
+        (hN.Φs_mem_codeGrid (orbitCode_mem_codeGrid _ _) z)
     · obtain ⟨d, rfl⟩ := hN.exists_old_of_lt hz
       rw [hN.pnextσ_old_of_lt hz]
       exact hP _
   · -- literal
+    -- the section of the padded next level, by definition
     change N.pnextσ 𝒮 P (Fin.castAdd _ (N.embed d)) = P (Sum.inl d)
     by_cases hd : (N.S.appendFullCellsScheme (g + 1) (𝒮).card).grade
         (Fin.castAdd _ (N.embed d)) ≤ g + 1
@@ -194,6 +201,7 @@ theorem SLvl.Good.pnext (hN : N.Good A) (hgm : g + 1 ≤ m) (hA0 : ∀ W : Prof 
       exact upperDecoderAt_orbitCode _
     · exact hN.pnextσ_old_of_lt hd
   · -- capAgree
+    -- the section of the padded next level, by definition
     change min (N.pnextσ 𝒮 P z) h = min (N.pnextσ 𝒮 P' z) h
     by_cases hz : (N.S.appendFullCellsScheme (g + 1) (𝒮).card).grade z ≤ g + 1
     · rw [SLvl.pnextσ_of_le hz, SLvl.pnextσ_of_le hz]
@@ -215,6 +223,7 @@ theorem SLvl.Good.pnext (hN : N.Good A) (hgm : g + 1 ≤ m) (hA0 : ∀ W : Prof 
       rw [hN.pnextσ_old_of_lt hz, hN.pnextσ_old_of_lt hz]
       exact hag _
   · -- readable
+    -- the section of the padded next level at the state with the cutoff `⊥`, by definition
     change IsReadableAt (g + 1 + 1) Q (N.pnextσ 𝒮 (withCut Q ⊥) z)
     by_cases hz : (N.S.appendFullCellsScheme (g + 1) (𝒮).card).grade z ≤ g + 1
     · rw [SLvl.pnextσ_of_le hz, ← isReadableAt_withCut_bot_iff]
@@ -222,7 +231,7 @@ theorem SLvl.Good.pnext (hN : N.Good A) (hgm : g + 1 ≤ m) (hA0 : ∀ W : Prof 
         rw [orbitCode_withCut_bot, hQ]
       refine isReadableAt_upperDecoderAt_of_mem hQ' (by omega) (fun f ↦ ?_)
         (fun f ↦ isReadableAt_apply (withCut Q ⊥) f)
-        (hN.Φs_mem_codeGrid (orbitCode_mem_codeGrid' _ _) z)
+        (hN.Φs_mem_codeGrid (orbitCode_mem_codeGrid _ _) z)
       rcases f with d | u
       exacts [hQB d, mem_insert_self _ _]
     · obtain ⟨d, rfl⟩ := hN.exists_old_of_lt hz
@@ -249,13 +258,14 @@ theorem SLvl.Good.pnext (hN : N.Good A) (hgm : g + 1 ≤ m) (hA0 : ∀ W : Prof 
 theorem SLvl.Good.readableS_pnext (hN : N.Good A) (C : Finset (CProf I)) :
     (N.pnext C).ReadableS := by
   intro Q hQ hQB z
+  -- the section of the padded next level, by definition
   change IsReadableAt (g + 1 + 1) Q (N.pnextσ C Q z)
   by_cases hz : (N.S.appendFullCellsScheme (g + 1) C.card).grade z ≤ g + 1
   · rw [SLvl.pnextσ_of_le hz]
     refine isReadableAt_upperDecoderAt_of_mem (B' := bound I) hQ (by omega) hQB
       (fun f ↦ isReadableAt_apply Q f) ?_
     induction z using Fin.addCases with
-    | left e => rw [SLvl.Φs_castAdd]; exact hN.mem _ (orbitCode_mem_codeGrid' _ _) e
+    | left e => rw [SLvl.Φs_castAdd]; exact hN.mem _ (orbitCode_mem_codeGrid _ _) e
     | right i =>
       rw [SLvl.Φs_natAdd]
       exact grid_subset_codeGrid _ _ (agreementHeight_spec (bot_mem_grid _ _) _ _).1
@@ -376,22 +386,25 @@ theorem le_pTower_hi : ∀ (J : ℕ) (P : CProf I) (i : Fin (𝒦).card),
     ((𝒦).equivFin.symm i).1 = orbitCode (g + 1) (pBot g J P) →
     P (Sum.inr ()) ≤ (pTower L A (J + 1)).σs P (pEmb J (Fin.natAdd L.S.card i))
   | 0, P, i, hi => by
+    -- the layer of controllers is the padded next level of `L` read as a state level
     change P (Sum.inr ()) ≤ L.toS.pnextσ 𝒦 P (Fin.natAdd _ i)
     rw [SLvl.pnextσ_of_le (by rw [Scheme.appendFullCellsScheme_grade_natAdd]), SLvl.Φs_natAdd,
       hi]
+    -- the row of the controller of the orbit code reads it at its agreement height with itself
     change P (Sum.inr ()) ≤ upperDecoderAt (g + 1) (g + 2) (bound I) P
       (agreementHeight (grid (g + 1) (bound I)) (orbitCode (g + 1) P) (orbitCode (g + 1) P))
     rw [agreementHeight_self (gridPoint_mem_grid le_rfl) (fun _ hx ↦ le_gridPoint_of_mem_grid hx)]
     have h := upperDecoderAt_orbitCode (k := g + 1) (K := g + 2) (B := bound I) (w := P)
       (Sum.inr ())
     refine le_of_eq_of_le h.symm ((isWitness_upperDecoderAt (by omega)).monotone ?_)
-    exact le_gridPoint_of_mem_codeGrid (orbitCode_mem_codeGrid' _ _ _)
+    exact le_gridPoint_of_mem_codeGrid (orbitCode_mem_codeGrid _ _ _)
   | J + 1, P, i, hi => by
     have ih := le_pTower_hi J (orbitCode (g + J + 2) P) i hi
     have hgr : (pTower L A (J + 1)).S.toCellScheme.grade (pEmb J (Fin.natAdd L.S.card i)) =
         g + 1 :=
       ((isGradePrefix_pEmb J).lowerEmb.grade_eq _).trans
         (Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i)
+    -- the section of the padded next level at an old controller, by definition
     change P (Sum.inr ()) ≤ (pTower L A (J + 1)).pnextσ (sCat I (g + (J + 1) + 1) A) P
       (Fin.castAdd _ (pEmb J (Fin.natAdd L.S.card i)))
     rw [SLvl.pnextσ_of_le (by rw [Scheme.appendFullCellsScheme_grade_castAdd, hgr]; omega),
@@ -412,6 +425,7 @@ theorem pTower_lo_le (N : Finset (Fin I.amalgam.card ⊕ Unit)) :
       orbitCode (g + 1) (pBot g J P) (Sum.inr ()) →
     (pTower L A (J + 1)).σs P (pEmb J (Fin.natAdd L.S.card i)) ≤ cutoffCut (g + 1) N P
   | 0, P, i, hi, hlt => by
+    -- the layer of controllers is the padded next level of `L` read as a state level
     change L.toS.pnextσ 𝒦 P (Fin.natAdd _ i) ≤ _
     rw [SLvl.pnextσ_of_le (by rw [Scheme.appendFullCellsScheme_grade_natAdd]), SLvl.Φs_natAdd,
       hi]
@@ -424,6 +438,7 @@ theorem pTower_lo_le (N : Finset (Fin I.amalgam.card ⊕ Unit)) :
         g + 1 :=
       ((isGradePrefix_pEmb J).lowerEmb.grade_eq _).trans
         (Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i)
+    -- the section of the padded next level at an old controller, by definition
     change (pTower L A (J + 1)).pnextσ (sCat I (g + (J + 1) + 1) A) P
       (Fin.castAdd _ (pEmb J (Fin.natAdd L.S.card i))) ≤ _
     rw [SLvl.pnextσ_of_le (by rw [Scheme.appendFullCellsScheme_grade_castAdd, hgr]; omega),

@@ -112,6 +112,12 @@ theorem isLowAt_of_forall_top {a : X → Label.{u}} (h : ∀ x ∈ T, a x = ⊤)
   rw [h x hx]
   exact le_top
 
+/-- **The clause over fewer proper donor fields implies the clause over more**: a larger set has a
+larger donor maximum, so activation over it is activation over the smaller set. -/
+theorem IsLowAt.of_subset {N' : Finset X} (hNN : N ⊆ N') {a : X → Label.{u}}
+    (h : IsLowAt K N T o r β a) : IsLowAt K N' T o r β a := fun hact ↦
+  h ((Finset.sup_mono hNN).trans_lt hact)
+
 /-! ### The partner -/
 
 variable [DecidableEq X]

@@ -16,14 +16,24 @@ the hypotheses of the main theorem"); semantic contract, items 4, 5 and 8.
 `StageType.hasLowDisplaysOn_lt`, compiled in this repository).  For a LOW family `(t', tb)` with
 `K = g + 1 < k = g + J + 2`, the padded tower of the LOW clause over the proper donor fields of
 every grade, over the levels from the grade `0` at `g` on the seed of the family, reads the actual
-state (`ProfileTower.readsActualOn_pTower`): its lifts are the steps for states at every grade
+state (`ProfileTower.exists_isLowLayer_pTower`): its lifts are the steps for states at every grade
 from `K` to `k` (`ProfileTower.stateCatStep_lowAll_seed`).  The display is legal, its faces are
 the private context and the donor with their labels, and its LOW layer at `K` has a separator
 labelled by a proper label and `⊤`.
 
 **LOW displays for every LOW family** (`StageType.hasLowDisplays_of_padded`, compiled in this
 repository): `K < k` by the padded tower, `K ≥ k` by `StageType.hasLowDisplaysOn_ge`.  The
-statement is `StageType.HasLowDisplays`, with no hypothesis.
+statement is `StageType.HasLowDisplays`, with no hypothesis.  So are its stronger forms: LOW
+layers (`StageType.hasLowLayers_of_padded`: `K < k` by the padded tower, `K = k` by
+`StageType.hasLowLayersOn_eq`, `K = k + 1` by `StageType.hasLowLayersOn_fullGradeAll`), controlled
+LOW displays (`StageType.hasControlledLowDisplays_of_padded`) and separated LOW displays
+(`StageType.hasSeparatedLowDisplays_of_padded`).
+
+**The chain to (R2)** (compiled in this repository): the bounded coatom form for the source-gap
+contexts with the lost point last (`Realization.boundedCoatomCutoffDetermination_sourceGapLast`)
+and (R2) for receiving models (`Realization.receivingResidualReceiving_of_padded`), through
+`Realization.BoundedCoatomCutoffDetermination.of_hasLowDisplays` and
+`Realization.receivingResidualReceiving_of_hasLowDisplays`.
 
 **The main theorem with (R2) from the padded tower**
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_padded`, compiled in this repository):
@@ -31,30 +41,60 @@ conditional on (R4) for receiving models and (R3) for receiving models, which ar
 
 ## References
 
-The LOW construction is that of [AFK26]; the displays and generalized saturation are those of
-[Kni26, §4.3].
+The LOW displays serve the proof of [AFK26, Theorem 4.29] for the legal templates of
+[AFK26, Definition 4.27]; the displays and generalized saturation are those of [Kni26, §4.3].
 -/
 
-universe u
+universe u w
 
 namespace VaughtConjecture.StageType
 
 open Finset Label
 
-/-- **LOW layers on the LOW families with `K < k`** (`ProfileTower.readsActualOn_pTower` on the
+/-- **LOW layers on the LOW families with `K < k`** (`ProfileTower.exists_isLowLayer_pTower` on the
 seed of the family), with no condition on the labels of the faces above `K`. -/
 theorem hasLowLayersOn_lt : HasLowLayersOn.{u} fun _ K k _ _ _ _ _ ↦ K < k := by
   intro α K k t' tb p o r hα hF hKk
   have hK0 := hF.grade_pos
   obtain ⟨g, rfl⟩ : ∃ g, K = g + 1 := ⟨K - 1, by omega⟩
   obtain ⟨J, rfl⟩ : ∃ J, k = g + J + 2 := ⟨k - (g + 2), by omega⟩
-  exact ProfileTower.readsActualOn_pTower
+  exact ProfileTower.exists_isLowLayer_pTower
     (I := Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private hF.face_donor)
     hα.isSuccPrelimit hF.isSourceGapContextAt hF.topGrade_donor
 
 /-- **LOW displays on the LOW families with `K < k`.** -/
 theorem hasLowDisplaysOn_lt : HasLowDisplaysOn.{u} fun _ K k _ _ _ _ _ ↦ K < k :=
   hasLowLayersOn_lt.hasLowDisplaysOn
+
+/-- **LOW layers on the LOW families with `K = k`** (`StageType.hasLowLayersOn_lowBotAll`; there is
+no grade in `(K, k]`, so the faces are vacuously `⊥` there). -/
+theorem hasLowLayersOn_eq : HasLowLayersOn.{u} fun _ K k _ _ _ _ _ ↦ K = k := by
+  intro α K k t' tb p o r hα hF hKk
+  subst hKk
+  exact hasLowLayersOn_lowBotAll t' tb p o r hα hF
+    ⟨le_rfl, fun _ h1 h2 ↦ absurd (h1.trans_le h2) (lt_irrefl _),
+      fun _ h1 h2 ↦ absurd (h1.trans_le h2) (lt_irrefl _)⟩
+
+/-- **LOW layers for every LOW family**: `K < k` through the padded tower
+(`StageType.hasLowLayersOn_lt`), `K = k` by `StageType.hasLowLayersOn_eq`, `K = k + 1` by
+`StageType.hasLowLayersOn_fullGradeAll`. -/
+theorem hasLowLayers_of_padded : HasLowLayers.{u} := by
+  intro α K k t' tb p o r hα hF
+  rcases lt_trichotomy K k with hlt | heq | hgt
+  · exact hasLowLayersOn_lt t' tb p o r hα hF hlt
+  · exact hasLowLayersOn_eq t' tb p o r hα hF heq
+  · exact hasLowLayersOn_fullGradeAll t' tb p o r hα hF
+      (show K = k + 1 by have := hF.grade_le_succ; omega)
+
+/-- **Controlled LOW displays for every LOW family** (`StageType.hasLowLayers_of_padded`,
+`StageType.HasLowLayers.hasControlledLowDisplays`). -/
+theorem hasControlledLowDisplays_of_padded : HasControlledLowDisplays.{u} :=
+  hasLowLayers_of_padded.hasControlledLowDisplays
+
+/-- **Separated LOW displays for every LOW family**
+(`StageType.HasControlledLowDisplays.hasSeparatedLowDisplays`). -/
+theorem hasSeparatedLowDisplays_of_padded : HasSeparatedLowDisplays.{u} :=
+  hasControlledLowDisplays_of_padded.hasSeparatedLowDisplays
 
 /-- **LOW displays for every LOW family**: `K < k` through the padded tower
 (`StageType.hasLowDisplaysOn_lt`), `K ≥ k` by `StageType.hasLowDisplaysOn_ge`. -/
@@ -65,6 +105,22 @@ theorem hasLowDisplays_of_padded : HasLowDisplays.{u} := by
   · exact hasLowDisplaysOn_ge t' tb p o r hα hF hge
 
 end VaughtConjecture.StageType
+
+namespace VaughtConjecture.Realization
+
+/-- **The bounded coatom form for the source-gap contexts with the lost point last**
+(`Realization.BoundedCoatomCutoffDetermination.of_hasLowDisplays` with
+`StageType.hasLowDisplays_of_padded`). -/
+theorem boundedCoatomCutoffDetermination_sourceGapLast :
+    BoundedCoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h :=
+  BoundedCoatomCutoffDetermination.of_hasLowDisplays StageType.hasLowDisplays_of_padded
+
+/-- **(R2) for receiving models** (`Realization.receivingResidualReceiving_of_hasLowDisplays` with
+`StageType.hasLowDisplays_of_padded`). -/
+theorem receivingResidualReceiving_of_padded : ReceivingResidualReceiving.{u, w} :=
+  receivingResidualReceiving_of_hasLowDisplays StageType.hasLowDisplays_of_padded
+
+end VaughtConjecture.Realization
 
 namespace VaughtConjecture.MainTheorem
 

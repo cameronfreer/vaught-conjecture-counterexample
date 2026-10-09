@@ -26,12 +26,12 @@ the fields above its grade to `⊥` first, and that splice does not keep the cla
 (`ProfileTower.not_lowPred_scode_of_high`); a tower whose code is the orbit code of the state
 itself keeps it.
 
-**The root above the donor maximum is excluded** (`ProfileTower.not_donorMax_lt_of_mem`,
-`ProfileTower.mem_lowNAll_of_subset_coatD`, compiled in this repository).  Both the rigid and
-the held configurations ask a copy `u` of a cell below both coatoms, of the grade of the layer,
-read above the donor maximum of the serving state.  Over every grade such a cell above the top
-grade of the donor is a proper donor field; capped agreement with a state active below the cap
-reads it at the value of the state, at most the donor maximum.
+**The root above the donor maximum is excluded** (`ProfileTower.not_donorMax_lt_of_subset_coatD`,
+compiled in this repository; not used by the step).  Both the rigid and the held configurations
+ask a copy `u` of a cell below both coatoms, of the grade of the layer, read above the donor
+maximum of the serving state.  Over every grade such a cell above the top grade of the donor is a
+proper donor field (`ProfileTower.mem_lowNAll_of_subset_coatD`); capped agreement with a state
+active below the cap reads it at the value of the state, at most the donor maximum.
 
 **The step from the repair at `K`** (`ProfileTower.LowStateRepair.of_subset`,
 `ProfileTower.lowStateRaise_of_repair`, compiled in this repository).  A repair of the failure mode
@@ -77,7 +77,8 @@ theorem lowPred_orbitCode {K j : ℕ} (hj : K ≤ j) {N : Finset (Fin I.amalgam.
 
 /-- **A proper donor field below the cap is read at the state**: for a state `P` with donor
 maximum below the cap `h`, every labelling agreeing with `P` capped at `h` at a proper donor field
-`u` reads it at most at the donor maximum. -/
+`u` reads it at most at the donor maximum.  Not used by the step for states; the form of the
+exclusion is `ProfileTower.not_donorMax_lt_of_subset_coatD`. -/
 theorem not_donorMax_lt_of_mem {N : Finset (Fin I.amalgam.card ⊕ Unit)} {P : CProf I}
     {h : Label.{u}} (hMh : donorMax N P < h) {a : Prof I} {u : Fin I.amalgam.card}
     (hu : Sum.inl u ∈ N) (hau : min (a u) h = min (P (Sum.inl u)) h) :
@@ -105,7 +106,10 @@ theorem mem_lowNAll_of_subset_coatD {K : ℕ} (htb : I.right.topGrade ≤ K) {d 
 /-- **The rigid and held configurations are excluded over every grade**: for a state `P` with
 donor maximum over the proper donor fields of every grade below the cap `h`, no labelling agreeing
 with `P` capped at `h` reads a cell on the donor coatom above the top grade of the donor (in
-particular a cell below both coatoms at a grade above `K`) above that donor maximum. -/
+particular a cell below both coatoms at a grade above `K`) above that donor maximum.  This is the
+hypothesis `donorMax Nf P < a u` of `ProfileTower.SLvl.Good.not_cappedLift_sS_of_rigid` and
+`ProfileTower.SLvl.Good.not_cappedLift_sS_of_held` over every grade; it is not used by the step
+for states, which needs only `ProfileTower.mem_lowNAll_of_subset_coatD`. -/
 theorem not_donorMax_lt_of_subset_coatD {K : ℕ} (htb : I.right.topGrade ≤ K) {P : CProf I}
     {h : Label.{u}} (hMh : donorMax (lowNAll I) P < h) {a : Prof I} {u : Fin I.amalgam.card}
     (hu : I.amalgam.toCellScheme.scope u ⊆ coatD) (hK : K < I.amalgam.toCellScheme.grade u)
@@ -139,6 +143,7 @@ theorem LowStateRepair.of_subset {N N' : Finset (Fin I.amalgam.card ⊕ Unit)} {
     exact le_trans (max_le_max (min_le_left _ _) le_rfl) (hPlow hPact (Sum.inl d) hy)
   have hle : donorMax N (withCut W₀ ⊥) ≤ donorMax N' (withCut W₀ ⊥) := Finset.sup_mono hNN
   have hact' : donorMax N (withCut W₀ ⊥) < min (P' (Sum.inr ())) c := by
+    -- the cutoff of the lowered state is `min (P cutoff) c`
     change _ < min (min (P (Sum.inr ())) c) c
     rw [min_assoc, min_self]
     exact hle.trans_lt hact
@@ -185,6 +190,7 @@ theorem lowStateRaise_of_repair {N : Finset (Fin I.amalgam.card ⊕ Unit)} (hK0 
       (hdy : d ∈ I.amalgam.toCellScheme.below (univ.erase y, j)) : q' ⟨d, hdy⟩ = W₀ d := by
     by_cases hdK : I.amalgam.toCellScheme.grade d ≤ K
     · have h1 := hq'WK ⟨d, ⟨hdy.1, hdK⟩⟩
+      -- the lift at the inclusion of a cell below `(univ.erase y, K)` is the lift at that cell
       change q' ⟨d, hdy⟩ = WK d at h1
       rw [h1]
       exact hWKW₀ d ⟨hdx.1, hdK⟩
@@ -233,9 +239,11 @@ theorem lowStateRaise_of_repair {N : Finset (Fin I.amalgam.card ⊕ Unit)} (hK0 
     have hfr : frontier K (Sum.inl o) (Sum.inl r) (withCut W ⊥) =
         frontier K (Sum.inl o) (Sum.inl r) (withCut WK ⊥) := by
       unfold Label.frontier
+      -- the frontier reads the owner and the lost top
       change min (W o) (visibilityReplace K K (W r)) = min (WK o) (visibilityReplace K K (WK r))
       rw [hWK' o hoK, hWK' r hrK]
     rw [hfr]
+    -- the donor top of the state of `W` is the label of `W` at its cell
     change _ ≤ W e
     rw [hWK' e he]
     exact hWKfr _ hz
@@ -280,18 +288,6 @@ theorem lowStateRepair_seed (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
   · exact lowStateRaise_private hs htb rfl rfl hNQ (fun f hf ↦ hf) (fun t ht ↦ ⟨t, ht, rfl⟩)
       fun t ht htK ↦ mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, ht, htK⟩, rfl⟩
   · exact lowStateRaise_donor hgm hs rfl rfl hNQ hTQ hNroot
-
-/-- The proper donor fields of grade at most `K` are proper donor fields. -/
-theorem lowN_subset_lowNAll (K : ℕ) : lowN I K ⊆ lowNAll I := by
-  classical
-  intro f hf
-  obtain ⟨t, ht, rfl⟩ := mem_image.mp hf
-  exact mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, (mem_filter.mp ht).2.1⟩, rfl⟩
-
-/-- The cutoff is not a proper donor field. -/
-theorem inr_notMem_lowNAll : Sum.inr () ∉ lowNAll I := fun hf ↦ by
-  obtain ⟨t, -, ht⟩ := mem_image.mp hf
-  cases ht
 
 /-- **The step for states at every grade `j ∈ [K, m]` for the LOW designations of a seed, over
 the proper donor fields of every grade**, when the private context is a source-gap context of

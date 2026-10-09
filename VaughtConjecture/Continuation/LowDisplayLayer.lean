@@ -74,6 +74,18 @@ noncomputable def lowNAll : Finset (Fin I.amalgam.card ⊕ Unit) :=
   (univ.filter fun t ↦ I.right.label t ≠ ⊤).image
     fun t ↦ Sum.inl (StageType.faceCell I.restrictFace_right t)
 
+/-- The proper donor fields of grade at most `K` are proper donor fields. -/
+theorem lowN_subset_lowNAll (K : ℕ) : lowN I K ⊆ lowNAll I := by
+  classical
+  intro f hf
+  obtain ⟨t, ht, rfl⟩ := mem_image.mp hf
+  exact mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, (mem_filter.mp ht).2.1⟩, rfl⟩
+
+/-- The cutoff is not a proper donor field. -/
+theorem inr_notMem_lowNAll : Sum.inr () ∉ lowNAll I := fun hf ↦ by
+  obtain ⟨t, -, ht⟩ := mem_image.mp hf
+  cases ht
+
 section Fields
 
 variable {D : StageType.{u} α (m + 2)} {C : Finset (CProf I)}
@@ -227,16 +239,17 @@ theorem cutoffCut_lowFields (hL : L.Good) (hψ : Function.Injective ψ)
     cutoffCut K (properDonorFields h₂) (lowFields ψ P) = cutoffCut K (lowNAll I) P := by
   rw [cutoffCut, cutoffCut, donorMax_lowFields hL hψ hface₂]
 
-/-- **The entry of a LOW profile is LOW** for the designations of `D`: the donor maximum over all
-proper donor cells bounds the one over those of grade at most `g + 1`, and the donor tops, the
+/-- **The entry of a state LOW over the proper donor fields of every grade is LOW** for the
+designations of `D`: the donor maximum of the entry over all proper donor cells is that of the
+state over all proper donor fields (`ProfileTower.donorMax_lowFields`), and the donor tops, the
 owner, the lost top and the cutoff are read literally. -/
-theorem isLowAt_lowFields (hL : L.Good) (hψ : Function.Injective ψ)
+theorem isLowAt_lowFields_all (hL : L.Good) (hψ : Function.Injective ψ)
     (hface₁ : ∀ i, faceCell h₁ i =
       ψ (Fin.castAdd C.card (L.embed (faceCell I.restrictFace_left i))))
     (hface₂ : ∀ i, faceCell h₂ i =
       ψ (Fin.castAdd C.card (L.embed (faceCell I.restrictFace_right i))))
     {o r : Fin I.left.card} {P : CProf I}
-    (hP : IsLowAt (g + 1) (lowN I (g + 1)) (lowT I) (Sum.inl (faceCell I.restrictFace_left o))
+    (hP : IsLowAt (g + 1) (lowNAll I) (lowT I) (Sum.inl (faceCell I.restrictFace_left o))
       (Sum.inl (faceCell I.restrictFace_left r)) (Sum.inr ()) P) :
     IsLowAt (g + 1) (properDonorFields h₂) (donorTopFields h₂) (Sum.inl (faceCell h₁ o))
       (Sum.inl (faceCell h₁ r)) (Sum.inr ()) (lowFields ψ P) := by
@@ -249,12 +262,8 @@ theorem isLowAt_lowFields (hL : L.Good) (hψ : Function.Injective ψ)
     rw [hface₂, lowFields_old hL hψ]
   intro hact x hx
   obtain ⟨y, hy, rfl⟩ := hx
-  have hle : donorMax (lowN I (g + 1)) P ≤ donorMax (properDonorFields h₂) (lowFields ψ P) := by
-    refine Finset.sup_le fun f hf ↦ ?_
-    obtain ⟨t, ht, rfl⟩ := mem_image.mp hf
-    rw [← hd₂ t]
-    exact le_donorMax (mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, (mem_filter.mp ht).2.1⟩, rfl⟩)
-  have h := hP (hle.trans_lt hact) _ ⟨y, hy, rfl⟩
+  rw [donorMax_lowFields hL hψ hface₂, lowFields_inr] at hact
+  have h := hP hact _ ⟨y, hy, rfl⟩
   have hfr : Label.frontier (g + 1) (Sum.inl (faceCell h₁ o)) (Sum.inl (faceCell h₁ r))
       (lowFields ψ P) = Label.frontier (g + 1) (Sum.inl (faceCell I.restrictFace_left o))
         (Sum.inl (faceCell I.restrictFace_left r)) P := by
@@ -262,6 +271,21 @@ theorem isLowAt_lowFields (hL : L.Good) (hψ : Function.Injective ψ)
     rw [hd₁, hd₁]
   rw [hfr, lowFields_inr, hd₂]
   exact h
+
+/-- **The entry of a LOW profile is LOW** for the designations of `D`: a profile LOW over the
+proper donor fields of grade at most `g + 1` is LOW over all of them (`Label.IsLowAt.of_subset`),
+and `ProfileTower.isLowAt_lowFields_all` applies. -/
+theorem isLowAt_lowFields (hL : L.Good) (hψ : Function.Injective ψ)
+    (hface₁ : ∀ i, faceCell h₁ i =
+      ψ (Fin.castAdd C.card (L.embed (faceCell I.restrictFace_left i))))
+    (hface₂ : ∀ i, faceCell h₂ i =
+      ψ (Fin.castAdd C.card (L.embed (faceCell I.restrictFace_right i))))
+    {o r : Fin I.left.card} {P : CProf I}
+    (hP : IsLowAt (g + 1) (lowN I (g + 1)) (lowT I) (Sum.inl (faceCell I.restrictFace_left o))
+      (Sum.inl (faceCell I.restrictFace_left r)) (Sum.inr ()) P) :
+    IsLowAt (g + 1) (properDonorFields h₂) (donorTopFields h₂) (Sum.inl (faceCell h₁ o))
+      (Sum.inl (faceCell h₁ r)) (Sum.inr ()) (lowFields ψ P) :=
+  isLowAt_lowFields_all hL hψ hface₁ hface₂ (hP.of_subset (lowN_subset_lowNAll _))
 
 end Fields
 

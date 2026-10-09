@@ -13,11 +13,14 @@ Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3: the dis
 controllers when the faces carry labels other than `⊥` above `K`); semantic contract, items 3, 4
 and 8.
 
-**LOW layers from any catalogue of LOW states** (`ProfileTower.isLowLayer_of_isGradePrefix_of`,
-`ProfileTower.ReadsActualOn`, `ProfileTower.ReadsActualOn.exists_isLowLayer`, compiled in this
-repository).  The LOW layer of a display (`ProfileTower.isLowLayer_of_isGradePrefix`) and the
-reading from a level reading the actual state (`ProfileTower.ReadsActual.exists_isLowLayer`) use
-of the LOW catalogue only that its states lie in the code grid and are LOW; they hold for every
+**LOW layers from any catalogue of LOW states** (`ProfileTower.isLowLayer_of_isGradePrefix_all`,
+`ProfileTower.ReadsActualOn`, `ProfileTower.ReadsActualOn.exists_isLowLayer_all`, compiled in this
+repository, for states LOW over the proper donor fields of every grade; their forms
+`ProfileTower.isLowLayer_of_isGradePrefix_of` and `ProfileTower.ReadsActualOn.exists_isLowLayer`
+for states LOW over those of grade at most `K` follow by `Label.IsLowAt.of_subset`).  The LOW
+layer of a display (`ProfileTower.isLowLayer_of_isGradePrefix`) and the reading from a level
+reading the actual state (`ProfileTower.ReadsActual.exists_isLowLayer`) use of the LOW catalogue
+only that its states lie in the code grid and are LOW; they hold for every
 such catalogue, in particular for the state catalogue of the LOW clause at `K`
 (`ProfileTower.sCat`), whose states are normalized by the orbit code over all fields, not by that
 of the amalgam part (`ProfileTower.orbitCode_update_cutoffCut` keeps the partner in it).
@@ -59,11 +62,14 @@ variable {D : StageType.{u} α (m + 2)} {o r : Fin I.left.card} {C : Finset (CPr
 local notation "𝒜" => lowPred (g + 1) (lowN I (g + 1)) (lowT I)
   (StageType.faceCell I.restrictFace_left o) (StageType.faceCell I.restrictFace_left r)
 
-/-- **The LOW layer of a display in which a catalogue layer of LOW states over a good level is a
-grade prefix at `g + 1`** (`ProfileTower.isLowLayer_of_isGradePrefix` for any catalogue of LOW
-states in the code grid). -/
-theorem isLowLayer_of_isGradePrefix_of (hL : L.Good)
-    (hC : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ 𝒜 P)
+local notation "𝒜all" => lowPred (g + 1) (lowNAll I) (lowT I)
+  (StageType.faceCell I.restrictFace_left o) (StageType.faceCell I.restrictFace_left r)
+
+/-- **The LOW layer of a display in which a catalogue layer of states LOW over the proper donor
+fields of every grade, over a good level, is a grade prefix at `g + 1`**
+(`ProfileTower.isLowLayer_of_isGradePrefix` for any such catalogue in the code grid). -/
+theorem isLowLayer_of_isGradePrefix_all (hL : L.Good)
+    (hC : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ 𝒜all P)
     {ψ : Fin (L.catS C).card → Fin D.card}
     (hψ : Scheme.IsGradePrefix (L.catS C) D.toScheme ψ (g + 1))
     (h₁ : restrictFace Fin.castSuccEmb D = some I.left)
@@ -100,7 +106,7 @@ theorem isLowLayer_of_isGradePrefix_of (hL : L.Good)
       cutoffCut_lt := by rw [hcut, lowFields_inr]; exact hlt }
   · obtain ⟨i, rfl⟩ := exists_ctrl_eq hψ hw
     rw [lowEntry_natAdd hinj]
-    exact isLowAt_lowFields hL hinj hface₁ hface₂ (hC _ (C.equivFin.symm i).2).2
+    exact isLowAt_lowFields_all hL hinj hface₁ hface₂ (hC _ (C.equivFin.symm i).2).2
   · obtain ⟨i, rfl⟩ := exists_ctrl_eq hψ hw
     obtain ⟨e, rfl⟩ := exists_old_eq hψ hdK hd
     have he : L.S.toCellScheme.grade e ≤ g + 1 := by
@@ -122,6 +128,33 @@ theorem isLowLayer_of_isGradePrefix_of (hL : L.Good)
     · rw [partner, Function.update_self, hcut]
       simp only [lowFields, Sum.elim_inr, Function.update_self]
 
+/-- **The LOW layer of a display in which a catalogue layer of LOW states over a good level is a
+grade prefix at `g + 1`**: states LOW over the proper donor fields of grade at most `g + 1` are LOW
+over all of them (`Label.IsLowAt.of_subset`), and `ProfileTower.isLowLayer_of_isGradePrefix_all`
+applies. -/
+theorem isLowLayer_of_isGradePrefix_of (hL : L.Good)
+    (hC : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ 𝒜 P)
+    {ψ : Fin (L.catS C).card → Fin D.card}
+    (hψ : Scheme.IsGradePrefix (L.catS C) D.toScheme ψ (g + 1))
+    (h₁ : restrictFace Fin.castSuccEmb D = some I.left)
+    (h₂ : restrictFace (extendByLast Fin.castSuccEmb) D = some I.right)
+    (hface₁ : ∀ i, faceCell h₁ i =
+      ψ (Fin.castAdd C.card (L.embed (faceCell I.restrictFace_left i))))
+    (hface₂ : ∀ i, faceCell h₂ i =
+      ψ (Fin.castAdd C.card (L.embed (faceCell I.restrictFace_right i))))
+    {ilo ihi : Fin C.card}
+    (hsep : (C.equivFin.symm ilo).1 = Function.update (C.equivFin.symm ihi).1 (Sum.inr ())
+      (cutoffCut (g + 1) (lowNAll I) (C.equivFin.symm ihi).1))
+    (hmem : cutoffCut (g + 1) (lowNAll I) (C.equivFin.symm ihi).1 ∈ grid (g + 1) (bound I))
+    (hlt : cutoffCut (g + 1) (lowNAll I) (C.equivFin.symm ihi).1 <
+      (C.equivFin.symm ihi).1 (Sum.inr ())) :
+    IsLowLayer (g + 1) h₁ h₂ o r (grid (g + 1) (bound I)) (lowEntry ψ)
+      (lowFields ψ (C.equivFin.symm ihi).1) (ψ (Fin.natAdd L.S.card ilo))
+      (ψ (Fin.natAdd L.S.card ihi)) :=
+  isLowLayer_of_isGradePrefix_all hL
+    (fun P hP ↦ ⟨(hC P hP).1, (hC P hP).2.of_subset (lowN_subset_lowNAll _)⟩) hψ h₁ h₂ hface₁
+    hface₂ hsep hmem hlt
+
 variable (C) in
 /-- **A level reading the actual state, over a catalogue `C` of LOW states**: the statement of
 `ProfileTower.ReadsActual` with the controllers indexed by `C`. -/
@@ -139,10 +172,11 @@ def ReadsActualOn (L : Lvl I g) (N : Lvl I m) (ψ : Fin (L.catS C).card → Fin 
     θ (N.S.rowAt u (ψ (Fin.natAdd L.S.card ihi))) = ⊤ ∧
     θ (N.S.rowAt u (ψ (Fin.natAdd L.S.card ilo))) < α
 
-/-- **The reading from a level reading the actual state over a catalogue of LOW states**
-(`ProfileTower.ReadsActual.exists_isLowLayer` for any catalogue of LOW states). -/
-theorem ReadsActualOn.exists_isLowLayer (hα : Order.IsSuccPrelimit α) (hL : L.Good)
-    (hC : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ 𝒜 P)
+/-- **The reading from a level reading the actual state over a catalogue of states LOW over the
+proper donor fields of every grade** (`ProfileTower.ReadsActual.exists_isLowLayer` for any such
+catalogue). -/
+theorem ReadsActualOn.exists_isLowLayer_all (hα : Order.IsSuccPrelimit α) (hL : L.Good)
+    (hC : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ 𝒜all P)
     {N : Lvl I m} (hN : N.Good) (hB : N.HasBotExtension) (hm : 1 ≤ m) (hgm : g + 1 ≤ m)
     {ψ : Fin (L.catS C).card → Fin N.S.card}
     (hψ : Scheme.IsGradePrefix (L.catS C) N.S ψ (g + 1))
@@ -162,6 +196,7 @@ theorem ReadsActualOn.exists_isLowLayer (hα : Order.IsSuccPrelimit α) (hL : L.
   have hq : F.scheme.rows.IsLawful (Label.reduce α ∘ r₁) := hr₁.reduce hα
   have hqα (d : Fin F.scheme.card) : AtStage α ((Label.reduce α ∘ r₁) d) := atStage_reduce α _
   have hqe (d : Fin I.amalgam.card) : (Label.reduce α ∘ r₁) (F.embed d) = I.amalgam.label d := by
+    -- the label of the completion at an old cell is the reduced row of the decoded labels
     change Label.reduce α (r₁ (Fin.castAdd _ (N.embed d))) = _
     rw [hr₁q, decodedLabels_embed hN hold, (I.amalgam.atStage d).reduce_eq]
   have hP : Scheme.IsGradePrefix (L.catS C) (F.display hq hqα).toScheme
@@ -177,6 +212,7 @@ theorem ReadsActualOn.exists_isLowLayer (hα : Order.IsSuccPrelimit α) (hL : L.
       faceCell h i = (Fin.castSucc ∘ Fin.castAdd _ ∘ ψ)
         (Fin.castAdd C.card (L.embed (faceCell h' i))) := by
     rw [CompletionBelowFullGrade.faceCell_display _ hf h h']
+    -- the face cells of the completion are the images of the old cells
     change Fin.castSucc (Fin.castAdd _ (N.embed _)) = _
     rw [hembed]
     rfl
@@ -184,17 +220,37 @@ theorem ReadsActualOn.exists_isLowLayer (hα : Order.IsSuccPrelimit α) (hL : L.
     rw [hψ.lowerEmb.grade_eq]
     exact (Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i).le.trans hgm
   refine ⟨F.display hq hqα, _, _, _, _, _, _, _, F.isLegal_display hq hqα, fun h' ↦ ?_, ?_,
-    isLowLayer_of_isGradePrefix_of hL hC hP (F.restrictFace_left_display hqe)
+    isLowLayer_of_isGradePrefix_all hL hC hP (F.restrictFace_left_display hqe)
       (F.restrictFace_right_display hqe)
       (hface Coatom.univ_map_left_ne _ I.restrictFace_left)
       (hface Coatom.univ_map_right_ne _ I.restrictFace_right) hsep hmem hlt⟩
   · have h2 := (CompletionBelowFullGrade.display_label_castSucc F hq hqα _).symm.trans h'
+    -- the label of the completion at the lower separator cell
     change Label.reduce α (r₁ (Fin.castAdd _ (ψ (Fin.natAdd L.S.card ilo)))) = ⊤ at h2
     rw [hr₁q, decodedLabels_of_le (hgr ilo), reduce_of_lt hlo] at h2
     exact ne_top_of_lt hlo h2
   · refine (CompletionBelowFullGrade.display_label_castSucc F hq hqα _).trans ?_
+    -- the label of the completion at the upper separator cell
     change Label.reduce α (r₁ (Fin.castAdd _ (ψ (Fin.natAdd L.S.card ihi)))) = ⊤
     rw [hr₁q, decodedLabels_of_le (hgr ihi), hhi, reduce_top]
+
+/-- **The reading from a level reading the actual state over a catalogue of LOW states**
+(`ProfileTower.ReadsActualOn.exists_isLowLayer_all`, through `Label.IsLowAt.of_subset`). -/
+theorem ReadsActualOn.exists_isLowLayer (hα : Order.IsSuccPrelimit α) (hL : L.Good)
+    (hC : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ 𝒜 P)
+    {N : Lvl I m} (hN : N.Good) (hB : N.HasBotExtension) (hm : 1 ≤ m) (hgm : g + 1 ≤ m)
+    {ψ : Fin (L.catS C).card → Fin N.S.card}
+    (hψ : Scheme.IsGradePrefix (L.catS C) N.S ψ (g + 1))
+    (hembed : ∀ d, N.embed d = ψ (Fin.castAdd _ (L.embed d)))
+    (h : ReadsActualOn C L N ψ) :
+    ∃ (D : StageType.{u} α (m + 2)) (h₁ : restrictFace Fin.castSuccEmb D = some I.left)
+      (h₂ : restrictFace (extendByLast Fin.castSuccEmb) D = some I.right)
+      (G : Finset Label.{u}) (entry : Fin D.card → LowField D → Label.{u})
+      (s : LowField D → Label.{u}) (lo hi : Fin D.card), D.IsLegal ∧ D.label lo ≠ ⊤ ∧
+        D.label hi = ⊤ ∧ IsLowLayer (g + 1) h₁ h₂ o r G entry s lo hi :=
+  h.exists_isLowLayer_all hα hL
+    (fun P hP ↦ ⟨(hC P hP).1, (hC P hP).2.of_subset (lowN_subset_lowNAll _)⟩) hN hB hm hgm hψ
+    hembed
 
 end Layer
 
