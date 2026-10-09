@@ -56,7 +56,7 @@ face is replaced by a section with frontier at most the cap and the same root
 (`StageType.IsSourceGapContextAt.exists_frontier_le_of_unserved`); the frontier condition then
 holds at every donor top, at most the cap or, below the cap, by the LOW clause of the serving
 profile (capping commutes with the frontier); the cutoff is coded by `exists_codedCutoff`. -/
-theorem Lvl.Good.lowStep_donor_top (hL : L.Good) (hm : 1 ≤ m) {o' r' : Fin I.left.card}
+theorem Lvl.Good.lowStep_donor_top (hL : L.Good) {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o' r')
     (hU : StageType.LowStepUnserved (m + 1) I.left (Fin.last m) o' r')
     (ho : o = StageType.faceCell I.restrictFace_left o')
@@ -90,9 +90,8 @@ theorem Lvl.Good.lowStep_donor_top (hL : L.Good) (hm : 1 ≤ m) {o' r' : Fin I.l
   set O : Finset (Fin (m + 2)) × ℕ := (coatD ∩ coatC, m) with hO
   have hOV : O ≤ (coatC, m + 1) := ⟨inter_subset_right, by simp only [hO]; omega⟩
   have hOU : O ≤ (coatD, m + 1) := ⟨inter_subset_left, by simp only [hO]; omega⟩
-  have hlift : I.amalgam.rows.CappedLift hOV := I.isBountiful
-    (show O ∈ I.amalgam.toCellScheme.gradedFaces from ⟨hOf, hm, hOcard.ge⟩)
-    ⟨I.erase_mem_faces hyP, Nat.succ_pos m, show m + 1 ≤ #(coatC) by rw [hcard]⟩ hOV
+  have hlift : I.amalgam.rows.CappedLift hOV :=
+    cappedLift_inter_succ hOf hOcard (I.erase_mem_faces hyP) (Seed.card_erase _) hOV
   obtain ⟨q', hq', hq'P, hq'a⟩ := (Rows.cappedLift_iff_forall_exists hOV).mp hlift h hh
     (fun d ↦ a d) (fun d ↦ P (Sum.inl d)) (ha.mono hOU) hPC
     fun d ↦ (haP d (I.amalgam.toCellScheme.below_mono hOU d.2)).symm
@@ -249,7 +248,7 @@ is replaced by one reading every donor top off the root at least at `c`
 (`StageType.IsLowFamily.exists_raised`; the root tops are at least `c` by the strict source gaps);
 when `c` is at most the cap, the capped agreement with the serving profile already gives the
 frontier condition; the cutoff is coded by `exists_codedCutoff`. -/
-theorem Lvl.Good.lowStep_private_top (hL : L.Good) (hm : 1 ≤ m) {o' r' : Fin I.left.card}
+theorem Lvl.Good.lowStep_private_top (hL : L.Good) {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o' r')
     (htb : I.right.topGrade ≤ m + 1)
     (hTie : StageType.LowStepTie (m + 1) I.left I.right I.restrictFace_face_left
@@ -285,9 +284,8 @@ theorem Lvl.Good.lowStep_private_top (hL : L.Good) (hm : 1 ≤ m) {o' r' : Fin I
   set O : Finset (Fin (m + 2)) × ℕ := (coatC ∩ coatD, m) with hO
   have hOV : O ≤ (coatD, m + 1) := ⟨inter_subset_right, by simp only [hO]; omega⟩
   have hOU : O ≤ (coatC, m + 1) := ⟨inter_subset_left, by simp only [hO]; omega⟩
-  have hlift : I.amalgam.rows.CappedLift hOV := I.isBountiful
-    (show O ∈ I.amalgam.toCellScheme.gradedFaces from ⟨hOf, hm, hOcard.ge⟩)
-    ⟨I.erase_mem_faces hyP, Nat.succ_pos m, show m + 1 ≤ #(coatD) by rw [hcard]⟩ hOV
+  have hlift : I.amalgam.rows.CappedLift hOV :=
+    cappedLift_inter_succ hOf hOcard (I.erase_mem_faces hyP) (Seed.card_erase _) hOV
   obtain ⟨q', hq', hq'P, hq'a⟩ := (Rows.cappedLift_iff_forall_exists hOV).mp hlift h hh
     (fun d ↦ a d) (fun d ↦ P (Sum.inl d)) (ha.mono hOU) hPD
     fun d ↦ (haP d (I.amalgam.toCellScheme.below_mono hOU d.2)).symm
@@ -489,11 +487,11 @@ theorem Lvl.Good.lowStep_private_top (hL : L.Good) (hm : 1 ≤ m) {o' r' : Fin I
 /-- **The capped lift from a coatom into the LOW layer at the grade `m + 1` from the LOW step**
 (`ProfileTower.Lvl.Good.cappedLift_catS_of_catStep_top`; the profiles with the cutoff `⊥` are
 LOW). -/
-theorem Lvl.Good.cappedLift_lowS_of_lowStep_top (hL : L.Good) (hm : 1 ≤ m) {x : Fin (m + 2)}
+theorem Lvl.Good.cappedLift_lowS_of_lowStep_top (hL : L.Good) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hstep : L.LowStep N T o r x) :
     (L.lowS 𝒞).rows.CappedLift (X := (univ.erase x, m + 1))
       (Y := ((univ : Finset (Fin (m + 2))), m + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  hL.cappedLift_catS_of_catStep_top hm hx lowPred_withCut_bot hstep
+  hL.cappedLift_catS_of_catStep_top hx lowPred_withCut_bot hstep
 
 /-- **The capped lift from either coatom into the LOW layer over a good level, from the two
 named cases.**  Under the designations of `ProfileTower.Lvl.Good.lowStep_donor` and
@@ -501,7 +499,7 @@ named cases.**  Under the designations of `ProfileTower.Lvl.Good.lowStep_donor` 
 (`StageType.LowStepUnserved`) and the tie case of the donor face (`StageType.LowStepTie`) give the
 capped lift from either coatom at the grade `m + 1` into `(univ, m + 1)`
 (`ProfileTower.Lvl.Good.cappedLift_lowS_of_lowStep`). -/
-theorem Lvl.Good.cappedLift_lowS_of_unserved_tie_top (hL : L.Good) (hm : 1 ≤ m)
+theorem Lvl.Good.cappedLift_lowS_of_unserved_tie_top (hL : L.Good)
     {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o' r')
     (htb : I.right.topGrade ≤ m + 1)
@@ -524,16 +522,16 @@ theorem Lvl.Good.cappedLift_lowS_of_unserved_tie_top (hL : L.Good) (hm : 1 ≤ m
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
     (L.lowS 𝒞).rows.CappedLift (X := (univ.erase x, m + 1))
       (Y := ((univ : Finset (Fin (m + 2))), m + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
-  refine hL.cappedLift_lowS_of_lowStep_top hm hx ?_
+  refine hL.cappedLift_lowS_of_lowStep_top hx ?_
   rcases Finset.mem_insert.mp hx with rfl | hx'
-  · exact hL.lowStep_private_top hm hs htb hTie ho hr hNQ hTR hTtop hLoN
+  · exact hL.lowStep_private_top hs htb hTie ho hr hNQ hTR hTtop hLoN
   · rw [Finset.mem_singleton.mp hx']
-    exact hL.lowStep_donor_top hm hs hU ho hr hNQ hTQ hNroot
+    exact hL.lowStep_donor_top hs hU ho hr hNQ hTQ hNroot
 
 /-- **The capped lift from either coatom into the LOW layer over a good level, from the tie case
 alone**: below the full grade the unserved case holds (`StageType.lowStepUnserved_of_le`), so
 `ProfileTower.Lvl.Good.cappedLift_lowS_of_unserved_tie` needs only `StageType.LowStepTie`. -/
-theorem Lvl.Good.cappedLift_lowS_of_tie_top (hL : L.Good) (hm : 1 ≤ m)
+theorem Lvl.Good.cappedLift_lowS_of_tie_top (hL : L.Good)
     {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o' r')
     (htb : I.right.topGrade ≤ m + 1)
@@ -555,14 +553,14 @@ theorem Lvl.Good.cappedLift_lowS_of_tie_top (hL : L.Good) (hm : 1 ≤ m)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
     (L.lowS 𝒞).rows.CappedLift (X := (univ.erase x, m + 1))
       (Y := ((univ : Finset (Fin (m + 2))), m + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  hL.cappedLift_lowS_of_unserved_tie_top hm hs htb
+  hL.cappedLift_lowS_of_unserved_tie_top hs htb
     (StageType.lowStepUnserved I.isLegal_left hs I.restrictFace_face_left) hTie ho hr
     hNQ hTQ hNroot hTR hTtop hLoN hx
 
 /-- **The capped lift from either coatom into the LOW layer over a good level, when the donor has
 a top of grade `m + 1`**: the tie case holds (`StageType.lowStepTie_of_top_grade`), so the capped
 lift needs only the LOW designations. -/
-theorem Lvl.Good.cappedLift_lowS_of_top_top (hL : L.Good) (hm : 1 ≤ m)
+theorem Lvl.Good.cappedLift_lowS_of_top_top (hL : L.Good)
     {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o' r')
     (htb : I.right.topGrade ≤ m + 1) {z : Fin I.right.card} (hz : I.right.label z = ⊤)
@@ -583,7 +581,7 @@ theorem Lvl.Good.cappedLift_lowS_of_top_top (hL : L.Good) (hm : 1 ≤ m)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
     (L.lowS 𝒞).rows.CappedLift (X := (univ.erase x, m + 1))
       (Y := ((univ : Finset (Fin (m + 2))), m + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  hL.cappedLift_lowS_of_tie_top hm hs htb
+  hL.cappedLift_lowS_of_tie_top hs htb
     (StageType.lowStepTie_of_top_grade (hF := ⟨I.isLegal_left, I.isLegal_right,
       I.restrictFace_face_left, I.restrictFace_face_right, hs, htb⟩) hz hzK) ho hr
     hNQ hTQ hNroot hTR hTtop hLoN hx
@@ -602,7 +600,7 @@ the private context is a source-gap context of grade `m + 1`
 with the lost point last and the donor has top grade `m + 1`, attained: the designation hypotheses
 of `ProfileTower.Lvl.Good.cappedLift_lowS_of_top` hold for `lowN`, `lowT` and the copies of the
 owner and the lost top. -/
-theorem Lvl.Good.cappedLift_lowS_seed_top {L : Lvl I m} (hL : L.Good) (hm : 1 ≤ m)
+theorem Lvl.Good.cappedLift_lowS_seed_top {L : Lvl I m} (hL : L.Good)
     {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o' r')
     (htb : I.right.topGrade ≤ m + 1) {z : Fin I.right.card} (hz : I.right.label z = ⊤)
@@ -614,7 +612,7 @@ theorem Lvl.Good.cappedLift_lowS_seed_top {L : Lvl I m} (hL : L.Good) (hm : 1 �
       (X := (univ.erase x, m + 1)) (Y := ((univ : Finset (Fin (m + 2))), m + 1))
       ⟨erase_subset _ _, le_rfl⟩ := by
   classical
-  refine hL.cappedLift_lowS_of_top_top hm hs htb hz hzK rfl rfl ?_ ?_ ?_ ?_ ?_ ?_ hx
+  refine hL.cappedLift_lowS_of_top_top hs htb hz hzK rfl rfl ?_ ?_ ?_ ?_ ?_ ?_ hx
   · intro f hf
     obtain ⟨t, ht, rfl⟩ := mem_image.mp hf
     exact ⟨_, rfl, faceCell_right_mem_below (mem_filter.mp ht).2.2⟩
@@ -775,7 +773,7 @@ theorem Lvl.Good.catNext_succ (hL : L.Good) (hgm : g + 1 ≤ m + 1)
 when the private context is a source-gap context of grade `m + 1` with the lost point last and the
 donor has top grade `m + 1`, attained, with `1 ≤ m` (`ProfileTower.Lvl.Good.catNext_succ`,
 `ProfileTower.Lvl.Good.cappedLift_lowS_seed_top`). -/
-theorem Lvl.Good.lowNext_top {L : Lvl I m} (hL : L.Good) (hm : 1 ≤ m) {o' r' : Fin I.left.card}
+theorem Lvl.Good.lowNext_top {L : Lvl I m} (hL : L.Good) {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o' r')
     (htb : I.right.topGrade ≤ m + 1) {z : Fin I.right.card} (hz : I.right.label z = ⊤)
     (hzK : I.right.toCellScheme.grade z = m + 1) :
@@ -783,6 +781,6 @@ theorem Lvl.Good.lowNext_top {L : Lvl I m} (hL : L.Good) (hm : 1 ≤ m) {o' r' :
       (StageType.faceCell I.restrictFace_left o')
       (StageType.faceCell I.restrictFace_left r'))).Good :=
   hL.catNext_succ le_rfl lowPred_withCut_bot fun _ hx ↦
-    hL.cappedLift_lowS_seed_top hm hs htb hz hzK hx
+    hL.cappedLift_lowS_seed_top hs htb hz hzK hx
 
 end VaughtConjecture.ProfileTower

@@ -163,6 +163,25 @@ theorem Lvl.Good.cappedLift_catS_succ (hL : L.Good) (hgm : g + 1 ≤ m + 1) {x :
 
 end Succ
 
+/-- **The lift from the common face of the two coatoms into a coatom at the grade `m + 1`**: the
+common face has `m` points, so its graded face of grade `m` lies below the coatom at `m + 1`; for
+`1 ≤ m` the lift is bountifulness of the amalgam, and for `m = 0` no cell lies below it. -/
+theorem cappedLift_inter_succ {B C : Finset (Fin (m + 2))} (hB : B ∈ I.amalgam.toCellScheme.faces)
+    (hBc : #B = m) (hC : C ∈ I.amalgam.toCellScheme.faces) (hCc : #C = m + 1)
+    (h : ((B, m) : Finset (Fin (m + 2)) × ℕ) ≤ (C, m + 1)) : I.amalgam.rows.CappedLift h := by
+  by_cases hm : 1 ≤ m
+  · exact I.isBountiful
+      (show ((B, m) : Finset (Fin (m + 2)) × ℕ) ∈ I.amalgam.toCellScheme.gradedFaces from
+        ⟨hB, hm, hBc.ge⟩)
+      (show ((C, m + 1) : Finset (Fin (m + 2)) × ℕ) ∈ I.amalgam.toCellScheme.gradedFaces from
+        ⟨hC, by omega, hCc.ge⟩) h
+  · refine (Rows.cappedLift_iff_forall_exists h).mpr fun _ _ _ q _ hq _ ↦
+      ⟨q, hq, fun _ ↦ rfl, fun d ↦ ?_⟩
+    exfalso
+    have h1 : I.amalgam.toCellScheme.grade d.1 ≤ m := d.2.2
+    have h2 := I.amalgam.isWellFormed.isWellFormed.grade_pos d.1
+    omega
+
 section Top
 
 variable {L : Lvl I m} {A : CProf I → Prop} {C : Finset (CProf I)}
@@ -173,7 +192,7 @@ local notation "𝒞" => predCat I (m + 1) A
 lawful below a coatom at the grade `m + 1` is, at the amalgam cells below the coatom, an amalgam
 profile lawful on the grade-`(m + 1)` cut: lift its trace on the common face into the other coatom
 at the cap `⊥` (bountifulness of the amalgam) and glue. -/
-theorem Lvl.Good.exists_cutLawful_of_coatom_top (hL : L.Good) (hm : 1 ≤ m) {x : Fin (m + 2)}
+theorem Lvl.Good.exists_cutLawful_of_coatom_top (hL : L.Good) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {w : Fin (L.catS C).card → Label.{u}}
     (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, m + 1) (fun z ↦ w z)) :
     ∃ W : Prof I, IsCutLawful I (m + 1) W ∧
@@ -194,9 +213,8 @@ theorem Lvl.Good.exists_cutLawful_of_coatom_top (hL : L.Good) (hm : 1 ≤ m) {x 
   set O : Finset (Fin (m + 2)) × ℕ := (univ.erase x ∩ univ.erase y, m) with hO
   have hOV : O ≤ (univ.erase y, m + 1) := ⟨inter_subset_right, by simp only [hO]; omega⟩
   have hOU : O ≤ (univ.erase x, m + 1) := ⟨inter_subset_left, by simp only [hO]; omega⟩
-  have hlift : I.amalgam.rows.CappedLift hOV := I.isBountiful
-    (show O ∈ I.amalgam.toCellScheme.gradedFaces from ⟨hOf, hm, hOcard.ge⟩)
-    ⟨I.erase_mem_faces hy, by omega, show m + 1 ≤ #(univ.erase y) by rw [hcard]⟩ hOV
+  have hlift : I.amalgam.rows.CappedLift hOV :=
+    cappedLift_inter_succ hOf hOcard (I.erase_mem_faces hy) (Seed.card_erase _) hOV
   obtain ⟨q', hq', -, hq'a⟩ := (Rows.cappedLift_iff_forall_exists hOV).mp hlift ⊥
     (isSelfVisible_bot _) (fun d ↦ a d) (fun _ ↦ ⊥) (ha.mono hOU)
     (Rows.isLawfulBelow_const_bot _) fun _ ↦ by simp
@@ -230,7 +248,7 @@ below a coatom that agrees there with `P` capped at `h` is, at the amalgam cells
 an amalgam profile lawful on the cut agreeing everywhere with `P` capped at `h`: the trace on the
 common face is lifted into the other coatom in the cap ball of `P` (bountifulness of the amalgam),
 and the cells above the cut keep `P`. -/
-theorem Lvl.Good.exists_cutLawful_of_coatom_cap_top (hL : L.Good) (hm : 1 ≤ m)
+theorem Lvl.Good.exists_cutLawful_of_coatom_cap_top (hL : L.Good)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {P : Prof I}
     (hP : IsCutLawful I (m + 1) P) {h : Label.{u}} (hh : IsSelfVisible (m + 1) h)
     {w : Fin (L.catS C).card → Label.{u}}
@@ -255,9 +273,8 @@ theorem Lvl.Good.exists_cutLawful_of_coatom_cap_top (hL : L.Good) (hm : 1 ≤ m)
   set O : Finset (Fin (m + 2)) × ℕ := (univ.erase x ∩ univ.erase y, m) with hO
   have hOV : O ≤ (univ.erase y, m + 1) := ⟨inter_subset_right, by simp only [hO]; omega⟩
   have hOU : O ≤ (univ.erase x, m + 1) := ⟨inter_subset_left, by simp only [hO]; omega⟩
-  have hlift : I.amalgam.rows.CappedLift hOV := I.isBountiful
-    (show O ∈ I.amalgam.toCellScheme.gradedFaces from ⟨hOf, hm, hOcard.ge⟩)
-    ⟨I.erase_mem_faces hy, by omega, show m + 1 ≤ #(univ.erase y) by rw [hcard]⟩ hOV
+  have hlift : I.amalgam.rows.CappedLift hOV :=
+    cappedLift_inter_succ hOf hOcard (I.erase_mem_faces hy) (Seed.card_erase _) hOV
   obtain ⟨q', hq', hq'P, hq'a⟩ := (Rows.cappedLift_iff_forall_exists hOV).mp hlift h hh
     (fun d ↦ a d) (fun d ↦ P d) (ha.mono hOU) (hP.isLawfulBelow_erase hy)
     fun d ↦ (hwP d.1 (d.2.2.trans (by simp only [hO]; omega)) (subset_inter_iff.mp d.2.1).1).symm
@@ -294,7 +311,7 @@ theorem Lvl.Good.exists_cutLawful_of_coatom_cap_top (hL : L.Good) (hm : 1 ≤ m)
 
 /-- **The capped lift from a coatom into the catalogue layer at the grade `m + 1`, from the
 catalogue step**: the cap `⊥` is `ProfileTower.Lvl.Good.exists_cutLawful_of_coatom_top`. -/
-theorem Lvl.Good.cappedLift_catS_of_catStep_top (hL : L.Good) (hm : 1 ≤ m) {x : Fin (m + 2)}
+theorem Lvl.Good.cappedLift_catS_of_catStep_top (hL : L.Good) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hAbot : ∀ W : Prof I, A (withCut W ⊥))
     (hstep : L.CatStep A x) :
     (L.catS 𝒞).rows.CappedLift (X := (univ.erase x, m + 1))
@@ -304,7 +321,7 @@ theorem Lvl.Good.cappedLift_catS_of_catStep_top (hL : L.Good) (hm : 1 ≤ m) {x 
     funext f
     rcases f with d | z <;> rfl
   hL.cappedLift_catS_succ le_rfl hx hA0 (fun _ hw ↦ by
-    obtain ⟨W, hW, hWw⟩ := hL.exists_cutLawful_of_coatom_top hm hx hw
+    obtain ⟨W, hW, hWw⟩ := hL.exists_cutLawful_of_coatom_top hx hw
     exact ⟨W, hW, hWw, hAbot _⟩) hstep
 
 end Top
