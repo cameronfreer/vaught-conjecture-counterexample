@@ -367,4 +367,92 @@ theorem exists_stateStep_two (I : Seed.{u} ω 1) (hI : I.left = ctx ω)
 
 end TieInstance
 
+namespace ApexInstance
+
+open AvailableTopDeterminationCounterexample
+
+/-- The root of the input. -/
+local notation "𝕘" => (Fin.castSuccEmb : Fin 1 ↪ Fin 2)
+
+/-- The state step at the input, for the first coatom type given up to equality: at the grade `2`
+from the threshold `2`, and at every grade from an anchor in the catalogue. -/
+theorem exists_stateStep_aux {α : Ordinal.{u}} {I : Seed.{u} α 2} {t' : StageType.{u} α 3}
+    (hI : I.left = t') {p : StageType.{u} α 1}
+    {hte : restrictFace ((𝕘).trans Fin.castSuccEmb) t' = some p} {d : StageType.{u} α 2}
+    (hdp : restrictFace Fin.castSuccEmb d = some p) (hdL : d.IsLegal)
+    (hdA : restrictFace (extendByLast ((𝕘).trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests t' d.toScheme} (hpair : ∀ j, Q.CorrectAt t'.label j (d.label j))
+    (hQ : Q.ClassCalibrated hte) (hrel : Q.HasRelativeLiftOnClass hte hdp) {k : ℕ}
+    (hk : 1 ≤ k) {R₀ : Fin (I.attachment 𝕘).card → Label.{u}}
+    (hR₀ : (I.attachment 𝕘).rows.IsLawful R₀) {h : Label.{u}} (hh : IsSelfVisible k h)
+    {w : Fin I.left.card → Label.{u}}
+    (hw : I.left.rows.IsLawfulBelow ((univ : Finset (Fin 3)), k) fun x ↦ w x)
+    (hwR : ∀ x, I.left.toCellScheme.grade x ≤ k →
+      min (w x) h = min (R₀ (I.attachCtxCell 𝕘 x)) h)
+    (hadm : (Q.threshold = k ∧ I.attachAdmits 𝕘 hdA (hI ▸ Q) k R₀) ∨
+      ∃ (H : ℕ) (Γ : Finset Label.{u}) (B' : ℕ), 0 < H ∧ (I.attachmentBase 𝕘).S.card ≤ H ∧
+        ⊥ ∈ Γ ∧ (∀ x ∈ Γ, x ≤ gridPoint 2 B') ∧
+        R₀ ∈ (I.attachmentBase 𝕘).towerCat Γ (I.attachAdmits 𝕘 hdA (hI ▸ Q)) 4) :
+    ∃ W : Fin (I.attachment 𝕘).card → Label.{u},
+      (∀ x, I.left.toCellScheme.grade x ≤ k → W (I.attachCtxCell 𝕘 x) = w x) ∧
+      (I.attachment 𝕘).rows.IsLawfulBelow ((univ : Finset (Fin 4)), k) (fun a ↦ W a) ∧
+      I.attachAdmits 𝕘 hdA (hI ▸ Q) k W ∧
+      ∀ a, min (W a) h = min (R₀ a) h := by
+  subst hI
+  rcases hadm with ⟨hth, hR₀A⟩ | ⟨H, Γ, B', hH, hcard, hΓ0, hΓ, hR₀C⟩
+  · exact Seed.exists_stateStep_threshold hte hdp hdL Nat.one_pos hdA hQ hpair hrel hth hk hR₀
+      hR₀A hh hw hwR
+  · exact Seed.exists_stateStep_of_mem_towerCat hH hcard hΓ0 hΓ hte hdp hdL Nat.one_pos hdA hQ
+      hpair hrel hk hR₀C hh hw hwR
+
+/-- **The state step at the grade `2` of the apex input, below its top grade `3`**: with the
+bottom requests `req α` (threshold `2`) over the donor labelled `⊥`, every lawful anchor admitted
+at `2` and every context prescription lawful below `(univ, 2)` agreeing with it capped at a cut
+`h` self-visible at `2` give a state of the attachment literal on the context, lawful below
+`(univ, 2)`, admitted at `2`, and agreeing with the anchor capped at `h`. -/
+theorem exists_stateStep_two {α : Ordinal.{u}} (I : Seed.{u} α 2) (hI : I.left = topType α)
+    (hdA : restrictFace (extendByLast ((𝕘).trans Fin.castSuccEmb)) I.amalgam =
+      some (bareDonor α))
+    {R₀ : Fin (I.attachment 𝕘).card → Label.{u}} (hR₀ : (I.attachment 𝕘).rows.IsLawful R₀)
+    (hR₀A : I.attachAdmits 𝕘 hdA (hI ▸ req α) 2 R₀) {h : Label.{u}} (hh : IsSelfVisible 2 h)
+    {w : Fin I.left.card → Label.{u}}
+    (hw : I.left.rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) fun x ↦ w x)
+    (hwR : ∀ x, I.left.toCellScheme.grade x ≤ 2 →
+      min (w x) h = min (R₀ (I.attachCtxCell 𝕘 x)) h) :
+    ∃ W : Fin (I.attachment 𝕘).card → Label.{u},
+      (∀ x, I.left.toCellScheme.grade x ≤ 2 → W (I.attachCtxCell 𝕘 x) = w x) ∧
+      (I.attachment 𝕘).rows.IsLawfulBelow ((univ : Finset (Fin 4)), 2) (fun a ↦ W a) ∧
+      I.attachAdmits 𝕘 hdA (hI ▸ req α) 2 W ∧
+      ∀ a, min (W a) h = min (R₀ a) h :=
+  exists_stateStep_aux hI (hte := restrictFace_root) bareDonor_mem_cofaces.2
+    bareDonor_mem_cofaces.1 hdA (correctAt_req α) (classCalibrated_req α)
+    (hasRelativeLiftOnClass_req α) (by omega) hR₀ hh hw hwR (.inl ⟨threshold_req α, hR₀A⟩)
+
+/-- **The state step at the top grade `3` of the apex input, above the threshold `2`**: for an
+anchor in the catalogue (values `Γ` containing `⊥` and below the grid point at `2`, height bound
+`H` at least the card of the attachment base), the admission of the anchor's truncation at `3` is
+the ambient admission of its writing, and the state step holds at `3`. -/
+theorem exists_stateStep_three {α : Ordinal.{u}} (I : Seed.{u} α 2) (hI : I.left = topType α)
+    (hdA : restrictFace (extendByLast ((𝕘).trans Fin.castSuccEmb)) I.amalgam =
+      some (bareDonor α))
+    {H : ℕ} {Γ : Finset Label.{u}} {B' : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase 𝕘).S.card ≤ H)
+    (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') {R₀ : Fin (I.attachment 𝕘).card → Label.{u}}
+    (hR₀ : R₀ ∈ (I.attachmentBase 𝕘).towerCat Γ (I.attachAdmits 𝕘 hdA (hI ▸ req α)) 4)
+    {h : Label.{u}} (hh : IsSelfVisible 3 h) {w : Fin I.left.card → Label.{u}}
+    (hw : I.left.rows.IsLawfulBelow ((univ : Finset (Fin 3)), 3) fun x ↦ w x)
+    (hwR : ∀ x, I.left.toCellScheme.grade x ≤ 3 →
+      min (w x) h = min (R₀ (I.attachCtxCell 𝕘 x)) h) :
+    ∃ W : Fin (I.attachment 𝕘).card → Label.{u},
+      (∀ x, I.left.toCellScheme.grade x ≤ 3 → W (I.attachCtxCell 𝕘 x) = w x) ∧
+      (I.attachment 𝕘).rows.IsLawfulBelow ((univ : Finset (Fin 4)), 3) (fun a ↦ W a) ∧
+      I.attachAdmits 𝕘 hdA (hI ▸ req α) 3 W ∧
+      ∀ a, min (W a) h = min (R₀ a) h :=
+  exists_stateStep_aux hI (hte := restrictFace_root) bareDonor_mem_cofaces.2
+    bareDonor_mem_cofaces.1 hdA (correctAt_req α) (classCalibrated_req α)
+    (hasRelativeLiftOnClass_req α) (by omega)
+    (Scheme.LadderBaseData.mem_towerCat.mp hR₀).2.1 hh hw hwR
+    (.inr ⟨H, Γ, B', hH, hcard, hΓ0, hΓ, hR₀⟩)
+
+end ApexInstance
+
 end VaughtConjecture

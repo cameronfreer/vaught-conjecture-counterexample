@@ -331,6 +331,27 @@ theorem isTopFree_pointFace : (pointFace α).IsTopFree := fun i hi ↦ by
     rw [labelling, ite_eq_right (by simp [live_eq_false_of_scope d hd])] at hi
     exact bot_ne_top hi
 
+/-- **The face on `{0}` is labelled `⊥`**: it is top-free, and every label of `topType α` is `⊥`
+or `⊤`. -/
+theorem label_pointFace (i : Fin (pointFace α).card) : (pointFace α).label i = ⊥ := by
+  -- the label of the root at `i` is that of its cell in `topType α`
+  change (topType α).label ((topType α).cellMap pointEmb i) = ⊥
+  exact (label_topType_eq_bot_or_top _).resolve_right (isTopFree_pointFace i)
+
+/-- The cell of `topType α` at `(univ, 2)`: the live cell `8` of `S`. -/
+noncomputable def fullTwoCell (α : Ordinal.{u}) : Fin (topType α).card := oldCell 8
+
+/-- The cell `fullTwoCell α` has graded index `(univ, 2)`. -/
+theorem gradedIndex_fullTwoCell :
+    (topType α).toCellScheme.gradedIndex (fullTwoCell α) = ((univ : Finset (Fin 3)), 2) := by
+  rw [fullTwoCell, gradedIndex_oldCell]
+  rfl
+
+/-- The cell `fullTwoCell α` is labelled `⊤`. -/
+theorem label_fullTwoCell : (topType α).label (fullTwoCell α) = ⊤ := by
+  rw [fullTwoCell, label_oldCell]
+  rfl
+
 /-- **The face on `{0, 1}` has a new top of grade `2`**: its cell at `({0, 1}, 2)`, the live cell
 `6` of `S`, contains the new point `1` and is labelled `⊤`. -/
 theorem exists_new_top_pairFace : ∃ j, Fin.last 1 ∈ (pairFace α).toCellScheme.scope j ∧

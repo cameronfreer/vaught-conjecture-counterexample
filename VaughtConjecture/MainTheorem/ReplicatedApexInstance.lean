@@ -26,6 +26,17 @@ code at the grade `2` is not lawful (`Seed.not_isLawful_orbitCode_of_grade_lt`).
 lemma, which asks full lawfulness of the coded state, does not apply to orbit codes below the top
 grade at this input, while at the top grade it does (`Seed.isLawful_orbitCode_top`).
 
+**Requests below the top grade** (`ApexInstance.req`): over the donor labelled `⊥`
+(`ApexInstance.bareDonor`, the scheme of `pairFace α`, a legal coface of `pointFace α`, which is
+labelled `⊥`; its seed exists, `ApexInstance.exists_seed_bare`), the cap and the marker are the
+cell of `topType α` at `(univ, 2)`, labelled `⊤`, so the threshold is `2 < m + 1 = 3`; every donor
+cell is a bottom request.  The labels pair is admitted (`correctAt_req`), the requests are
+calibrated on the class (`classCalibrated_req`; the root cells have grade `1`), and the relative
+lift on the exact class holds (`hasRelativeLiftOnClass_req`, by
+`StageType.GrowthRequests.hasRelativeLiftOnClass_of_bottoms`; the root cells are labelled `⊥`).
+The donor `pairFace α` itself carries `⊤` at its cell `({0, 1}, 2)`, which a bottom request under
+the cap `⊤` excludes.
+
 ## References
 
 Lawful sections are [Kni26, Definition 2.5.4]; the growth construction is that of [Kni26, §4].
@@ -89,6 +100,85 @@ theorem not_isLawful_orbitCode_two {α : Ordinal.{u}} (I : Seed.{u} α 2) (hI : 
       ¬ (I.attachment 𝕘).rows.IsLawful (orbitCode 2 (I.compressedLabel 𝕘)) := by
   obtain ⟨d, hd, hl⟩ := exists_apex α
   exact not_isLawful_orbitCode_two_aux hI hd hl
+
+/-! ### Bottom requests with the cap at a cell of grade `2` -/
+
+/-- **The donor labelled `⊥`**: the face on `{0, 1}` with every label `⊥`. -/
+noncomputable def bareDonor (α : Ordinal.{u}) : StageType.{u} α 2 where
+  toScheme := (pairFace α).toScheme
+  label _ := ⊥
+  isWellFormed := (pairFace α).isWellFormed
+  isCoded := (pairFace α).isCoded
+  isLawful := CellScheme.Rows.isLawful_const_bot
+  atStage _ := atStage_bot
+
+/-- The donor labelled `⊥` is a legal coface of the face on `{0}`: that face is labelled `⊥`. -/
+theorem bareDonor_mem_cofaces {α : Ordinal.{u}} : bareDonor α ∈ (pointFace α).cofaces := by
+  refine ⟨isLegal_pairFace, ?_⟩
+  rw [← restrictFace_pairFace]
+  refine restrictFace_congr_label rfl fun i j hij hi ↦ ?_
+  obtain rfl : i = j := Fin.ext hij
+  obtain ⟨y, rfl⟩ := exists_faceCell_eq (restrictFace_pairFace (α := α)) hi
+  exact (label_pointFace y).symm.trans (label_faceCell _ y).symm
+
+/-- The root face of `topType α` along `{0}` is the face on `{0}`. -/
+theorem restrictFace_root {α : Ordinal.{u}} :
+    restrictFace ((𝕘).trans Fin.castSuccEmb) (topType α) = some (pointFace α) :=
+  (restrictFace_trans (topType α) _ _ topType_mem_cofaces.2).symm.trans restrictFace_pairFace
+
+/-- **The seed position with the donor labelled `⊥` exists**: a seed with first coatom type
+`topType α` whose donor face along the root followed by the new point is `bareDonor α`. -/
+theorem exists_seed_bare {α : Ordinal.{u}} (hα : Order.IsSuccLimit α) :
+    ∃ I : Seed.{u} α 2, I.left = topType α ∧
+      restrictFace (extendByLast ((𝕘).trans Fin.castSuccEmb)) I.amalgam = some (bareDonor α) :=
+  exists_growthSeed_of_isSuccLimit hα isLegal_topType topType_mem_cofaces.2 restrictFace_pairFace
+    bareDonor_mem_cofaces
+
+variable (α : Ordinal.{u})
+
+/-- **The bottom requests** with the cap and the marker at the cell of `topType α` at
+`(univ, 2)`, labelled `⊤`: the threshold is `2`, below the top grade `3`. -/
+noncomputable def req : GrowthRequests (topType α) (bareDonor α).toScheme where
+  cap := fullTwoCell α
+  marker := fullTwoCell α
+  markerOffset := 0
+  bottoms := Set.univ
+  exacts := ∅
+  highs := ∅
+  ref _ := fullTwoCell α
+  offset _ := 0
+
+theorem threshold_req : (req α).threshold = 2 :=
+  congrArg Prod.snd (gradedIndex_fullTwoCell (α := α))
+
+theorem correctAt_req (j : Fin (bareDonor α).card) :
+    (req α).CorrectAt (topType α).label j ((bareDonor α).label j) :=
+  ⟨fun _ ↦ min_eq_left bot_le, fun h ↦ absurd h (Set.notMem_empty _),
+    fun h ↦ absurd h (Set.notMem_empty _)⟩
+
+theorem classCalibrated_req : (req α).ClassCalibrated (restrictFace_root (α := α)) where
+  cover _ := .inl (Set.mem_univ _)
+  scope_cap := congrArg Prod.fst (gradedIndex_fullTwoCell (α := α))
+  label_cap := by
+    rw [show (req α).cap = fullTwoCell α from rfl, label_fullTwoCell]; exact top_ne_bot
+  ref _ h := absurd h (Set.notMem_empty _)
+  marker := ⟨(threshold_req α).ge, Nat.zero_le _, by
+    rw [show (req α).marker = fullTwoCell α from rfl, label_fullTwoCell]; exact top_ne_bot⟩
+  root i := by
+    rw [grade_faceCell, threshold_req]
+    exact ((pointFace α).grade_le i).trans (by omega)
+  arity := (threshold_req α).ge
+
+/-- The context is `⊥` at the root cells: the face on `{0}` is labelled `⊥`. -/
+theorem label_root (i : Fin (pointFace α).card) :
+    (topType α).label ((topType α).faceCell (restrictFace_root (α := α)) i) = ⊥ :=
+  (label_faceCell _ i).trans (label_pointFace i)
+
+theorem hasRelativeLiftOnClass_req :
+    (req α).HasRelativeLiftOnClass (restrictFace_root (α := α)) bareDonor_mem_cofaces.2 :=
+  GrowthRequests.hasRelativeLiftOnClass_of_bottoms _ _ (classCalibrated_req α)
+    (fun _ ↦ Set.mem_univ _) (fun _ h ↦ Set.notMem_empty _ h) (fun _ h ↦ Set.notMem_empty _ h)
+    (label_root α) isLegal_pairFace Nat.one_pos
 
 end ApexInstance
 
