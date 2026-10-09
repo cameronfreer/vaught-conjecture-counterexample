@@ -23,7 +23,7 @@ compiled separately:
 * `K = k`: LOW displays for every family (`StageType.hasLowDisplaysOn_lowBotAll`; there is no grade
   in `(K, k]`, so the faces are vacuously `⊥` there; no hypothesis);
 * `K < k`: LOW displays from the lifts of the state tower (`StageType.hasLowDisplaysOn_stateLifts`,
-  hypothesis `StageType.StateTowerLifts`), or, for `2 ≤ K`, from the steps for states on the amalgam
+  hypothesis `StageType.StateTowerLifts`), or from the steps for states on the amalgam
   (`StageType.hasLowDisplaysOn_stateAmalgam`, hypothesis `StageType.StateAmalgamSteps`), whose
   step at the grade `K` of the controllers is compiled for every LOW family
   (`ProfileTower.stateCatStep_low_seed`).
@@ -42,8 +42,7 @@ compiled separately:
   the two coatoms into the full face at its grade.
 * `StageType.hasLowDisplays_of_stateStepsAbove`: `StageType.HasLowDisplays` from the steps for
   states on the amalgam **above the controllers only** (`StageType.StateStepsAbove`: at the grades
-  `K + 1, …, k`, for `2 ≤ K < k`) and the lifts of the state tower at `K = 1 < k`: the step at the
-  grade `K` is `ProfileTower.stateCatStep_low_seed`.
+  `K + 1, …, k`, for `K < k`): the step at the grade `K` is `ProfileTower.stateCatStep_low_seed`.
 
 **Not claimed.**  `StageType.HasLowDisplays` is not proved: the lifts of the state tower
 (`StageType.StateTowerLifts`) are open, and so are the steps for states above the controllers
@@ -64,18 +63,18 @@ open Finset Label
 variable {α : Ordinal.{u}} {k : ℕ}
 
 /-- **The steps for states above the controllers of a LOW family** (a hypothesis): for every
-decomposition `K = g + 2`, `k = g + 1 + J + 2`, the step for states on the amalgam of the seed of
-the family (`ProfileTower.StateCatStep`), for the LOW clause at `K`, at every grade `K + 1, …, k`,
-from the two coatoms.  The step at `K` itself is `ProfileTower.stateCatStep_low_seed`. -/
+decomposition `K = g + 1`, `k = g + J + 2`, the step for states on the amalgam of the seed of the
+family (`ProfileTower.StateCatStep`), for the LOW clause at `K`, at every grade `K + 1, …, k`, from
+the two coatoms.  The step at `K` itself is `ProfileTower.stateCatStep_low_seed`. -/
 def StateStepsAbove (K : ℕ) (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (o r : Fin t'.card) : Prop :=
-  ∀ (hF : IsLowFamily K t' tb p o r) (g J : ℕ) (hK : K = g + 2) (hk : k = g + 1 + J + 2), by
+  ∀ (hF : IsLowFamily K t' tb p o r) (g J : ℕ) (hK : K = g + 1) (hk : k = g + J + 2), by
     subst hK hk
-    exact ∀ J', 1 ≤ J' → J' < J + 2 → ∀ x ∈ (ProfileTower.Pts : Finset (Fin (g + 1 + J + 2 + 2))),
+    exact ∀ J', 1 ≤ J' → J' < J + 2 → ∀ x ∈ (ProfileTower.Pts : Finset (Fin (g + J + 2 + 2))),
       ProfileTower.StateCatStep
         (Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private hF.face_donor)
-        (g + 1 + J' + 1)
-        (ProfileTower.lowPred (g + 2) (ProfileTower.lowN _ (g + 2)) (ProfileTower.lowT _)
+        (g + J' + 1)
+        (ProfileTower.lowPred (g + 1) (ProfileTower.lowN _ (g + 1)) (ProfileTower.lowT _)
           (StageType.faceCell (Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private
             hF.face_donor).restrictFace_left o)
           (StageType.faceCell (Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private
@@ -134,24 +133,17 @@ theorem hasLowDisplays_of_stateTowerLifts
   · exact hasLowDisplaysOn_ge t' tb p o r hα hF hge
 
 /-- **The composition from the steps above the controllers**: LOW displays for every LOW family,
-from the steps for states on the amalgam at the grades `K + 1, …, k` when `2 ≤ K < k`
-(`StageType.StateStepsAbove`; the step at `K` is `ProfileTower.stateCatStep_low_seed`) and the
-lifts of the state tower when `K = 1 < k`.  Both hypotheses are open, so
-`StageType.HasLowDisplays` stays open. -/
+from the steps for states on the amalgam at the grades `K + 1, …, k` when `K < k`
+(`StageType.StateStepsAbove`; the step at `K` is `ProfileTower.stateCatStep_low_seed`).  The
+hypothesis is open, so `StageType.HasLowDisplays` stays open. -/
 theorem hasLowDisplays_of_stateStepsAbove
     (habove : ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1))
-      (p : StageType.{u} α k) (o r : Fin t'.card), 2 ≤ K → K < k →
-        StateStepsAbove K t' tb p o r)
-    (hone : ∀ ⦃α : Ordinal.{u}⦄ ⦃k : ℕ⦄ (t' tb : StageType.{u} α (k + 1))
-      (p : StageType.{u} α k) (o r : Fin t'.card), 1 < k → StateTowerLifts 1 t' tb p o r) :
+      (p : StageType.{u} α k) (o r : Fin t'.card), K < k → StateStepsAbove K t' tb p o r) :
     HasLowDisplays.{u} := by
   intro α K k t' tb p o r hα hF
   rcases lt_or_ge K k with hlt | hge
-  · rcases Nat.lt_or_ge K 2 with hK | hK
-    · obtain rfl : K = 1 := by have := hF.grade_pos; omega
-      exact hasLowDisplaysOn_stateLifts t' tb p o r hα hF ⟨hlt, hone t' tb p o r hlt⟩
-    · exact hasLowDisplaysOn_stateAmalgam t' tb p o r hα hF
-        ⟨hK, hlt, (habove t' tb p o r hK hlt).stateAmalgamSteps⟩
+  · exact hasLowDisplaysOn_stateAmalgam t' tb p o r hα hF
+      ⟨hlt, (habove t' tb p o r hlt).stateAmalgamSteps⟩
   · exact hasLowDisplaysOn_ge t' tb p o r hα hF hge
 
 end VaughtConjecture.StageType
