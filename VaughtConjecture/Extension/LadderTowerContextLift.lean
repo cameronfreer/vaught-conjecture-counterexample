@@ -197,17 +197,30 @@ theorem _root_.VaughtConjecture.CellScheme.Rows.isLawful_of_isLawfulBelow {ι β
   obtain ⟨ho, hl, ha⟩ := Rows.isLawfulBelow_iff_forall.mp hw
   exact ⟨fun d ↦ ho d (hall d), fun s ↦ hl s (hall s), fun s t hst hg ↦ ha s t (hall t) hst hg⟩
 
-/-- **The state lift from the bountifulness of the amalgam**, when the catalogue predicate
-`A (m + 2)` holds for every lawful state vanishing above the grade `j`.  The prescription and the
-ambient are read on the cells of the amalgam (a lower embedding keeping scopes); the amalgam lifts
-capped from the context coatom into `(univ, j)`; the lifted section, extended by `⊥` above the
-grade, is a complete lawful state. -/
-theorem contextStateLift_of_vanishing {j : ℕ} (hj : 0 < j) (hjm : j ≤ m + 1)
-    (hAj : ∀ P : Fin I.amalgam.card → Label.{u}, I.amalgam.rows.IsLawful P →
-      (∀ a, j < I.amalgam.toCellScheme.grade a → P a = ⊥) → A (m + 2) P) :
-    ContextStateLift I H Γ A B' j := by
+/-- **The amalgam lift from the context coatom**: for a cap `c` self-visible at `j`, an ambient `q`
+lawful below `(univ, j)` and a prescription `p` lawful below the context coatom at `j` with the same
+observation at `c`, some complete lawful state of the amalgam vanishing above the grade reads `p`
+on the cells of the context coatom below the grade and has the observation of `q` at `c` on the
+cells of the amalgam below the grade.  The prescription and the ambient are read on the cells of
+the amalgam (a lower embedding keeping scopes); the amalgam lifts capped from the context coatom
+into `(univ, j)`; the lifted section, extended by `⊥` above the grade, is lawful. -/
+theorem exists_amalgamLift {j : ℕ} (hj : 0 < j) (hjm : j ≤ m + 1) (c : Label.{u})
+    (hc : IsSelfVisible j c)
+    (p : (I.ladderTower H Γ A B' m).S.toCellScheme.below (ctxCoatom m, j) → Label.{u})
+    (q : (I.ladderTower H Γ A B' m).S.toCellScheme.below
+      ((univ : Finset (Fin (m + 2))), j) → Label.{u})
+    (hp : (I.ladderTower H Γ A B' m).S.rows.IsLawfulBelow (ctxCoatom m, j) p)
+    (hq : (I.ladderTower H Γ A B' m).S.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j) q)
+    (hpq : ∀ d, min (q (Set.inclusion (CellScheme.below_mono _ (ctxCoatom_le j)) d)) c =
+      min (p d) c) :
+    ∃ P : Fin I.amalgam.card → Label.{u}, I.amalgam.rows.IsLawful P ∧
+      (∀ a, j < I.amalgam.toCellScheme.grade a → P a = ⊥) ∧
+      (∀ (d : (I.ladderTower H Γ A B' m).S.toCellScheme.below (ctxCoatom m, j)) a,
+        I.towerAmalgamEmb H Γ A B' a = d.1 → P a = p d) ∧
+      ∀ (d : (I.ladderTower H Γ A B' m).S.toCellScheme.below
+        ((univ : Finset (Fin (m + 2))), j)) a,
+        I.towerAmalgamEmb H Γ A B' a = d.1 → min (P a) c = min (q d) c := by
   classical
-  intro c hc p q hp hq hpq
   have hφ := I.isLowerEmbedding_towerAmalgamEmb H Γ A B'
   have hsc := I.scope_towerAmalgamEmb H Γ A B'
   have hrows := I.comap_rows_towerAmalgamEmb H Γ A B'
@@ -253,7 +266,7 @@ theorem contextStateLift_of_vanishing {j : ℕ} (hj : 0 < j) (hjm : j ≤ m + 1)
   have hPl : I.amalgam.rows.IsLawful w := Rows.isLawful_of_isLawfulBelow
     (fun a ↦ ⟨subset_univ _, (I.amalgam.isWellFormed.isWellFormed.grade_le_card a).trans
       ((card_le_univ _).trans (by simp))⟩) hext'
-  refine ⟨w, hPl, hAj w hPl hw_of_lt, ?_, ?_⟩
+  refine ⟨w, hPl, hw_of_lt, ?_, ?_⟩
   · intro d a ha
     have hab : a ∈ I.amalgam.toCellScheme.below (ctxCoatom m, j) :=
       (towerAmalgamEmb_mem_below_iff a _).mp (ha ▸ d.2)
@@ -266,6 +279,17 @@ theorem contextStateLift_of_vanishing {j : ℕ} (hj : 0 < j) (hjm : j ≤ m + 1)
     rw [hw_of_le a hab.2]
     refine (hP₁c ⟨a, hab⟩).trans ?_
     exact congrArg (fun z ↦ min (q z) c) (Subtype.ext ha)
+
+/-- **The state lift from the bountifulness of the amalgam**, when the catalogue predicate
+`A (m + 2)` holds for every lawful state vanishing above the grade `j`
+(`Seed.exists_amalgamLift`). -/
+theorem contextStateLift_of_vanishing {j : ℕ} (hj : 0 < j) (hjm : j ≤ m + 1)
+    (hAj : ∀ P : Fin I.amalgam.card → Label.{u}, I.amalgam.rows.IsLawful P →
+      (∀ a, j < I.amalgam.toCellScheme.grade a → P a = ⊥) → A (m + 2) P) :
+    ContextStateLift I H Γ A B' j := by
+  intro c hc p q hp hq hpq
+  obtain ⟨P, hPl, hP0, hPp, hPq⟩ := exists_amalgamLift hj hjm c hc p q hp hq hpq
+  exact ⟨P, hPl, hAj P hPl hP0, hPp, hPq⟩
 
 end Seed
 
