@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthFaceAdmission
+import VaughtConjecture.Extension.FaceGluing
 import VaughtConjecture.MainTheorem.SeedLadderCarrier
 
 /-!
@@ -40,13 +41,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label StageType
-
-/-- Lawfulness passes to an equal scheme, along the cast of the cells. -/
-theorem Scheme.isLawful_of_eq {n : ℕ} {S T : Scheme.{u} n} (h : S = T)
-    {v : Fin T.card → Label.{u}} (hv : T.rows.IsLawful v) :
-    S.rows.IsLawful fun i ↦ v (Fin.cast (congrArg Scheme.card h) i) := by
-  subst h
-  exact hv
 
 namespace Seed
 
