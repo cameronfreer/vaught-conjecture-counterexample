@@ -212,4 +212,11 @@ theorem rowAt_mirror_castAdd (z x : Fin T.card) :
     exact T.rows.row_congr (mirrorOrig_castAdd _ _ z) (mirrorOrig_castAdd _ _ x)
   · rw [rowAt_of_notMem (mt hiff.mp hx), rowAt_of_notMem hx]
 
+/-- **Every cell reads, at a cell below it, the row of its original at the other's original.** -/
+theorem rowAt_mirror_of_mem {k t : Fin (T.card + T.copyCount 𝒰)}
+    (ht : t ∈ (mirror hmix).toCellScheme.below ((mirror hmix).toCellScheme.gradedIndex k)) :
+    (mirror hmix).rowAt k t = T.rowAt (T.mirrorOrig 𝒰 k) (T.mirrorOrig 𝒰 t) := by
+  rw [rowAt_of_mem ht]
+  exact (rowAt_of_mem (S := T) ((mirrorData hmix).orig_mem_below ht)).symm
+
 end VaughtConjecture.Scheme

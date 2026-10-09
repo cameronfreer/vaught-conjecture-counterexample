@@ -119,6 +119,52 @@ theorem cappedLift_replicated_of_writingLift (hH : 0 < H)
     isLawfulBelow_map_replicatedWriting hH hcard hΓ hA hR Y hν hbot, hνq,
     fun d ↦ hνp d⟩
 
+/-! ### The copies read the controllers -/
+
+/-- **A lawful section reads, at a cell whose original is a cell of full scope at a grade
+`N + 2 ≤ m + 1`, a witness image of the state of that controller** on the cells of the attachment
+inside its scope: the cell's row is the controller's row, which stores the state (a copy reads
+the row of its original).  This is the first step of the recognition on the copies. -/
+theorem exists_copy_reading (hcard : (I.attachmentBase g).S.card ≤ H)
+    {Y : Finset (Fin (m + 2)) × ℕ} {w : Fin (I.replicated g H Γ A B').card → Label.{u}}
+    (hw : (I.replicated g H Γ A B').rows.IsLawfulBelow Y fun d ↦ w d)
+    {k : Fin (I.replicated g H Γ A B').card}
+    (hk : k ∈ (I.replicated g H Γ A B').toCellScheme.below Y) {N : ℕ} (hN : N + 1 ≤ m)
+    (hko : (I.attachTower g H Γ A B').toCellScheme.gradedIndex
+      ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) k) =
+        ((univ : Finset (Fin (m + 2))), N + 2)) :
+    ∃ R ∈ (I.attachmentBase g).towerCat Γ A (N + 2), (I.attachment g).rows.IsLawful R ∧
+      ∃ (gg : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}), IsWitness gg σ ∧
+        ∀ c : Fin (I.attachment g).card,
+          (I.attachment g).toCellScheme.scope c ⊆ (I.replicated g H Γ A B').toCellScheme.scope k →
+          (I.attachment g).toCellScheme.grade c ≤ N + 2 →
+          min (w (I.attachEmb g H Γ A B' c)) (w k) =
+            min (σ (R c)) (gg ((I.attachment g).toCellScheme.grade c)) := by
+  obtain ⟨R, hRC, hR, hrowA, -⟩ :=
+    Scheme.LadderBaseData.exists_controller_ladderTower (B := I.attachmentBase g) (A := A)
+      (Γ := Γ) (B' := B') hcard N m hN _ hko
+  obtain ⟨gg, σ, hwit, hq⟩ := (Rows.isLawfulBelow_iff_forall.mp hw).2.1 k hk
+  refine ⟨R, hRC, hR, gg, σ, hwit, fun c hcs hcg ↦ ?_⟩
+  have hkg : (I.replicated g H Γ A B').toCellScheme.grade k = N + 2 :=
+    congrArg Prod.snd hko
+  have hmem : I.attachEmb g H Γ A B' c ∈ (I.replicated g H Γ A B').toCellScheme.below
+      ((I.replicated g H Γ A B').toCellScheme.gradedIndex k) := by
+    rw [CellScheme.mem_below, gradedIndex_attachEmb]
+    exact ⟨hcs, hcg.trans hkg.ge⟩
+  have h := hq ⟨_, hmem⟩
+  simp only at h
+  rw [← Scheme.rowAt_of_mem hmem, Scheme.rowAt_mirror_of_mem hmem] at h
+  have hgc : (I.replicated g H Γ A B').toCellScheme.grade (I.attachEmb g H Γ A B' c) =
+      (I.attachment g).toCellScheme.grade c :=
+    congrArg Prod.snd (gradedIndex_attachEmb c)
+  rw [hgc] at h
+  refine h.trans ?_
+  congr 2
+  change (I.attachTower g H Γ A B').rowAt _
+    ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ _)) = R c
+  rw [Scheme.mirrorOrig_castAdd]
+  exact hrowA c hcg
+
 end Seed
 
 end VaughtConjecture
