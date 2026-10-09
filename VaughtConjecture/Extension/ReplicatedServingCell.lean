@@ -107,20 +107,21 @@ variable {B : LadderBaseData.{u} n} {H : ℕ} {Γ : Finset Label.{u}}
 /-- **Every lawful state of the catalogue has its cell in the ladder tower**, reading the state on
 the base cells of grade at most its grade and its positive table at the base indices of its rank
 member on the ladder. -/
-theorem exists_cell_of_mem_towerCat (hcard : B.S.card ≤ H) (k K : ℕ) (hK : k + 1 ≤ K)
+theorem exists_cell_of_mem_towerCat {G : ℕ → Finset Label.{u}} (hcard : B.S.card ≤ H)
+    (k K : ℕ) (hK : k + 1 ≤ K)
     {R : Fin B.S.card → Label.{u}} (hRC : R ∈ B.towerCat Γ A (k + 2)) :
-    ∃ (u : Fin (B.ladderTower H Γ A B' K).S.card) (hR : B.S.rows.IsLawful R),
-      (B.ladderTower H Γ A B' K).S.toCellScheme.gradedIndex u =
+    ∃ (u : Fin (B.ladderTower H Γ A B' K G).S.card) (hR : B.S.rows.IsLawful R),
+      (B.ladderTower H Γ A B' K G).S.toCellScheme.gradedIndex u =
         ((univ : Finset (Fin n)), k + 2) ∧
       (∀ d : Fin B.S.card, B.S.toCellScheme.grade d ≤ k + 2 →
-        (B.ladderTower H Γ A B' K).S.rowAt u (B.towerEmb K (Fin.castAdd _ d)) = R d) ∧
-      ∀ p, (B.ladderTower H Γ A B' K).S.rowAt u
+        (B.ladderTower H Γ A B' K G).S.rowAt u (B.towerEmb K (Fin.castAdd _ d)) = R d) ∧
+      ∀ p, (B.ladderTower H Γ A B' K G).S.rowAt u
           (B.towerEmb K (Fin.natAdd _ (ladderEquiv _ _ H p))) =
         posTable R (baseIndex H (rankProf B.S H)
           (RankMember.ofLawful B.wf hcard hR)
           (Fin.natAdd _ (ladderEquiv _ _ H p))) := by
   obtain ⟨u, hu, hrow⟩ := exists_layerTower_cell_of_mem (B := B.towerBase H)
-    (C := B.towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) k hRC K hK
+    (C := B.towerCat Γ A) (G := G) k hRC K hK
   have hRl := (mem_towerCat.mp hRC).2.1
   refine ⟨u, hRl, hu, fun d hd ↦ ?_, fun p ↦ ?_⟩
   · have h := hrow (Fin.castAdd _ d) (by

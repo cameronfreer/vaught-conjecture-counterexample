@@ -73,20 +73,22 @@ theorem map_castSuccEmb_eq_ctxCoatom :
   Coatom.univ_map_left
 
 /-- **The cells of the replicated scheme below the context coatom are cells of the attachment.** -/
-theorem exists_attachEmb_eq_of_mem_below_ctx {j : ℕ} {z : Fin (I.replicated g H Γ A B').card}
-    (hz : z ∈ (I.replicated g H Γ A B').toCellScheme.below (ctxCoatom m, j)) :
+theorem exists_attachEmb_eq_of_mem_below_ctx {G : ℕ → Finset Label.{u}} {j : ℕ}
+    {z : Fin (I.replicated g H Γ A B' G).card}
+    (hz : z ∈ (I.replicated g H Γ A B' G).toCellScheme.below (ctxCoatom m, j)) :
     ∃ a, I.attachEmb g H Γ A B' a = z := by
-  have h := mem_range_attachEmb (I := I) (g := g) (H := H) (Γ := Γ) (A := A) (B' := B') z
+  have h := mem_range_attachEmb (I := I) (g := g) (H := H) (Γ := Γ) (A := A) (B' := B') (G := G) z
     (.inl (map_castSuccEmb_eq_ctxCoatom ▸ (hz.1 : _ ⊆ ctxCoatom m)))
   obtain ⟨a, ha⟩ := h
   exact ⟨a, ha⟩
 
 /-- A cell of the attachment lies below a pair in the replicated scheme exactly when it does in
 the attachment. -/
-theorem attachEmb_mem_below_iff (a : Fin (I.attachment g).card) (X : Finset (Fin (m + 2)) × ℕ) :
-    I.attachEmb g H Γ A B' a ∈ (I.replicated g H Γ A B').toCellScheme.below X ↔
+theorem attachEmb_mem_below_iff {G : ℕ → Finset Label.{u}} (a : Fin (I.attachment g).card)
+    (X : Finset (Fin (m + 2)) × ℕ) :
+    I.attachEmb g H Γ A B' a ∈ (I.replicated g H Γ A B' G).toCellScheme.below X ↔
       a ∈ (I.attachment g).toCellScheme.below X := by
-  change (I.replicated g H Γ A B').toCellScheme.gradedIndex _ ≤ X ↔
+  change (I.replicated g H Γ A B' G).toCellScheme.gradedIndex _ ≤ X ↔
     (I.attachment g).toCellScheme.gradedIndex a ≤ X
   rw [gradedIndex_attachEmb]
 

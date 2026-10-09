@@ -115,15 +115,18 @@ local notation "𝕋" => Seed.attachTower I g H Γ A B'
 local notation "𝕐[" k "]" => ((univ : Finset (Fin (m + 2))), k)
 
 /-- A cell of the replicated scheme of full scope is a cell of the tower. -/
-theorem exists_eq_castAdd_of_scope (z : Fin (𝔼).card) (hz : (𝔼).toCellScheme.scope z = univ) :
-    ∃ f, z = Fin.castAdd _ f ∧ (𝕋).toCellScheme.gradedIndex f = (𝔼).toCellScheme.gradedIndex z := by
+theorem exists_eq_castAdd_of_scope {G : ℕ → Finset Label.{u}}
+    (z : Fin (I.replicated g H Γ A B' G).card)
+    (hz : (I.replicated g H Γ A B' G).toCellScheme.scope z = univ) :
+    ∃ f, z = Fin.castAdd _ f ∧ (I.attachTower g H Γ A B' G).toCellScheme.gradedIndex f =
+      (I.replicated g H Γ A B' G).toCellScheme.gradedIndex z := by
   induction z using Fin.addCases with
   | right jj =>
     exfalso
     exact ((I.mem_mixedFaces g).mp (scope_replicated_natAdd jj)).2.1 hz
   | left x =>
     exact ⟨x, rfl, (Scheme.gradedIndex_mirror_castAdd
-      (hmix := I.not_subset_scope_tower g H Γ A B') x).symm⟩
+      (hmix := I.not_subset_scope_tower g H Γ A B' (G := G)) x).symm⟩
 
 /-- **A section is determined by its cells of full scope**: two sections lawful below `(univ, j)`,
 `j ≤ m + 1`, that agree at the cells of full scope agree at every cell below `(univ, j)`. -/

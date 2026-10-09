@@ -52,14 +52,35 @@ namespace Seed
 
 variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
   {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
+  {G : ℕ → Finset Label.{u}}
+
+variable (I g H Γ A B') in
+/-- **The writing of a state in the replicated scheme with agreement heights in `G`**: the
+writing in the ladder tower over the attachment, every copy reading it at its original. -/
+noncomputable def replicatedWritingOn (G : ℕ → Finset Label.{u})
+    (R : Fin (I.attachment g).card → Label.{u}) :
+    Fin (I.replicated g H Γ A B' G).card → Label.{u} :=
+  fun z ↦ ((I.attachmentBase g).ladderTower H Γ A B' m G).v R
+    ((I.attachTower g H Γ A B' G).mirrorOrig (I.mixedFaces g) z)
 
 variable (I g H Γ A B') in
 /-- **The writing of a state in the replicated scheme**: the writing in the ladder tower over the
 attachment, every copy reading it at its original. -/
-noncomputable def replicatedWriting (R : Fin (I.attachment g).card → Label.{u}) :
+noncomputable abbrev replicatedWriting (R : Fin (I.attachment g).card → Label.{u}) :
     Fin (I.replicated g H Γ A B').card → Label.{u} :=
-  fun z ↦ ((I.attachmentBase g).ladderTower H Γ A B' m).v R
-    ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) z)
+  I.replicatedWritingOn g H Γ A B' (fun j ↦ Scheme.heightSet Γ B' j) R
+
+/-- **The writing of a state of the catalogue is lawful on the replicated scheme**, for agreement
+heights in height sets over the grid. -/
+theorem isLawful_replicatedWriting_of_isHeights (hH : 0 < H)
+    (hcard : (I.attachmentBase g).S.card ≤ H) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
+    (hG : Scheme.IsHeights G B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    {R : Fin (I.attachment g).card → Label.{u}}
+    (hR : R ∈ (I.attachmentBase g).towerCat Γ A (m + 2)) :
+    (I.replicated g H Γ A B' G).rows.IsLawful (I.replicatedWritingOn g H Γ A B' G R) :=
+  (Scheme.mirrorData (I.not_subset_scope_tower g H Γ A B' (G := G))).isLawful_comp
+    ((Scheme.LadderBaseData.ladderTower_lawful_of_isHeights hH hcard hΓ hG hA m).2 R hR).1
+    (Scheme.saturated_mirrorData _)
 
 /-- **The writing of a state of the catalogue is lawful on the replicated scheme.** -/
 theorem isLawful_replicatedWriting (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
@@ -67,21 +88,43 @@ theorem isLawful_replicatedWriting (hH : 0 < H) (hcard : (I.attachmentBase g).S.
     {R : Fin (I.attachment g).card → Label.{u}}
     (hR : R ∈ (I.attachmentBase g).towerCat Γ A (m + 2)) :
     (I.replicated g H Γ A B').rows.IsLawful (I.replicatedWriting g H Γ A B' R) :=
-  (Scheme.mirrorData (I.not_subset_scope_tower g H Γ A B')).isLawful_comp
-    ((Scheme.LadderBaseData.ladderTower_lawful hH hcard hΓ hA m).2 R hR).1
-    (Scheme.saturated_mirrorData _)
+  isLawful_replicatedWriting_of_isHeights hH hcard hΓ (Scheme.isHeights_heightSet hΓ) hA hR
+
+/-- **The writing of a lawful state is the state at the cells of the attachment**, for agreement
+heights in any height sets. -/
+theorem replicatedWritingOn_attachEmb (hcard : (I.attachmentBase g).S.card ≤ H)
+    {R : Fin (I.attachment g).card → Label.{u}} (hR : (I.attachment g).rows.IsLawful R)
+    (c : Fin (I.attachment g).card) :
+    I.replicatedWritingOn g H Γ A B' G R (I.attachEmb g H Γ A B' c) = R c := by
+  change ((I.attachmentBase g).ladderTower H Γ A B' m G).v R
+    ((I.attachTower g H Γ A B' G).mirrorOrig (I.mixedFaces g) (Fin.castAdd _ _)) = R c
+  rw [Scheme.mirrorOrig_castAdd]
+  refine (Scheme.layerTower_v_emb (B := (I.attachmentBase g).towerBase H)
+    (C := (I.attachmentBase g).towerCat Γ A) (G := G) R _ m).trans ?_
+  exact Scheme.LadderBaseData.stateExt_castAdd hR hcard c
 
 /-- **The writing of a lawful state is the state at the cells of the attachment.** -/
 theorem replicatedWriting_attachEmb (hcard : (I.attachmentBase g).S.card ≤ H)
     {R : Fin (I.attachment g).card → Label.{u}} (hR : (I.attachment g).rows.IsLawful R)
     (c : Fin (I.attachment g).card) :
-    I.replicatedWriting g H Γ A B' R (I.attachEmb g H Γ A B' c) = R c := by
-  change ((I.attachmentBase g).ladderTower H Γ A B' m).v R
-    ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ _)) = R c
-  rw [Scheme.mirrorOrig_castAdd]
-  refine (Scheme.layerTower_v_emb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) R _ m).trans ?_
-  exact Scheme.LadderBaseData.stateExt_castAdd hR hcard c
+    I.replicatedWriting g H Γ A B' R (I.attachEmb g H Γ A B' c) = R c :=
+  replicatedWritingOn_attachEmb hcard hR c
+
+/-- **The decoded writing of a state of the catalogue is lawful** below every pair of the grade of
+the decoder, for a witness that sends no non-bottom label to bottom, and agreement heights in
+height sets over the grid. -/
+theorem isLawfulBelow_map_replicatedWriting_of_isHeights (hH : 0 < H)
+    (hcard : (I.attachmentBase g).S.card ≤ H) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
+    (hG : Scheme.IsHeights G B')
+    (hA : ∀ k R, A (k + 3) R → A (k + 2) R) {R : Fin (I.attachment g).card → Label.{u}}
+    (hR : R ∈ (I.attachmentBase g).towerCat Γ A (m + 2)) (Y : Finset (Fin (m + 2)) × ℕ)
+    {ν : Label.{u} → Label.{u}} (hν : IsWitness (stepSuppressor Y.2) ν)
+    (hbot : ∀ x, ν x = ⊥ → x = ⊥) :
+    (I.replicated g H Γ A B' G).rows.IsLawfulBelow Y
+      fun d ↦ ν (I.replicatedWritingOn g H Γ A B' G R d) :=
+  ((isLawful_replicatedWriting_of_isHeights hH hcard hΓ hG hA hR).isLawfulBelow
+    Y).map_of_apply_eq_bot
+    (fun d ↦ d.2.2) hν fun _ h ↦ hbot _ h
 
 /-- **The decoded writing of a state of the catalogue is lawful** below every pair of the grade of
 the decoder, for a witness that sends no non-bottom label to bottom. -/
@@ -93,8 +136,8 @@ theorem isLawfulBelow_map_replicatedWriting (hH : 0 < H)
     (hbot : ∀ x, ν x = ⊥ → x = ⊥) :
     (I.replicated g H Γ A B').rows.IsLawfulBelow Y
       fun d ↦ ν (I.replicatedWriting g H Γ A B' R d) :=
-  ((isLawful_replicatedWriting hH hcard hΓ hA hR).isLawfulBelow Y).map_of_apply_eq_bot
-    (fun d ↦ d.2.2) hν fun _ h ↦ hbot _ h
+  isLawfulBelow_map_replicatedWriting_of_isHeights hH hcard hΓ (Scheme.isHeights_heightSet hΓ) hA
+    hR Y hν hbot
 
 variable (I g H Γ A B') in
 /-- **Lifts by decoded writings** from `X` to `Y`: for every cap `c` self-visible at the grade of
