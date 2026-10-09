@@ -6,7 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.AdmittedCompletion
 import VaughtConjecture.Extension.AdmittedClassObstruction
 import VaughtConjecture.Extension.CapRequestsCode
-import VaughtConjecture.Extension.CapRequestsExamples
+import VaughtConjecture.Stage.MarkedCap
 
 /-!
 # Cap requests at the top grade: the lift provisions
@@ -17,7 +17,7 @@ correct states at the top grade of a completion below the full grade.
 Let `I` be a seed on `m + 2` points with `0 < m`, and `r` cap requests on the cells of its amalgam,
 graded by the grades of the amalgam (`CapRequests.IsGraded`), whose cap has graded index
 `(Cp, m + 1)` for the **private coatom** `Cp = univ.erase xp` (the top cap of a marked-cap context
-at the top grade of the coatom type, copied into the amalgam).  The other coatom
+at the top grade of the coatom type, carried into the amalgam).  The other coatom
 `Dd = univ.erase xd` is the **donor coatom**.  The catalogue of correct states at the grade
 `m + 1` (`ProfileTower.rowCat r.IsCorrect (m + 1)`) carries the lift provisions:
 
@@ -35,7 +35,7 @@ at the top grade of the coatom type, copied into the amalgam).  The other coatom
   profile capped at `h`, at the positive caps) is, below the private coatom, a state lawful on the
   cut that is correct (and agrees with the profile capped at `h`).  The fills are the raise of the
   donor cells by the prescription of the private coatom; they are the conditions of the reading
-  fills of the (R3) lane at the grade `4` when the marker is the cap
+  fills of the (R3) route at the grade `4` when the marker is the cap
   (`CapRequests.isCorrect_iff_of_marker_eq_cap`: correctness is reading `T` at least as the cap).
 
 **The correct completion at the top** (`Seed.exists_correctCompletion_top`): under the fills and the
@@ -355,8 +355,8 @@ theorem liftProvisionOf_of_fills (hm : 0 < m) (hgr : r.IsGraded I.amalgam.toCell
 
 /-! ### No bottom class on the rows -/
 
-/-- **A bottom class at a cell read by the cap admits no lift provision.**  For the reading rows of
-decision (a), states in the bottom class `(B, ZA)` that are correct or have the cap at `⊥`: if a
+/-- **A bottom class at a cell read by the cap admits no lift provision.**  For the reading rows,
+states in the bottom class `(B, ZA)` that are correct or have the cap at `⊥`: if a
 cell `z ∈ B ∩ ZA` is read other than `⊥` by the row of the cap (itself read other than `⊥` there),
 and the cap has graded index `(univ.erase x, k)`, the lift provision at `⊥` from that coatom fails.
 The row of the cap is a labelling of the coatom other than `⊥` at the cap and at `z`
@@ -422,12 +422,10 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} {r : CapRequests (Fin 
 
 /-- **The admission of correct states at the top grade**, from the grade `m + 1`: correct states,
 no bottom class, the states with cap `⊥` admitted unconditionally; closed under transformation
-images by the grading, under caps by `CapRequests.IsCorrect.cap`; its coatom provision is that of
-the correct completion (`CompletionBelowFullGrade.coatomProvision`). -/
-noncomputable def topAdmission (hm : 2 ≤ m) (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
-    (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1))
-    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hbot : CapFillBot r xp) (hpos : CapFillPos r xp)
-    (hlab : r.IsCorrect fun d ↦ I.amalgam.label d) : I.Admission where
+images by the grading, under caps by `CapRequests.IsCorrect.cap`. -/
+noncomputable def topAdmission (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1)) :
+    I.Admission where
   N := m + 1
   Adm := r.IsCorrect
   InClass _ := True
@@ -437,34 +435,28 @@ noncomputable def topAdmission (hm : 2 ≤ m) (hgr : r.IsGraded I.amalgam.toCell
     hs.cap hgr.off_le (hh.mono ((hgr.le_grade_cap.trans (congrArg Prod.snd hcap).le).trans hk))
   bot := isCorrect_bot r
   adm_of_capBot _ h := isCorrect_of_cap_eq_bot h
-  provision :=
-    (I.exists_correctCompletion_top hm hgr hcap hxp hbot hpos hlab).choose.coatomProvision
-      (fun _ _ _ hs hw ↦ hs.map hgr hw)
-      (I.exists_correctCompletion_top hm hgr hcap hxp hbot hpos hlab).choose_spec
 
 /-- The reading rows of the admission of correct states are the correct states. -/
-theorem row_topAdmission (hm : 2 ≤ m) (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
-    (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1))
-    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hbot : CapFillBot r xp) (hpos : CapFillPos r xp)
-    (hlab : r.IsCorrect fun d ↦ I.amalgam.label d) :
-    (topAdmission hm hgr hcap hxp hbot hpos hlab).Row = r.IsCorrect :=
+theorem row_topAdmission (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1)) :
+    (topAdmission hgr hcap).Row = r.IsCorrect :=
   funext fun _ ↦ propext ⟨fun h ↦ h.elim (·.2) isCorrect_of_cap_eq_bot,
     fun h ↦ .inl ⟨trivial, h⟩⟩
 
 /-- **The admission of correct states with its lift provisions**, from the grade `m + 1`. -/
 noncomputable def topLiftAdmission (hm : 2 ≤ m) (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
     (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1))
-    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hbot : CapFillBot r xp) (hpos : CapFillPos r xp)
-    (hlab : r.IsCorrect fun d ↦ I.amalgam.label d) : I.LiftAdmission where
-  toAdmission := topAdmission hm hgr hcap hxp hbot hpos hlab
+    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hbot : CapFillBot r xp)
+    (hpos : CapFillPos r xp) : I.LiftAdmission where
+  toAdmission := topAdmission hgr hcap
   botLift k hk hkm x hx := by
     obtain rfl : k = m + 1 := le_antisymm hkm hk
     have h := ((liftProvisionOf_of_fills (by omega) hgr hcap hxp hbot hpos) x hx).1
-    rwa [← row_topAdmission hm hgr hcap hxp hbot hpos hlab] at h
+    rwa [← row_topAdmission hgr hcap] at h
   capLift k hk hkm x hx := by
     obtain rfl : k = m + 1 := le_antisymm hkm hk
     have h := ((liftProvisionOf_of_fills (by omega) hgr hcap hxp hbot hpos) x hx).2
-    rwa [← row_topAdmission hm hgr hcap hxp hbot hpos hlab] at h
+    rwa [← row_topAdmission hgr hcap] at h
 
 end CapRequests
 
@@ -546,13 +538,13 @@ end CapRequests
 /-- **The correct completion at a marked-cap context at the top grade.**  For a seed on `m + 2 ≥ 4`
 points whose left coatom type is a marked-cap context along `h : Fin n ↪ Fin (m + 1)` with top cap
 `c` at the top grade `m + 1` and marker `r` (the predicate
-`CapRequestsExamples.IsMarkedCapContextAt`, copied verbatim), the requests of the seed at `c`,
+`StageType.IsMarkedCapContextAt`), the requests of the seed at `c`,
 `r` with marker offset `n + 1` reading the donor cells labelled `⊤`, and the fills from the private
 coatom: some completion below the full grade has every row of full scope at the grade `m + 1`
 correct. -/
 theorem Seed.exists_correctCompletion_markedCap {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
     (hm : 2 ≤ m) {n : ℕ} {h : Fin n ↪ Fin (m + 1)} {c r : Fin I.left.card}
-    (hctx : CapRequestsExamples.IsMarkedCapContextAt I.left h c r)
+    (hctx : I.left.IsMarkedCapContextAt h c r)
     (hg : I.left.toCellScheme.grade c = m + 1)
     (hbot : CapFillBot (seedTopReq I c r (n + 1) (hctx.2.2.1.trans_eq hg)) (Fin.last (m + 1)))
     (hpos : CapFillPos (seedTopReq I c r (n + 1) (hctx.2.2.1.trans_eq hg)) (Fin.last (m + 1))) :

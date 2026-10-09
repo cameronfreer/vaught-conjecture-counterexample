@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.AdmittedTower
+import VaughtConjecture.Extension.RowCompletionZero
 import VaughtConjecture.Extension.CapRequestsTop
 
 /-!
@@ -408,9 +408,38 @@ namespace VaughtConjecture
 
 open Finset Label ProfileTower CapRequests
 
+/-- **The correct completion from the grade of the cap, from the lift provisions of the donor
+coatom (R4)**: for a seed on `m + 2 ≥ 4` points and cap requests graded by the grades of the
+amalgam, with the cap of scope the private coatom `univ.erase xp` and grade `N`, the lift
+provisions from the other coatom (`hdon`) and the fills from the private coatom at every grade
+`N ≤ k ≤ m + 1`, and the code of the glued labelling at `m + 1` with correct splice, some
+completion below the full grade has every row of full scope at the grades `≥ N` correct. -/
+theorem Seed.exists_correctCompletion' {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) (hm : 2 ≤ m)
+    {r : CapRequests (Fin I.amalgam.card)} (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    {xp : Fin (m + 2)}
+    (hdon : ∀ x ∈ (Pts : Finset (Fin (m + 2))), x ≠ xp → ∀ k,
+      I.amalgam.toCellScheme.grade r.cap ≤ k → k ≤ m + 1 →
+        BotLiftProvisionOf r.IsCorrect k x ∧ CapLiftProvisionOf r.IsCorrect k x)
+    (hbot : ∀ k, I.amalgam.toCellScheme.grade r.cap ≤ k → k ≤ m + 1 → CapFillBotAt r xp k)
+    (hpos : ∀ k, I.amalgam.toCellScheme.grade r.cap ≤ k → k ≤ m + 1 → CapFillPosAt r xp k)
+    (hlab : r.IsCorrect (hat I (m + 1) (code (m + 1) fun d ↦ I.amalgam.label d))) :
+    ∃ F : CompletionBelowFullGrade I,
+      F.HasAdmittedRows (I.amalgam.toCellScheme.grade r.cap) r.IsCorrect := by
+  have hNN : r.N ≤ I.amalgam.toCellScheme.grade r.cap := hgr.le_grade_cap
+  refine I.exists_rowCompletion hm (fun k hk hkm x hx ↦ ?_) (fun k hk hkm x hx ↦ ?_)
+    (fun k _ _ R hR ↦ code_mem_rowCat_of_mem_rowCat hgr hR) fun _ ↦ hlab
+  · by_cases hxe : x = xp
+    · subst hxe
+      exact botLiftProvisionOf_private_le hgr (hbot k hk hkm)
+    · exact (hdon x hx hxe k hk hkm).1
+  · by_cases hxe : x = xp
+    · subst hxe
+      exact capLiftProvisionOf_private_le hgr (hNN.trans hk) (hpos k hk hkm)
+    · exact (hdon x hx hxe k hk hkm).2
+
 /-- **The correct completion from the grade of the cap (R4)**: for a seed on `m + 2 ≥ 4` points and
 cap requests graded by the grades of the amalgam, with the cap of scope the private coatom
-`univ.erase xp` and grade `N ≥ 3`, the common face of the coatoms carrying no cell of grade at
+`univ.erase xp` and grade `N`, the common face of the coatoms carrying no cell of grade at
 least `N`, the fills from the private coatom at every grade `N ≤ k ≤ m + 1`, and the code of the
 glued labelling at `m + 1` with correct splice, some completion below the full grade has every row
 of full scope at the grades `≥ N` correct.  The lift provisions from the donor coatom are
@@ -420,7 +449,6 @@ theorem Seed.exists_correctCompletion {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u}
     {r : CapRequests (Fin I.amalgam.card)} (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
     {xp : Fin (m + 2)} (hxp : xp ∈ (Pts : Finset (Fin (m + 2))))
     (hcapC : I.amalgam.toCellScheme.scope r.cap = univ.erase xp)
-    (hN3 : 3 ≤ I.amalgam.toCellScheme.grade r.cap)
     (hface : ∀ x ∈ (Pts : Finset (Fin (m + 2))), x ≠ xp → ∀ d,
       I.amalgam.toCellScheme.scope d ⊆ univ.erase xp ∩ univ.erase x →
       I.amalgam.toCellScheme.grade d < I.amalgam.toCellScheme.grade r.cap)
@@ -428,18 +456,11 @@ theorem Seed.exists_correctCompletion {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u}
     (hpos : ∀ k, I.amalgam.toCellScheme.grade r.cap ≤ k → k ≤ m + 1 → CapFillPosAt r xp k)
     (hlab : r.IsCorrect (hat I (m + 1) (code (m + 1) fun d ↦ I.amalgam.label d))) :
     ∃ F : CompletionBelowFullGrade I,
-      F.HasAdmittedRows (I.amalgam.toCellScheme.grade r.cap) r.IsCorrect := by
-  have hNN : r.N ≤ I.amalgam.toCellScheme.grade r.cap := hgr.le_grade_cap
-  refine I.exists_rowCompletion hm hN3 (fun k hk hkm x hx ↦ ?_) (fun k hk hkm x hx ↦ ?_)
-    (fun k _ R hR ↦ code_mem_rowCat_of_mem_rowCat hgr hR) fun _ ↦ hlab
-  · by_cases hxe : x = xp
-    · subst hxe
-      exact botLiftProvisionOf_private_le hgr (hbot k hk hkm)
-    · exact botLiftProvisionOf_donor_le (by omega) hcapC hk hkm (hface x hx hxe) hxp hx hxe hgr
-  · by_cases hxe : x = xp
-    · subst hxe
-      exact capLiftProvisionOf_private_le hgr (hNN.trans hk) (hpos k hk hkm)
-    · exact capLiftProvisionOf_donor_le (by omega) hgr hcapC hk hkm (hface x hx hxe) hxp hx hxe
+      F.HasAdmittedRows (I.amalgam.toCellScheme.grade r.cap) r.IsCorrect :=
+  I.exists_correctCompletion' hm hgr (fun x hx hxe k hk hkm ↦
+    ⟨botLiftProvisionOf_donor_le (by omega) hcapC hk hkm (hface x hx hxe) hxp hx hxe hgr,
+      capLiftProvisionOf_donor_le (by omega) hgr hcapC hk hkm (hface x hx hxe) hxp hx hxe⟩)
+    hbot hpos hlab
 
 /-- **The reading of the tops from the private fills (R4)**: under the hypotheses of
 `Seed.exists_correctCompletion`, some completion below the full grade reads, in every labelling
@@ -451,7 +472,6 @@ theorem Seed.exists_completion_lt_label {α : Ordinal.{u}} {m : ℕ} (I : Seed.{
     (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
     {xp : Fin (m + 2)} (hxp : xp ∈ (Pts : Finset (Fin (m + 2))))
     (hcapC : I.amalgam.toCellScheme.scope r.cap = univ.erase xp)
-    (hN3 : 3 ≤ I.amalgam.toCellScheme.grade r.cap)
     (hface : ∀ x ∈ (Pts : Finset (Fin (m + 2))), x ≠ xp → ∀ d,
       I.amalgam.toCellScheme.scope d ⊆ univ.erase xp ∩ univ.erase x →
       I.amalgam.toCellScheme.grade d < I.amalgam.toCellScheme.grade r.cap)
@@ -467,7 +487,7 @@ theorem Seed.exists_completion_lt_label {α : Ordinal.{u}} {m : ℕ} (I : Seed.{
         q (F.embed r.marker) ≤ q (F.embed r.cap) →
         ((lam + r.R : Ordinal.{u}) : Label.{u}) ≤ q (F.embed r.cap) →
         ∀ γ : Label.{u}, γ < ((lam + r.R : Ordinal.{u}) : Label.{u}) → γ < q (F.embed y) := by
-  obtain ⟨F, hF⟩ := I.exists_correctCompletion hm hgr hxp hcapC hN3 hface hbot hpos hlab
+  obtain ⟨F, hF⟩ := I.exists_correctCompletion hm hgr hxp hcapC hface hbot hpos hlab
   exact ⟨F, fun q hq y hy hyN lam hlam i hi ha hmc hc γ hγ ↦
     CompletionBelowFullGrade.lt_label_of_hasAdmittedRows hgr hF hq hy hyN hlam hi ha hmc hc hγ⟩
 

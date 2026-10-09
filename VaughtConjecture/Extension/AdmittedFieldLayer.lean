@@ -42,8 +42,8 @@ labelling, which need not satisfy `A`.
 
 ## Placement
 
-The engine of the restricted catalogue at the reading grades (`roadmap/README.md`, Layer 3, 3.1,
-under "(R6)"); first piece.
+The completion below the full grade with admitted rows at the reading grades
+(`roadmap/README.md`, Layer 3, 3.1, under "(R6)").
 -/
 
 universe u
@@ -85,9 +85,6 @@ noncomputable def fieldRowOn (a : Fin S.card → Label.{u}) : Fin (S.card + C.ca
     S.fieldRowOn k C a (Fin.natAdd _ j) = agreementHeight (S.fieldGrid k) a (entryOn C j) :=
   Fin.append_right _ _ j
 
-/-- On the canonical catalogue the field row on `C` is the field row. -/
-theorem fieldRowOn_catalogue (a : Fin S.card → Label.{u}) :
-    S.fieldRowOn k (S.catalogue k) a = S.fieldRow k a := rfl
 
 /-- The field row on `C` of a catalogue entry takes its values in the code grid with block bound
 `2 N + 2`. -/
@@ -227,16 +224,11 @@ theorem mem_admittedCatalogue {a : Fin S.card → Label.{u}} :
 theorem admittedCatalogue_subset : S.admittedCatalogue k A ⊆ S.catalogue k :=
   fun _ ha ↦ (mem_admittedCatalogue.mp ha).1
 
-/-- The constant `⊥` is an entry of the canonical catalogue. -/
-theorem bot_mem_catalogue' : (fun _ ↦ ⊥ : Fin S.card → Label.{u}) ∈ S.catalogue k :=
-  mem_catalogue.mpr ⟨CellScheme.Rows.isLawful_const_bot, fun _ _ ↦ rfl,
-    funext fun _ ↦ orbitCode_eq_bot_iff.mpr rfl⟩
-
 /-- **The constant `⊥` is admitted when `A` holds there**, so that the admitted layer carries a
 cell at `(univ, k)`. -/
 theorem bot_mem_admittedCatalogue (hA : A fun _ ↦ ⊥) :
     (fun _ ↦ ⊥ : Fin S.card → Label.{u}) ∈ S.admittedCatalogue k A :=
-  mem_admittedCatalogue.mpr ⟨bot_mem_catalogue', hA⟩
+  mem_admittedCatalogue.mpr ⟨bot_mem_catalogue S k, hA⟩
 
 /-- **When `A` holds everywhere, the admitted catalogue is the canonical catalogue.** -/
 theorem admittedCatalogue_of_forall (hA : ∀ a, A a) : S.admittedCatalogue k A = S.catalogue k := by
@@ -244,9 +236,6 @@ theorem admittedCatalogue_of_forall (hA : ∀ a, A a) : S.admittedCatalogue k A 
   rw [mem_admittedCatalogue]
   exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, hA a⟩⟩
 
-/-- **For `A` everywhere true the admitted catalogue is the canonical catalogue.** -/
-theorem admittedCatalogue_true : S.admittedCatalogue k (fun _ ↦ True) = S.catalogue k :=
-  admittedCatalogue_of_forall fun _ ↦ trivial
 
 variable (S k A) in
 /-- **The admitted field layer** at grade `k`: the field layer on the admitted catalogue. -/
@@ -264,21 +253,8 @@ theorem admittedFieldLayer_true :
     S.admittedFieldLayer k (fun _ ↦ True) hS = S.fieldLayer k hS :=
   admittedFieldLayer_of_forall fun _ ↦ trivial
 
-/-- **The admitted field layer is consistent.** -/
-theorem isConsistent_admittedFieldLayer (hcons : S.rows.IsConsistent) :
-    (S.admittedFieldLayer k A hS).rows.IsConsistent :=
-  isConsistent_fieldLayerOn hcons admittedCatalogue_subset
 
-/-- **The admitted field layer is coded.** -/
-theorem isCoded_admittedFieldLayer (hc : S.IsCoded) : (S.admittedFieldLayer k A hS).IsCoded :=
-  isCoded_fieldLayerOn hc admittedCatalogue_subset
 
-/-- **The admitted field layer carries a cell at `(univ, k)`** when `A` holds at the constant `⊥`.
--/
-theorem exists_gradedIndex_eq_admittedFieldLayer (hA : A fun _ ↦ ⊥) :
-    ∃ u, (S.admittedFieldLayer k A hS).toCellScheme.gradedIndex u = (univ, k) := by
-  obtain ⟨i, -⟩ := exists_entryOn_eq (bot_mem_admittedCatalogue (S := S) (k := k) hA)
-  exact ⟨Fin.natAdd _ i, appendFullCellsScheme_gradedIndex_natAdd _ _ _ i⟩
 
 /-- **Every row of the admitted field layer at `(univ, k)` reads, on the old cells, an entry
 satisfying `A`.** -/

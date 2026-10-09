@@ -4458,6 +4458,26 @@ ones split):
     `ProfileTower.nonempty_completionBelowFullGrade_of_three_le`,
     `Seed.nonempty_completionBelowFullGrade`, `StageType.hasApexCoatomExtensions`;
   - `Extension/ProfileTowerExamples`: the tests at `seedL` and at a seed on six points;
+  - `Extension/LevelOn`, `Extension/AdmittedFieldLayer`, `Extension/Admission`,
+    `Extension/AdmittedLift`, `Extension/AdmittedCompletion`, `Extension/AdmittedClassObstruction`,
+    `Extension/AdmittedTower`, `Extension/RowCompletionZero`: the completion with admitted rows at
+    the reading grades (compiled in this repository (theorem named)): levels good relative to a
+    family of catalogues (`ProfileTower.Lvl.GoodOn`; `ProfileTower.Lvl.good_iff_goodOn_cat`),
+    admissions and recognition (`Seed.Admission`, `CompletionBelowFullGrade.adm_of_isLawfulBelow`),
+    the lifts into an admitted layer under the two lift provisions
+    (`ProfileTower.Lvl.GoodOn.cappedLift_admittedNextS`), the completion on the catalogues of a
+    predicate from a grade `N` under the lift provisions, the downward clause at `N ≤ k ≤ m` and the
+    code of the glued labelling (`Seed.exists_rowCompletion₀`, `Seed.exists_rowCompletion`,
+    `Seed.exists_admittedCompletion`), and the obstruction to a bottom class on the rows
+    (`ProfileTower.not_botLiftProvisionOf`);
+  - `Extension/CapRequests`, `Extension/CapRequestsCode`, `Extension/CapRequestsExamples`,
+    `Extension/CapRequestsTop`, `Extension/CapRequestsGrade`, `Extension/CapRequestsFill`: cap
+    requests and the correct completion from the grade of the cap (compiled in this repository
+    (theorem named)): correctness of a capped state (`CapRequests.IsCorrect`) and its closure
+    under witnesses, splice and orbit code, the instances at the reading type and at a marked-cap
+    context, the lift provisions from the donor coatom, and the correct completions
+    (`Seed.exists_correctCompletion`, `Seed.exists_correctCompletion_top`,
+    `Seed.exists_correctCompletion_T`), under the fills from the private coatom;
   - `MainTheorem/CoatomExtensionTheorem`: the consequences with hypothesis 8 discharged
     (`StageType.hasCoatomExtensions`, `StageType.exists_pinned_extension_of_isSuccPrelimit`,
     `forcingDonors_blockStage`, `MainTheorem.capToModel`,

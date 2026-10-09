@@ -67,15 +67,14 @@ def IsDeadFace (I : Seed.{u} α m) (xp xd : Fin (m + 2)) : Prop :=
   ∀ d, I.amalgam.toCellScheme.scope d ⊆ univ.erase xp ∩ univ.erase xd →
     I.amalgam.rows.row d ⟨d, CellScheme.mem_below_gradedIndex _ d⟩ = ⊥
 
-/-- **A lawful labelling is `⊥` at a cell that reads itself as `⊥`.** -/
+/-- **A lawful labelling is `⊥` at a cell that reads itself as `⊥`**
+(`CellScheme.Rows.IsLawfulBelow.eq_bot_of_row_self_eq_bot`, on the amalgam). -/
 theorem eq_bot_of_row_self_eq_bot {X : Finset (Fin (m + 2)) × ℕ}
     {w : Fin I.amalgam.card → Label.{u}}
     (hw : I.amalgam.rows.IsLawfulBelow X fun d ↦ w d) {d : Fin I.amalgam.card}
     (hd : d ∈ I.amalgam.toCellScheme.below X)
-    (hdead : I.amalgam.rows.row d ⟨d, CellScheme.mem_below_gradedIndex _ d⟩ = ⊥) : w d = ⊥ := by
-  obtain ⟨-, hloc, -⟩ := Rows.isLawfulBelow_iff_forall.mp hw
-  have h := (hloc d hd).eq_bot (d := ⟨d, CellScheme.mem_below_gradedIndex _ d⟩) hdead
-  simpa using h
+    (hdead : I.amalgam.rows.row d ⟨d, CellScheme.mem_below_gradedIndex _ d⟩ = ⊥) : w d = ⊥ :=
+  hw.eq_bot_of_row_self_eq_bot hd hdead
 
 /-- **Over a dead common face, lawful labellings are `⊥` on it.** -/
 theorem eq_bot_of_isDeadFace {xp xd : Fin (m + 2)} (hdead : IsDeadFace I xp xd)
@@ -398,7 +397,7 @@ open Finset Label ProfileTower CapRequests
 
 /-- **The correct completion reading the tops (R4)**: for a seed on `m + 2 ≥ 4` points and cap
 requests graded by the grades of the amalgam, with
-* the cap of scope the private coatom `univ.erase xp` and grade `N ≥ 3`,
+* the cap of scope the private coatom `univ.erase xp` and grade `N`,
 * the common face carrying no cell of grade at least `N` (`hface`),
 * `T` labelled `⊤` and `Z` labelled `⊥` in the glued labelling, off the private coatom and of grade
   below `N` (the margin (M3)), and `F` empty,
@@ -438,7 +437,7 @@ theorem Seed.exists_correctCompletion_T {α : Ordinal.{u}} {m : ℕ} (I : Seed.{
     isCorrect_of_forall (fun z hz ↦ (hZ z hz).1) (fun f hf ↦ by simp [hF] at hf)
       fun y hy ↦ by rw [(hT y hy).1]; exact le_top
   have hlab := (hglued.code hgr (m + 1)).hat hgr (m + 1)
-  refine I.exists_correctCompletion hm hgr hxp hcapC hN3 hface (fun k hk hkm ↦ ?_)
+  refine I.exists_correctCompletion hm hgr hxp hcapC hface (fun k hk hkm ↦ ?_)
     (fun k hk hkm ↦ ?_) hlab
   · rcases hfill with hdead | hfol
     · exact capFillBotAt_of_isDeadFace hgr hxp hxd hne hdead hT' hZ' hF k
