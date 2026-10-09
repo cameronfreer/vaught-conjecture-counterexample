@@ -5,7 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedAssembly
 import VaughtConjecture.Extension.ReplicatedTieReading
-import VaughtConjecture.Extension.RepairedTieLift
+import VaughtConjecture.Extension.ReplicatedGridTie
 import VaughtConjecture.Continuation.SourceGapSeparationObstruction
 
 /-!
@@ -38,20 +38,15 @@ Roadmap, Layer 3 ((R3) and (R4), the context lift of the replicated scheme at th
 `repairedContextLift_of_hasContextLiftAtSeed` compiles the instantiation: the context lift at
 the seed position, at the choice of the assembly, gives the lift at this input.
 
-**Old scheme (agreement heights in the grid alone): refuted.**  At commit `86a30a0` (branch
-`research/port-growth-pos-test`) this module compiled, with the tower of that commit,
-
-    theorem StageType.not_hasContextLiftAtSeed_seedChoice :
-        ¬ HasContextLiftAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound
-
-(and `not_towerExtensionAtSeed_seedChoice`, `not_towerExtensionPosAtSeed_seedChoice`), by the tie
-of `o` and `r` at the code value `3`, strictly inside the block `0` of the grid at `2`.  The base
-lane replaced the grid by the height set in `Scheme.LadderBaseData.ladderTower` itself
-(`Scheme.heightSet`, research/port-growth `5edcc2e`); the grid-only tower is no longer a value of
-the definitions (the height set is not a parameter of the tower, of `Seed.attachTower` or of
-`Seed.replicated`), so the old refutation is not restated here.  Making both reachable side by
-side needs one parameter (the height function) threaded through the ladder tower, the attachment
-tower and the replicated scheme; that is a change to the base files, left to the base lane.
+**Old scheme (agreement heights in the grid alone): no lift at the input** (compiled here,
+`TieInstance.exists_not_lift_of_tie_grid`).  The height sets are a parameter of the replicated
+scheme (`Seed.replicated`, default `Scheme.heightSet Γ B'`); the height sets of no values are the
+grid alone (`Scheme.heightSet_empty`).  With them, at every seed of the input, the admitted
+completion of `sep ω` has, for every code of it shifted by one block, no lift below `(univ, 2)`
+keeping the tie ambient at the cap `3` (`Seed.not_exists_lift_of_tie_of_pin`: `3` is not a height
+of the grid at `2`, so the tied cell `o` is pinned).  At commit `86a30a0` (branch
+`research/port-growth-pos-test`) the same mechanism refuted the context lift at the seed position
+for the choice of the assembly (`StageType.not_hasContextLiftAtSeed_seedChoice`).
 
 **The old counterexample mechanism is eliminated** (`TieInstance.not_pin_cellR`, from
 `Seed.not_pin_of_grade`): the tied value is a value of a state of the catalogue at a cell of grade
@@ -59,7 +54,8 @@ tower and the replicated scheme; that is a change to the base files, left to the
 below it.
 
 **The repaired lift at the old input: proved** (`TieInstance.exists_lift_of_tie`, from
-`Seed.exists_lift_of_tie`): at every seed of the input, at the choice of the assembly, for every
+`Seed.exists_lift_of_tie`; the executable pair with `TieInstance.exists_not_lift_of_tie_grid`):
+at every seed of the input, at the choice of the assembly, for every
 complete lawful admitted state (the admitted completion of `sep ω` among them), the cap `3`, the
 tie ambient and every code of the shifted state as prescription, a lift below `(univ, 2)` exists.
 The two steps asked first: **separation** (`TieInstance.tieValue_mem_heightSet`,
@@ -71,9 +67,11 @@ consistent, lawful on the catalogue and coded at the choice).  The cap is the co
 
 **The repaired context lift at every input of the seed: open** (`TieInstance.RepairedContextLift`,
 a `Prop`): the context lift at the grade `2` at every seed of this input, at the choice of the
-assembly, for every cap, prescription and ambient.  It is the extension over the tower at a
-positive cap at the grades `1` and `2` for this seed (`Seed.TowerExtensionPos`), the general open
-step specialized to `m = n = 1`; not proved here.
+assembly, for every cap, prescription and ambient.  The extension over the tower of every state
+(`Seed.TowerExtensionPos`) fails on this scheme at the seed position (the pin of
+`VaughtConjecture.MainTheorem.ReplicatedPinInstance`, through prescribed donor values); the
+context lift prescribes only the context, and no pin lies inside the context
+(`Seed.not_context_pin`).  Not proved here.
 
 ## References
 
@@ -479,6 +477,118 @@ theorem exists_lift_of_tie (I : Seed.{u} ω 1) (hI : I.left = ctx ω)
             (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣) RP e.1) :=
   exists_lift_of_tie_aux hI (hte := restrictFace_ctx_root ω) hdA (classCalibrated_req ω) hP₀
     hP₀A hRP hσR
+
+/-- The tie input over the grid alone, for the first coatom type given up to equality. -/
+theorem exists_not_lift_of_tie_grid_aux {I : Seed.{u} ω 1} {t' : StageType.{u} ω 2}
+    (hI : I.left = t') {p : StageType.{u} ω 1}
+    {hte : restrictFace ((𝕣).trans Fin.castSuccEmb) t' = some p} {d : StageType.{u} ω 2}
+    (hdp : restrictFace Fin.castSuccEmb d = some p)
+    (hdA : restrictFace (extendByLast ((𝕣).trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests t' d.toScheme} (hpair : ∀ j, Q.CorrectAt t'.label j (d.label j))
+    (hQ : Q.ClassCalibrated hte) (hrel : Q.HasRelativeLiftOnClass hte hdp)
+    {u' : Fin t'.card → Label.{u}} (hu' : t'.rows.IsLawful u') {x₁ x₂ : Fin t'.card}
+    (hx₁ : t'.toCellScheme.grade x₁ = 2) (hx₂ : t'.toCellScheme.grade x₂ = 2)
+    (h20 : u' x₂ ≠ ⊥) (h21 : u' x₂ < u' x₁) :
+    ∃ P₀ : Fin (I.attachment 𝕣).card → Label.{u}, (I.attachment 𝕣).rows.IsLawful P₀ ∧
+      I.attachAdmits 𝕣 hdA (hI ▸ Q) (1 + 2) P₀ ∧
+      ∃ a₁ a₂ : Fin (I.attachment 𝕣).card, (I.attachment 𝕣).toCellScheme.grade a₁ = 2 ∧
+        (I.attachment 𝕣).toCellScheme.grade a₂ = 2 ∧
+        (I.attachment 𝕣).toCellScheme.scope a₁ ⊆ Seed.ctxCoatom 1 ∧
+        (I.attachment 𝕣).toCellScheme.scope a₂ ⊆ Seed.ctxCoatom 1 ∧ P₀ a₁ = u' x₁ ∧ P₀ a₂ = u' x₂ ∧
+        ∀ RP ∈ (I.attachmentBase 𝕣).towerCat (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ Q))
+            (1 + 2), ∀ σ : Label.{u} → Label.{u}, (∀ a, σ (RP a) = Label.omegaShift (P₀ a)) →
+          ¬ ∃ q' : (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+              (I.attachAdmits 𝕣 hdA (hI ▸ Q)) (I.seedGridBound 𝕣)
+              (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)).toCellScheme.below
+                ((univ : Finset (Fin 3)), 2) → Label.{u},
+            (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ Q))
+              (I.seedGridBound 𝕣)
+              (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)).rows.IsLawfulBelow
+                ((univ : Finset (Fin 3)), 2) q' ∧
+            (∀ e, min (q' e) (Seed.tieValue 1) = min (I.replicatedWritingOn 𝕣 (I.seedHeight 𝕣)
+              (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ Q)) (I.seedGridBound 𝕣)
+              (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)
+              (Label.posConst (Seed.tieValue 1) ∘ P₀) e.1) (Seed.tieValue 1)) ∧
+            ∀ e : (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+                (I.attachAdmits 𝕣 hdA (hI ▸ Q)) (I.seedGridBound 𝕣)
+                (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)).toCellScheme.below
+                  (univ.erase (Fin.last 2), 2),
+              q' (Set.inclusion ((I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+                (I.attachAdmits 𝕣 hdA (hI ▸ Q)) (I.seedGridBound 𝕣)
+                (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)).toCellScheme.below_mono
+                (show ((univ.erase (Fin.last 2), 2) : Finset (Fin 3) × ℕ) ≤
+                  ((univ : Finset (Fin 3)), 2) from ⟨erase_subset _ _, le_rfl⟩)) e) =
+                σ (I.replicatedWritingOn 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+                  (I.attachAdmits 𝕣 hdA (hI ▸ Q)) (I.seedGridBound 𝕣)
+                  (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k) RP e.1) := by
+  subst hI
+  obtain ⟨R, hRl, hRu, hadm⟩ := I.exists_admitted_completion_attachment hte hdp hdA hpair hrel hu'
+  have hRc (x : Fin I.left.card) : R (I.attachCtxCell 𝕣 x) = u' x := hRu x
+  have hRA : I.attachAdmits 𝕣 hdA Q (1 + 2) R :=
+    Seed.attachAdmits_of_admitsOnClass hdA hQ (1 + 2) (by
+      rw [show (fun x ↦ R (I.attachCtxCell 𝕣 x)) = u' from funext hRc]
+      exact hadm)
+  refine ⟨R, hRl, hRA, I.attachCtxCell 𝕣 x₁, I.attachCtxCell 𝕣 x₂,
+    (Seed.grade_attachCtxCell x₁).trans hx₁, (Seed.grade_attachCtxCell x₂).trans hx₂,
+    Seed.scope_attachCtxCell_subset x₁, Seed.scope_attachCtxCell_subset x₂, hRc x₁, hRc x₂,
+    fun RP hRP σ hσR ↦ ?_⟩
+  exact Seed.not_exists_lift_of_tie_of_pin (I.card_le_seedHeight 𝕣)
+    (I.codeSet_subset_seedValues 𝕣) hdA hQ le_rfl le_rfl
+    (fun x hx hxy ↦ Seed.tieValue_lt_of_mem_grid le_rfl hx hxy) hRl hRA
+    ((Seed.grade_attachCtxCell x₁).trans hx₁) ((Seed.grade_attachCtxCell x₂).trans hx₂)
+    (Seed.scope_attachCtxCell_subset x₁) (Seed.scope_attachCtxCell_subset x₂)
+    (by rw [hRc]; exact h20) (by rw [hRc, hRc]; exact h21) hRP hσR
+
+/-- **The old scheme at the tie input: no lift** (agreement heights in the grid alone, the height
+sets of no values, `Scheme.heightSet_empty`): at every seed of the input, at the choice of the
+assembly, the admitted completion `P₀` of the section `sep ω` (`ω + 3` at the cell `o`, `3` at the
+cell `r`, both of grade `2` below the context coatom) has, for every code `(RP, σ)` of `P₀`
+shifted by one block, no labelling lawful below `(univ, 2)` keeping the tie ambient at the cap `3`
+and equal to the prescription below the context coatom (`Seed.not_exists_lift_of_tie_of_pin`: the
+tie value `3` is not a height of the grid at `2`).  Beside it, the repaired scheme lifts at every
+such input (`TieInstance.exists_lift_of_tie`). -/
+theorem exists_not_lift_of_tie_grid (I : Seed.{u} ω 1) (hI : I.left = ctx ω)
+    (hdA : restrictFace (extendByLast ((𝕣).trans Fin.castSuccEmb)) I.amalgam = some (don ω)) :
+    ∃ P₀ : Fin (I.attachment 𝕣).card → Label.{u}, (I.attachment 𝕣).rows.IsLawful P₀ ∧
+      I.attachAdmits 𝕣 hdA (hI ▸ req ω) (1 + 2) P₀ ∧
+      ∃ a₁ a₂ : Fin (I.attachment 𝕣).card, (I.attachment 𝕣).toCellScheme.grade a₁ = 2 ∧
+        (I.attachment 𝕣).toCellScheme.grade a₂ = 2 ∧
+        (I.attachment 𝕣).toCellScheme.scope a₁ ⊆ Seed.ctxCoatom 1 ∧
+        (I.attachment 𝕣).toCellScheme.scope a₂ ⊆ Seed.ctxCoatom 1 ∧ P₀ a₁ = labelAdd ω 3 ∧
+        P₀ a₂ = labelAdd 0 3 ∧
+        ∀ RP ∈ (I.attachmentBase 𝕣).towerCat (I.seedValues 𝕣)
+            (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (1 + 2),
+          ∀ σ : Label.{u} → Label.{u}, (∀ a, σ (RP a) = Label.omegaShift (P₀ a)) →
+          ¬ ∃ q' : (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+              (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)
+              (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)).toCellScheme.below
+                ((univ : Finset (Fin 3)), 2) → Label.{u},
+            (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+              (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)
+              (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)).rows.IsLawfulBelow
+                ((univ : Finset (Fin 3)), 2) q' ∧
+            (∀ e, min (q' e) (Seed.tieValue 1) = min (I.replicatedWritingOn 𝕣 (I.seedHeight 𝕣)
+              (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)
+              (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)
+              (Label.posConst (Seed.tieValue 1) ∘ P₀) e.1) (Seed.tieValue 1)) ∧
+            ∀ e : (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+                (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)
+                (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)).toCellScheme.below
+                  (univ.erase (Fin.last 2), 2),
+              q' (Set.inclusion ((I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+                (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)
+                (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k)).toCellScheme.below_mono
+                (show ((univ.erase (Fin.last 2), 2) : Finset (Fin 3) × ℕ) ≤
+                  ((univ : Finset (Fin 3)), 2) from ⟨erase_subset _ _, le_rfl⟩)) e) =
+                σ (I.replicatedWritingOn 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+                  (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)
+                  (fun k ↦ Scheme.heightSet ∅ (I.seedGridBound 𝕣) k) RP e.1) :=
+  exists_not_lift_of_tie_grid_aux hI (hte := restrictFace_ctx_root ω) (don_mem_cofaces ω).2 hdA
+    (correctAt_req ω) (classCalibrated_req ω) (hasRelativeLiftOnClass_req ω) (isLawful_sep ω)
+    (x₁ := cellO.{u} ω) (x₂ := cellR.{u} ω) rfl rfl WithBot.coe_ne_bot (by
+      change labelAdd 0 3 < labelAdd ω 3
+      rw [labelAdd, labelAdd, zero_add, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
+      exact (Ordinal.natCast_lt_omega0 3).trans_le le_self_add)
 
 end TieInstance
 

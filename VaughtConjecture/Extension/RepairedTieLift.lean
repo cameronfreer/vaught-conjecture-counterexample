@@ -319,6 +319,10 @@ theorem tieValue_lt_omega0 (m : ℕ) : tieValue.{u} m < (Ordinal.omega0 : Label.
     rw [Nat.cast_zero, mul_zero, zero_add]; exact Ordinal.natCast_lt_omega0 _
   exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr h)
 
+theorem tieValue_le_omegaShift (m : ℕ) {x : Label.{u}} (hx : x ≠ ⊥) :
+    tieValue.{u} m ≤ omegaShift x :=
+  (tieValue_lt_omega0 m).le.trans (omega0_le_omegaShift hx)
+
 theorem tieValue_mem_codeSet (C m : ℕ) : tieValue.{u} m ∈ codeSet C (m + 2) :=
   mem_codeSet (Nat.zero_le _) (by omega)
 

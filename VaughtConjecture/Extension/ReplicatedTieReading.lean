@@ -269,6 +269,19 @@ local notation "𝕋" => Seed.attachTower I g H Γ A B'
 /-- The full face at a grade. -/
 local notation "𝕐[" k "]" => ((univ : Finset (Fin (m + 2))), k)
 
+variable {Γh : Finset Label.{u}}
+
+/-- The replicated scheme with agreement heights in the height sets of `Γh`. -/
+local notation "𝔼'" => Seed.replicated I g H Γ A B' (fun k ↦ Scheme.heightSet Γh B' k)
+
+/-- The ladder tower over the attachment with agreement heights in the height sets of `Γh`. -/
+local notation "𝕋'" => Seed.attachTower I g H Γ A B' (fun k ↦ Scheme.heightSet Γh B' k)
+
+/-- The ladder tower at the height `m` with agreement heights in the height sets of `Γh`. -/
+local notation "𝕃'" =>
+  Scheme.LadderBaseData.ladderTower (Seed.attachmentBase I g) H Γ A B' m
+    (fun k ↦ Scheme.heightSet Γh B' k)
+
 /-- **A cell of full scope at a grade `k ≥ 2` reads the attachment as a state agreeing with every
 writing up to the writing's value at the cell**: for a cell `f` of the tower at `(univ, k)`,
 `2 ≤ k ≤ m + 1`, some lawful state `R` of the catalogue at `k` is read by `f` at the cells of the
@@ -276,27 +289,27 @@ attachment of grade at most `k`, the writing of a lawful state `R'` at `f` is a 
 (`Scheme.heightSet`), and `R` agrees with `R'` capped at that value: equal where `R'` lies below
 it, at least it where `R'` is. -/
 theorem exists_reading_of_writing (hcard : (I.attachmentBase g).S.card ≤ H) {k : ℕ}
-    (hk2 : 2 ≤ k) (hkm : k ≤ m + 1) (f : Fin (𝕋).card)
-    (hf : (𝕋).toCellScheme.gradedIndex f = ((univ : Finset (Fin (m + 2))), k))
+    (hk2 : 2 ≤ k) (hkm : k ≤ m + 1) (f : Fin (𝕋').card)
+    (hf : (𝕋').toCellScheme.gradedIndex f = ((univ : Finset (Fin (m + 2))), k))
     {R' : Fin (I.attachment g).card → Label.{u}} (hR' : (I.attachment g).rows.IsLawful R') :
     ∃ R ∈ (I.attachmentBase g).towerCat Γ A k,
       (∀ a, (I.attachment g).toCellScheme.grade a ≤ k →
-        (𝔼).rowAt (Fin.castAdd _ f) (I.attachEmb g H Γ A B' a) = R a) ∧
-      ((I.attachmentBase g).ladderTower H Γ A B' m).v R' f ∈ Scheme.heightSet Γ B' k ∧
-      (∀ a, R' a < ((I.attachmentBase g).ladderTower H Γ A B' m).v R' f → R a = R' a) ∧
-      ∀ a, ((I.attachmentBase g).ladderTower H Γ A B' m).v R' f ≤ R' a →
-        ((I.attachmentBase g).ladderTower H Γ A B' m).v R' f ≤ R a := by
-  have hf' : (𝕋).toCellScheme.gradedIndex f = ((univ : Finset (Fin (m + 2))), k - 2 + 2) := by
+        (𝔼').rowAt (Fin.castAdd _ f) (I.attachEmb g H Γ A B' a) = R a) ∧
+      (𝕃').v R' f ∈ Scheme.heightSet Γh B' k ∧
+      (∀ a, R' a < (𝕃').v R' f → R a = R' a) ∧
+      ∀ a, (𝕃').v R' f ≤ R' a →
+        (𝕃').v R' f ≤ R a := by
+  have hf' : (𝕋').toCellScheme.gradedIndex f = ((univ : Finset (Fin (m + 2))), k - 2 + 2) := by
     rw [show k - 2 + 2 = k by omega]; exact hf
   obtain ⟨R, hRC, hrow, hagr⟩ := Scheme.exists_layerTower_layerCell
     (B := (I.attachmentBase g).towerBase H) (C := (I.attachmentBase g).towerCat Γ A)
-    (G := fun k ↦ Scheme.heightSet Γ B' k) (fun _ ↦ Scheme.bot_mem_heightSet _ _ _) (k - 2) m
+    (G := fun k ↦ Scheme.heightSet Γh B' k) (fun _ ↦ Scheme.bot_mem_heightSet _ _ _) (k - 2) m
     (by omega) f hf'
   have hk : k - 2 + 2 = k := by omega
   rw [hk] at hRC
   have hRl : (I.attachment g).rows.IsLawful R :=
     (Scheme.LadderBaseData.mem_towerCat.mp hRC).2.1
-  set W := ((I.attachmentBase g).ladderTower H Γ A B' m).v R' f with hW
+  set W := (𝕃').v R' f with hW
   have hag (a : Fin (I.attachment g).card) : min (R' a) W = min (R a) W := by
     have e := hagr R' (Fin.castAdd _ a)
     change min ((I.attachmentBase g).stateExt H R' (Fin.castAdd _ a)) _ =
@@ -311,7 +324,7 @@ theorem exists_reading_of_writing (hcard : (I.attachmentBase g).S.card ≤ H) {k
     rw [Scheme.appendFullCellsScheme_grade_castAdd]
     omega
   · have h := Scheme.layerTower_v_mem (B := (I.attachmentBase g).towerBase H)
-      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k)
+      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γh B' k)
       (fun _ ↦ Scheme.bot_mem_heightSet _ _ _) (k - 2) R' m (by omega) f hf'
     rwa [hk] at h
   · have e := hag a
@@ -326,7 +339,7 @@ theorem exists_reading_of_writing (hcard : (I.attachmentBase g).S.card ≤ H) {k
 /-- **A pin of the ambient below every height above the cap defeats every lawful labelling that
 reverses it.**  Let the ambient be the writing of a state `R'` of the catalogue read through a map
 `σ`, let `a`, `a₁` be attachment cells of grades at most `k` with `R' a ≤ R' a₁`, and let every
-height `x` at `k` (`Scheme.heightSet Γ B' k`) with `c ≤ σ x` lie above `R' a` (the **pin**).
+height `x` at `k` (`Scheme.heightSet Γh B' k`) with `c ≤ σ x` lie above `R' a` (the **pin**).
 Then no labelling `r` lawful below `(univ, j)`, `2 ≤ k ≤ j ≤ m + 1`, with the observation of the
 ambient at `c`, carries `v₁ < v ≤ v₃` at `a₁`, `a` and a cell `a₃` of grade `k` with `v₃` above
 `c`: a cell at `(univ, k)` available above `v₃` carries a label at least `c` in the ambient, so
@@ -340,61 +353,68 @@ theorem not_lawful_of_pin (hcard : (I.attachmentBase g).S.card ≤ H)
     (ha : (I.attachment g).toCellScheme.grade a ≤ k)
     (ha₁ : (I.attachment g).toCellScheme.grade a₁ ≤ k)
     (ha₃ : (I.attachment g).toCellScheme.grade a₃ = k) (hR'a : R' a ≤ R' a₁)
-    (hpin : ∀ x ∈ Scheme.heightSet Γ B' k, c ≤ σ x → R' a < x) {v v₁ v₃ : Label.{u}}
+    (hpin : ∀ x ∈ Scheme.heightSet Γh B' k, c ≤ σ x → R' a < x) {v v₁ v₃ : Label.{u}}
     (hv3 : v ≤ v₃) (hv1 : v₁ < v) (hc3 : ¬ v₃ ≤ c)
-    {r : (𝔼).toCellScheme.below 𝕐[j] → Label.{u}}
-    (hr : (𝔼).rows.IsLawfulBelow 𝕐[j] r)
+    {r : (𝔼').toCellScheme.below 𝕐[j] → Label.{u}}
+    (hr : (𝔼').rows.IsLawfulBelow 𝕐[j] r)
     (hra : ∀ d, d.1 = I.attachEmb g H Γ A B' a → r d = v)
     (hra₁ : ∀ d, d.1 = I.attachEmb g H Γ A B' a₁ → r d = v₁)
     (hra₃ : ∀ d, d.1 = I.attachEmb g H Γ A B' a₃ → r d = v₃)
-    (hrq : ∀ d, min (r d) c = min (σ (I.replicatedWriting g H Γ A B' R' d)) c) : False := by
+    (hrq : ∀ d, min (r d) c =
+      min (σ (I.replicatedWritingOn g H Γ A B' (fun k ↦ Scheme.heightSet Γh B' k) R' d)) c) :
+    False := by
   classical
   have hR'l : (I.attachment g).rows.IsLawful R' :=
     (Scheme.LadderBaseData.mem_towerCat.mp hR').2.1
-  set w : Fin (𝔼).card → Label.{u} := fun d ↦ if hd : d ∈ (𝔼).toCellScheme.below 𝕐[j] then
+  set w : Fin (𝔼').card → Label.{u} := fun d ↦ if hd : d ∈ (𝔼').toCellScheme.below 𝕐[j] then
     r ⟨d, hd⟩ else ⊥ with hwdef
-  have hwr : (fun d : (𝔼).toCellScheme.below 𝕐[j] ↦ w d) = r :=
+  have hwr : (fun d : (𝔼').toCellScheme.below 𝕐[j] ↦ w d) = r :=
     funext fun d ↦ dite_eq_left d.2
-  have hw : (𝔼).rows.IsLawfulBelow 𝕐[j] fun d ↦ w d := by rw [hwr]; exact hr
+  have hw : (𝔼').rows.IsLawfulBelow 𝕐[j] fun d ↦ w d := by rw [hwr]; exact hr
   have hmemY (b : Fin (I.attachment g).card) (hb : (I.attachment g).toCellScheme.grade b ≤ k) :
-      I.attachEmb g H Γ A B' b ∈ (𝔼).toCellScheme.below 𝕐[j] :=
+      I.attachEmb g H Γ A B' b ∈ (𝔼').toCellScheme.below 𝕐[j] :=
     (attachEmb_mem_below_iff b _).mpr ⟨subset_univ _, hb.trans hkj⟩
   have hwv (b : Fin (I.attachment g).card) (hb : (I.attachment g).toCellScheme.grade b ≤ k)
       {x : Label.{u}} (hx : ∀ d, d.1 = I.attachEmb g H Γ A B' b → r d = x) :
       w (I.attachEmb g H Γ A B' b) = x := by
-    change (if hd : _ ∈ (𝔼).toCellScheme.below 𝕐[j] then r ⟨_, hd⟩ else ⊥) = x
+    change (if hd : _ ∈ (𝔼').toCellScheme.below 𝕐[j] then r ⟨_, hd⟩ else ⊥) = x
     rw [dite_eq_left (hmemY b hb)]
     exact hx ⟨_, hmemY b hb⟩ rfl
   have hw₃ := hwv a₃ ha₃.le hra₃
   -- a cell at `(univ, k)` available above `v₃`
   obtain ⟨k', rfl⟩ : ∃ k', k = k' + 2 := ⟨k - 2, by omega⟩
-  obtain ⟨u₀, -, hu₀, -⟩ := exists_cell_of_mem_towerCat (B' := B') hcard hk2 (hkj.trans hjm)
-    (Scheme.LadderBaseData.towerCat_mono hA (by omega : k' ≤ m) hR')
-  have hu₀Y : u₀ ∈ (𝔼).toCellScheme.below 𝕐[j] := by
+  obtain ⟨u₁, -, hu₁, -⟩ := Scheme.LadderBaseData.exists_cell_of_mem_towerCat
+    (B := I.attachmentBase g) (B' := B') (G := fun k ↦ Scheme.heightSet Γh B' k) hcard k' m
+    (by omega) (Scheme.LadderBaseData.towerCat_mono hA (by omega : k' ≤ m) hR')
+  set u₀ : Fin (𝔼').card := Fin.castAdd _ u₁ with hu₀def
+  have hu₀ : (𝔼').toCellScheme.gradedIndex u₀ = ((univ : Finset (Fin (m + 2))), k' + 2) :=
+    (Scheme.gradedIndex_mirror_castAdd u₁).trans hu₁
+  have hu₀Y : u₀ ∈ (𝔼').toCellScheme.below 𝕐[j] := by
     rw [CellScheme.mem_below, hu₀]; exact ⟨subset_rfl, hkj⟩
   obtain ⟨-, -, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hw
   obtain ⟨u, huE, hle⟩ := havail (I.attachEmb g H Γ A B' a₃) u₀ hu₀Y
-    (by rw [show (𝔼).toCellScheme.scope u₀ = univ from congrArg Prod.fst hu₀]
+    (by rw [show (𝔼').toCellScheme.scope u₀ = univ from congrArg Prod.fst hu₀]
         exact subset_univ _)
-    (by rw [show (𝔼).toCellScheme.grade u₀ = k' + 2 from congrArg Prod.snd hu₀]
+    (by rw [show (𝔼').toCellScheme.grade u₀ = k' + 2 from congrArg Prod.snd hu₀]
         exact (congrArg Prod.snd (gradedIndex_attachEmb a₃)).trans ha₃)
   rw [hu₀] at huE
   rw [hw₃] at hle
   obtain ⟨f, rfl, hf⟩ := exists_eq_castAdd_of_scope u (congrArg Prod.fst huE)
   rw [huE] at hf
-  have huY : (Fin.castAdd _ f : Fin (𝔼).card) ∈ (𝔼).toCellScheme.below 𝕐[j] := by
+  have huY : (Fin.castAdd _ f : Fin (𝔼').card) ∈ (𝔼').toCellScheme.below 𝕐[j] := by
     rw [CellScheme.mem_below, huE]; exact ⟨subset_rfl, hkj⟩
   -- the ambient is at least the cap at the cell
-  set W := ((I.attachmentBase g).ladderTower H Γ A B' m).v R' f with hWdef
+  set W := (𝕃').v R' f with hWdef
   have hqu : c ≤ σ W := by
     have e := hrq ⟨_, huY⟩
     have e1 : w (Fin.castAdd _ f) = r ⟨_, huY⟩ := dite_eq_left huY
     rw [← e1, min_eq_right ((not_le.mp hc3).le.trans hle)] at e
-    have e2 : I.replicatedWriting g H Γ A B' R' (Fin.castAdd _ f) = W := by
-      change ((I.attachmentBase g).ladderTower H Γ A B' m).v R'
-        ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ f)) = W
+    have e2 : I.replicatedWritingOn g H Γ A B' (fun k ↦ Scheme.heightSet Γh B' k) R'
+        (Fin.castAdd _ f) = W := by
+      change (𝕃').v R'
+        ((𝕋').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ f)) = W
       rw [Scheme.mirrorOrig_castAdd]
-    rw [show (⟨_, huY⟩ : (𝔼).toCellScheme.below 𝕐[j]).1 = Fin.castAdd _ f from rfl, e2] at e
+    rw [show (⟨_, huY⟩ : (𝔼').toCellScheme.below 𝕐[j]).1 = Fin.castAdd _ f from rfl, e2] at e
     exact e ▸ min_le_left _ _
   -- the reading of the cell: pinned at `a`, at least that at `a₁`
   obtain ⟨R, -, hrow, hWg, hRlt, hRge⟩ := exists_reading_of_writing (Γ := Γ) (A := A)
@@ -410,7 +430,7 @@ theorem not_lawful_of_pin (hcard : (I.attachmentBase g).S.card ≤ H)
   have hb (b : Fin (I.attachment g).card)
       (hgb : (I.attachment g).toCellScheme.grade b ≤ k' + 2) :
       I.attachEmb g H Γ A B' b ∈
-        (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex (Fin.castAdd _ f)) := by
+        (𝔼').toCellScheme.below ((𝔼').toCellScheme.gradedIndex (Fin.castAdd _ f)) := by
     rw [huE]; exact (attachEmb_mem_below_iff b _).mpr ⟨subset_univ _, hgb⟩
   have h1 := hθr _ (hb a ha)
   have h2 := hθr _ (hb a₁ ha₁)
