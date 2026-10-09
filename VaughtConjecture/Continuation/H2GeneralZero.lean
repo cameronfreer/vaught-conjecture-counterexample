@@ -39,19 +39,20 @@ theorem exists_rowCompletion₀_of_le_one {α : Ordinal.{u}} {m : ℕ} (I : Seed
   classical
   set D := rowFamily I N Rw
   have hD (k : ℕ) : D k ⊆ cat I k := rowCat_subset _ k
-  have hdD := rowFamily_down hdown
+  have hdD := rowFamily_down (fun k hk _ ↦ hdown k hk)
+  have hdD' (k : ℕ) (hk : k + 1 ≤ m) := hdD k (by omega)
   have hprov (k : ℕ) (hk0 : 0 < k) (hkm : k ≤ m + 1) (x : Fin (m + 2))
       (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
       BotLiftProvisionIn (rowFamily I N Rw k) k x ∧
         CapLiftProvisionIn (rowFamily I N Rw k) k x := by
     rw [rowFamily_of_le _ (by omega)]
     exact ⟨hbotP k (by omega) hkm x hx, hcapP k (by omega) hkm x hx⟩
-  have hL := lvlOn₀_goodOn hD hdD (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).1)
+  have hL := lvlOn₀_goodOn hD hdD' (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).1)
     (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).2) m le_rfl
-  have hR := lvlOn₀_rowsInAll hD hdD (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).1)
+  have hR := lvlOn₀_rowsInAll hD hdD' (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).1)
     (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).2) m le_rfl
   set Rt : I.State → Prop := fun s ↦ N ≤ m + 1 → Rw s
-  have hdtop : ∀ R ∈ rowCat Rt (m + 1), code m R ∈ D m := hdD m
+  have hdtop : ∀ R ∈ rowCat Rt (m + 1), code m R ∈ D m := hdD m le_rfl
   have hbot (x) (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
       BotLiftProvisionOf Rt (m + 1) x := (hprov _ (by omega) le_rfl x hx).1
   have hcap (x) (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
@@ -84,8 +85,8 @@ theorem exists_rowCompletion₀_of_le_one {α : Ordinal.{u}} {m : ℕ} (I : Seed
     have hrow' (d : Fin I.amalgam.card) :
         (L.nextSOn (rowCat Rt (m + 1))).rowAt (Fin.castAdd _ e)
           (L.embedOn (rowCat Rt (m + 1)) d) = hat I k R d :=
-      (rowAt_appendFullCells_castAdd
-        (r := fun i ↦ L.ΦOn (rowCat Rt (m + 1)) (entryOn (rowCat Rt (m + 1)) i))
+      (Scheme.rowAt_appendFullCells_castAdd
+        (r' := fun i ↦ L.ΦOn (rowCat Rt (m + 1)) (entryOn (rowCat Rt (m + 1)) i))
         (h := L.not_le) e (L.embed d)).trans (hrow d)
     rw [funext hrow']
     have hR'' : R ∈ rowCat Rw k := by

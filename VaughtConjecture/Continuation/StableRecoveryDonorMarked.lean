@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.StableRecoveryMarkedApex
 import VaughtConjecture.Extension.SmallArityOne
+import VaughtConjecture.Extension.AdmittedFieldLayerCells
 
 /-!
 # Marked caps with a donor other than the input, at the arity one

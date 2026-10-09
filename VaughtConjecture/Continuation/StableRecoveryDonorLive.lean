@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.StableRecoveryDonorBlock
+import VaughtConjecture.Extension.AdmittedFieldLayerCells
 
 /-!
 # Both coatoms prescribed at grade one: the lift on the canonical lower layer

@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.StableRecoveryAdmittedLayerP
 import VaughtConjecture.Extension.OwnerCappedLift
 import VaughtConjecture.Extension.Restoration
+import VaughtConjecture.Extension.AdmittedFieldLayerCells
 
 /-!
 # Bountifulness of the admitted field layer at `P`

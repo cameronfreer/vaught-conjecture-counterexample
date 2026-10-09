@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.H2GeneralTwo
 import VaughtConjecture.Extension.AdmittedTower
 import VaughtConjecture.Extension.LevelOn
+import VaughtConjecture.Extension.RowCompletionZero
 
 /-!
 # h2 at every arity: the engine at the full grade (work file)
@@ -15,7 +16,7 @@ WORK FILE (branch `research/work-h2`).  No `sorry`.
 **The engine at the full grade** (`H2.admittedCompletionsAt_full`): for a context on `k + 1 ≥ 3`
 points of top grade `K = k + 1`, an admission of states of the clause between the lawful faces
 gives a completion with the reading property, through the completion on the catalogues of the
-clause from the grade `k + 1` (`Seed.exists_rowCompletion`):
+clause from the grade `k + 1` (`Seed.exists_rowCompletion₀`):
 * the states read the clause on their two coatom faces (`H2.stateAdm`); the clause depends only on
   the order and on the replacement at `K`, so it passes to the codes (orbit maps are witnesses
   bounded by the grade);
@@ -367,11 +368,11 @@ theorem capLift_right :
     exact hA
 
 /-- **The completion with the clause on the rows at the full grade**: the completion on the
-catalogue of the clause from the grade `m + 1` (`Seed.exists_rowCompletion`), for `m ≥ 2`. -/
+catalogue of the clause from the grade `m + 1` (`Seed.exists_rowCompletion₀`), for `m ≥ 2`. -/
 theorem exists_completion_full (hm : 2 ≤ m) (hst : Adm I.left.label I.right.label) :
     ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows (m + 1) (stateAdm I Adm) := by
-  refine I.exists_rowCompletion hm (N := m + 1) (by omega) (fun k hk hkm x hx ↦ ?_)
-    (fun k hk hkm x hx ↦ ?_) (fun k hk R hR ↦ ?_) (fun _ ↦ ?_)
+  refine I.exists_rowCompletion₀ (by omega) (N := m + 1) (fun k hk hkm x hx ↦ ?_)
+    (fun k hk hkm x hx ↦ ?_) (fun k hk _ R hR ↦ ?_) (fun _ ↦ ?_)
   · obtain rfl : k = m + 1 := le_antisymm hkm hk
     simp only [Pts, mem_insert, mem_singleton] at hx
     rcases hx with rfl | rfl

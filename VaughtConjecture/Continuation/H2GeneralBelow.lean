@@ -542,7 +542,7 @@ theorem exists_completion_below (hm : 0 < m) (hKm : K ≤ m + 1)
   refine I.exists_rowCompletion₀ hm (N := K)
     (fun j hj hjm x hx ↦ (liftProvisions_below hS hextL hextR hj hjm hx).1)
     (fun j hj hjm x hx ↦ (liftProvisions_below hS hextL hextR hj hjm hx).2)
-    (fun j hj R hR ↦ ?_) (fun _ ↦ ?_)
+    (fun j hj _ R hR ↦ ?_) (fun _ ↦ ?_)
   · obtain ⟨hRcat, hRA⟩ := mem_rowCat.mp hR
     have hRA' : rowAdm I K Adm R := by
       unfold rowAdm at hRA ⊢; rwa [trK_hat (by omega)] at hRA

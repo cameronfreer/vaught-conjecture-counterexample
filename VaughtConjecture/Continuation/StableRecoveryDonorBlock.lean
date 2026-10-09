@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.StableRecoveryDonorInstance
+import VaughtConjecture.Extension.AdmittedFieldLayerCells
 
 /-!
 # Marked caps with a donor whose cells are labelled in a block

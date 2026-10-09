@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.SourceGapAdmittedEngine
 import VaughtConjecture.Continuation.SourceGapLowProvision
 import VaughtConjecture.Continuation.SourceGapTwistedEntry
+import VaughtConjecture.Extension.AdmittedFieldLayerCells
 
 /-!
 # The LOW-admitted completion at the twisted seed

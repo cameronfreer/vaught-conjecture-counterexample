@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.H2ArityOne
 import VaughtConjecture.Continuation.StableRecoveryDonorLive
+import VaughtConjecture.Extension.AdmittedFieldLayerCells
 
 /-!
 # The admitted completion at the arity one for an admission of states (work file)

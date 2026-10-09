@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.H2OneTop
+import VaughtConjecture.Extension.AdmittedFieldLayerCells
 
 /-!
 # Top grade `1` at two points: the completion (work file)
