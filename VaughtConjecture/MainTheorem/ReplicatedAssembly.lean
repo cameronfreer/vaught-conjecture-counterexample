@@ -101,6 +101,55 @@ the extension over the tower at a positive cap at the seed position
 `StageType.TowerExtensionPosAtSeed Seed.seedHeight Seed.seedValues Seed.seedGridBound`, is open:
 it is not proved in this repository, and the main theorem stays conditional on it.
 
+**The height sets.**  The agreement heights of the ladder tower at the grade `k` are the height
+set `Scheme.heightSet Γ B' k`, the grid `grid k B'` together with the values of `Γ` self-visible
+at `k` (`VaughtConjecture.Extension.BaseLadderTower`).  For the earlier ladder tower, with
+agreement heights in the grid alone, `StageType.TowerExtensionPosAtSeed` at the choice of this
+file is refuted (`StageType.not_towerExtensionPosAtSeed_seedChoice`, compiled outside this
+library).  A statement compiled for the earlier tower is no evidence for the present one, nor is
+that refutation.  For the present tower it is open.
+
+**Dependency record** for the chain from the extension over the tower to the main theorem and its
+named inputs, against the change of the height sets: (i) unchanged and recompiled against the
+height sets; (ii) re-proved for the height sets with the same statement; (ii') re-proved with one
+added hypothesis; (iii) the statement mentions the grid, so its interface is to be re-checked
+before reuse.  Every (iii) here mentions only the grid point: the side condition
+`∀ x ∈ Γ, x ≤ gridPoint 2 B'` on the values, which also bounds the heights
+(`Scheme.le_gridPoint_of_mem_heightSet`), or the top `gridPoint k B'` of the height set
+(`Scheme.sup_heightSet`).  No statement below names the set `grid k B'`.
+
+| Declarations | Record |
+| --- | --- |
+| `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos(')` | (i) |
+| `StageType.hasReplicatedInputsAtSeed_of_seedTowerExtension(Pos)` | (i) |
+| `StageType.towerExtensionAtSeed_of_pos`, `Seed.towerExtension_of_pos` | (i), (iii) |
+| `StageType.hasReplicatedInputsAtSeed_of_towerExtension`, `…_of_lifts` | (i), (iii) |
+| `Seed.replicatedInputs_of_lifts` | (i), (iii) |
+| `StageType.hasContextLiftAtSeed_of_towerExtension` | (i) |
+| `StageType.hasOntoRootCoatomLiftAtSeed_of_towerExtension` | (i) |
+| `StageType.hasAttachedMixedLiftsAtSeed_of_towerExtension` | (i), (iii) |
+| `StageType.HasReplicatedInputsAtSeed.hasLadderGrowthCarriersStableAtSeed` | (i) |
+| `Seed.exists_ladderCarrier_of_replicatedInputs` | (i) |
+| `Seed.exists_replicatedCarrier` | (ii), (iii) |
+| `StageType.HasLadderGrowthCarriersStableAtSeed.hasLadderGrowthCarriersStable` | (i) |
+| `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed` | (i) |
+| `Seed.hasMixedCoatomLift`, `Seed.hasMixedCoatomLift_of_two` | (i), (iii) |
+| `Seed.hasMixedLifts_of_attachedMixedLifts`, `Seed.hasMixedSameGradeLifts` | (i), (iii) |
+| `Seed.attachedMixedLifts_one`, `Seed.hasAttachedMixedLifts_of_two` | (i), (iii) |
+| `Seed.hasContextLift_of_two`, `Seed.cappedLift_context_one` | (i) |
+| `Seed.cappedLift_context_of_towerExtension`, `Seed.hasContextLift_of_towerExtension` | (i) |
+| `Seed.cappedLift_coatom_one_of_surjective` | (i) |
+| `Seed.hasExtendingLabel_attachAdmits`, `Seed.hasExtendingLabel_of_expansion` | (i), (iii) |
+| `Seed.exists_stateCode`, `Seed.exists_stateCode_capped` | (i) |
+| `Scheme.LadderBaseData.exists_controller_twin_ladderTower` (adds `hΓ`) | (ii'), (iii) |
+| `Scheme.exists_layerTower_controller_twin` (any height sets) | (i) |
+| `Scheme.LadderBaseData.exists_controller_agree_ladderTower` | (ii) |
+| `Seed.min_decode_eq_decode` | (ii), (iii) |
+| `Seed.min_decode_eq_decode_one`, `Seed.decode_copyFull` | (i) |
+| `GrowthCarrier.recognizes_of_ladder`, `GrowthCarrier.recovers_of_recognizes` | (i) |
+| `Seed.copy_recognition` | (i) |
+| `Scheme.LadderBaseData.ladderTower_lawful` | (ii), (iii) |
+
 ## References
 
 The growth construction is that of [Kni26, §4].
@@ -462,7 +511,10 @@ end TowerExtension
 /-- **The extension over the tower at a positive cap at the seed position, at the grades
 `2, …, m + 1`** (open), for the choice `H`, `Γ`, `B'`: as `StageType.TowerExtensionAtSeed`, with
 `Seed.TowerExtensionPos` (the extension asked only at caps `c ≠ ⊥` and for states exceeding `c`
-at some cell of the attachment of grade at most `j`) in place of `Seed.TowerExtension`. -/
+at some cell of the attachment of grade at most `j`) in place of `Seed.TowerExtension`.  At the
+choice of this file it is refuted for the earlier ladder tower with agreement heights in the grid
+alone (`StageType.not_towerExtensionPosAtSeed_seedChoice`, compiled outside this library), and
+open for the height sets `Scheme.heightSet`. -/
 def TowerExtensionPosAtSeed
     (H : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
     (Γ : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → Finset Label.{u})
@@ -690,7 +742,10 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos
 choice `Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`.  (R2) for receiving models is
 `Realization.receivingResidualReceiving_of_padded`; the rest is
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos`.  The hypothesis is not
-proved here, so the thin `ℵ₁` spectrum stays conditional on it. -/
+proved here, so the thin `ℵ₁` spectrum stays conditional on it.  For the earlier ladder tower,
+with agreement heights in the grid alone, the hypothesis is refuted
+(`StageType.not_towerExtensionPosAtSeed_seedChoice`, compiled outside this library); for the
+height sets `Scheme.heightSet` it is open. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos'
     (hE : TowerExtensionPosAtSeed.{0} Seed.seedHeight Seed.seedValues Seed.seedGridBound) :
     HasThinAlephOneSpectrum densitySentence.{0} :=
