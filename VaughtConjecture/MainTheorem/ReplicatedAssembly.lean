@@ -3,58 +3,71 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.MainTheorem.ReplicatedLabel
+import VaughtConjecture.MainTheorem.ReplicatedAttachedInputs
 import VaughtConjecture.MainTheorem.GrowthRelabelStable
 import VaughtConjecture.Extension.LadderTowerContextLiftOne
-import VaughtConjecture.Extension.ReplicatedSeedFaces
+import VaughtConjecture.Extension.ReplicatedOntoRoot
 
 /-!
-# The inputs of the replicated scheme at the seed position from the remaining lifts
+# The inputs of the replicated scheme at the seed position from the extension over the tower
 
 Roadmap, Layer 3 ((R3) and (R4), the assembly of the recognizing growth carrier).
 
 `StageType.HasReplicatedInputsAtSeed` (open) asks, at every seed position, for SOME seed and SOME
 height `H`, finite set of values `Γ` and grid bound `B'` with the four inputs of the replicated
 scheme.  Here one choice of `H`, `Γ`, `B'` is made for every seed at once (functions of the seed
-and the root, quantified once, outside the lift statements), the seed is the one of
+and the root, quantified once, outside every statement), the seed is the one of
 `StageType.exists_growthSeed_of_isSuccLimit`, and the inputs are assembled from what is compiled
-and from three lift statements at the seed position, each for the same `H`, `Γ`, `B'`:
+and from ONE open statement at the seed position:
 
-* `StageType.HasAttachedMixedLiftsAtSeed H Γ B'` (open): the same-grade lifts from the faces
-  inside the context face or the donor face into the mixed faces, at the grades `k ≥ 2`;
-* `StageType.HasContextLiftAtSeed H Γ B'` (open): the lift from the context coatom into the full
-  face, at the grades `2, …, m + 1`; it follows from the extension over the tower at those grades
-  (`StageType.hasContextLiftAtSeed_of_towerExtension`, `Seed.TowerExtension` open);
-* `StageType.HasOntoRootCoatomLiftAtSeed H Γ B'` (open): for an ONTO root only, the lift from the
-  second coatom (then the donor face) into the full face, at the grades `2, …, m + 1`.
+* `StageType.TowerExtensionAtSeed H Γ B'` (open): the extension over the tower
+  (`Seed.TowerExtension`) at the grades `2, …, m + 1`, at every seed and requests of the seed
+  position, for the replicated scheme with the admission predicate of the requests.
 
-What is compiled and used: the grade one of each lift (`Seed.attachedMixedLifts_one`,
-`Seed.cappedLift_context_one`, `Seed.cappedLift_coatom_one_of_surjective`), with their face
-hypotheses at the seed (`Seed.mem_faces_donorFace`, `Seed.mem_faces_root`,
-`Seed.one_le_card_root`); the same-grade lifts between mixed faces
-(`Seed.hasMixedLifts_of_attachedMixedLifts`); the mixed-coatom lift for a root that is not onto
-(`Seed.hasMixedCoatomLift`); and the lawful labelling extending the labels of the attachment
-(`Seed.hasExtendingLabel_attachAdmits`), which asks `Γ` to contain the compressed labels
-(`Γ₀ ⊆ Γ`, `Γ₀ = univ.image (I.compressedLabel g)`) and every value of `Γ` to lie below the grid
-point `ω * B' + 2` (for `Γ₀` this is `B₀ ≤ B'`, `B₀ = blockCount (I.attachLabels g) + 1`).
+It gives three lift statements at the seed position, each for the same `H`, `Γ`, `B'` (they are
+kept as statements of their own, readable separately, so that the assembly
+`StageType.hasReplicatedInputsAtSeed_of_lifts` asks only for them):
+
+* `StageType.HasAttachedMixedLiftsAtSeed H Γ B'`: the same-grade lifts from the faces inside the
+  context face or the donor face into the mixed faces at the grades `k ≥ 2`
+  (`StageType.hasAttachedMixedLiftsAtSeed_of_towerExtension`: through the full face, the context
+  lift inside the context face, the state lift inside the donor face);
+* `StageType.HasContextLiftAtSeed H Γ B'`: the lift from the context coatom into the full face at
+  the grades `2, …, m + 1` (`StageType.hasContextLiftAtSeed_of_towerExtension`);
+* `StageType.HasOntoRootCoatomLiftAtSeed H Γ B'`: for an ONTO root only, the lift from the second
+  coatom into the full face at the grades `2, …, m + 1`
+  (`StageType.hasOntoRootCoatomLiftAtSeed_of_towerExtension`: the second coatom is then the donor
+  face, `Seed.cappedLift_donor_univ_attachAdmits`).
 
 **The onto root.**  The seed position allows `n = m`: calibration gives only `n < m + 1`
-(`StageType.GrowthRequests.Calibrated.lt`), so the root `g : Fin n ↪ Fin m` may be onto.  Then the
-second coatom is the donor face (`Seed.donorFace_eq_coatom_of_surjective`), not a mixed face, and
-`Seed.hasMixedCoatomLift` (which needs a root that is not onto) does not apply; the lift from it
-above the grade one is the third statement.  It is asked only at onto roots.
+(`StageType.GrowthRequests.Calibrated.lt`), so the root `g : Fin n ↪ Fin m` may be onto, and the
+hypothesis `¬ Function.Surjective g` of `Seed.hasMixedCoatomLift` and
+`Seed.replicatedInputs_of_towerExtension` is not available there.  For an onto root the second
+coatom is the donor face (`Seed.donorFace_eq_coatom_of_surjective`), and the lift from it is the
+lift from a face inside the donor face, which the extension over the tower gives as well.
+
+What is compiled and used besides: the grade one of each lift (`Seed.attachedMixedLifts_one`,
+`Seed.cappedLift_context_one`, `Seed.cappedLift_coatom_one_of_surjective`), with the face
+hypotheses at the seed (`Seed.donor_mem_faces`, `Seed.root_mem_faces`, `Seed.card_root`); the
+same-grade lifts between mixed faces (`Seed.hasMixedLifts_of_attachedMixedLifts`); the
+mixed-coatom lift for a root that is not onto (`Seed.hasMixedCoatomLift`); and the lawful
+labelling extending the labels of the attachment (`Seed.hasExtendingLabel_attachAdmits`), which
+asks `Γ` to contain the compressed labels (`Γ₀ ⊆ Γ`, `Γ₀ = univ.image (I.compressedLabel g)`) and
+every value of `Γ` to lie below the grid point `ω * B' + 2` (for `Γ₀` this is `B₀ ≤ B'`,
+`B₀ = blockCount (I.attachLabels g) + 1`).
 
 **The choice** (`Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`): `H` the number of
 cells of the attachment plus one, `Γ = insert ⊥ Γ₀`, `B' = B₀`.  It meets every side condition
-(`StageType.hasReplicatedInputsAtSeed_of_seedLifts`), so the main theorem follows from (R2) and the
-three lift statements at this choice
-(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_seedLifts`, through the transport of the
-seed position, `StageType.HasLadderGrowthCarriersStableAtSeed.hasLadderGrowthCarriersStable`).
+(`StageType.hasReplicatedInputsAtSeed_of_seedTowerExtension`), so the main theorem follows from
+(R2) and the extension over the tower at the seed position at this choice
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_towerExtension`, through the transport of
+the seed position, `StageType.HasLadderGrowthCarriersStableAtSeed.hasLadderGrowthCarriersStable`).
 
-The lift statements are asked at EVERY seed with the context as its first coatom type and the
-donor as the face along the root followed by the new point (the assembly uses one such seed).
-These are implications; `StageType.HasReplicatedInputsAtSeed`, the three lift statements and the
-main theorem stay conditional.
+The statements at the seed position are asked at EVERY seed with the context as its first coatom
+type and the donor as the face along the root followed by the new point (the assembly uses one
+such seed).  These are implications; `StageType.HasReplicatedInputsAtSeed`,
+`StageType.TowerExtensionAtSeed`, the three lift statements and the main theorem stay
+conditional.
 
 ## References
 
@@ -175,6 +188,37 @@ theorem hasMixedCoatomLift_of_two (hH : 0 < H) (hcard : (I.attachmentBase g).S.c
     · exact h2 hg j h1 hjm
   · exact hasMixedCoatomLift hH hcard hΓ0 hΓ hA hA0 hg
 
+/-- **The lift from a face inside the donor face into the full face from the extension over the
+tower** at the grade `k`, for requests calibrated on the class over a nonempty root: the state lift
+from the face (`Seed.attachedStateLift_of_vanishing` below the threshold, by the vanishing states;
+`Seed.attachedStateLift_donor` at the threshold, the donor face at the grade `n + 1`) and the
+extension give the lift (`Seed.cappedLift_attached_univ_of_stateLift`).  This is the donor case of
+`Seed.hasAttachedMixedLifts_attachAdmits`, for a single grade. -/
+theorem cappedLift_donor_univ_attachAdmits {p₀ : StageType.{u} α n}
+    {d : StageType.{u} α (n + 1)} (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ0 : ⊥ ∈ Γ) (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀) (hn : 0 < n)
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
+    {V : Finset (Fin (m + 2))} (hVF : V ∈ I.amalgam.toCellScheme.faces)
+    (hVD : V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb))) {k : ℕ} (hk1 : 1 ≤ k)
+    (hkV : k ≤ #V) (hE : TowerExtension I g H Γ (I.attachAdmits g hd Q) B' k) :
+    (I.replicated g H Γ (I.attachAdmits g hd Q) B').rows.CappedLift (X := (V, k))
+      (Y := ((univ : Finset (Fin (m + 2))), k)) ⟨subset_univ _, le_rfl⟩ := by
+  have hDc : #(univ.map (extendByLast (g.trans Fin.castSuccEmb))) = n + 1 := by
+    rw [card_map, card_univ, Fintype.card_fin]
+  have hkD : k ≤ n + 1 := hkV.trans (hDc ▸ card_le_card hVD)
+  refine cappedLift_attached_univ_of_stateLift (.inr hVD) ?_ hE
+  rcases Nat.lt_or_ge k Q.threshold with hkN | hkN
+  · exact attachedStateLift_of_vanishing (donor_mem_faces hd) (root_mem_faces hte)
+      (by rw [card_root]; omega) hVF hk1 hkV (.inr hVD)
+      fun P _ hP ↦ attachAdmits_of_vanishing hd Q hkN hP _
+  · have hN := hQ.arity
+    have hkn : k = n + 1 := by omega
+    have hVe : V = univ.map (extendByLast (g.trans Fin.castSuccEmb)) :=
+      eq_of_subset_of_card_le hVD (by omega)
+    subst hVe hkn
+    exact attachedStateLift_donor hH hcard hΓ0 hte hn hd hQ (by omega)
+
 end Seed
 
 namespace StageType
@@ -258,36 +302,115 @@ def HasOntoRootCoatomLiftAtSeed
             (X := (univ.erase (Fin.castSucc (Fin.last m)), j))
             (Y := ((univ : Finset (Fin (m + 2))), j)) ⟨erase_subset _ _, le_rfl⟩
 
-/-- **The context lift at the seed position from the extension over the tower** at the grades
-`2, …, m + 1` (`Seed.TowerExtension`, open), for a choice with `H` positive and at least the number
-of cells of the attachment and `⊥ ∈ Γ`: the state lift holds (`Seed.contextStateLiftR_attachAdmits`,
-the ambient being admitted, `Seed.ambientAdmitted`), and with the extension it gives the lift
-(`Seed.cappedLift_context_of_towerExtension`). -/
-theorem hasContextLiftAtSeed_of_towerExtension
+/-! ### The extension over the tower at the seed position -/
+
+/-- **The extension over the tower at the seed position, at the grades `2, …, m + 1`** (open),
+for the choice `H`, `Γ`, `B'`: at every seed and requests as in
+`StageType.HasAttachedMixedLiftsAtSeed`, the replicated scheme with the admission predicate of `Q`
+has the extension over the tower (`Seed.TowerExtension`) at the grade `j`, for `2 ≤ j ≤ m + 1`:
+every complete lawful state of the attachment satisfying the predicate at the grade `m + 2`, with
+the observation at a cap `c` self-visible at `j` of an ambient lawful below `(univ, j)` on the
+cells of the attachment below the grade, extends to a labelling lawful below `(univ, j)`, equal to
+the state on the cells of the attachment and with the observation of the ambient at `c`. -/
+def TowerExtensionAtSeed
     (H : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
     (Γ : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → Finset Label.{u})
-    (B' : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
+    (B' : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ) : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃n m : ℕ⦄ (I : Seed.{u} α m) (g : Fin n ↪ Fin m)
+    (p' : StageType.{u} α m), Order.IsSuccLimit α → I.left.IsLegal →
+    restrictFace Fin.castSuccEmb I.left = some p' → ∀ (p : StageType.{u} α n)
+      (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p) (d : StageType.{u} α (n + 1))
+      (hd : d ∈ p.cofaces)
+      (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d), 0 < n →
+      ∀ Q : GrowthRequests I.left d.toScheme,
+        (∀ j, Q.CorrectAt I.left.label j (d.label j)) → Q.ClassCalibrated hte →
+        Q.HasRelativeLiftOnClass hte hd.2 →
+        ∀ j, 2 ≤ j → j ≤ m + 1 →
+          Seed.TowerExtension I g (H I g) (Γ I g) (I.attachAdmits g hdA Q) (B' I g) j
+
+section TowerExtension
+
+variable (H : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
+  (Γ : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → Finset Label.{u})
+  (B' : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
+  {H Γ B'}
+
+/-- **The context lift at the seed position from the extension over the tower**, for a choice
+with `H` positive and at least the number of cells of the attachment and `⊥ ∈ Γ`: the state lift
+holds (`Seed.contextStateLiftR_attachAdmits`, the ambient being admitted, `Seed.ambientAdmitted`),
+and with the extension it gives the lift (`Seed.cappedLift_context_of_towerExtension`). -/
+theorem hasContextLiftAtSeed_of_towerExtension
     (hH : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), 0 < H I g)
     (hcard : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
       (I.attachment g).card ≤ H I g)
     (hΓ0 : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), ⊥ ∈ Γ I g)
-    (hE : ∀ ⦃α : Ordinal.{u}⦄ ⦃n m : ℕ⦄ (I : Seed.{u} α m) (g : Fin n ↪ Fin m)
-      (p' : StageType.{u} α m), Order.IsSuccLimit α → I.left.IsLegal →
-      restrictFace Fin.castSuccEmb I.left = some p' → ∀ (p : StageType.{u} α n)
-        (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p)
-        (d : StageType.{u} α (n + 1)) (hd : d ∈ p.cofaces)
-        (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d), 0 < n →
-        ∀ Q : GrowthRequests I.left d.toScheme,
-          (∀ j, Q.CorrectAt I.left.label j (d.label j)) → Q.ClassCalibrated hte →
-          Q.HasRelativeLiftOnClass hte hd.2 →
-          ∀ j, 2 ≤ j → j ≤ m + 1 →
-            Seed.TowerExtension I g (H I g) (Γ I g) (I.attachAdmits g hdA Q) (B' I g) j) :
-    HasContextLiftAtSeed.{u} H Γ B' := by
+    (hE : TowerExtensionAtSeed.{u} H Γ B') : HasContextLiftAtSeed.{u} H Γ B' := by
   intro α n m I g p' hα hI hp' p hte d hd hdA hn Q hpair hQ hrel j hj hjm
   exact Seed.cappedLift_context_of_towerExtension
     (Seed.contextStateLiftR_attachAdmits hte hd.2 hd.1 hn hdA hQ hpair hrel (by omega)
       (Seed.ambientAdmitted (hH I g) (hcard I g) (hΓ0 I g) hdA hQ hn j))
     (hE I g p' hα hI hp' p hte d hd hdA hn Q hpair hQ hrel j hj hjm)
+
+/-- **The lifts from the faces of the attachment into the mixed faces at the seed position from
+the extension over the tower** (grades `k ≥ 2`), for a choice with `H` positive and at least the
+number of cells of the attachment, `⊥ ∈ Γ` and `Γ` below the grid point `ω * B' + 2`: through the
+full face (`Seed.cappedLift_attached_mixed_of_univ`), inside the context face by the context lift
+(`Seed.hasContextLift_attachAdmits_two`), inside the donor face by the state lift
+(`Seed.cappedLift_donor_univ_attachAdmits`). -/
+theorem hasAttachedMixedLiftsAtSeed_of_towerExtension
+    (hH : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), 0 < H I g)
+    (hcard : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      (I.attachment g).card ≤ H I g)
+    (hΓ0 : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), ⊥ ∈ Γ I g)
+    (hΓ : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      ∀ x ∈ Γ I g, x ≤ gridPoint 2 (B' I g))
+    (hE : TowerExtensionAtSeed.{u} H Γ B') : HasAttachedMixedLiftsAtSeed.{u} H Γ B' := by
+  intro α n m I g p' hα hI hp' p hte d hd hdA hn Q hpair hQ hrel V U k hVF hV hU h hk hkV
+  have hE' := hE I g p' hα hI hp' p hte d hd hdA hn Q hpair hQ hrel
+  have hVu : #V ≤ m + 1 := by
+    have hlt : V ⊂ univ := ssubset_univ_iff.mpr fun he ↦
+      ((I.mem_mixedFaces g).mp hU).2.1 (univ_subset_iff.mp (he ▸ h))
+    have := card_lt_card hlt
+    simp only [card_univ, Fintype.card_fin] at this
+    omega
+  refine Seed.cappedLift_attached_mixed_of_univ (hH I g) (hcard I g) (hΓ0 I g) (hΓ I g)
+    (I.attachAdmits_succ g hdA Q) (I.attachAdmits_bot g hdA Q) hU h (by omega) (hkV.trans hVu)
+    (hkV.trans (card_le_card h)) ?_
+  by_cases hVC : V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2))
+  · exact Seed.cappedLift_attached_univ_of_context
+      (Seed.hasContextLift_attachAdmits_two (hH I g) (hcard I g) (hΓ0 I g) hte hd.2 hd.1 hn hdA hQ
+        hpair hrel (Seed.root_mem_faces hte) (by rw [Seed.card_root]; omega) hE')
+      hVF hVC (by omega) hkV
+  · exact Seed.cappedLift_donor_univ_attachAdmits (hH I g) (hcard I g) (hΓ0 I g) hte hn hdA hQ
+      (Seed.faces_replicated ▸ hVF) (hV.resolve_left hVC) (by omega) hkV
+      (hE' k hk (hkV.trans hVu))
+
+/-- **The lift from the second coatom at an onto root at the seed position from the extension
+over the tower**, for a choice with `H` positive and at least the number of cells of the
+attachment and `⊥ ∈ Γ`: for an onto root `n = m` and the second coatom is the donor face
+(`Seed.donorFace_eq_coatom_of_surjective`), so the lift is the lift from the donor face
+(`Seed.cappedLift_donor_univ_attachAdmits`). -/
+theorem hasOntoRootCoatomLiftAtSeed_of_towerExtension
+    (hH : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), 0 < H I g)
+    (hcard : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      (I.attachment g).card ≤ H I g)
+    (hΓ0 : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), ⊥ ∈ Γ I g)
+    (hE : TowerExtensionAtSeed.{u} H Γ B') : HasOntoRootCoatomLiftAtSeed.{u} H Γ B' := by
+  intro α n m I g p' hα hI hp' p hte d hd hdA hn Q hpair hQ hrel hg j hj hjm
+  have hnm : m ≤ n := by simpa using Fintype.card_le_of_surjective g hg
+  have hl := Seed.cappedLift_donor_univ_attachAdmits (hH I g) (hcard I g) (hΓ0 I g) hte hn hdA hQ
+    (Seed.donor_mem_faces hdA) subset_rfl (by omega)
+    (by rw [card_map, card_univ, Fintype.card_fin]; omega)
+    (hE I g p' hα hI hp' p hte d hd hdA hn Q hpair hQ hrel j hj hjm)
+  have key : ∀ (W : Finset (Fin (m + 2)))
+      (h : ((W, j) : Finset (Fin (m + 2)) × ℕ) ≤ ((univ : Finset (Fin (m + 2))), j)),
+      W = univ.map (extendByLast (g.trans Fin.castSuccEmb)) →
+        (I.replicated g (H I g) (Γ I g) (I.attachAdmits g hdA Q) (B' I g)).rows.CappedLift h := by
+    rintro W h rfl
+    exact hl
+  exact key _ _ (Seed.donorFace_eq_coatom_of_surjective g hg).symm
+
+end TowerExtension
 
 /-! ### The assembly -/
 
@@ -317,9 +440,10 @@ theorem hasReplicatedInputsAtSeed_of_lifts
   obtain ⟨I, rfl, hdA⟩ :=
     exists_growthSeed_of_isSuccLimit hα ht' hp' ((restrictFace_trans t' _ g hp').trans hte) hd
   refine ⟨I, rfl, hdA, ?_⟩
-  have hdF := Seed.mem_faces_donorFace hdA
-  have hrF := Seed.mem_faces_root hte
-  have hr1 := Seed.one_le_card_root (m := m) g hn
+  have hdF := Seed.donor_mem_faces hdA
+  have hrF := Seed.root_mem_faces hte
+  have hr1 : 1 ≤ #(univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+      univ.map (extendByLast (g.trans Fin.castSuccEmb))) := by rw [Seed.card_root]; omega
   have hA := I.attachAdmits_succ g hdA Q
   have hA0 := I.attachAdmits_bot g hdA Q
   exact Seed.replicatedInputs_of_lifts hdA hpair hQ (hH I g) (hcard I g) (hΓ0 I g) (hΓ I g)
@@ -347,6 +471,43 @@ theorem hasReplicatedInputsAtSeed_of_seedLifts
     (fun I g _ hx ↦ I.lt_omega0_sq_of_mem_seedValues g hx)
     Seed.image_compressedLabel_subset_seedValues hatt hctx honto
 
+/-- **The inputs of the replicated scheme at the seed position from the extension over the
+tower**, for a choice `H`, `Γ`, `B'` with the side conditions of
+`StageType.hasReplicatedInputsAtSeed_of_lifts`: the three lift statements follow from it
+(`StageType.hasAttachedMixedLiftsAtSeed_of_towerExtension`,
+`StageType.hasContextLiftAtSeed_of_towerExtension`,
+`StageType.hasOntoRootCoatomLiftAtSeed_of_towerExtension`). -/
+theorem hasReplicatedInputsAtSeed_of_towerExtension
+    (H : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
+    (Γ : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → Finset Label.{u})
+    (B' : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
+    (hH : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), 0 < H I g)
+    (hcard : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      (I.attachment g).card ≤ H I g)
+    (hΓ0 : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), ⊥ ∈ Γ I g)
+    (hΓ : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      ∀ x ∈ Γ I g, x ≤ gridPoint 2 (B' I g))
+    (hΓω : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      ∀ x ∈ Γ I g, x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}))
+    (hsub : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      univ.image (I.compressedLabel g) ⊆ Γ I g)
+    (hE : TowerExtensionAtSeed.{u} H Γ B') : HasReplicatedInputsAtSeed.{u} :=
+  hasReplicatedInputsAtSeed_of_lifts H Γ B' hH hcard hΓ0 hΓ hΓω hsub
+    (hasAttachedMixedLiftsAtSeed_of_towerExtension hH hcard hΓ0 hΓ hE)
+    (hasContextLiftAtSeed_of_towerExtension hH hcard hΓ0 hE)
+    (hasOntoRootCoatomLiftAtSeed_of_towerExtension hH hcard hΓ0 hE)
+
+/-- **The inputs of the replicated scheme at the seed position from the extension over the tower
+at the choice** `H = #cells + 1`, `Γ = insert ⊥ Γ₀`, `B' = B₀` (`Seed.seedHeight`,
+`Seed.seedValues`, `Seed.seedGridBound`), which meets every side condition. -/
+theorem hasReplicatedInputsAtSeed_of_seedTowerExtension
+    (hE : TowerExtensionAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound) :
+    HasReplicatedInputsAtSeed.{u} :=
+  hasReplicatedInputsAtSeed_of_towerExtension _ _ _ Seed.seedHeight_pos Seed.card_le_seedHeight
+    Seed.bot_mem_seedValues (fun I g _ hx ↦ I.le_gridPoint_of_mem_seedValues g hx)
+    (fun I g _ hx ↦ I.lt_omega0_sq_of_mem_seedValues g hx)
+    Seed.image_compressedLabel_subset_seedValues hE
+
 end StageType
 
 namespace MainTheorem
@@ -368,6 +529,19 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_seedLifts
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed hres
     (hasReplicatedInputsAtSeed_of_seedLifts hatt hctx honto).hasLadderGrowthCarriersStableAtSeed
+
+/-- **The main theorem from (R2) and the extension over the tower at the seed position** (both
+hypotheses open): `StageType.TowerExtensionAtSeed` at the grades `2, …, m + 1`, at the choice
+`Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`.  Through
+`StageType.hasReplicatedInputsAtSeed_of_seedTowerExtension`,
+`StageType.HasReplicatedInputsAtSeed.hasLadderGrowthCarriersStableAtSeed` and the transport
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed`. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_towerExtension
+    (hres : ReceivingResidualReceiving.{0, 0})
+    (hE : TowerExtensionAtSeed.{0} Seed.seedHeight Seed.seedValues Seed.seedGridBound) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed hres
+    (hasReplicatedInputsAtSeed_of_seedTowerExtension hE).hasLadderGrowthCarriersStableAtSeed
 
 end MainTheorem
 
