@@ -62,7 +62,7 @@ file the LOW families left are those with a donor top through the new point but 
 `StageType.IsLowFamily.grade_pos`), and those with a label other than `⊥` above `K < k`, for which
 the completed display carries no separator labelled `⊤` (`StageType.not_lowReadingFamily`).  The
 acquisition of (R2) can produce such families; for them a level above the LOW layer reading the
-actual state suffices (`ProfileTower.ReadsActual.exists_isLowLayer`).
+actual state suffices (`ProfileTower.ReadsActualOn.exists_isLowLayer_all`).
 
 ## Placement
 
