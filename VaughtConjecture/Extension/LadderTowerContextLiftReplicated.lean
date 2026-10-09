@@ -183,7 +183,7 @@ theorem not_stateCodingReflecting (hH : 0 < H) (hcard : (I.attachmentBase g).S.c
       ((univ : Finset (Fin (m + 2))), 1) := by
     refine (Scheme.gradedIndex_mirror_castAdd _).trans ?_
     refine (Scheme.gradedIndex_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') _ m).trans ?_
+      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) _ m).trans ?_
     change ((I.attachmentBase g).S.appendFullCellsScheme 1 _).gradedIndex (Fin.natAdd _ _) = _
     exact Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ _
   have hmem : Fin.castAdd _ t ∈ (I.replicated g H Γ A B').toCellScheme.below

@@ -124,7 +124,7 @@ theorem gradedIndex_ladCell
     (I.attachTower g H Γ A B').toCellScheme.gradedIndex (ladCell H Γ A B' p) =
       ((univ : Finset (Fin (m + 2))), 1) := by
   refine (Scheme.gradedIndex_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') _ m).trans ?_
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) _ m).trans ?_
   change ((I.attachmentBase g).S.appendFullCellsScheme 1 _).gradedIndex (Fin.natAdd _ _) = _
   exact Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ _
 
@@ -164,7 +164,7 @@ theorem rowAt_copyLadder (hU : U ∈ I.mixedFaces g)
   refine (rowAt_copyAt_copyAt hU _ _ _ _ ?_).trans ?_
   · rw [grade_ladCell, grade_ladCell]
   · exact (Scheme.rowAt_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') _ _ m).trans
+      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) _ _ m).trans
       (Scheme.rowAt_ladderBase_ladder (hS := (I.attachmentBase g).noFull)
         (I.attachmentBase g).wf p q)
 

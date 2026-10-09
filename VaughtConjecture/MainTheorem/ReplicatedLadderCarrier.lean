@@ -150,13 +150,13 @@ theorem exists_replicatedCarrier (Q : GrowthRequests I.left d.toScheme)
     (gradedIndex_replicatedCompletion_castSucc hα hL hq _).trans
       ((Scheme.gradedIndex_mirror_castAdd _).trans
         (Scheme.gradedIndex_layerTowerEmb (B := Bd.towerBase H) (C := Bd.towerCat Γ A)
-          (G := fun k ↦ grid k B') t m))
+          (G := fun k ↦ Scheme.heightSet Γ B' k) t m))
   have hrowB (z t : Fin (Bd.ladderBase H).card) :
       G.scheme.rowAt (emb z) (emb t) = (Bd.ladderBase H).rowAt z t :=
     (rowAt_replicatedCompletion_castSucc hα hL hq _ _).trans
       ((Scheme.rowAt_mirror_castAdd _ _).trans
         (Scheme.rowAt_layerTowerEmb (B := Bd.towerBase H) (C := Bd.towerCat Γ A)
-          (G := fun k ↦ grid k B') z t m))
+          (G := fun k ↦ Scheme.heightSet Γ B' k) z t m))
   -- the ladder
   let lad : Scheme.LadderPt Bd.S (Scheme.RankMember Bd.S H) H → Fin G.scheme.card :=
     fun p ↦ emb (Fin.natAdd _ (Scheme.ladderEquiv _ _ H p))

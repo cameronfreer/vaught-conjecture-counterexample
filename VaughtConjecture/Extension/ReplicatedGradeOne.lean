@@ -172,7 +172,7 @@ theorem tower_grade_one_cases (x : Fin (I.attachTower g H Γ A B').card)
         x = (I.attachmentBase g).baseCellEmb (H := H) (Γ := Γ) (A := A) (B' := B') m e := by
   obtain ⟨t, rfl⟩ := Scheme.mem_range_layerTowerEmb_of_grade
     (B := (I.attachmentBase g).towerBase H) (C := (I.attachmentBase g).towerCat Γ A)
-    (G := fun k ↦ grid k B') m x hx.le
+    (G := fun k ↦ Scheme.heightSet Γ B' k) m x hx.le
   induction t using Fin.addCases with
   | left e =>
     refine .inr ⟨e, ?_, rfl⟩
@@ -191,7 +191,7 @@ theorem rowAt_ladCell_ladCell
         (Scheme.baseIndex H (Scheme.rankProf (I.attachmentBase g).S H) p.1
           (Fin.natAdd _ (Scheme.ladderEquiv _ _ H v))) :=
   (Scheme.rowAt_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') _ _ m).trans
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) _ _ m).trans
     (Scheme.rowAt_ladderBase_ladder (hS := (I.attachmentBase g).noFull) (I.attachmentBase g).wf
       p v)
 
@@ -205,7 +205,7 @@ theorem rowAt_ladCell_baseCellEmb
       (I.attachTower g H Γ A B').rowAt (ladCell H Γ A B' p)
         (ladCell H Γ A B' (p.1, Sum.inr e)) := by
   refine ((Scheme.rowAt_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') _ _ m).trans
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) _ _ m).trans
     (Scheme.rowAt_ladderBase_old (hS := (I.attachmentBase g).noFull) (I.attachmentBase g).wf
       p he)).trans ?_
   rw [rowAt_ladCell_ladCell]

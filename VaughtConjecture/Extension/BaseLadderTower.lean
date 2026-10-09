@@ -37,6 +37,48 @@ namespace VaughtConjecture.Scheme
 
 open Finset Label
 
+open Classical in
+/-- **The height set at the grade `k`**: the grid of block bound `B'` at `k` and the values of `Γ`
+self-visible at `k`.  An agreement height can then stop at a value of a state, not only at a
+point of the grid. -/
+noncomputable def heightSet (Γ : Finset Label.{u}) (B' k : ℕ) : Finset Label.{u} :=
+  grid k B' ∪ Γ.filter (IsSelfVisible k)
+
+theorem mem_heightSet {Γ : Finset Label.{u}} {B' k : ℕ} {x : Label.{u}} :
+    x ∈ heightSet Γ B' k ↔ x ∈ grid k B' ∨ (x ∈ Γ ∧ IsSelfVisible k x) := by
+  classical
+  simp only [heightSet, mem_union, mem_filter]
+
+theorem bot_mem_heightSet (Γ : Finset Label.{u}) (B' k : ℕ) : (⊥ : Label.{u}) ∈ heightSet Γ B' k :=
+  mem_heightSet.mpr (.inl (bot_mem_grid _ _))
+
+theorem gridPoint_mem_heightSet (Γ : Finset Label.{u}) {B' k : ℕ} :
+    gridPoint.{u} k B' ∈ heightSet Γ B' k :=
+  mem_heightSet.mpr (.inl (gridPoint_mem_grid le_rfl))
+
+theorem isSelfVisible_of_mem_heightSet {Γ : Finset Label.{u}} {B' k : ℕ} {x : Label.{u}}
+    (hx : x ∈ heightSet Γ B' k) : IsSelfVisible k x :=
+  (mem_heightSet.mp hx).elim isSelfVisible_of_mem_grid fun h ↦ h.2
+
+/-- The values of `Γ` lie below the grid point `ω * B' + 2`, so every height at a grade `k ≥ 2`
+lies below the top `gridPoint k B'`. -/
+theorem le_gridPoint_of_mem_heightSet {Γ : Finset Label.{u}} {B' k : ℕ}
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hk : 2 ≤ k) {x : Label.{u}}
+    (hx : x ∈ heightSet Γ B' k) : x ≤ gridPoint k B' :=
+  (mem_heightSet.mp hx).elim le_gridPoint_of_mem_grid fun h ↦ (hΓ x h.1).trans
+    (gridPoint_le_gridPoint_iff_lex.mpr (.inr ⟨rfl, hk⟩))
+
+theorem lt_omega0_sq_of_mem_heightSet {Γ : Finset Label.{u}} {B' k : ℕ}
+    (hΓω : ∀ x ∈ Γ, x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u})) {x : Label.{u}}
+    (hx : x ∈ heightSet Γ B' k) : x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) :=
+  (mem_heightSet.mp hx).elim lt_omega0_sq_of_mem_grid fun h ↦ hΓω x h.1
+
+/-- The top of the height set at a grade `k ≥ 2` is the grid point `ω * B' + k`. -/
+theorem sup_heightSet {Γ : Finset Label.{u}} {B' k : ℕ} (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
+    (hk : 2 ≤ k) : (heightSet Γ B' k).sup id = (gridPoint k B' : Label.{u}) :=
+  le_antisymm (Finset.sup_le fun _ hx ↦ le_gridPoint_of_mem_heightSet hΓ hk hx)
+    (Finset.le_sup (f := id) (gridPoint_mem_heightSet Γ))
+
 /-- **Ladder base data**: a scheme with no cell of full scope at grade one or above, well formed,
 consistent and coded. -/
 structure LadderBaseData (n : ℕ) where
@@ -168,11 +210,12 @@ theorem mem_towerCat {Γ : Finset Label.{u}} {A : ℕ → (Fin B.S.card → Labe
   simp only [towerCat, mem_filter, Fintype.mem_piFinset]
 
 /-- **The ladder tower** , with values of the states in `Γ`, predicates `A`, and agreement
-heights in the grids of block bound `B'`. -/
+heights in the height sets (`Scheme.heightSet`: the grid of block bound `B'` and the values of `Γ`
+self-visible at the grade). -/
 noncomputable abbrev ladderTower (Γ : Finset Label.{u})
     (A : ℕ → (Fin B.S.card → Label.{u}) → Prop) (B' : ℕ) (k : ℕ) :
     LayerTower.{u} n (Fin B.S.card → Label.{u}) k :=
-  layerTower (B.towerBase H) (B.towerCat Γ A) (fun k ↦ grid k B') k
+  layerTower (B.towerBase H) (B.towerCat Γ A) (fun k ↦ heightSet Γ B' k) k
 
 /-! ### Values of the written states -/
 
@@ -242,9 +285,10 @@ theorem ladderTower_lawful (hH : 0 < H) (hcard : B.S.card ≤ H)
       (B.ladderTower H Γ A B' k).S.rows.IsLawful ((B.ladderTower H Γ A B' k).v R) ∧
         ∀ x, (B.ladderTower H Γ A B' k).v R x ≤ gridPoint (k + 2) B' := by
   have h := layerTower_lawful (B := B.towerBase H) (C := B.towerCat Γ A)
-    (G := fun k ↦ grid k B') (y := fun k ↦ gridPoint k B') (towerCat_succ_subset hA)
-    (fun k ↦ bot_mem_grid _ _) (fun k _ hx ↦ isSelfVisible_of_mem_grid hx)
-    (fun k ↦ gridPoint_mem_grid le_rfl) (fun k _ hx ↦ le_gridPoint_of_mem_grid hx)
+    (G := fun k ↦ heightSet Γ B' k) (y := fun k ↦ gridPoint k B') (towerCat_succ_subset hA)
+    (fun k ↦ bot_mem_heightSet _ _ _) (fun k _ hx ↦ isSelfVisible_of_mem_heightSet hx)
+    (fun k ↦ gridPoint_mem_heightSet Γ)
+    (fun k _ hx ↦ le_gridPoint_of_mem_heightSet hΓ (by omega) hx)
     (fun k ↦ gridPoint_le_gridPoint_iff_lex.mpr (.inr ⟨rfl, by omega⟩))
     (B.isConsistent_ladderBase H hH) (towerBase_lawful hH hcard hΓ) k
   exact h
@@ -255,8 +299,8 @@ theorem isCoded_ladderTower (hcard : B.S.card ≤ H)
     (hA : ∀ k R, A (k + 3) R → A (k + 2) R) (k : ℕ) :
     (B.ladderTower H Γ A B' k).S.IsCoded := by
   have h := isCoded_layerTower (B := B.towerBase H) (C := B.towerCat Γ A)
-    (G := fun k ↦ grid k B') (towerCat_succ_subset hA) (fun k ↦ bot_mem_grid _ _)
-    (fun k _ hx ↦ lt_omega0_sq_of_mem_grid hx) (B.isCoded_ladderBase H)
+    (G := fun k ↦ heightSet Γ B' k) (towerCat_succ_subset hA) (fun k ↦ bot_mem_heightSet _ _ _)
+    (fun k _ hx ↦ lt_omega0_sq_of_mem_heightSet hΓω hx) (B.isCoded_ladderBase H)
     (towerBase_lt hcard hΓω) k
   exact h.1
 
@@ -269,7 +313,7 @@ theorem exists_gradedIndex_ladderTower (hH : 0 < H) (hne : ∀ k, (B.towerCat Γ
     (K : ℕ) {X : Finset (Fin n) × ℕ}
     (hX : X ∈ (B.ladderTower H Γ A B' K).S.toCellScheme.gradedFaces) (hX2 : X.2 ≤ K + 1) :
     ∃ d, (B.ladderTower H Γ A B' K).S.toCellScheme.gradedIndex d = X := by
-  refine exists_gradedIndex_layerTower (B := B.towerBase H) (G := fun k ↦ grid k B')
+  refine exists_gradedIndex_layerTower (B := B.towerBase H) (G := fun k ↦ heightSet Γ B' k)
     (fun X hX hX1 ↦ ?_) hne K X hX (.inl hX2)
   by_cases hXu : X.1 = univ
   · have hX1' : X.2 ≤ 1 := hX1.resolve_right (not_not.mpr hXu)
@@ -300,7 +344,7 @@ theorem grade_lt_ladderTower {K : ℕ} (hK : K + 1 < n) (d : Fin (B.ladderTower 
 /-- The cells of the base in the ladder tower at the height `K`. -/
 noncomputable abbrev towerEmb (K : ℕ) :
     Fin (B.ladderBase H).card → Fin (B.ladderTower H Γ A B' K).S.card :=
-  layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ grid k B') K
+  layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ heightSet Γ B' k) K
 
 /-- **Every cell of full scope of the ladder tower is a ladder controller by construction**: at
 every height `K ≥ k + 1`, a cell of full scope at the grade `k + 2` is the cell of a state `R` of
@@ -319,7 +363,7 @@ theorem exists_controller_ladderTower (hcard : B.S.card ≤ H) (k K : ℕ) (hK :
           (RankMember.ofLawful B.wf hcard hR)
           (Fin.natAdd _ (ladderEquiv _ _ H p))) := by
   obtain ⟨R, hRC, hrow⟩ := exists_layerTower_controller (B := B.towerBase H)
-    (C := B.towerCat Γ A) (G := fun k ↦ grid k B') k K hK u hu
+    (C := B.towerCat Γ A) (G := fun k ↦ heightSet Γ B' k) k K hK u hu
   have hRl := (mem_towerCat.mp hRC).2.1
   refine ⟨R, hRC, hRl, fun d hd ↦ ?_, fun p ↦ ?_⟩
   · have h := hrow (Fin.castAdd _ d) (by
@@ -365,21 +409,21 @@ noncomputable def baseCellEmb (K : ℕ) : Fin B.S.card → Fin (B.ladderTower H 
 theorem strictMono_baseCellEmb (K : ℕ) :
     StrictMono (B.baseCellEmb (H := H) (Γ := Γ) (A := A) (B' := B') K) :=
   (strictMono_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
-    (G := fun k ↦ grid k B') K).comp (Fin.castAddOrderEmb _).strictMono
+    (G := fun k ↦ heightSet Γ B' k) K).comp (Fin.castAddOrderEmb _).strictMono
 
 /-- **The base scheme is a lower embedding into the ladder tower.** -/
 theorem isLowerEmbedding_baseCellEmb (K : ℕ) :
     B.S.toCellScheme.IsLowerEmbedding (B.ladderTower H Γ A B' K).S.toCellScheme
       (B.baseCellEmb K) :=
   (isLowerEmbedding_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
-    (G := fun k ↦ grid k B') K).comp (isLowerEmbedding_castAdd (S := B.S) 1 _ _ B.noFull)
+    (G := fun k ↦ heightSet Γ B' k) K).comp (isLowerEmbedding_castAdd (S := B.S) 1 _ _ B.noFull)
 
 /-- The cells of the base scheme keep their graded indices in the tower. -/
 theorem gradedIndex_baseCellEmb (K : ℕ) (d : Fin B.S.card) :
     (B.ladderTower H Γ A B' K).S.toCellScheme.gradedIndex (B.baseCellEmb K d) =
       B.S.toCellScheme.gradedIndex d :=
   (gradedIndex_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
-    (G := fun k ↦ grid k B') _ K).trans (appendFullCellsScheme_gradedIndex_castAdd _ _ _ d)
+    (G := fun k ↦ heightSet Γ B' k) _ K).trans (appendFullCellsScheme_gradedIndex_castAdd _ _ _ d)
 
 theorem scope_baseCellEmb (K : ℕ) (d : Fin B.S.card) :
     (B.ladderTower H Γ A B' K).S.toCellScheme.scope (B.baseCellEmb K d) =
@@ -391,12 +435,12 @@ theorem comap_rows_baseCellEmb (K : ℕ) :
     (B.ladderTower H Γ A B' K).S.rows.comap (B.isLowerEmbedding_baseCellEmb K) = B.S.rows :=
   (congrArg (fun R ↦ CellScheme.Rows.comap R (isLowerEmbedding_castAdd (S := B.S) 1 _ _ B.noFull))
     (comap_rows_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
-      (G := fun k ↦ grid k B') K)).trans (comap_rows_castAdd (S := B.S))
+      (G := fun k ↦ heightSet Γ B' k) K)).trans (comap_rows_castAdd (S := B.S))
 
 /-- The tower reads the cells of the base scheme as the base scheme does. -/
 theorem rowAt_baseCellEmb (K : ℕ) (z x : Fin B.S.card) :
     (B.ladderTower H Γ A B' K).S.rowAt (B.baseCellEmb K z) (B.baseCellEmb K x) = B.S.rowAt z x :=
-  (rowAt_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ grid k B')
+  (rowAt_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ heightSet Γ B' k)
     _ _ K).trans (rowAt_appendFullCells_castAdd (h := B.noFull) _ _)
 
 /-- **Every cell of the tower of proper scope is a cell of the base scheme.** -/
@@ -404,9 +448,9 @@ theorem mem_range_baseCellEmb (K : ℕ) (z : Fin (B.ladderTower H Γ A B' K).S.c
     (hz : (B.ladderTower H Γ A B' K).S.toCellScheme.scope z ≠ univ) :
     z ∈ Set.range (B.baseCellEmb K) := by
   obtain ⟨t, rfl⟩ := mem_range_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
-    (G := fun k ↦ grid k B') K z hz
+    (G := fun k ↦ heightSet Γ B' k) K z hz
   have hz' := hz
-  change (layerTower (B.towerBase H) (B.towerCat Γ A) (fun k ↦ grid k B')
+  change (layerTower (B.towerBase H) (B.towerCat Γ A) (fun k ↦ heightSet Γ B' k)
     K).S.toCellScheme.scope (layerTowerEmb K t) ≠ univ at hz'
   rw [scope_layerTowerEmb] at hz'
   induction t using Fin.addCases with
@@ -419,12 +463,12 @@ theorem mem_range_baseCellEmb (K : ℕ) (z : Fin (B.ladderTower H Γ A B' K).S.c
 /-- The faces of the tower are those of the base scheme. -/
 theorem faces_ladderTower (K : ℕ) :
     (B.ladderTower H Γ A B' K).S.toCellScheme.faces = B.S.toCellScheme.faces :=
-  faces_layerTower (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ grid k B') K
+  faces_layerTower (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ heightSet Γ B' k) K
 
 /-- The ground set of the tower is that of the base scheme. -/
 theorem ground_ladderTower (K : ℕ) :
     (B.ladderTower H Γ A B' K).S.toCellScheme.ground = B.S.toCellScheme.ground :=
-  ground_layerTower (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ grid k B') K
+  ground_layerTower (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ heightSet Γ B' k) K
 
 /-- **Completeness of the ladder tower at the full faces**, whatever the base completes: for
 nonempty catalogues, the tower at the height `K` has a cell of full scope at every grade from `1`

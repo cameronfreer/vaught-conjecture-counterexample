@@ -66,7 +66,7 @@ theorem replicatedWriting_ladder (hcard : (I.attachmentBase g).S.card ≤ H)
     ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ _)) = _
   rw [Scheme.mirrorOrig_castAdd]
   refine (Scheme.layerTower_v_emb (B := (I.attachmentBase g).towerBase H)
-    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') R _ m).trans ?_
+    (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) R _ m).trans ?_
   change (I.attachmentBase g).stateExt H R _ = _
   rw [Scheme.LadderBaseData.stateExt_of_isLawful hR hcard]
   erw [Fin.append_right]
@@ -119,7 +119,7 @@ theorem ladderCellE_mem_below {j : ℕ} (hj : 1 ≤ j)
       ((univ : Finset (Fin (m + 2))), 1) := by
     refine (Scheme.gradedIndex_mirror_castAdd _).trans ?_
     refine (Scheme.gradedIndex_layerTowerEmb (B := (I.attachmentBase g).towerBase H)
-      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B') _ m).trans ?_
+      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k) _ m).trans ?_
     change ((I.attachmentBase g).S.appendFullCellsScheme 1 _).gradedIndex (Fin.natAdd _ _) = _
     exact Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ _
   rw [CellScheme.mem_below, hgt]
