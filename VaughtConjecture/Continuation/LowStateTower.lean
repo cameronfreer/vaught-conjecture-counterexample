@@ -142,14 +142,15 @@ theorem SLvl.Good.hasBotExtension_next (hN : N.Good A) (hA0 : ∀ W : Prof I, A 
   have hQC : Q ∈ 𝒮 := mem_sCat.mpr ⟨fun f ↦ by
       rcases f with d | z
       exacts [code_mem_codeGrid _ _ _, mem_insert_self _ _],
-    (mem_cat.mp (code_mem_cat_of_isCutLawful hWcut)).1, hA0 _⟩
+    (mem_cat.mp (code_mem_cat_of_isCutLawful hWcut)).1,
+    by rw [hQ, orbitCode_withCut_bot, orbitCode_orbitCode], hA0 _⟩
   have hQW (d : Fin I.amalgam.card) :
       min (code (g + 1) W d) (gridPoint (g + 1) 0) = min (hat I (g + 1) W d)
         (gridPoint (g + 1) 0) :=
     min_orbitCode_gridPoint_zero d
   refine ⟨fun z ↦ orbitDecoder (g + 1) (hat I (g + 1) W) (gridPoint (g + 1) 0) (N.Φs 𝒮 Q z),
     (hN.isLawfulBelow_Φs hQC (mem_sCat.mp hQC).1 (mem_sCat.mp hQC).2.1
-      (mem_sCat.mp hQC).2.2).map_of_apply_eq_bot (fun z ↦ z.2.2)
+      (mem_sCat.mp hQC).2.2.2).map_of_apply_eq_bot (fun z ↦ z.2.2)
       (isWitness_orbitDecoder (isSelfVisible_gridPoint _ 0) (gridPoint_ne_bot _ 0))
       (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot (gridPoint_ne_bot _ 0)), fun z hz ↦ ?_⟩
   obtain ⟨z, hzm⟩ := z
@@ -415,6 +416,110 @@ theorem cutoffCut_lt_of_sepInv {K : ℕ} {P : CProf I} (h : SepInv N T o P) :
   rw [not_lt] at hge
   have := visibilityReplace_le_of_le le_rfl (isSelfVisible_visibilityReplace_self K (P f)) hge
   exact absurd this (not_le.mpr hlt)
+
+/-- **The partner of a canonical state whose owner carries its cutoff is canonical**: lowering
+the cutoff to the cutoff cut keeps the keys (the old cutoff key stays at the owner, the cutoff cut
+has the key of the donor maximum) and the orbit keys (the cutoff cut is self-visible), so the orbit
+map is unchanged, and it fixes the cutoff cut, a grid point of the code block of its key. -/
+theorem orbitCode_update_cutoffCut {k : ℕ} {o' : Fin I.amalgam.card} (hNi : Sum.inr () ∉ N)
+    {s : CProf I} (hs : orbitCode k s = s) (ho : s (Sum.inl o') = s (Sum.inr ())) :
+    orbitCode k (Function.update s (Sum.inr ()) (cutoffCut k N s)) =
+      Function.update s (Sum.inr ()) (cutoffCut k N s) := by
+  classical
+  set c := cutoffCut k N s with hc
+  set s' := Function.update s (Sum.inr ()) c with hs'
+  have hval (f : Fin I.amalgam.card ⊕ Unit) (hf : f ≠ Sum.inr ()) : s' f = s f :=
+    Function.update_of_ne hf _ _
+  have hfix (y : Label.{u}) (hy : ∃ f, s f = y) : orbitMap k s y = y := by
+    obtain ⟨f, rfl⟩ := hy
+    exact congrFun hs f
+  -- the cutoff cut is `⊥` or the key of a value at a proper field
+  have hcases : c = ⊥ ∨ ∃ f ∈ N, s f ≠ ⊥ ∧ c = visibilityReplace k k (s f) := by
+    rcases N.eq_empty_or_nonempty with he | hne
+    · left; rw [hc, cutoffCut, donorMax, he, sup_empty, visibilityReplace_bot]
+    obtain ⟨f, hf, hfeq⟩ := exists_mem_eq_sup _ hne s
+    by_cases hf0 : s f = ⊥
+    · left; rw [hc, cutoffCut, donorMax, hfeq, hf0, visibilityReplace_bot]
+    · right; exact ⟨f, hf, hf0, by rw [hc, cutoffCut, donorMax, hfeq]⟩
+  have hcsv : IsSelfVisible k c := isSelfVisible_cutoffCut s
+  have hinr_ne (f : Fin I.amalgam.card ⊕ Unit) (hf : f ∈ N) : f ≠ Sum.inr () :=
+    fun h ↦ hNi (h ▸ hf)
+  -- the keys
+  have hkeys (y : Label.{u}) (hy : y ≠ ⊥) :
+      (∃ f, s f ≠ ⊥ ∧ visibilityReplace k k (s f) = y) ↔
+        ∃ f, s' f ≠ ⊥ ∧ visibilityReplace k k (s' f) = y := by
+    constructor
+    · rintro ⟨f, hf0, hfy⟩
+      by_cases hf : f = Sum.inr ()
+      · subst hf
+        refine ⟨Sum.inl o', ?_, ?_⟩
+        · rw [hval _ Sum.inl_ne_inr, ho]; exact hf0
+        · rw [hval _ Sum.inl_ne_inr, ho]; exact hfy
+      · exact ⟨f, by rw [hval f hf]; exact hf0, by rw [hval f hf]; exact hfy⟩
+    · rintro ⟨f, hf0, hfy⟩
+      by_cases hf : f = Sum.inr ()
+      · subst hf
+        rw [hs', Function.update_self] at hf0 hfy
+        rcases hcases with h0 | ⟨f', hf', hf'0, hcf⟩
+        · exact absurd h0 hf0
+        · refine ⟨f', hf'0, ?_⟩
+          rw [← hfy, hcf, visibilityReplace_self_visibilityReplace le_rfl]
+      · exact ⟨f, by rw [← hval f hf]; exact hf0, by rw [← hval f hf]; exact hfy⟩
+  have hkey (x : Label.{u}) : IsKey k s' x ↔ IsKey k s x := by
+    by_cases hx : x = ⊥
+    · subst hx
+      exact ⟨fun h ↦ absurd rfl h.ne_bot, fun h ↦ absurd rfl h.ne_bot⟩
+    have hRx : visibilityReplace k k x ≠ ⊥ := by rwa [Ne, visibilityReplace_eq_bot_iff]
+    exact (hkeys _ hRx).symm
+  have horb (x : Label.{u}) : IsOrbitKey k s' x ↔ IsOrbitKey k s x := by
+    constructor
+    · rintro ⟨f, hfx, hf⟩
+      by_cases hfi : f = Sum.inr ()
+      · subst hfi
+        rw [hs', Function.update_self] at hf
+        exact absurd hcsv hf
+      · exact ⟨f, by rw [← hval f hfi]; exact hfx, by rw [← hval f hfi]; exact hf⟩
+    · rintro ⟨f, hfx, hf⟩
+      by_cases hfi : f = Sum.inr ()
+      · subst hfi
+        exact ⟨Sum.inl o', by rw [hval _ Sum.inl_ne_inr, ho]; exact hfx,
+          by rw [hval _ Sum.inl_ne_inr, ho]; exact hf⟩
+      · exact ⟨f, by rw [hval f hfi]; exact hfx, by rw [hval f hfi]; exact hf⟩
+  have hrank (x : Label.{u}) : keyRank k s' x = keyRank k s x := by
+    unfold keyRank valueRank
+    congr 1
+    ext y
+    simp only [mem_filter, mem_image, mem_univ, true_and]
+    constructor
+    · rintro ⟨⟨f, rfl⟩, hy, hyx⟩
+      have hf0 : s' f ≠ ⊥ := fun h ↦ hy (by rw [h, visibilityReplace_bot])
+      obtain ⟨f', -, hf'⟩ := (hkeys _ hy).mpr ⟨f, hf0, rfl⟩
+      exact ⟨⟨f', hf'⟩, hy, hyx⟩
+    · rintro ⟨⟨f, rfl⟩, hy, hyx⟩
+      have hf0 : s f ≠ ⊥ := fun h ↦ hy (by rw [h, visibilityReplace_bot])
+      obtain ⟨f', -, hf'⟩ := (hkeys _ hy).mp ⟨f, hf0, rfl⟩
+      exact ⟨⟨f', hf'⟩, hy, hyx⟩
+  have hmap (x : Label.{u}) : orbitMap k s' x = orbitMap k s x :=
+    orbitMap_congr (hrank x) (hkey x) (horb x)
+  funext f
+  rw [orbitCode_apply, hmap]
+  by_cases hfi : f = Sum.inr ()
+  · subst hfi
+    rw [hs', Function.update_self]
+    rcases hcases with h0 | ⟨f', -, hf'0, hcf⟩
+    · rw [h0, orbitMap_bot]
+    · have hsf : orbitMap k s (s f') = s f' := hfix _ ⟨f', rfl⟩
+      have hgp : c = gridPoint k (codeBlock k s (s f')) := by
+        rw [hcf, ← hsf, visibilityReplace_orbitMap hf'0, hsf]
+      have hc0 : c ≠ ⊥ := by rw [hgp]; exact gridPoint_ne_bot _ _
+      have hcb : codeBlock k s c = codeBlock k s (s f') :=
+        codeBlock_congr (by rw [hcf, visibilityReplace_self_visibilityReplace le_rfl])
+      by_cases hco : IsOrbitKey k s c
+      · rw [orbitMap_of_isOrbitKey hco, hcb, ← hgp]
+        exact moveToBlock_eq_self (k := k) rfl
+      · rw [orbitMap_of_not_isOrbitKey hc0 hco, hcb, ← hgp]
+  · rw [hval f hfi]
+    exact hfix _ ⟨f, rfl⟩
 
 end Sep
 
