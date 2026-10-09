@@ -337,4 +337,28 @@ example {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} {c r : Fin t'.card}
 
 end MarkedCap
 
+/-! ### Names of the request data at `P`
+
+The request data at `P` moved from this namespace to
+`VaughtConjecture.Extension.GatedExtensionRequests` (namespace `GatedExtensionCounterexample`);
+these names forward to it. -/
+
+/-- `GatedExtensionCounterexample.selfZ`, moved from this namespace. -/
+abbrev selfZ : Finset (Fin 5) := GatedExtensionCounterexample.selfZ
+
+/-- `GatedExtensionCounterexample.selfT`, moved from this namespace. -/
+abbrev selfT : Finset (Fin 5) := GatedExtensionCounterexample.selfT
+
+/-- `GatedExtensionCounterexample.InBottomClassP`, moved from this namespace. -/
+abbrev InBottomClassP (sL : Fin 5 → Label.{u}) : Prop :=
+  GatedExtensionCounterexample.InBottomClassP sL
+
+/-- `GatedExtensionCounterexample.IsCapCorrectP`, moved from this namespace. -/
+abbrev IsCapCorrectP (C a : Fin 5) (R : ℕ) (sL sR : Fin 5 → Label.{u}) : Prop :=
+  GatedExtensionCounterexample.IsCapCorrectP C a R sL sR
+
+/-- `GatedExtensionCounterexample.IsAdmittedP`, moved from this namespace. -/
+abbrev IsAdmittedP (C a : Fin 5) (R : ℕ) (sL sR : Fin 5 → Label.{u}) : Prop :=
+  GatedExtensionCounterexample.IsAdmittedP C a R sL sR
+
 end VaughtConjecture.CapRequestsExamples
