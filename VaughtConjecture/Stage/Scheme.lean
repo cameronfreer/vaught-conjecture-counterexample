@@ -546,6 +546,15 @@ theorem isLawfulBelow_rowAt_faceCell (hS : S.rows.IsConsistent) {u : Fin S.card}
     ((isLawfulBelow_rowAt hS hu).mono (X := Prod.map (Finset.map f) id ((univ : Finset (Fin m)), g))
       ⟨subset_univ _, le_rfl⟩)
 
+/-- **Lawfulness through a face**: a labelling of `S` read on the cells of a face `T` along `f` is
+lawful below `X` in `T` exactly when it is lawful below the image of `X` in `S`. -/
+theorem isLawfulBelow_faceCell_iff (he : S.comap f = T) (X : Finset (Fin m) × ℕ)
+    (x : Fin S.card → Label.{u}) :
+    T.rows.IsLawfulBelow X (fun i ↦ x (S.faceCell f he i)) ↔
+      S.rows.IsLawfulBelow (Prod.map (Finset.map f) id X) (fun d ↦ x d) := by
+  subst he
+  exact S.isLawfulBelow_comap_cellMap_iff f X x
+
 end Scheme
 
 end VaughtConjecture

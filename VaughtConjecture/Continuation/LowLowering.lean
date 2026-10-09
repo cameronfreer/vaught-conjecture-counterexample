@@ -24,7 +24,7 @@ it.
 For `θ` and `c` self-visible at `K` and `c ≠ ⊥` it is a witness bounded by grade `K` that sends
 only `⊥` to `⊥` (`Label.isWitness_lowerMap`): visibility replacement at a threshold `k ≤ K` keeps
 `(⊥, θ]` and its complement (`Label.lt_visibilityReplace_of_lt`, in
-`VaughtConjecture.Extension.AlignedEncoding`).  So the lowering map of a
+`VaughtConjecture.Label.Visibility`).  So the lowering map of a
 lawful row is lawful (`CellScheme.Rows.IsLawful.map_of_bot_reflecting`).
 
 **The lowering** (`StageType.IsSourceGapContextAt.exists_lowering`, compiled in this repository).

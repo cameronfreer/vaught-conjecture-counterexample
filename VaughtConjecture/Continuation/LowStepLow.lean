@@ -5,7 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.LowStepTie
 import VaughtConjecture.Continuation.LowTowerLevel
-import VaughtConjecture.Continuation.H2GeneralBelow
+import VaughtConjecture.Continuation.H2General
 
 /-!
 # The tie case of the LOW step for every donor
