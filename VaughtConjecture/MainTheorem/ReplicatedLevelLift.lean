@@ -10,9 +10,11 @@ import VaughtConjecture.MainTheorem.ReplicatedLevelGrades
 
 Roadmap, Layer 3 ((R3) and (R4), one level of the replicated carrier re-rendered per grade).
 
-Over a good level `N` at the grade `j + 1` (`Seed.ALvl.Good`), with `j + 2 ≤ m + 1` and any
-calibrated requests (no relation between the threshold and `j + 2`), the next level on the
-catalogue at `j + 2` (`Seed.ALvl.next`, `Seed.lvCat`) lifts capped from the context coatom into
+Over a good level `N` at the grade `j + 1` (`Seed.ALvl.Good`), with `j + 2 ≤ m + 1`, requests
+calibrated on the class (`hQ`) with no relation between the threshold and `j + 2`, and the other
+premises kept explicit until their proof is composed at the seed position (the labels pair correct,
+`hpair`; the relative lift on the class, `hrel`; a legal donor, `hdL`; `0 < n`), the next level on
+the catalogue at `j + 2` (`Seed.ALvl.next`, `Seed.lvCat`) lifts capped from the context coatom into
 `(univ, j + 2)`, given the lift at the grade `j + 1` and a context cell at `(univ, j + 2)`
 (`Seed.ALvl.Good.cappedLift_next`).
 
@@ -441,8 +443,11 @@ theorem hasOwnerCappedLifts_next_bot (hdp : restrictFace Fin.castSuccEmb d = som
   rw [ite_eq_left ((grade_attachCtxCell x).trans_le hx), ← he]
   exact Rows.extendBot_of_mem _ e.2
 
-/-- **The context lift of the next level at the grade `j + 2 ≤ m + 1`** (any calibrated
-requests, a context cell at `(univ, j + 2)`): the lift at the grade `j + 1` and the owner-capped
+/-- **The context lift of the next level at the grade `j + 2 ≤ m + 1`**, for requests calibrated
+on the class at any threshold (`hQ`; no relation between the threshold and `j + 2`), with the
+labels pair correct (`hpair`), the relative lift on the class (`hrel`), a legal donor (`hdL`),
+`0 < n`, and a context cell at `(univ, j + 2)`; these premises stay explicit until their proof is
+composed at the seed position.  The lift at the grade `j + 1` and the owner-capped
 lifts at every cap self-visible at `j + 2` (at `⊥`,
 `Seed.ALvl.Good.hasOwnerCappedLifts_next_bot`; at a positive cap from the serving rows,
 `CellScheme.Rows.hasOwnerCappedLifts_of_rows_short`, the rows consistent, short at `j + 2` and

@@ -10,8 +10,10 @@ import VaughtConjecture.MainTheorem.ReplicatedLevelLift
 
 Roadmap, Layer 3 ((R3) and (R4), the levels of the replicated carrier re-rendered per grade).
 
-For any calibrated requests (no relation between the threshold and the grades) and a context with
-a cell at `(univ, k)` for every `1 ≤ k ≤ m + 1`, the level at the grade `j + 1` (`Seed.lvLevel`)
+For requests calibrated on the class (no relation between the threshold and the grades), with the
+labels pair correct (`hpair`), the relative lift on the class (`hrel`), a legal donor and `0 < n`
+(explicit premises until their proof is composed at the seed position), and a context with a cell
+at `(univ, k)` for every `1 ≤ k ≤ m + 1`, the level at the grade `j + 1` (`Seed.lvLevel`)
 lifts capped from the context coatom into `(univ, j + 1)` for every `j + 1 ≤ m + 1`
 (`Seed.lvLevel_cappedLift`):
 
@@ -81,8 +83,9 @@ theorem lvLevel1_cappedLift_one (hH : 0 < H) (hcard : (I.attachmentBase g).S.car
     exact hl
   exact key _ _ map_castSuccEmb_eq_ctxCoatom.symm
 
-/-- **The context lift at every grade of the levels**, for any calibrated requests and a context
-with a cell at `(univ, k)` for every `1 ≤ k ≤ m + 1`. -/
+/-- **The context lift at every grade of the levels**, for requests calibrated on the class at any
+threshold, with the explicit premises `hpair`, `hrel`, `hdL`, `0 < n`, and a context with a cell at
+`(univ, k)` for every `1 ≤ k ≤ m + 1`. -/
 theorem lvLevel_cappedLift (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
     (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)

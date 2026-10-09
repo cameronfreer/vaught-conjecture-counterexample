@@ -15,8 +15,10 @@ Roadmap, Layer 3 ((R3) and (R4), the levels of the replicated carrier re-rendere
 stage type on `n` points has a cell of graded index `(univ, k)` for every `1 ≤ k ≤ n`
 (completeness).  So the hypothesis `hX` of `Seed.lvLevel_cappedLift` holds at every seed, its
 first coatom type being legal (`Seed.exists_gradedIndex_univ_left`), and the chain lemma asks no
-hypothesis on the context beyond calibrated requests (`Seed.lvLevel_cappedLift'`; no relation
-between the threshold and the grades).
+relation between the threshold and the grades (`Seed.lvLevel_cappedLift'`).  Its premises at the
+seed position stay explicit until their proof is composed there: requests calibrated on the class
+(`hQ`), the labels pair correct (`hpair`), the relative lift on the class (`hrel`), a legal donor
+(`hdL`) and `0 < n`.
 
 **The input** (namespace `QuadInstance`, at a limit stage `α`, `m = 3`):
 * the first coatom type `quadType hα` on four points: a legal one-point extension of
@@ -67,10 +69,12 @@ theorem Seed.exists_gradedIndex_univ_left {α : Ordinal.{u}} {m : ℕ} (I : Seed
     ∃ x : Fin I.left.card, I.left.toCellScheme.gradedIndex x = ((univ : Finset (Fin (m + 1))), k) :=
   StageType.exists_gradedIndex_univ_of_isLegal I.isLegal_left hk hkm
 
-/-- **The context lift at every grade of the levels, for any calibrated requests**: the chain
-lemma `Seed.lvLevel_cappedLift` with the cells of full scope taken from the first coatom type,
-which is legal.  No relation between the threshold and the grades is asked (the threshold is at
-most `m + 1` by calibration only). -/
+/-- **The context lift at every grade of the levels, at any threshold**: the chain lemma
+`Seed.lvLevel_cappedLift` with the cells of full scope taken from the first coatom type, which is
+legal.  No relation between the threshold and the grades is asked (the threshold is at most
+`m + 1` by calibration only).  The premises `hQ` (calibration on the class), `hpair` (the labels
+pair correct), `hrel` (the relative lift on the class), `hdL` (a legal donor) and `0 < n` stay
+explicit until their proof is composed at the seed position. -/
 theorem Seed.lvLevel_cappedLift' {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m}
     {g : Fin n ↪ Fin m} {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
@@ -323,6 +327,18 @@ theorem lvLevel_cappedLift_reqLow (I : Seed.{u} α 3) (hI : I.left = quadType h�
     (correctAt_reqLow hα) (classCalibrated_reqLow hα) (hasRelativeLiftOnClass_reqLow hα) hH hcard
     hB⟩
 
+/-- **The grade `4` strictly above the threshold `3`** at the input on four points. -/
+theorem lvLevel_cappedLift_reqLow_four (I : Seed.{u} α 3) (hI : I.left = quadType hα)
+    (hdA : restrictFace (extendByLast ((𝕘).trans Fin.castSuccEmb)) I.amalgam =
+      some (ApexInstance.bareDonor α))
+    {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase 𝕘).S.card ≤ H)
+    (hB : 2 * (I.attachment 𝕘).card ≤ B) :
+    (reqLow hα).threshold < 4 ∧ (I.lvLevel 𝕘 H B hdA (hI ▸ reqLow hα) 3).S.rows.CappedLift
+      (X := (univ.erase (Fin.last 4), 4)) (Y := ((univ : Finset (Fin 5)), 4))
+      ⟨erase_subset _ _, le_rfl⟩ := by
+  obtain ⟨h3, hl⟩ := lvLevel_cappedLift_reqLow hα I hI hdA hH hcard hB
+  exact ⟨by omega, hl 3 le_rfl⟩
+
 end QuadInstance
 
 namespace ApexInstance
@@ -343,6 +359,18 @@ theorem lvLevel_cappedLift_req {α : Ordinal.{u}} (I : Seed.{u} α 2) (hI : I.le
   ⟨threshold_req α, Seed.lvLevel_cappedLift_of_eq hI (hte := restrictFace_root)
     bareDonor_mem_cofaces.2 bareDonor_mem_cofaces.1 Nat.one_pos hdA (correctAt_req α)
     (classCalibrated_req α) (hasRelativeLiftOnClass_req α) hH hcard hB⟩
+
+/-- **The grade `3` strictly above the threshold `2`** at the apex input. -/
+theorem lvLevel_cappedLift_req_three {α : Ordinal.{u}} (I : Seed.{u} α 2) (hI : I.left = topType α)
+    (hdA : restrictFace (extendByLast (((Fin.castSuccEmb : Fin 1 ↪ Fin 2)).trans
+      Fin.castSuccEmb)) I.amalgam = some (bareDonor α))
+    {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase Fin.castSuccEmb).S.card ≤ H)
+    (hB : 2 * (I.attachment (Fin.castSuccEmb : Fin 1 ↪ Fin 2)).card ≤ B) :
+    (req α).threshold < 3 ∧ (I.lvLevel Fin.castSuccEmb H B hdA (hI ▸ req α) 2).S.rows.CappedLift
+      (X := (univ.erase (Fin.last 3), 3)) (Y := ((univ : Finset (Fin 4)), 3))
+      ⟨erase_subset _ _, le_rfl⟩ := by
+  obtain ⟨h2, hl⟩ := lvLevel_cappedLift_req I hI hdA hH hcard hB
+  exact ⟨by omega, hl 2 le_rfl⟩
 
 end ApexInstance
 
