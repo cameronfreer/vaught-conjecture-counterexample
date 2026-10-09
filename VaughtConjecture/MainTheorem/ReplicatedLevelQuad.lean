@@ -14,8 +14,9 @@ Roadmap, Layer 3 ((R3) and (R4), the levels of the replicated carrier re-rendere
 **Cells of full scope at every grade** (`StageType.exists_gradedIndex_univ_of_isLegal`): a legal
 stage type on `n` points has a cell of graded index `(univ, k)` for every `1 ≤ k ≤ n`
 (completeness).  So the hypothesis `hX` of `Seed.lvLevel_cappedLift` holds at every seed, its
-first coatom type being legal (`Seed.exists_gradedIndex_univ_left`), and the chain lemma asks only
-the threshold `m + 1` (`Seed.lvLevel_cappedLift_of_threshold`).
+first coatom type being legal (`Seed.exists_gradedIndex_univ_left`), and the chain lemma asks no
+hypothesis on the context beyond calibrated requests (`Seed.lvLevel_cappedLift'`; no relation
+between the threshold and the grades).
 
 **The input** (namespace `QuadInstance`, at a limit stage `α`, `m = 3`):
 * the first coatom type `quadType hα` on four points: a legal one-point extension of
@@ -32,6 +33,12 @@ the threshold `m + 1` (`Seed.lvLevel_cappedLift_of_threshold`).
 input, the level at every grade `j + 1 ≤ 4` lifts capped from the context coatom into
 `(univ, j + 1)`.  At the grade `3` the composition runs with the threshold `4` strictly above the
 grade (`QuadInstance.lvLevel_cappedLift_grade_three`).
+
+**Grades above the threshold.**  With the cap at a cell of `quadType hα` at `(univ, 3)` labelled
+`⊤` (`QuadInstance.reqLow`, threshold `3`), the level at every grade `j + 1 ≤ 4` lifts, the grade
+`4` above the threshold (`QuadInstance.lvLevel_cappedLift_reqLow`); likewise at the apex input
+with the cap at `(univ, 2)` (`ApexInstance.req`, threshold `2`) at every grade `j + 1 ≤ 3`
+(`ApexInstance.lvLevel_cappedLift_req`).
 
 ## References
 
@@ -60,10 +67,11 @@ theorem Seed.exists_gradedIndex_univ_left {α : Ordinal.{u}} {m : ℕ} (I : Seed
     ∃ x : Fin I.left.card, I.left.toCellScheme.gradedIndex x = ((univ : Finset (Fin (m + 1))), k) :=
   StageType.exists_gradedIndex_univ_of_isLegal I.isLegal_left hk hkm
 
-/-- **The context lift at every grade of the levels, for requests at the top grade**: the chain
+/-- **The context lift at every grade of the levels, for any calibrated requests**: the chain
 lemma `Seed.lvLevel_cappedLift` with the cells of full scope taken from the first coatom type,
-which is legal; only the threshold `m + 1` remains asked. -/
-theorem Seed.lvLevel_cappedLift_of_threshold {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m}
+which is legal.  No relation between the threshold and the grades is asked (the threshold is at
+most `m + 1` by calibration only). -/
+theorem Seed.lvLevel_cappedLift' {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m}
     {g : Fin n ↪ Fin m} {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
     (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
@@ -71,12 +79,28 @@ theorem Seed.lvLevel_cappedLift_of_threshold {α : Ordinal.{u}} {m n : ℕ} {I :
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    (hth : Q.threshold = m + 1) (hB : 2 * (I.attachment g).card ≤ B) :
+    (hB : 2 * (I.attachment g).card ≤ B) :
     ∀ j, j + 1 ≤ m + 1 → (I.lvLevel g H B hd Q j).S.rows.CappedLift
       (X := (univ.erase (Fin.last (m + 1)), j + 1)) (Y := ((univ : Finset (Fin (m + 2))), j + 1))
       ⟨erase_subset _ _, le_rfl⟩ :=
-  Seed.lvLevel_cappedLift hH hcard hte hdp hdL hn hd hQ hpair hrel hth hB
+  Seed.lvLevel_cappedLift hH hcard hte hdp hdL hn hd hQ hpair hrel hB
     fun _ hk2 hkm ↦ I.exists_gradedIndex_univ_left (by omega) hkm
+
+/-- The chain lemma for a first coatom type given up to equality. -/
+theorem Seed.lvLevel_cappedLift_of_eq {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m}
+    {t' : StageType.{u} α (m + 1)} (hI : I.left = t') {g : Fin n ↪ Fin m}
+    {p₀ : StageType.{u} α n} {hte : restrictFace (g.trans Fin.castSuccEmb) t' = some p₀}
+    {d : StageType.{u} α (n + 1)} (hdp : restrictFace Fin.castSuccEmb d = some p₀)
+    (hdL : d.IsLegal) (hn : 0 < n)
+    (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests t' d.toScheme} (hpair : ∀ y, Q.CorrectAt t'.label y (d.label y))
+    (hQ : Q.ClassCalibrated hte) (hrel : Q.HasRelativeLiftOnClass hte hdp) {H B : ℕ} (hH : 0 < H)
+    (hcard : (I.attachmentBase g).S.card ≤ H) (hB : 2 * (I.attachment g).card ≤ B) :
+    ∀ j, j + 1 ≤ m + 1 → (I.lvLevel g H B hdA (hI ▸ Q) j).S.rows.CappedLift
+      (X := (univ.erase (Fin.last (m + 1)), j + 1)) (Y := ((univ : Finset (Fin (m + 2))), j + 1))
+      ⟨erase_subset _ _, le_rfl⟩ := by
+  subst hI
+  exact Seed.lvLevel_cappedLift' hH hcard hte hdp hdL hn hdA hQ hpair hrel hB
 
 namespace QuadInstance
 
@@ -192,24 +216,6 @@ theorem hasRelativeLiftOnClass_req :
     (fun _ ↦ Set.mem_univ _) (fun _ h ↦ Set.notMem_empty _ h) (fun _ h ↦ Set.notMem_empty _ h)
     (label_root hα) isLegal_pairFace Nat.one_pos
 
-/-- The context lift of the levels at the input, for the first coatom type given up to
-equality. -/
-theorem lvLevel_cappedLift_aux {I : Seed.{u} α 3} {t' : StageType.{u} α 4} (hI : I.left = t')
-    {p : StageType.{u} α 1}
-    {hte : restrictFace ((𝕘).trans Fin.castSuccEmb) t' = some p}
-    {d : StageType.{u} α 2} (hdp : restrictFace Fin.castSuccEmb d = some p) (hdL : d.IsLegal)
-    (hdA : restrictFace (extendByLast ((𝕘).trans Fin.castSuccEmb)) I.amalgam = some d)
-    {Q : GrowthRequests t' d.toScheme} (hpair : ∀ j, Q.CorrectAt t'.label j (d.label j))
-    (hQ : Q.ClassCalibrated hte) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    (hth : Q.threshold = 4) {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase 𝕘).S.card ≤ H)
-    (hB : 2 * (I.attachment 𝕘).card ≤ B) :
-    ∀ j, j + 1 ≤ 4 → (I.lvLevel 𝕘 H B hdA (hI ▸ Q) j).S.rows.CappedLift
-      (X := (univ.erase (Fin.last 4), j + 1)) (Y := ((univ : Finset (Fin 5)), j + 1))
-      ⟨erase_subset _ _, le_rfl⟩ := by
-  subst hI
-  exact Seed.lvLevel_cappedLift_of_threshold hH hcard hte hdp hdL Nat.one_pos hdA hQ hpair hrel
-    hth hB
-
 /-- **The context lift of the re-rendered levels at the input on four points**: at every seed of
 the input, for the requests `req hα` (threshold `4 = m + 1`) and every height `H` and block bound
 `B` with `2 · #cells ≤ B`, the level at the grade `j + 1 ≤ 4` lifts capped from the context
@@ -222,10 +228,9 @@ theorem lvLevel_cappedLift_quad (I : Seed.{u} α 3) (hI : I.left = quadType hα)
     ∀ j, j + 1 ≤ 4 → (I.lvLevel 𝕘 H B hdA (hI ▸ req hα) j).S.rows.CappedLift
       (X := (univ.erase (Fin.last 4), j + 1)) (Y := ((univ : Finset (Fin 5)), j + 1))
       ⟨erase_subset _ _, le_rfl⟩ :=
-  lvLevel_cappedLift_aux hI (hte := restrictFace_root_quad hα)
-    ApexInstance.bareDonor_mem_cofaces.2 ApexInstance.bareDonor_mem_cofaces.1 hdA
-    (correctAt_req hα) (classCalibrated_req hα) (hasRelativeLiftOnClass_req hα)
-    (threshold_req hα) hH hcard hB
+  Seed.lvLevel_cappedLift_of_eq hI (hte := restrictFace_root_quad hα)
+    ApexInstance.bareDonor_mem_cofaces.2 ApexInstance.bareDonor_mem_cofaces.1 Nat.one_pos hdA
+    (correctAt_req hα) (classCalibrated_req hα) (hasRelativeLiftOnClass_req hα) hH hcard hB
 
 /-- **The grade `3` below the top grade `4`**: at every seed of the input, the level at the grade
 `3` lifts capped from the context coatom into `(univ, 3)`, the threshold `4` lying strictly above
@@ -240,6 +245,105 @@ theorem lvLevel_cappedLift_grade_three (I : Seed.{u} α 3) (hI : I.left = quadTy
       ⟨erase_subset _ _, le_rfl⟩ :=
   ⟨threshold_req hα, lvLevel_cappedLift_quad hα I hI hdA hH hcard hB 2 (by omega)⟩
 
+/-! ### A lower cap at the input on four points -/
+
+/-- A cell of `quadType hα` of graded index `(univ, 3)` labelled `⊤`: above the apex of
+`topType α`, a face cell of grade `3` labelled `⊤` (completeness and availability,
+`StageType.exists_gradedIndex_univ_le_label`). -/
+theorem exists_capLow : ∃ c : Fin (quadType hα).card,
+    (quadType hα).toCellScheme.gradedIndex c = ((univ : Finset (Fin 4)), 3) ∧
+      (quadType hα).label c = ⊤ := by
+  obtain ⟨c, hc, hle⟩ := exists_gradedIndex_univ_le_label (isLegal_quadType hα)
+    ((quadType hα).faceCell (restrictFace_quadType hα) (ApexInstance.apex α))
+  rw [label_faceCell, ApexInstance.label_apex] at hle
+  refine ⟨c, ?_, top_le_iff.mp hle⟩
+  rw [hc, grade_faceCell]
+  exact congrArg (Prod.mk _) (congrArg Prod.snd (ApexInstance.gradedIndex_apex α))
+
+/-- The cell of `quadType hα` at `(univ, 3)` labelled `⊤`. -/
+noncomputable def capLow : Fin (quadType hα).card := (exists_capLow hα).choose
+
+/-- **The bottom requests with a lower cap**: cap and marker at `capLow hα`, threshold `3`, below
+the top grade `4`. -/
+noncomputable def reqLow : GrowthRequests (quadType hα) (ApexInstance.bareDonor α).toScheme where
+  cap := capLow hα
+  marker := capLow hα
+  markerOffset := 0
+  bottoms := Set.univ
+  exacts := ∅
+  highs := ∅
+  ref _ := capLow hα
+  offset _ := 0
+
+theorem threshold_reqLow : (reqLow hα).threshold = 3 :=
+  congrArg Prod.snd (exists_capLow hα).choose_spec.1
+
+theorem correctAt_reqLow (j : Fin (ApexInstance.bareDonor α).card) :
+    (reqLow hα).CorrectAt (quadType hα).label j ((ApexInstance.bareDonor α).label j) :=
+  ⟨fun _ ↦ min_eq_left bot_le, fun h ↦ absurd h (Set.notMem_empty _),
+    fun h ↦ absurd h (Set.notMem_empty _)⟩
+
+theorem classCalibrated_reqLow : (reqLow hα).ClassCalibrated (restrictFace_root_quad hα) where
+  cover _ := .inl (Set.mem_univ _)
+  scope_cap := congrArg Prod.fst (exists_capLow hα).choose_spec.1
+  label_cap := by
+    rw [show (reqLow hα).cap = capLow hα from rfl, capLow, (exists_capLow hα).choose_spec.2]
+    exact top_ne_bot
+  ref _ h := absurd h (Set.notMem_empty _)
+  marker := ⟨le_rfl, Nat.zero_le _, by
+    rw [show (reqLow hα).marker = capLow hα from rfl, capLow, (exists_capLow hα).choose_spec.2]
+    exact top_ne_bot⟩
+  root i := by
+    rw [grade_faceCell, threshold_reqLow]
+    exact ((pointFace α).grade_le i).trans (by omega)
+  arity := by rw [threshold_reqLow]; omega
+
+theorem hasRelativeLiftOnClass_reqLow :
+    (reqLow hα).HasRelativeLiftOnClass (restrictFace_root_quad hα)
+      ApexInstance.bareDonor_mem_cofaces.2 :=
+  GrowthRequests.hasRelativeLiftOnClass_of_bottoms _ _ (classCalibrated_reqLow hα)
+    (fun _ ↦ Set.mem_univ _) (fun _ h ↦ Set.notMem_empty _ h) (fun _ h ↦ Set.notMem_empty _ h)
+    (label_root hα) isLegal_pairFace Nat.one_pos
+
+/-- **Grades above the threshold at the input on four points**: for the requests `reqLow hα`
+(threshold `3`), at every seed of the input the level at every grade `j + 1 ≤ 4` lifts capped
+from the context coatom into `(univ, j + 1)`; at the grade `4` the grade lies above the
+threshold. -/
+theorem lvLevel_cappedLift_reqLow (I : Seed.{u} α 3) (hI : I.left = quadType hα)
+    (hdA : restrictFace (extendByLast ((𝕘).trans Fin.castSuccEmb)) I.amalgam =
+      some (ApexInstance.bareDonor α))
+    {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase 𝕘).S.card ≤ H)
+    (hB : 2 * (I.attachment 𝕘).card ≤ B) :
+    (reqLow hα).threshold = 3 ∧ ∀ j, j + 1 ≤ 4 →
+      (I.lvLevel 𝕘 H B hdA (hI ▸ reqLow hα) j).S.rows.CappedLift
+        (X := (univ.erase (Fin.last 4), j + 1)) (Y := ((univ : Finset (Fin 5)), j + 1))
+        ⟨erase_subset _ _, le_rfl⟩ :=
+  ⟨threshold_reqLow hα, Seed.lvLevel_cappedLift_of_eq hI (hte := restrictFace_root_quad hα)
+    ApexInstance.bareDonor_mem_cofaces.2 ApexInstance.bareDonor_mem_cofaces.1 Nat.one_pos hdA
+    (correctAt_reqLow hα) (classCalibrated_reqLow hα) (hasRelativeLiftOnClass_reqLow hα) hH hcard
+    hB⟩
+
 end QuadInstance
+
+namespace ApexInstance
+
+/-- **Grades above the threshold at the apex input**: for the requests `req α` with the cap at
+the cell of `topType α` at `(univ, 2)` (threshold `2`, below the top grade `3`), at every seed of
+the input the level at every grade `j + 1 ≤ 3` lifts capped from the context coatom into
+`(univ, j + 1)`; at the grade `3` the grade lies above the threshold. -/
+theorem lvLevel_cappedLift_req {α : Ordinal.{u}} (I : Seed.{u} α 2) (hI : I.left = topType α)
+    (hdA : restrictFace (extendByLast (((Fin.castSuccEmb : Fin 1 ↪ Fin 2)).trans
+      Fin.castSuccEmb)) I.amalgam = some (bareDonor α))
+    {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase Fin.castSuccEmb).S.card ≤ H)
+    (hB : 2 * (I.attachment (Fin.castSuccEmb : Fin 1 ↪ Fin 2)).card ≤ B) :
+    (req α).threshold = 2 ∧ ∀ j, j + 1 ≤ 3 →
+      (I.lvLevel Fin.castSuccEmb H B hdA (hI ▸ req α) j).S.rows.CappedLift
+        (X := (univ.erase (Fin.last 3), j + 1)) (Y := ((univ : Finset (Fin 4)), j + 1))
+        ⟨erase_subset _ _, le_rfl⟩ :=
+  ⟨threshold_req α, Seed.lvLevel_cappedLift_of_eq hI (hte := restrictFace_root)
+    bareDonor_mem_cofaces.2 bareDonor_mem_cofaces.1 Nat.one_pos hdA (correctAt_req α)
+    (classCalibrated_req α) (hasRelativeLiftOnClass_req α) hH hcard hB⟩
+
+end ApexInstance
 
 end VaughtConjecture

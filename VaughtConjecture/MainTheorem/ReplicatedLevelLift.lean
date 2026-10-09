@@ -10,16 +10,21 @@ import VaughtConjecture.MainTheorem.ReplicatedLevelGrades
 
 Roadmap, Layer 3 ((R3) and (R4), one level of the replicated carrier re-rendered per grade).
 
-Over a good level `N` at the grade `j + 1` (`Seed.ALvl.Good`), with `j + 2 ≤ m + 1` and requests
-whose threshold is `j + 2` or above, the next level on the catalogue at `j + 2`
-(`Seed.ALvl.next`, `Seed.lvCat`) lifts capped from the context coatom into `(univ, j + 2)`, given
-the lift at the grade `j + 1` and a context cell at `(univ, j + 2)`
+Over a good level `N` at the grade `j + 1` (`Seed.ALvl.Good`), with `j + 2 ≤ m + 1` and any
+calibrated requests (no relation between the threshold and `j + 2`), the next level on the
+catalogue at `j + 2` (`Seed.ALvl.next`, `Seed.lvCat`) lifts capped from the context coatom into
+`(univ, j + 2)`, given the lift at the grade `j + 1` and a context cell at `(univ, j + 2)`
 (`Seed.ALvl.Good.cappedLift_next`).
 
+* **The admission premise at every grade** (`Seed.attachAdmits_truncate`,
+  `Seed.exists_stateStep_admitted`): for an anchor admitted at `k`, the admission of its
+  truncation at `k` is its own admission.  The donor cells have grade at most the arity
+  `n + 1 ≤ threshold`, and the admission reads the context at the grades up to the threshold only
+  (`GrowthRequests.admitsOnClass_congr_le_threshold`).  So the state step needs no relation
+  between `k` and the threshold, and no catalogue structure of the anchor.
 * **The state step for a catalogue anchor** (`Seed.exists_stateStep_level`): the anchor is lawful
-  below the grade only; the step runs on its truncation (at the threshold the admission is
-  derived from the anchor's, `Seed.exists_stateStep_threshold`; below it the admission premise is
-  vacuous, `Seed.exists_stateStep`), and above the grade the state is the anchor.
+  below the grade only; the step runs on its truncation, and above the grade the state is the
+  anchor.
 * **The serving rows.**  A cell at `(univ, j + 2)` is the cell of a state `R` of the catalogue; its
   row is the row labelling of `R` (`Seed.ALvl.Φ`): the section of the level at `R` and the agreement
   heights of `R` in the grid.
@@ -98,19 +103,92 @@ theorem isLawful_ctxSectionOf {k : ℕ} {V : Fin (I.attachment g).card → Label
   exact Scheme.isLawful_of_eq
     (comap_toScheme_of_restrictFace (I.restrictFace_left_attachmentType g)).symm h3
 
-/-- **The state step for an anchor of a catalogue** at a grade `k` at most the threshold: the anchor
-`R₀` is only lawful below `(univ, k)`, with values self-visible at `1` and admitted at `k`.  The
-state step runs on the truncation of `R₀` at `k` (lawful, `Scheme.isLawful_truncate`): at the
-threshold its admission is that of `R₀` (`Seed.exists_stateStep_threshold`), below the threshold
-the admission premise is vacuous (`Seed.exists_stateStep`).  Above the grade `k` the state is set
-to `R₀`, so every value is self-visible at `1`. -/
+/-- **The admission on the class reads a section at the grades up to the threshold only**: the
+class pattern is read at the cells below the cap, and the relation at the cap, the references and
+the marker, all of grade at most the threshold (`ClassCalibrated`). -/
+theorem _root_.VaughtConjecture.StageType.GrowthRequests.admitsOnClass_congr_le_threshold
+    {k : ℕ} {t' : StageType.{u} α k} {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
+    {e : Fin n ↪ Fin k} {hte : restrictFace e t' = some p₀}
+    {Q : GrowthRequests t' d.toScheme} (hQ : Q.ClassCalibrated hte)
+    {s s' : Fin t'.card → Label.{u}} {v : Fin d.card → Label.{u}}
+    (hss : ∀ x, t'.toCellScheme.grade x ≤ Q.threshold → s' x = s x)
+    (h : Q.AdmitsOnClass s v) : Q.AdmitsOnClass s' v := by
+  intro hcls hcap j
+  have hc : s' Q.cap = s Q.cap := hss _ le_rfl
+  refine (h (fun x hx ↦ ?_) (hc ▸ hcap) j).congr hc.symm
+    (fun hj ↦ (hss _ (hQ.ref j hj).1).symm) (hss _ hQ.marker.1).symm
+  rw [← hss x hx.2]
+  exact hcls x hx
+
+/-- **The admission premise of the state step holds at every grade for an admitted anchor**: from
+the threshold on, the admission of the truncation of `R₀` at `k` is the admission of `R₀` (read at
+the threshold).  The donor cells have grade at most the arity `n + 1 ≤ threshold`, so both
+truncations read the donor alike; on the context the admission reads the grades up to the
+threshold only (`GrowthRequests.admitsOnClass_congr_le_threshold`). -/
+theorem attachAdmits_truncate {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
+    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
+    {hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d}
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte) {k : ℕ}
+    {R₀ : Fin (I.attachment g).card → Label.{u}} (hA : I.attachAdmits g hd Q k R₀) :
+    Q.threshold ≤ k →
+      Q.AdmitsOnClass
+        (fun x ↦ if I.left.toCellScheme.grade x ≤ k then R₀ (I.attachCtxCell g x) else ⊥)
+        fun y ↦ if d.toCellScheme.grade y ≤ k then R₀ (I.attachDonCell g hd y) else ⊥ := by
+  intro hN
+  have hdon (y : Fin d.card) : d.toCellScheme.grade y ≤ Q.threshold := by
+    have h1 := d.isWellFormed.isWellFormed.grade_le_card y
+    have h2 : #(d.toCellScheme.scope y) ≤ n + 1 :=
+      (card_le_univ _).trans (by rw [Fintype.card_fin])
+    exact h1.trans (h2.trans hQ.arity)
+  have hgd (y : Fin d.card) :
+      (I.attachment g).toCellScheme.grade (I.attachDonCell g hd y) = d.toCellScheme.grade y :=
+    Scheme.grade_faceCell (I.comap_donor_attachment_scheme g hd) y
+  have e2 : (fun y ↦ if d.toCellScheme.grade y ≤ k then R₀ (I.attachDonCell g hd y) else ⊥) =
+      fun y ↦ I.attachHatAt g Q.threshold R₀ (I.attachDonCell g hd y) := by
+    funext y
+    unfold attachHatAt
+    rw [hgd, ite_eq_left ((hdon y).trans hN), ite_eq_left (hdon y)]
+  rw [e2]
+  refine GrowthRequests.admitsOnClass_congr_le_threshold hQ (fun x hx ↦ ?_) (hA hN)
+  change (if _ then _ else ⊥) = I.attachHatAt g Q.threshold R₀ (I.attachCtxCell g x)
+  unfold attachHatAt
+  rw [grade_attachCtxCell, ite_eq_left (hx.trans hN), ite_eq_left hx]
+
+/-- **The state step for an admitted anchor at every grade**: a lawful anchor admitted at `k`
+satisfies the admission premise of `Seed.exists_stateStep` (`Seed.attachAdmits_truncate`), with
+no relation between `k` and the threshold. -/
+theorem exists_stateStep_admitted {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
+    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
+    (hdp : restrictFace Fin.castSuccEmb d = some p₀) (hdL : d.IsLegal) (hn : 0 < n)
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
+    (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
+    {k : ℕ} (hk : 1 ≤ k) {R₀ : Fin (I.attachment g).card → Label.{u}}
+    (hR₀ : (I.attachment g).rows.IsLawful R₀) (hR₀A : I.attachAdmits g hd Q k R₀)
+    {h : Label.{u}} (hh : IsSelfVisible k h) {w : Fin I.left.card → Label.{u}}
+    (hw : I.left.rows.IsLawfulBelow ((univ : Finset (Fin (m + 1))), k) fun x ↦ w x)
+    (hwR : ∀ x, I.left.toCellScheme.grade x ≤ k →
+      min (w x) h = min (R₀ (I.attachCtxCell g x)) h) :
+    ∃ W : Fin (I.attachment g).card → Label.{u},
+      (∀ x, I.left.toCellScheme.grade x ≤ k → W (I.attachCtxCell g x) = w x) ∧
+      (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), k) (fun a ↦ W a) ∧
+      I.attachAdmits g hd Q k W ∧
+      ∀ a, min (W a) h = min (R₀ a) h :=
+  exists_stateStep hte hdp hdL hn hd hQ hpair hrel hk hR₀ hh hw hwR
+    fun hN _ ↦ attachAdmits_truncate (hte := hte) hQ hR₀A hN
+
+/-- **The state step for an anchor of a catalogue** at every grade `k`: the anchor `R₀` is only
+lawful below `(univ, k)`, with values self-visible at `1` and admitted at `k`.  The state step runs
+on the truncation of `R₀` at `k` (lawful, `Scheme.isLawful_truncate`, admitted at `k` as `R₀` is,
+`Seed.exists_stateStep_admitted`).  Above the grade `k` the state is set to `R₀`, so every value is
+self-visible at `1`. -/
 theorem exists_stateStep_level {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
     (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
     (hdp : restrictFace Fin.castSuccEmb d = some p₀) (hdL : d.IsLegal) (hn : 0 < n)
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    {k : ℕ} (hk : 1 ≤ k) (hth : Q.threshold = k ∨ k < Q.threshold)
+    {k : ℕ} (hk : 1 ≤ k)
     {R₀ : Fin (I.attachment g).card → Label.{u}}
     (hR₀ : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), k) fun a ↦ R₀ a)
     (hR₀v : ∀ e, IsSelfVisible 1 (R₀ e)) (hR₀A : I.attachAdmits g hd Q k R₀)
@@ -136,11 +214,10 @@ theorem exists_stateStep_level {p₀ : StageType.{u} α n} {d : StageType.{u} α
       (∀ x, I.left.toCellScheme.grade x ≤ k → W (I.attachCtxCell g x) = w x) ∧
       (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), k) (fun a ↦ W a) ∧
       I.attachAdmits g hd Q k W ∧ ∀ a, min (W a) h = min (T a) h := by
-    rcases hth with hth | hlt
-    · exact exists_stateStep_threshold hte hdp hdL hn hd hQ hpair hrel hth hk hTl
-        (attachAdmits_congr hd (fun a ha ↦ hTR a (ha.trans hth.le)) hR₀A) hh hw hwT
-    · exact exists_stateStep hte hdp hdL hn hd hQ hpair hrel hk hTl hh hw hwT
-        fun hN ↦ absurd hN (not_le.mpr hlt)
+    refine exists_stateStep_admitted hte hdp hdL hn hd hQ hpair hrel hk hTl ?_ hh hw hwT
+    by_cases hN : Q.threshold ≤ k
+    · exact attachAdmits_congr hd (fun a ha ↦ hTR a (ha.trans hN)) hR₀A
+    · exact fun hN' ↦ absurd hN' hN
   refine ⟨fun a ↦ if (I.attachment g).toCellScheme.grade a ≤ k then W a else R₀ a,
     fun x hx ↦ ?_, ?_, ?_, fun a ↦ ?_, fun e ↦ ?_⟩
   · change (if _ then W _ else R₀ _) = _
@@ -150,9 +227,9 @@ theorem exists_stateStep_level {p₀ : StageType.{u} α n} {d : StageType.{u} α
       (w' := fun a ↦ if (I.attachment g).toCellScheme.grade a ≤ k then W a else R₀ a)
       fun a ha ↦ ?_).mp hWl
     exact (ite_eq_left (ha.2 : (I.attachment g).toCellScheme.grade a ≤ k)).symm
-  · rcases hth with hth | hlt
-    · exact attachAdmits_congr hd (fun a ha ↦ ite_eq_left (ha.trans hth.le)) hWA
-    · exact fun hN ↦ absurd hN (not_le.mpr hlt)
+  · by_cases hN : Q.threshold ≤ k
+    · exact attachAdmits_congr hd (fun a ha ↦ ite_eq_left (ha.trans hN)) hWA
+    · exact fun hN' ↦ absurd hN' hN
   · by_cases hak : (I.attachment g).toCellScheme.grade a ≤ k
     · change min (if _ then W a else R₀ a) h = _
       rw [ite_eq_left hak, hWR, hTR a hak]
@@ -226,7 +303,7 @@ docstring). -/
 theorem cappedLiftAtShort_next
     (hdp : restrictFace Fin.castSuccEmb d = some p₀) (hdL : d.IsLegal) (hn : 0 < n)
     (hQ : Q.ClassCalibrated hte) (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y))
-    (hrel : Q.HasRelativeLiftOnClass hte hdp) (hth : Q.threshold = j + 2 ∨ j + 2 < Q.threshold)
+    (hrel : Q.HasRelativeLiftOnClass hte hdp)
     (hB : 2 * (I.attachment g).card ≤ B) {u : Fin (N.nS B (I.lvCat g B hd Q (j + 2))).card}
     (hu : (N.nS B (I.lvCat g B hd Q (j + 2))).toCellScheme.gradedIndex u =
       ((univ : Finset (Fin (m + 2))), j + 2)) :
@@ -271,9 +348,9 @@ theorem cappedLiftAtShort_next
     rw [hwx x hx, hfS, hS]
     change min (N.Φ B C R (Fin.castAdd _ (N.attEmb (I.attachCtxCell g x)))) h = _
     rw [ALvl.Φ_castAdd, hN.literal R hR1]
-  -- the state step at the threshold
+  -- the state step at the grade `j + 2`
   obtain ⟨W, hWctx, hWl, hWA, hWR, hWv⟩ := exists_stateStep_level hte hdp hdL hn hd hQ hpair
-    hrel (by omega) hth hRl hRv hRA hh (hwl.isLawfulBelow _) hwR
+    hrel (by omega) hRl hRv hRA hh (hwl.isLawfulBelow _) hwR
   set P := orbitCode (j + 2) W with hPdef
   have hPC : P ∈ C := mem_lvCat.mpr ⟨fun e ↦ orbitMap_mem_codeGrid hcB _,
     hWl.orbitCode fun e ↦ e.2.2, fun e ↦ isSelfVisible_one_orbitCode (by omega) (hWv e),
@@ -312,12 +389,12 @@ theorem cappedLiftAtShort_next
 
 /-- **The owner-capped lift at the cap `⊥` of the next level** at the top grade `j + 2`: the
 prescription capped at its owner label, its context section, the state step at the cut `⊥` from
-the bottom state (`Seed.exists_stateStep_threshold`), and the orbit decoder at the least grid point
+the bottom state (`Seed.exists_stateStep_level`), and the orbit decoder at the least grid point
 applied to the row labelling of the code (a state of the catalogue). -/
 theorem hasOwnerCappedLifts_next_bot (hdp : restrictFace Fin.castSuccEmb d = some p₀)
     (hdL : d.IsLegal) (hn : 0 < n) (hQ : Q.ClassCalibrated hte)
     (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    (hth : Q.threshold = j + 2 ∨ j + 2 < Q.threshold) (hB : 2 * (I.attachment g).card ≤ B) :
+    (hB : 2 * (I.attachment g).card ≤ B) :
     (N.nS B (I.lvCat g B hd Q (j + 2))).rows.HasOwnerCappedLifts
       (erase_subset (Fin.last (m + 1)) univ) (j + 1) ⊥ := by
   classical
@@ -337,7 +414,8 @@ theorem hasOwnerCappedLifts_next_bot (hdp : restrictFace Fin.castSuccEmb d = som
   have hwl : I.left.rows.IsLawful w :=
     isLawful_ctxSectionOf (V := fun a ↦ pT (Fin.castAdd _ (N.attEmb a))) hV
   obtain ⟨W, hWctx, hWl, hWA, -, hWv⟩ := exists_stateStep_level hte hdp hdL hn hd hQ hpair hrel
-    (by omega) hth (R₀ := fun _ ↦ ⊥) (Rows.isLawfulBelow_const_bot _) (fun _ ↦ isSelfVisible_bot 1)
+    (k := j + 2) (by omega) (R₀ := fun _ ↦ ⊥) (Rows.isLawfulBelow_const_bot _)
+    (fun _ ↦ isSelfVisible_bot 1)
     (I.attachAdmits_bot g hd Q _) (isSelfVisible_bot _) (hwl.isLawfulBelow _)
     fun _ _ ↦ by rw [min_bot_right, min_bot_right]
   set P := orbitCode (j + 2) W with hPdef
@@ -363,17 +441,18 @@ theorem hasOwnerCappedLifts_next_bot (hdp : restrictFace Fin.castSuccEmb d = som
   rw [ite_eq_left ((grade_attachCtxCell x).trans_le hx), ← he]
   exact Rows.extendBot_of_mem _ e.2
 
-/-- **The context lift at the top grade of the next level** (`m = j + 1`, threshold `j + 2`, a
-context cell at `(univ, j + 2)`): the lift at the grade `j + 1` and the owner-capped lifts at
-every cap self-visible at `j + 2` (at `⊥`, `Seed.ALvl.Good.hasOwnerCappedLifts_next_bot`; at a
-positive cap from the serving rows, `CellScheme.Rows.hasOwnerCappedLifts_of_rows_short`, the rows
-consistent, short at `j + 2` and never the formal top, and the short lift
+/-- **The context lift of the next level at the grade `j + 2 ≤ m + 1`** (any calibrated
+requests, a context cell at `(univ, j + 2)`): the lift at the grade `j + 1` and the owner-capped
+lifts at every cap self-visible at `j + 2` (at `⊥`,
+`Seed.ALvl.Good.hasOwnerCappedLifts_next_bot`; at a positive cap from the serving rows,
+`CellScheme.Rows.hasOwnerCappedLifts_of_rows_short`, the rows consistent, short at `j + 2` and
+never the formal top, and the short lift
 `Seed.ALvl.Good.cappedLiftAtShort_next`) compose by
 `CellScheme.Rows.cappedLift_of_ownerCappedLift`. -/
 theorem cappedLift_next (hdp : restrictFace Fin.castSuccEmb d = some p₀)
     (hdL : d.IsLegal) (hn : 0 < n) (hQ : Q.ClassCalibrated hte)
     (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    (hth : Q.threshold = j + 2 ∨ j + 2 < Q.threshold) (hkm : j + 2 ≤ m + 1)
+    (hkm : j + 2 ≤ m + 1)
     (hB : 2 * (I.attachment g).card ≤ B)
     (hX : ∃ x : Fin I.left.card,
       I.left.toCellScheme.gradedIndex x = ((univ : Finset (Fin (m + 1))), j + 2))
@@ -405,10 +484,10 @@ theorem cappedLift_next (hdp : restrictFace Fin.castSuccEmb d = some p₀)
     exact map_castSuccEmb_eq_ctxCoatom
   · by_cases hc0 : c = ⊥
     · subst hc0
-      exact hN.hasOwnerCappedLifts_next_bot hdp hdL hn hQ hpair hrel hth hB
+      exact hN.hasOwnerCappedLifts_next_bot hdp hdL hn hQ hpair hrel hB
     refine Rows.hasOwnerCappedLifts_of_rows_short (erase_subset _ _) (bot_lt_iff_ne_bot.mpr hc0)
       hc hY fun u hu ↦ ⟨hNext.consistent u, fun e ↦ ?_, fun e ↦ ?_,
-        hN.cappedLiftAtShort_next hdp hdL hn hQ hpair hrel hth hB hu⟩
+        hN.cappedLiftAtShort_next hdp hdL hn hQ hpair hrel hB hu⟩
     all_goals
       obtain ⟨i, rfl⟩ := exists_natAdd_of_gradedIndex C hu
       obtain ⟨hRB, hRl, -, -, -⟩ := mem_lvCat.mp (C.equivFin.symm i).2

@@ -95,7 +95,7 @@ theorem lvLevel_cappedLift_aux {I : Seed.{u} α 2} {t' : StageType.{u} α 3} (hI
     (hdA : restrictFace (extendByLast ((𝕘).trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests t' d.toScheme} (hpair : ∀ j, Q.CorrectAt t'.label j (d.label j))
     (hQ : Q.ClassCalibrated hte) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    (hth : Q.threshold = 3) {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase 𝕘).S.card ≤ H)
+    {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase 𝕘).S.card ≤ H)
     (hB : 2 * (I.attachment 𝕘).card ≤ B)
     (hX : ∀ k, 2 ≤ k → k ≤ 3 → ∃ x : Fin t'.card,
       t'.toCellScheme.gradedIndex x = ((univ : Finset (Fin 3)), k)) :
@@ -103,7 +103,7 @@ theorem lvLevel_cappedLift_aux {I : Seed.{u} α 2} {t' : StageType.{u} α 3} (hI
       (X := (univ.erase (Fin.last 3), j + 1)) (Y := ((univ : Finset (Fin 4)), j + 1))
       ⟨erase_subset _ _, le_rfl⟩ := by
   subst hI
-  exact Seed.lvLevel_cappedLift hH hcard hte hdp hdL Nat.one_pos hdA hQ hpair hrel hth hB hX
+  exact Seed.lvLevel_cappedLift hH hcard hte hdp hdL Nat.one_pos hdA hQ hpair hrel hB hX
 
 /-- **The context lift of the re-rendered levels at the apex input** (top grade `3`): at every
 seed of the input, for the requests `reqTop α` and every height `H` and block bound `B` with
@@ -119,7 +119,7 @@ theorem lvLevel_cappedLift_three {α : Ordinal.{u}} (I : Seed.{u} α 2) (hI : I.
       ⟨erase_subset _ _, le_rfl⟩ :=
   lvLevel_cappedLift_aux α hI (hte := restrictFace_root) bareDonor_mem_cofaces.2
     bareDonor_mem_cofaces.1 hdA (correctAt_reqTop α) (classCalibrated_reqTop α)
-    (hasRelativeLiftOnClass_reqTop α) (threshold_reqTop α) hH hcard hB fun k hk2 hk3 ↦ by
+    (hasRelativeLiftOnClass_reqTop α) hH hcard hB fun k hk2 hk3 ↦ by
       obtain rfl | rfl : k = 2 ∨ k = 3 := by omega
       · exact ⟨fullTwoCell α, gradedIndex_fullTwoCell⟩
       · exact ⟨apex α, gradedIndex_apex α⟩
@@ -139,14 +139,14 @@ theorem lvLevel_cappedLift_aux {α : Ordinal.{u}} {I : Seed.{u} α 1} {t' : Stag
     (hdA : restrictFace (extendByLast ((𝕣).trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests t' d.toScheme} (hpair : ∀ j, Q.CorrectAt t'.label j (d.label j))
     (hQ : Q.ClassCalibrated hte) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    (hth : Q.threshold = 2) {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase 𝕣).S.card ≤ H)
+    {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase 𝕣).S.card ≤ H)
     (hB : 2 * (I.attachment 𝕣).card ≤ B)
     (hX : ∃ x : Fin t'.card, t'.toCellScheme.gradedIndex x = ((univ : Finset (Fin 2)), 2)) :
     ∀ j, j + 1 ≤ 2 → (I.lvLevel 𝕣 H B hdA (hI ▸ Q) j).S.rows.CappedLift
       (X := (univ.erase (Fin.last 2), j + 1)) (Y := ((univ : Finset (Fin 3)), j + 1))
       ⟨erase_subset _ _, le_rfl⟩ := by
   subst hI
-  exact Seed.lvLevel_cappedLift hH hcard hte hdp hdL Nat.one_pos hdA hQ hpair hrel hth hB
+  exact Seed.lvLevel_cappedLift hH hcard hte hdp hdL Nat.one_pos hdA hQ hpair hrel hB
     fun k hk2 hk ↦ by obtain rfl : k = 2 := by omega
                       exact hX
 
@@ -162,7 +162,7 @@ theorem lvLevel_cappedLift_two (I : Seed.{u} ω 1) (hI : I.left = ctx ω)
       ⟨erase_subset _ _, le_rfl⟩ :=
   lvLevel_cappedLift_aux hI (hte := restrictFace_ctx_root ω) (don_mem_cofaces ω).2
     (don_mem_cofaces ω).1 hdA (correctAt_req ω) (classCalibrated_req ω)
-    (hasRelativeLiftOnClass_req ω) (threshold_req ω) hH hcard hB ⟨cellR.{u} ω, rfl⟩
+    (hasRelativeLiftOnClass_req ω) hH hcard hB ⟨cellR.{u} ω, rfl⟩
 
 end TieInstance
 

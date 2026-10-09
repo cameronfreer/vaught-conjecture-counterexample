@@ -10,9 +10,10 @@ import VaughtConjecture.MainTheorem.ReplicatedLevelLift
 
 Roadmap, Layer 3 ((R3) and (R4), the levels of the replicated carrier re-rendered per grade).
 
-For requests whose threshold is the top grade `m + 1`, a legal context with a cell at `(univ, k)`
-for every `1 ≤ k ≤ m + 1`, the level at the grade `j + 1` (`Seed.lvLevel`) lifts capped from the
-context coatom into `(univ, j + 1)` for every `j + 1 ≤ m + 1` (`Seed.lvLevel_cappedLift`):
+For any calibrated requests (no relation between the threshold and the grades) and a context with
+a cell at `(univ, k)` for every `1 ≤ k ≤ m + 1`, the level at the grade `j + 1` (`Seed.lvLevel`)
+lifts capped from the context coatom into `(univ, j + 1)` for every `j + 1 ≤ m + 1`
+(`Seed.lvLevel_cappedLift`):
 
 * at the grade one the level is the ladder base, which lifts from the context face
   (`Scheme.cappedLift_ladderBase_rankMember`, `Seed.cappedLift_attachment_univ_one`);
@@ -80,8 +81,8 @@ theorem lvLevel1_cappedLift_one (hH : 0 < H) (hcard : (I.attachmentBase g).S.car
     exact hl
   exact key _ _ map_castSuccEmb_eq_ctxCoatom.symm
 
-/-- **The context lift at every grade of the levels**, for requests whose threshold is the top
-grade and a context with a cell at `(univ, k)` for every `1 ≤ k ≤ m + 1`. -/
+/-- **The context lift at every grade of the levels**, for any calibrated requests and a context
+with a cell at `(univ, k)` for every `1 ≤ k ≤ m + 1`. -/
 theorem lvLevel_cappedLift (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
     (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
@@ -89,7 +90,7 @@ theorem lvLevel_cappedLift (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    (hth : Q.threshold = m + 1) (hB : 2 * (I.attachment g).card ≤ B)
+    (hB : 2 * (I.attachment g).card ≤ B)
     (hX : ∀ k, 2 ≤ k → k ≤ m + 1 → ∃ x : Fin I.left.card,
       I.left.toCellScheme.gradedIndex x = ((univ : Finset (Fin (m + 1))), k)) :
     ∀ j, j + 1 ≤ m + 1 → (I.lvLevel g H B hd Q j).S.rows.CappedLift
@@ -99,13 +100,11 @@ theorem lvLevel_cappedLift (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤
       (by rw [card_root]; exact hn)
   | j + 1, hj => by
     have hN := lvLevel_good (B := B) (hd := hd) hH hcard hQ hB j (by omega)
-    have hlow := lvLevel_cappedLift hH hcard hte hdp hdL hn hd hQ hpair hrel hth hB hX j (by omega)
+    have hlow := lvLevel_cappedLift hH hcard hte hdp hdL hn hd hQ hpair hrel hB hX j (by omega)
     have hlift := (ALvl.cappedLift_nS_iff (B := B) (I.lvLevel g H B hd Q j)
       (I.lvCat g B hd Q (j + 2)) _ fun h ↦ absurd h.2 (by simp only; omega)).mpr hlow
-    exact hN.cappedLift_next hdp hdL hn hQ hpair hrel
-      (by rcases Nat.lt_or_ge (j + 2) Q.threshold with h | h
-          · exact .inr h
-          · exact .inl (by omega)) (by omega) hB (hX (j + 2) (by omega) hj) hlift
+    exact hN.cappedLift_next hdp hdL hn hQ hpair hrel (by omega) hB (hX (j + 2) (by omega) hj)
+      hlift
 
 end Seed
 

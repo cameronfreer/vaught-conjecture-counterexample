@@ -28,13 +28,15 @@ anchor's **truncation at `k`** (`hamb`).  The admission of the anchor (`Seed.att
 that of its truncation at the threshold; the two coincide at `k = threshold`
 (`Seed.exists_stateStep_threshold`), as at the top grade `2` of the tie input
 (`TieInstance.exists_stateStep_two`) and at the grade `2` of the apex input, below its top grade
-(`ApexInstance.exists_stateStep_two`).  Above the threshold the truncation at `k` keeps donor
-values of grade in `(threshold, k]`; for an anchor in the catalogue its admission is the ambient
-admission of the anchor's writing (`Seed.ambientAdmitted`), so the state step holds at every grade
-(`Seed.exists_stateStep_of_mem_towerCat`; at the apex input at the grade `3`,
-`ApexInstance.exists_stateStep_three`).  **Status**: unconditional at `k = threshold`; for
-`k > threshold`, unconditional for an anchor in the catalogue and conditional on `hamb` for any
-other anchor (`Seed.exists_stateStep`).
+(`ApexInstance.exists_stateStep_two`).  Above the threshold they coincide as well: the donor
+cells have grade at most the arity `n + 1 ≤ threshold`, and the admission reads the context at the
+grades up to the threshold only, so `hamb` is the admission of the anchor at `k`
+(`Seed.attachAdmits_truncate`, `Seed.exists_stateStep_admitted`).  For an anchor in the catalogue
+it is also the ambient admission of the anchor's writing (`Seed.ambientAdmitted`,
+`Seed.exists_stateStep_of_mem_towerCat`; at the apex input at the grade `3`,
+`ApexInstance.exists_stateStep_three`).  **Status**: unconditional at every grade for an anchor
+admitted at `k`; `hamb` remains an assumption only for an anchor not admitted at `k`
+(`Seed.exists_stateStep`).
 
 **Toward the serving-row short lift** (not proved here).  The lift of a serving row from the state
 `W` would be `orbitDecoder k W h ∘ w_P`, with `P` the orbit code of `W`: it reads `P` literally as
@@ -257,8 +259,9 @@ state `W` of the attachment with four properties:
 (d) `W` agrees with `R₀` capped at `h` at every cell.
 **Status of `hamb`**: vacuous below the threshold; at `k = threshold` it is derived from the
 anchor's admission (`Seed.exists_stateStep_threshold`, unconditional there); for `k > threshold`
-this theorem is CONDITIONAL on `hamb` for a general anchor, and `hamb` is derived only for an
-anchor in the catalogue (`Seed.exists_stateStep_of_mem_towerCat`). -/
+it is derived from the admission of the anchor at `k` (`Seed.attachAdmits_truncate`: the donor
+cells have grade at most `n + 1 ≤ threshold`), and for an anchor in the catalogue also from the
+ambient admission (`Seed.exists_stateStep_of_mem_towerCat`). -/
 theorem exists_stateStep (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
     (hdp : restrictFace Fin.castSuccEmb d = some p₀) (hdL : d.IsLegal) (hn : 0 < n)
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
@@ -409,9 +412,8 @@ of the catalogue of the replicated scheme (its writing a lawful section,
 `Seed.isLawful_replicatedWriting`),
 the admission of its truncation at `k` is that of the ambient state of its writing
 (`Seed.ambientAdmitted`: the controller above the cap cell carries the reads), so the premise
-`hamb` of `Seed.exists_stateStep` holds at every grade.  Above the threshold this is the only
-derivation of `hamb`: for an anchor outside the catalogue the state step above the threshold stays
-conditional on `hamb`. -/
+`hamb` of `Seed.exists_stateStep` holds at every grade.  (It also follows from the admission of
+the anchor at `k` alone, `Seed.attachAdmits_truncate`.) -/
 theorem exists_stateStep_of_mem_towerCat {H : ℕ} {Γ : Finset Label.{u}} {B' : ℕ}
     (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H) (hΓ0 : ⊥ ∈ Γ)
     (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
