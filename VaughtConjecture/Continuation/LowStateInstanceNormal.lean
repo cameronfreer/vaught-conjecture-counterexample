@@ -13,6 +13,14 @@ import VaughtConjecture.Continuation.H2OwnerGeneral
 Roadmap, Layer 3 ((R2), the state tower of the LOW construction; the state step of the tower,
 `ProfileTower.SLvl.SCatStep`).
 
+**Scope.**  A conditional obstruction to the state tower of
+`VaughtConjecture.Continuation.LowStateTower` (whose code splices the fields above each layer and
+whose LOW clause reads the proper donor fields of grade at most `K`), stated under the hypotheses
+named in each theorem.  It is not on the proof of LOW displays: `StageType.hasLowDisplays_of_padded`
+goes through the padded tower (`VaughtConjecture.Continuation.LowPaddedTower`), whose clause over
+the proper donor fields of every grade excludes the configuration
+(`ProfileTower.not_donorMax_lt_of_subset_coatD`).
+
 The state tower asks the state step only at the **normalized** states (`ProfileTower.sCat`: fixed
 by the orbit code over all fields), and it asks the LOW clause of the **orbit code** of the new
 state, not of the new state itself.  Both are reached by the rigid reading of

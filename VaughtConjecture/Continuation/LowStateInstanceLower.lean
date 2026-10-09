@@ -11,6 +11,14 @@ import VaughtConjecture.Continuation.LowStateClauseAll
 Roadmap, Layer 3 ((R2), the state tower of the LOW construction: the step for states above the
 controllers under the clause of the layer).
 
+**Scope.**  A conditional obstruction to the state tower of
+`VaughtConjecture.Continuation.LowStateTower` (whose code splices the fields above each layer and
+whose LOW clause reads the proper donor fields of grade at most `K`), stated under the hypotheses
+named in each theorem.  It is not on the proof of LOW displays: `StageType.hasLowDisplays_of_padded`
+goes through the padded tower (`VaughtConjecture.Continuation.LowPaddedTower`), whose clause over
+the proper donor fields of every grade excludes the configuration
+(`ProfileTower.not_donorMax_lt_of_subset_coatD`).
+
 Under the clause of the layer (`ProfileTower.lowPred_scode_of_le`: the donor maximum over the
 proper donor fields of grade at most the layer's grade `j`) the rigid reading of a donor top is
 excluded (`ProfileTower.not_active_of_mem_fields`).  Its mirror on the private side is not: the
@@ -29,7 +37,8 @@ and `a d₂`.  Then at a state active below the cap the step for states fails: a
 cell of graded index `(univ.erase y, j)` above `u`, which holds the owner at least at `a d₁` and the
 lost top at least at `a d₂`, so the frontier stays above the prescribed donor top.  In an instance
 the donor top is prescribed exactly at the cap (`P t ≥ h`, `a t = h`), with `d₁`, `d₂` root cells
-prescribed above the cap: the case of a donor top at the cap of `ProfileTower.lowStateFail_raise`.
+prescribed above the cap: the case of a donor top at the cap, which the raise above the cap
+(raising every label above the cap) does not repair.
 The clause of the layer does not exclude it.  Whether a legal family realizes it is not compiled.
 
 ## References

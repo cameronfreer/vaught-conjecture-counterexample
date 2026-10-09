@@ -11,6 +11,14 @@ import VaughtConjecture.Continuation.LowStateStep
 Roadmap, Layer 3 ((R2), the state tower of the LOW construction; the step for states above the
 controllers, `StageType.StateStepsAbove`).
 
+**Scope.**  A conditional obstruction to the state tower of
+`VaughtConjecture.Continuation.LowStateTower` (whose code splices the fields above each layer and
+whose LOW clause reads the proper donor fields of grade at most `K`), stated under the hypotheses
+named in each theorem.  It is not on the proof of LOW displays: `StageType.hasLowDisplays_of_padded`
+goes through the padded tower (`VaughtConjecture.Continuation.LowPaddedTower`), whose clause over
+the proper donor fields of every grade excludes the configuration
+(`ProfileTower.not_donorMax_lt_of_subset_coatD`).
+
 The step for states (`ProfileTower.StateCatStep I j A x`) at a grade `j` above the grade `K` of the
 controllers asks, for a state `P` of the LOW clause and a prescription `a` below the coatom
 `univ.erase x` agreeing with `P` capped at `h`, a profile `W` lawful on the cut, literal on the

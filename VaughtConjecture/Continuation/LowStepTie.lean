@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.LowStep
-import VaughtConjecture.Continuation.GrowthCappedDecoder
+import VaughtConjecture.Extension.CappedDecoder
 import VaughtConjecture.Continuation.H2OwnerGeneral
 
 /-!

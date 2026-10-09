@@ -3,14 +3,15 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.GrowthControllerRecovery
-import VaughtConjecture.Label.StepWitness
 import VaughtConjecture.Extension.CapTransport
+import VaughtConjecture.Stage.Scheme
+import VaughtConjecture.Label.StepWitness
 
 /-!
 # The capped decoder of a section at the cap
 
-Roadmap, Layer 3 ((R3) and (R4), the relative lift of the growth construction).
+Roadmap, Layer 3 (the decoders of the constructions of 3.3: the LOW step of (R2) and the relative
+lift of the growth construction of (R3) and (R4)).
 
 Let `u` be a lawful section of a scheme and `c` a cell of grade `N`.  Locality at `c` gives a
 witness `(g, σ)` with `min (u d) (u c) = min (σ (row_c d)) (g (grade d))` for every cell `d` below
@@ -28,8 +29,13 @@ witness `(g, σ)` with `min (u d) (u c) = min (σ (row_c d)) (g (grade d))` for 
   commutes with visibility replacement at `k ≤ N`.
 
 So `θ` is a witness bounded by the grade `N` (`Label.IsWitness` with `Label.stepSuppressor N`),
-the form in which lawfulness is transported (`CellScheme.Rows.IsLawful.map_of_bot_iff`).  This is
-the decoder through which the donor of the growth construction reads the cap.
+the form in which lawfulness is transported (`CellScheme.Rows.IsLawful.map_of_bot_iff`).  The LOW
+step reads the donor face at a cap through it (`VaughtConjecture.Continuation.LowStepTie`), and so
+does the donor of the growth construction.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 
 ## References
 
@@ -43,6 +49,18 @@ namespace VaughtConjecture
 open Finset Label
 
 namespace Label
+
+/-- **The capped controller map commutes with visibility replacement**: for a witness `(g, σ)`,
+`x ↦ min (σ x) (g N)` commutes with visibility replacement at `N` with every value `i ≤ N`. -/
+theorem IsWitness.min_visibilityReplace {g : ℕ → Label.{u}}
+    {σ : Label.{u} → Label.{u}} (hw : IsWitness g σ) {N i : ℕ} (hi : i ≤ N) (x : Label.{u}) :
+    min (σ (visibilityReplace N i x)) (g N) = visibilityReplace N i (min (σ x) (g N)) := by
+  by_cases hx : σ x ≤ g N
+  · rw [hw.visibilityReplace_comm x N hx i hi, min_eq_left hx,
+      min_eq_left (visibilityReplace_le_of_le hi (hw.isSelfVisible N) hx)]
+  · have hlt := hw.lt_apply_visibilityReplace (not_le.mp hx) hi
+    rw [min_eq_right hlt.le, min_eq_right (not_le.mp hx).le,
+      (hw.isSelfVisible N).visibilityReplace_eq]
 
 /-- **A capped witness commutes with visibility replacement below the cap's threshold**: for a
 witness `(g, σ)` and `k ≤ N`, `x ↦ min (σ x) (g N)` commutes with visibility replacement at `k`

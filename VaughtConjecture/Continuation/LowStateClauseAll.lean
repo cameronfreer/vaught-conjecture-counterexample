@@ -10,10 +10,18 @@ import VaughtConjecture.Continuation.LowStateInstanceNormal
 
 Roadmap, Layer 3 ((R2), the state tower of the LOW construction: its admission clause).
 
-**The decision recorded.**  The LOW clause of the state catalogue was to take its donor maximum over
-the proper donor fields of the grades of the current layer, not only over those of grade at most
-`K`.  This is a change of the construction's admission clause, not of the class of models: the
-reason is
+**Scope.**  A conditional obstruction to the state tower of
+`VaughtConjecture.Continuation.LowStateTower` (whose code splices the fields above each layer and
+whose LOW clause reads the proper donor fields of grade at most `K`), stated under the hypotheses
+named in each theorem.  It is not on the proof of LOW displays: `StageType.hasLowDisplays_of_padded`
+goes through the padded tower (`VaughtConjecture.Continuation.LowPaddedTower`), whose clause over
+the proper donor fields of every grade excludes the configuration
+(`ProfileTower.not_donorMax_lt_of_subset_coatD`).
+
+**The question.**  Should the LOW clause of the state catalogue take its donor maximum over the
+proper donor fields of the grades of the current layer, not only over those of grade at most `K`?
+This is a change of the construction's admission clause, not of the class of models; the reason
+to ask is
 `ProfileTower.not_sCatStep_of_rigid_state` (with the maximum over the fields of grade at most `K`,
 the rigid reading refutes the state step of the tower at a normalized state), and
 `ProfileTower.not_active_of_mem_fields` (with the cells of the rigid reading among the fields, the

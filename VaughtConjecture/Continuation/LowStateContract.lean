@@ -12,6 +12,14 @@ import VaughtConjecture.Continuation.LowStateTower
 Roadmap, Layer 3 ((R2), the state tower of the LOW construction: the lift of a layer of states from
 a coatom, `ProfileTower.STowerLifts`); semantic contract, items 3, 4 and 8.
 
+**Scope.**  A conditional obstruction to the state tower of
+`VaughtConjecture.Continuation.LowStateTower` (whose code splices the fields above each layer and
+whose LOW clause reads the proper donor fields of grade at most `K`), stated under the hypotheses
+named in each theorem.  It is not on the proof of LOW displays: `StageType.hasLowDisplays_of_padded`
+goes through the padded tower (`VaughtConjecture.Continuation.LowPaddedTower`), whose clause over
+the proper donor fields of every grade excludes the configuration
+(`ProfileTower.not_donorMax_lt_of_subset_coatD`).
+
 The lift of the layer of a state catalogue `N.sS C` over a state level `N` at the grade `g` from a
 coatom `(univ.erase x, g + 1)` to `(univ, g + 1)` is the contract `CellScheme.Rows.CappedLift`:
 every prescription lawful below the coatom, agreeing with the ambient capped at the cap, extends

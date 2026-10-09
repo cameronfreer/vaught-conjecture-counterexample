@@ -34,8 +34,8 @@ catalogue cut out by an arbitrary **predicate** `A` on profiles with a cutoff
 
 **Instances.**  The LOW layer is the instance with `A` the LOW clause at the cutoff (every profile
 with cutoff `⊥` is inactive, so LOW); the activation layer of the growth construction is the
-instance with `A` the admission of a profile by the requests on the bottom class
-(`VaughtConjecture.Continuation.GrowthAdmittedStep`).  The construction and proofs are those of the
+instance with `A` the admission of a profile by the requests on the bottom class.  The
+construction and proofs are those of the
 LOW layer with the clause replaced by `A`.
 
 ## Placement

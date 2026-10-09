@@ -11,10 +11,9 @@ import VaughtConjecture.Continuation.LowDisplayActual
 Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3: the levels above the
 controllers); semantic contract, items 3, 4 and 8.
 
-The acquired contexts carry ordinal labels above their grade
-(`Realization.exists_acquired_not_lowBotClass`), and over the canonical levels the separator
-cannot be labelled `⊤` then (`ProfileTower.lowDisplay_label_eq_bot`).  This file states what a
-level above the LOW layer must provide instead, and proves the reading from it.
+The acquired contexts can carry ordinal labels above their grade, and over the canonical levels the
+separator cannot be labelled `⊤` then (`ProfileTower.lowDisplay_label_eq_bot`).  This file states
+what a level above the LOW layer must provide instead, and proves the reading from it.
 
 **A level reading the actual state** (`ProfileTower.ReadsActual`).  Over a seed `I` on `m + 2`
 points, a good level `L` at the grade `g` and the LOW catalogue at `K = g + 1`, a good level `N`
