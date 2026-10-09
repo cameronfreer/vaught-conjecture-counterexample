@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.LowStateInstance
+import VaughtConjecture.Continuation.LowStateInstanceLower
 import VaughtConjecture.Continuation.LowStateTower
 
 /-!
@@ -51,10 +51,18 @@ keeps the donor top at most `θ`.  Hence the layer does not lift capped from the
 step for states and the contract fail together here: the slack between them (a lift realized by
 an inactive state) does not exist.
 
-**The lifts of the state tower** (`ProfileTower.not_sTowerLifts_of_rigid`).  If the configuration
-occurs at a member of the catalogue of some layer `J < J₀` of the state tower of the LOW clause,
-the tower does not lift (`ProfileTower.STowerLifts`): the lifts below that layer make its level
-good (`ProfileTower.sTower_good`), and its layer does not lift capped.
+**The held frontier** (`ProfileTower.SLvl.Good.not_lawful_sS_of_held`,
+`ProfileTower.SLvl.Good.not_cappedLift_sS_of_held`).  The same holds in the configuration of
+`ProfileTower.not_stateCatStep_of_held`: the private coatom holds the owner and the lost top above
+`d₁` and `d₂` (monotone readings), and the donor top is prescribed below
+`min (a d₁) (visibilityReplace K K (a d₂))`; the witness of the realized cell reads the frontier of
+its LOW state at most at the donor top, and commutes with the replacement at `K` there.
+
+**The lifts of the state tower** (`ProfileTower.not_sTowerLifts_of_rigid`,
+`ProfileTower.not_sTowerLifts_of_held`, through `ProfileTower.not_sTowerLifts_of_layer`).  If
+either configuration occurs at a member of the catalogue of some layer `J < J₀` of the state tower
+of the LOW clause, the tower does not lift (`ProfileTower.STowerLifts`): the lifts below that
+layer make its level good (`ProfileTower.sTower_good`), and its layer does not lift capped.
 
 **Where a slack would have to come from.**  The activity of the realized state uses only that the
 proper donor fields are cells of grade at most `g + 1`, read by the row of the realized cell; the
@@ -663,6 +671,291 @@ theorem not_sTowerLifts_of_rigid {L : Lvl I g} (hL : L.Good) {K : ℕ}
   obtain ⟨e', he', hge'⟩ := hF.1 _ hf
   cases he'
   exact ⟨e, rfl, by omega, he⟩
+
+/-! ### The contract fails at a held frontier -/
+
+/-- **A new cell above a cell of grade `g + 1`, with an active state.**  Under the hypotheses of
+`ProfileTower.SLvl.Good.donorMax_lt_of_isLawfulBelow_sS`, a cell `z` of grade `g + 1` below
+`(univ, g + 1)` labelled above the donor maximum of `P` lies below a new cell `v` in the labels of
+`w` (availability), and the state of `v` is active. -/
+theorem SLvl.Good.exists_active_above (hN : N.Good A) {Nf : Finset (Fin I.amalgam.card ⊕ Unit)}
+    {P : CProf I} (hPC : P ∈ C) (hPB : ∀ f, P f ∈ codeGrid (g + 1) (bound I)) {h : Label.{u}}
+    (hNf : ∀ f ∈ Nf, ∃ e, f = Sum.inl e ∧ I.amalgam.toCellScheme.grade e ≤ g + 1 ∧
+      P (Sum.inl e) < h)
+    (hact : donorMax Nf P < min (P (Sum.inr ())) h)
+    {w : Fin (N.S.card + C.card) → Label.{u}}
+    (hw : (N.sS C).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g + 1) fun z ↦ w z)
+    (hwP : ∀ z ∈ (N.sS C).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1),
+      min (w z) h = min (N.Φs C P z) h)
+    {z : Fin (N.S.card + C.card)}
+    (hzg : (N.sS C).toCellScheme.grade z = g + 1) (hzD : donorMax Nf P < w z) :
+    ∃ i, w z ≤ w (Fin.natAdd N.S.card i) ∧
+      donorMax Nf (C.equivFin.symm i).1 < (C.equivFin.symm i).1 (Sum.inr ()) := by
+  obtain ⟨iP, -⟩ := exists_equivFin_eq hPC
+  obtain ⟨-, -, havail⟩ := Rows.isLawfulBelow_iff_forall.mp hw
+  obtain ⟨v, hv, hwv⟩ := havail z (Fin.natAdd N.S.card iP) (SLvl.natAdd_mem_below_sS iP)
+    (by rw [Scheme.appendFullCellsScheme_scope_natAdd]; exact subset_univ _)
+    (by rw [Scheme.appendFullCellsScheme_grade_natAdd]; exact hzg)
+  have hnew : ∀ v' : Fin (N.S.card + C.card), (N.sS C).toCellScheme.gradedIndex v' =
+      ((univ : Finset (Fin (m + 2))), g + 1) → ∃ i, v' = Fin.natAdd N.S.card i := by
+    intro v' hv'
+    induction v' using Fin.addCases with
+    | right i => exact ⟨i, rfl⟩
+    | left e =>
+      rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd] at hv'
+      rcases N.inv e with he | he
+      · have h2 : N.S.toCellScheme.grade e = g + 1 := congrArg Prod.snd hv'
+        omega
+      · exact absurd (congrArg Prod.fst hv') he
+  obtain ⟨i, rfl⟩ := hnew v (hv.trans (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ iP))
+  exact ⟨i, hwv, hN.donorMax_lt_of_isLawfulBelow_sS hPC hPB hNf hact hw hwP i
+    (hzD.trans_le hwv)⟩
+
+/-- **The reading at a new cell of the amalgam cells**: a witness `(gg, σ)` with
+`min (w e) (w v) = min (σ (Q e)) (gg (grade e))` at every amalgam cell `e` of grade at most
+`g + 1`, `Q` the state of `v`, and `w v ≤ gg (g + 1)`. -/
+theorem SLvl.Good.exists_reading_sS (hN : N.Good A) {w : Fin (N.S.card + C.card) → Label.{u}}
+    (hw : (N.sS C).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g + 1) fun z ↦ w z)
+    (i : Fin C.card) :
+    ∃ gg σ, IsWitness gg σ ∧ w (Fin.natAdd N.S.card i) ≤ gg (g + 1) ∧
+      ∀ e : Fin I.amalgam.card, I.amalgam.toCellScheme.grade e ≤ g + 1 →
+        min (w (Fin.castAdd C.card (N.embed e))) (w (Fin.natAdd N.S.card i)) =
+          min (σ ((C.equivFin.symm i).1 (Sum.inl e))) (gg (I.amalgam.toCellScheme.grade e)) := by
+  obtain ⟨gg, σ, hσ, hgv, hread⟩ := Scheme.exists_reading hw (SLvl.natAdd_mem_below_sS i)
+  refine ⟨gg, σ, hσ, by rwa [Scheme.appendFullCellsScheme_grade_natAdd] at hgv, fun e he ↦ ?_⟩
+  have h1 := hread _ (by
+    rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd]; exact hN.embed_mem_below_sS he)
+  rwa [hN.rowAt_sS_natAdd_embed i he, show (N.sS C).toCellScheme.grade
+    (Fin.castAdd C.card (N.embed e)) = I.amalgam.toCellScheme.grade e from
+    congrArg Prod.snd (hN.gradedIndex_sS_embed e)] at h1
+
+/-- **No lawful labelling of the layer at a held frontier.**  Let every state of `C` be LOW at
+`K ≤ g + 1`, and `P ∈ C` in the code grid, active below the cap `h`, with its proper donor fields
+amalgam cells of grade at most `g + 1` labelled below `h`.  Let every cell of graded index
+`(univ.erase y, g + 1)` (there is one, `w₀`) read the owner `o` at least as `d₁` and the lost top
+`r` at least as `d₂`, and let `u` have grade `g + 1` and scope in `univ.erase y`.  Then no
+labelling `w` lawful below `(univ, g + 1)` in the layer, agreeing with the row of `P` capped at `h`
+there, labels the copy of `u` above `d₁`, `d₂` and the donor maximum of `P`, and the donor top `t`
+(of grade at most `g + 1`) below `min (w d₁) (visibilityReplace K K (w d₂))`. -/
+theorem SLvl.Good.not_lawful_sS_of_held {K : ℕ} {Nf : Finset (Fin I.amalgam.card ⊕ Unit)}
+    {T : Set (Fin I.amalgam.card ⊕ Unit)} {o r : Fin I.amalgam.card}
+    (hN : N.Good A) (hKj : K ≤ g + 1) {y : Fin (m + 2)} {t d₁ d₂ u w₀ : Fin I.amalgam.card}
+    (hw₀ : I.amalgam.toCellScheme.gradedIndex w₀ = (univ.erase y, g + 1))
+    (hheld : ∀ w, I.amalgam.toCellScheme.gradedIndex w = (univ.erase y, g + 1) →
+      o ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      r ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      d₁ ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      d₂ ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      I.amalgam.rowAt w d₁ ≤ I.amalgam.rowAt w o ∧ I.amalgam.rowAt w d₂ ≤ I.amalgam.rowAt w r)
+    (ht : Sum.inl t ∈ T) (htg : I.amalgam.toCellScheme.grade t ≤ g + 1)
+    (huy : I.amalgam.toCellScheme.scope u ⊆ univ.erase y)
+    (hug : I.amalgam.toCellScheme.grade u = g + 1)
+    (hClow : ∀ Q ∈ C, lowPred K Nf T o r Q)
+    {P : CProf I} (hPC : P ∈ C) (hPB : ∀ f, P f ∈ codeGrid (g + 1) (bound I)) {h : Label.{u}}
+    (hNf : ∀ f ∈ Nf, ∃ e, f = Sum.inl e ∧ I.amalgam.toCellScheme.grade e ≤ g + 1 ∧
+      P (Sum.inl e) < h)
+    (hact : donorMax Nf P < min (P (Sum.inr ())) h)
+    {w : Fin (N.S.card + C.card) → Label.{u}}
+    (hw : (N.sS C).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g + 1) fun z ↦ w z)
+    (hwP : ∀ z ∈ (N.sS C).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1),
+      min (w z) h = min (N.Φs C P z) h)
+    (hu₁ : w (Fin.castAdd C.card (N.embed d₁)) < w (Fin.castAdd C.card (N.embed u)))
+    (hu₂ : w (Fin.castAdd C.card (N.embed d₂)) < w (Fin.castAdd C.card (N.embed u)))
+    (hwD : donorMax Nf P < w (Fin.castAdd C.card (N.embed u)))
+    (hwt : w (Fin.castAdd C.card (N.embed t)) < min (w (Fin.castAdd C.card (N.embed d₁)))
+      (visibilityReplace K K (w (Fin.castAdd C.card (N.embed d₂))))) :
+    False := by
+  classical
+  set W' : Prof I := fun e ↦ w (Fin.castAdd C.card (N.embed e)) with hW'
+  have hWy : I.amalgam.rows.IsLawfulBelow (univ.erase y, g + 1) (fun e ↦ W' e) :=
+    (hN.isLawfulBelow_sS_iff (Seed.ne_univ_erase y)).mp
+      (hw.mono (X := (univ.erase y, g + 1)) ⟨erase_subset _ _, le_rfl⟩)
+  have hgw₀ : I.amalgam.toCellScheme.grade w₀ = g + 1 := congrArg Prod.snd hw₀
+  -- availability below the coatom `univ.erase y`: the owner and the lost top are held
+  obtain ⟨-, -, havail⟩ := Rows.isLawfulBelow_iff_forall.mp hWy
+  have hw₀b : w₀ ∈ I.amalgam.toCellScheme.below (univ.erase y, g + 1) := by
+    rw [CellScheme.mem_below, hw₀]
+  obtain ⟨w₁, hw₁, huw⟩ := havail u w₀ hw₀b
+    (by rw [show I.amalgam.toCellScheme.scope w₀ = univ.erase y from congrArg Prod.fst hw₀]
+        exact huy)
+    (by rw [hug, hgw₀])
+  have hw₁g : I.amalgam.toCellScheme.grade w₁ = g + 1 := congrArg Prod.snd (hw₁.trans hw₀)
+  have hw₁b : w₁ ∈ I.amalgam.toCellScheme.below (univ.erase y, g + 1) := by
+    rw [CellScheme.mem_below, hw₁, hw₀]
+  obtain ⟨how, hrw, hd₁w, hd₂w, hrow₁, hrow₂⟩ := hheld w₁ (hw₁.trans hw₀)
+  have hWo : W' d₁ ≤ W' o :=
+    Scheme.le_of_rowAt_le_of_lt hWy hw₁b hd₁w how hrow₁ (hu₁.trans_le huw)
+  have hWr : W' d₂ ≤ W' r :=
+    Scheme.le_of_rowAt_le_of_lt hWy hw₁b hd₂w hrw hrow₂ (hu₂.trans_le huw)
+  have hog : I.amalgam.toCellScheme.grade o ≤ g + 1 := how.2.trans hw₁g.le
+  have hrg : I.amalgam.toCellScheme.grade r ≤ g + 1 := hrw.2.trans hw₁g.le
+  -- a new cell above the copy of `u`, with an active and LOW state
+  obtain ⟨i, hwv, hQact⟩ := hN.exists_active_above hPC hPB hNf hact hw hwP
+    (z := Fin.castAdd C.card (N.embed u))
+    (by rw [Scheme.appendFullCellsScheme_grade_castAdd, hN.lowerEmb.grade_eq, hug]) hwD
+  set Q : CProf I := (C.equivFin.symm i).1 with hQ
+  have hft := hClow Q (C.equivFin.symm i).2 hQact (Sum.inl t) ht
+  obtain ⟨gg, σ, hσ, hgv, hread⟩ := hN.exists_reading_sS hw i
+  have hgle {e : Fin I.amalgam.card} (he : I.amalgam.toCellScheme.grade e ≤ g + 1) :
+      w (Fin.natAdd N.S.card i) ≤ gg (I.amalgam.toCellScheme.grade e) :=
+    hgv.trans (hσ.antitone he)
+  have htv : W' t < w (Fin.natAdd N.S.card i) :=
+    (hwt.trans_le (min_le_left _ _)).trans (hu₁.trans_le hwv)
+  have hσt : σ (Q (Sum.inl t)) = W' t :=
+    Label.eq_of_min_eq_min_of_lt (hread t htg) htv (hgle htg)
+  have hd₁v : W' d₁ < w (Fin.natAdd N.S.card i) := hu₁.trans_le hwv
+  have hd₂v : W' d₂ < w (Fin.natAdd N.S.card i) := hu₂.trans_le hwv
+  have hσo : W' d₁ ≤ σ (Q (Sum.inl o)) := by
+    have h1 := hread o hog
+    have h2 : W' d₁ ≤ min (W' o) (w (Fin.natAdd N.S.card i)) := le_min hWo hd₁v.le
+    rw [h1] at h2
+    exact h2.trans (min_le_left _ _)
+  have hσr : W' d₂ ≤ σ (Q (Sum.inl r)) := by
+    have h1 := hread r hrg
+    have h2 : W' d₂ ≤ min (W' r) (w (Fin.natAdd N.S.card i)) := le_min hWr hd₂v.le
+    rw [h1] at h2
+    exact h2.trans (min_le_left _ _)
+  -- the LOW clause of `Q`, read by the witness
+  have hfrQ : σ (min (Q (Sum.inl o)) (visibilityReplace K K (Q (Sum.inl r)))) ≤ W' t :=
+    (hσ.monotone ((le_max_right _ _).trans hft)).trans hσt.le
+  rw [hσ.monotone.map_min] at hfrQ
+  have hvr : σ (visibilityReplace K K (Q (Sum.inl r))) ≤ W' t := by
+    rcases min_le_iff.mp hfrQ with h1 | h1
+    · exact absurd ((hwt.trans_le (min_le_left _ _)).trans_le (hσo.trans h1)) (lt_irrefl _)
+    · exact h1
+  have hcap : σ (Q (Sum.inl r)) ≤ gg K :=
+    (hσ.monotone (le_visibilityReplace (by omega) _)).trans
+      (hvr.trans (htv.le.trans (hgv.trans (hσ.antitone hKj))))
+  rw [hσ.visibilityReplace_comm _ K hcap K le_rfl] at hvr
+  have h3 : visibilityReplace K K (W' d₂) ≤ W' t :=
+    (monotone_visibilityReplace le_rfl hσr).trans hvr
+  exact absurd (hwt.trans_le ((min_le_right _ _).trans h3)) (lt_irrefl _)
+
+/-- **The layer of the LOW catalogue does not lift capped from the coatom at a held frontier.**
+In the configuration of `ProfileTower.not_stateCatStep_of_held` at the grade `g + 1`, with the
+state `P` a member of the catalogue `sCat I (g + 1) (lowPred K Nf T o r)` over a good state level,
+its proper donor fields amalgam cells of grade at most `g + 1`, and the prescription `a` above the
+donor maximum of `P` at `u`, the layer does not lift capped from `(univ.erase x, g + 1)` to
+`(univ, g + 1)`: the lift of `a` in the cap ball of the row of `P` at `h` would be a labelling
+excluded by `ProfileTower.SLvl.Good.not_lawful_sS_of_held`. -/
+theorem SLvl.Good.not_cappedLift_sS_of_held {K : ℕ} {Nf : Finset (Fin I.amalgam.card ⊕ Unit)}
+    {T : Set (Fin I.amalgam.card ⊕ Unit)} {o r : Fin I.amalgam.card}
+    (hN : N.Good (lowPred K Nf T o r)) (hKj : K ≤ g + 1) {x y : Fin (m + 2)}
+    {t d₁ d₂ u w₀ : Fin I.amalgam.card}
+    (hw₀ : I.amalgam.toCellScheme.gradedIndex w₀ = (univ.erase y, g + 1))
+    (hheld : ∀ w, I.amalgam.toCellScheme.gradedIndex w = (univ.erase y, g + 1) →
+      o ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      r ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      d₁ ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      d₂ ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      I.amalgam.rowAt w d₁ ≤ I.amalgam.rowAt w o ∧ I.amalgam.rowAt w d₂ ≤ I.amalgam.rowAt w r)
+    (ht : Sum.inl t ∈ T) (htx : t ∈ I.amalgam.toCellScheme.below (univ.erase x, g + 1))
+    (hd₁ : d₁ ∈ I.amalgam.toCellScheme.below (univ.erase x, g + 1))
+    (hd₂ : d₂ ∈ I.amalgam.toCellScheme.below (univ.erase x, g + 1))
+    (hux : u ∈ I.amalgam.toCellScheme.below (univ.erase x, g + 1))
+    (huy : I.amalgam.toCellScheme.scope u ⊆ univ.erase y)
+    (hug : I.amalgam.toCellScheme.grade u = g + 1)
+    {P : CProf I} (hP : P ∈ sCat I (g + 1) (lowPred K Nf T o r)) {h : Label.{u}}
+    (hh : IsSelfVisible (g + 1) h)
+    (hNf : ∀ f ∈ Nf, ∃ e, f = Sum.inl e ∧ I.amalgam.toCellScheme.grade e ≤ g + 1 ∧
+      P (Sum.inl e) < h)
+    (hact : donorMax Nf P < min (P (Sum.inr ())) h)
+    {a : Prof I} (ha : I.amalgam.rows.IsLawfulBelow (univ.erase x, g + 1) (fun e ↦ a e))
+    (haP : ∀ e ∈ I.amalgam.toCellScheme.below (univ.erase x, g + 1),
+      min (a e) h = min (P (Sum.inl e)) h)
+    (hu₁ : a d₁ < a u) (hu₂ : a d₂ < a u) (hDu : donorMax Nf P < a u)
+    (hat : a t < min (a d₁) (visibilityReplace K K (a d₂))) :
+    ¬ (N.sS (sCat I (g + 1) (lowPred K Nf T o r))).rows.CappedLift
+      (X := (univ.erase x, g + 1)) (Y := ((univ : Finset (Fin (m + 2))), g + 1))
+      ⟨erase_subset _ _, le_rfl⟩ := by
+  classical
+  intro hlift
+  set C := sCat I (g + 1) (lowPred K Nf T o r) with hC
+  obtain ⟨hPB, hPcut, -, hPA⟩ := mem_sCat.mp hP
+  obtain ⟨pf, hpe, hp, hag⟩ := hN.exists_prescription_sS (C := C) P ha haP
+  obtain ⟨r', hr', hr'q, hr'p⟩ := (Rows.cappedLift_iff_forall_exists _).mp hlift h hh
+    (fun z ↦ pf z) (fun z ↦ N.Φs C P z) hp (hN.isLawfulBelow_Φs hP hPB hPcut hPA)
+    fun e ↦ hag e.1 e.2
+  have hwa (e : Fin I.amalgam.card)
+      (he : e ∈ I.amalgam.toCellScheme.below (univ.erase x, g + 1)) :
+      Rows.extendBot ((univ : Finset (Fin (m + 2))), g + 1) r'
+        (Fin.castAdd C.card (N.embed e)) = a e := by
+    have hzb : Fin.castAdd C.card (N.embed e) ∈
+        (N.sS C).toCellScheme.below (univ.erase x, g + 1) := by
+      rw [CellScheme.mem_below, hN.gradedIndex_sS_embed]; exact he
+    rw [Rows.extendBot_of_mem r' ((N.sS C).toCellScheme.below_mono
+      (show ((univ.erase x, g + 1) : Finset (Fin (m + 2)) × ℕ) ≤ (univ, g + 1) from
+        ⟨erase_subset _ _, le_rfl⟩) hzb), ← hpe e]
+    exact hr'p ⟨_, hzb⟩
+  refine hN.not_lawful_sS_of_held hKj hw₀ hheld ht htx.2 huy hug
+    (fun Q hQ ↦ (mem_sCat.mp hQ).2.2.2) hP hPB hNf hact
+    (Rows.isLawfulBelow_extendBot.mpr hr') (fun z hz ↦ ?_) ?_ ?_ ?_ ?_
+  · rw [Rows.extendBot_of_mem r' hz]
+    exact hr'q ⟨z, hz⟩
+  · rw [hwa u hux, hwa d₁ hd₁]; exact hu₁
+  · rw [hwa u hux, hwa d₂ hd₂]; exact hu₂
+  · rw [hwa u hux]; exact hDu
+  · rw [hwa t htx, hwa d₁ hd₁, hwa d₂ hd₂]; exact hat
+
+/-! ### The lifts of the state tower fail at a layer that does not lift -/
+
+/-- **The lifts of the state tower fail at a layer that does not lift when its level is good.**
+Over a good level `L` at the grade `g`, for the LOW clause at `K ≤ g + 1` with designated fields of
+grade at most `K`: if for some `J < J₀` (with `g + J ≤ m`) and `x ∈ Pts` the layer of the level
+`J` does not lift capped from `univ.erase x` whenever that level is good, the state tower does not
+lift: its lifts would make the level good (`ProfileTower.sTower_good`). -/
+theorem not_sTowerLifts_of_layer {L : Lvl I g} (hL : L.Good) {K : ℕ}
+    {Nf : Finset (Fin I.amalgam.card ⊕ Unit)} {T : Set (Fin I.amalgam.card ⊕ Unit)}
+    {o r : Fin I.amalgam.card} (hF : FieldsLE K Nf T o) (hrK : I.amalgam.toCellScheme.grade r ≤ K)
+    (hKg : K ≤ g + 1) {J₀ J : ℕ} (hJ : J < J₀) (hJm : g + J ≤ m)
+    {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
+    (hlayer : (sTower L (lowPred K Nf T o r) J).Good (lowPred K Nf T o r) →
+      ¬ ((sTower L (lowPred K Nf T o r) J).sS
+        (sCat I (g + J + 1) (lowPred K Nf T o r))).rows.CappedLift
+        (X := (univ.erase x, g + J + 1)) (Y := ((univ : Finset (Fin (m + 2))), g + J + 1))
+        ⟨erase_subset _ _, le_rfl⟩) :
+    ¬ STowerLifts L (lowPred K Nf T o r) J₀ := fun hlift ↦
+  hlayer (sTower_good hL (fun W ↦ lowPred_withCut_bot W)
+    (fun _ hj _ hP ↦ lowPred_scode hF hrK (hKg.trans hj) hP) hlift J hJ.le hJm) (hlift J hJ x hx)
+
+/-- **The lifts of the state tower fail at a held frontier**: the configuration of
+`ProfileTower.SLvl.Good.not_cappedLift_sS_of_held` at a member of the catalogue of a layer
+`J < J₀` (with `g + J ≤ m`) of the state tower of the LOW clause, from a point `x`. -/
+theorem not_sTowerLifts_of_held {L : Lvl I g} (hL : L.Good) {K : ℕ}
+    {Nf : Finset (Fin I.amalgam.card ⊕ Unit)} {T : Set (Fin I.amalgam.card ⊕ Unit)}
+    {o r : Fin I.amalgam.card} (hF : FieldsLE K Nf T o) (hrK : I.amalgam.toCellScheme.grade r ≤ K)
+    (hKg : K ≤ g + 1) {J₀ J : ℕ} (hJ : J < J₀) (hJm : g + J ≤ m)
+    {x y : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
+    {t d₁ d₂ u w₀ : Fin I.amalgam.card}
+    (hw₀ : I.amalgam.toCellScheme.gradedIndex w₀ = (univ.erase y, g + J + 1))
+    (hheld : ∀ w, I.amalgam.toCellScheme.gradedIndex w = (univ.erase y, g + J + 1) →
+      o ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      r ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      d₁ ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      d₂ ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex w) ∧
+      I.amalgam.rowAt w d₁ ≤ I.amalgam.rowAt w o ∧ I.amalgam.rowAt w d₂ ≤ I.amalgam.rowAt w r)
+    (ht : Sum.inl t ∈ T) (htx : t ∈ I.amalgam.toCellScheme.below (univ.erase x, g + J + 1))
+    (hd₁ : d₁ ∈ I.amalgam.toCellScheme.below (univ.erase x, g + J + 1))
+    (hd₂ : d₂ ∈ I.amalgam.toCellScheme.below (univ.erase x, g + J + 1))
+    (hux : u ∈ I.amalgam.toCellScheme.below (univ.erase x, g + J + 1))
+    (huy : I.amalgam.toCellScheme.scope u ⊆ univ.erase y)
+    (hug : I.amalgam.toCellScheme.grade u = g + J + 1)
+    {P : CProf I} (hP : P ∈ sCat I (g + J + 1) (lowPred K Nf T o r)) {h : Label.{u}}
+    (hh : IsSelfVisible (g + J + 1) h) (hNh : ∀ f ∈ Nf, ∃ e, f = Sum.inl e ∧ P (Sum.inl e) < h)
+    (hact : donorMax Nf P < min (P (Sum.inr ())) h)
+    {a : Prof I} (ha : I.amalgam.rows.IsLawfulBelow (univ.erase x, g + J + 1) (fun e ↦ a e))
+    (haP : ∀ e ∈ I.amalgam.toCellScheme.below (univ.erase x, g + J + 1),
+      min (a e) h = min (P (Sum.inl e)) h)
+    (hu₁ : a d₁ < a u) (hu₂ : a d₂ < a u) (hDu : donorMax Nf P < a u)
+    (hat : a t < min (a d₁) (visibilityReplace K K (a d₂))) :
+    ¬ STowerLifts L (lowPred K Nf T o r) J₀ :=
+  not_sTowerLifts_of_layer hL hF hrK hKg hJ hJm hx fun hN ↦
+    hN.not_cappedLift_sS_of_held (by omega) hw₀ hheld ht htx hd₁ hd₂ hux huy hug hP hh
+      (fun f hf ↦ by
+        obtain ⟨e, rfl, he⟩ := hNh f hf
+        obtain ⟨e', he', hge'⟩ := hF.1 _ hf
+        cases he'
+        exact ⟨e, rfl, by omega, he⟩) hact ha haP hu₁ hu₂ hDu hat
 
 end ProfileTower
 
