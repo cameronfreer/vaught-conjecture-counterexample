@@ -134,7 +134,9 @@ theorem IsLowFamily.grade_pos {K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : 
     {o r : Fin t'.card} (hF : IsLowFamily K t' tb p o r) : 0 < K :=
   hF.isSourceGapContextAt.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
 
-/-- **The reading of a LOW family** (open): for every decomposition `K = g + 1`, `k = g + 1 + j`
+/-- **The reading of a LOW family** (at a stage that is zero or a limit, for a LOW family with a
+donor top of grade `K` and `K ≤ k`, it holds exactly when the two faces are `⊥` above `K`:
+`StageType.lowReadingFamily_iff`): for every decomposition `K = g + 1`, `k = g + 1 + j`
 and every donor top `z` of grade `K`, the reading (`ProfileTower.LowReading`) of the completed
 display over the levels from the grade `0` at `g` and the LOW layer at `K` of the seed of the
 family; the LOW layer is a good level by `ProfileTower.Lvl.Good.lowNext`. -/

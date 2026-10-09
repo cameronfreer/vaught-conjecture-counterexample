@@ -183,11 +183,15 @@ theorem IsSourceGapContextAt.isLawfulBelow_rowAt (ht' : t'.IsLegal)
   exact h'
 
 /-- **The lowering below a cap** in a legal source-gap context of grade `K`: a section `u`
-lawful below `(univ, K)`, a cap `c` self-visible at `K` with `⊥ < c ≤ u o`, and `u` at most `u o`
-at every cell of grade at most `K` that the owner reads above `R_K (row_o r)`, give a section
+lawful below `(univ, K)`, a cap `c` self-visible at `K` with `⊥ < c ≤ u o`, and the serving
+premise (`hserve`: for cells `s`, `t` of equal grades at most `K` with the scope of `s` inside that
+of `t`, if the owner reads `s` above `R_K (row_o r)` and `u` reads `s` above `u o`, some cell `w`
+of the graded index of `t` with `u s ≤ u w` is read by the owner above `R_K (row_o r)`), give a
+section
 `v` lawful below `(univ, K)` agreeing with `u` capped at `c`, reading the lost top at most `c`,
 and equal to `u` at every cell the owner reads above `R_K (row_o r)` and at every cell where `u`
-is at most `c`. -/
+is at most `c`.  Domination by the owner where the owner reads high gives the serving premise
+(`IsSourceGapContextAt.serve_of_dom`, `IsSourceGapContextAt.exists_lowering`). -/
 theorem IsSourceGapContextAt.exists_lowering' (ht' : t'.IsLegal)
     (hs : t'.IsSourceGapContextAt K h l o r) {u : Fin t'.card → Label.{u}}
     (hu : t'.rows.IsLawfulBelow (univ, K) fun d ↦ u d)
@@ -544,7 +548,9 @@ theorem IsSourceGapContextAt.serve_of_lowered {u v : Fin t'.card → Label.{u}}
   exact (hcs.trans_le (hvs ▸ hsw)).not_ge (hlow w hwK hle)
 
 variable (t' K l o r) in
-/-- **The unserved case of the private frontier** (open): in a legal source-gap context of grade `K`
+/-- **The unserved case of the private frontier** (proved with the lost point last,
+`StageType.lowStepUnserved`, in `VaughtConjecture.Continuation.LowFullGradeUnserved`, and below
+the full grade `StageType.lowStepUnserved_of_le`): in a legal source-gap context of grade `K`
 with lost point `l`, owner `o` and lost top `r`, every section `u` lawful below `(univ, K)` with the
 proper cells avoiding `l` at most a cap `c` (self-visible at `K`, `⊥ < c`), with
 `c < u o ≤ R_K (u r)`, and with a cell read by the owner above the threshold and by `u` above the
