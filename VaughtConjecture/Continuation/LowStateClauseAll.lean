@@ -10,9 +10,10 @@ import VaughtConjecture.Continuation.LowStateInstanceNormal
 
 Roadmap, Layer 3 ((R2), the state tower of the LOW construction: its admission clause).
 
-**The decision recorded.**  The LOW clause of the state catalogue takes its donor maximum over the
-proper donor fields of the grades of the current layer, not only over those of grade at most `K`.
-This is a change of the construction's admission clause, not of the class of models: the reason is
+**The decision recorded.**  The LOW clause of the state catalogue was to take its donor maximum over
+the proper donor fields of the grades of the current layer, not only over those of grade at most
+`K`.  This is a change of the construction's admission clause, not of the class of models: the
+reason is
 `ProfileTower.not_sCatStep_of_rigid_state` (with the maximum over the fields of grade at most `K`,
 the rigid reading refutes the state step of the tower at a normalized state), and
 `ProfileTower.not_active_of_mem_fields` (with the cells of the rigid reading among the fields, the
@@ -29,15 +30,17 @@ donor top below the frontier then violates the clause; the orbit code reads the 
 in the tower as it stands.
 
 **The clause of the layer** (`ProfileTower.lowPred_scode_of_le`).  A clause whose fields, tops,
-owner and lost top have grade at most `j₀` is kept by the state code at every grade `j ≥ j₀`.  So
-the donor maximum over the proper donor fields of grade at most `j` (`ProfileTower.lowN I j`) is
-kept by the state codes of the layers at and above `j`: the admission clause compatible with the
-tower is the clause **of the layer**, `lowPred K (lowN I j) (lowT I) o r` at the layer of grade
-`j`, and the tower must be indexed by a family of predicates, one per layer.  At the layer of
-controllers it is the present clause (`lowN I K`), so `ProfileTower.stateCatStep_low_seed` is the
-step there unchanged; at a layer `j > K` the cells of the rigid reading (proper donor fields of
-grade `j`) are among its fields and the configuration is excluded
-(`ProfileTower.not_active_of_mem_fields`).
+owner and lost top have grade at most `j₀` is kept by the state code at every grade `j ≥ j₀`, so
+the clause `lowPred K (lowN I j) (lowT I) o r` of the layer of grade `j` is kept by the codes of
+that layer.  **It does not fit the tower either**: the row of a controller of the layer `g + 1`
+reads the section of the level at `g` of its state (`ProfileTower.SLvl.Good.isLawfulBelow_Φs` uses
+`SLvl.Good.lawful` of that level, which asks the level's predicate of the state), so a state
+admitted at the layer `g + 1` must be admitted at every layer below, and the clauses accumulate down
+to the clause of grade `K`.  A state admitted by the clause of `g + 1` only through a field of grade
+`g + 1` is not admitted at `g` (`ProfileTower.not_lowPred_scode_of_high` with `lowN I (g + 1)` and
+the splice at `g`).  The cumulative clause contains the clause of grade `K`, at which the rigid
+reading refutes the step (`ProfileTower.not_sCatStep_of_rigid_state`).  So no weakening of the
+admission clause by layers keeps the tower as it stands.
 
 ## References
 
