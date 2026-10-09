@@ -84,6 +84,28 @@ theorem exists_controller_twin_ladderTower (hcard : B.S.card ≤ H)
   · obtain ⟨e, he, hv⟩ := htwin k' hk' (towerCat_mono hA hk' hRC)
     exact ⟨e, he, hv.trans (sup_grid (k' + 2) B')⟩
 
+/-- **A controller of the ladder tower reads a lower controller at a cap of agreement**: for cells
+`f` at `(univ, K + 2)` and `u` at `(univ, k + 2)`, `k ≤ K`, at a height `N ≥ K + 1`, there are
+lawful states `Rf` and `Ru` of the catalogues, read on the base by `f` and by `u` (the state on the
+cells of the base, the positive table on the ladder), whose extensions to the padded base agree
+capped at the reading of `u` by `f`. -/
+theorem exists_controller_agree_ladderTower (k K : ℕ) (hkK : k ≤ K)
+    (N : ℕ) (hN : K + 1 ≤ N) (f u : Fin (B.ladderTower H Γ A B' N).S.card)
+    (hf : (B.ladderTower H Γ A B' N).S.toCellScheme.gradedIndex f =
+      ((univ : Finset (Fin n)), K + 2))
+    (hu : (B.ladderTower H Γ A B' N).S.toCellScheme.gradedIndex u =
+      ((univ : Finset (Fin n)), k + 2)) :
+    ∃ Rf ∈ B.towerCat Γ A (K + 2), ∃ Ru ∈ B.towerCat Γ A (k + 2),
+      (∀ t : Fin (B.ladderBase H).card, (B.ladderBase H).toCellScheme.grade t ≤ K + 2 →
+        (B.ladderTower H Γ A B' N).S.rowAt f (B.towerEmb N t) = B.stateExt H Rf t) ∧
+      (∀ t : Fin (B.ladderBase H).card, (B.ladderBase H).toCellScheme.grade t ≤ k + 2 →
+        (B.ladderTower H Γ A B' N).S.rowAt u (B.towerEmb N t) = B.stateExt H Ru t) ∧
+      ∀ t : Fin (B.ladderBase H).card,
+        min (B.stateExt H Rf t) ((B.ladderTower H Γ A B' N).S.rowAt f u) =
+          min (B.stateExt H Ru t) ((B.ladderTower H Γ A B' N).S.rowAt f u) :=
+  exists_layerTower_controller_agree (B := B.towerBase H) (C := B.towerCat Γ A)
+    (G := fun k ↦ grid k B') (fun _ ↦ bot_mem_grid _ _) k K hkK N hN f u hf hu
+
 end LadderBaseData
 
 end VaughtConjecture.Scheme
