@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.Apex
+import VaughtConjecture.Extension.FaceGluing
 import VaughtConjecture.Extension.LadderBase
 import VaughtConjecture.Extension.LowerRestriction
 import VaughtConjecture.Extension.Seed
@@ -34,7 +35,7 @@ universe u
 
 namespace VaughtConjecture
 
-open Finset
+open Finset StageType
 
 namespace Seed
 
@@ -109,6 +110,64 @@ theorem comap_donor_attachment :
   I.comap_attachment g _ fun c hc ↦ (I.mem_attachmentCells g).mpr (.inr fun x hx ↦ by
     obtain ⟨y, rfl⟩ := hc (mem_coe.mpr hx)
     exact mem_map_of_mem _ (mem_univ y))
+
+/-! ### The attachment as a stage type -/
+
+/-- **The attachment as a stage type**: the labels of the amalgam on its cells. -/
+noncomputable def attachmentType : StageType.{u} α (m + 2) where
+  toScheme := I.attachment g
+  label c := I.amalgam.label (I.amalgam.toScheme.lowerEmb (I.attachmentCells g) c)
+  isWellFormed := I.isWellFormed_attachment g
+  isCoded := I.isCoded_attachment g
+  isLawful := Scheme.isLawful_restrictLower I.amalgam.isLawful
+  atStage _ := I.amalgam.atStage _
+
+/-- The faces of the attachment along a proper face whose visible cells are attachment cells are
+those of the amalgam, labels included. -/
+theorem restrictFace_attachmentType {k : ℕ} (f : Fin k ↪ Fin (m + 2))
+    (hf : ∀ c : Fin I.amalgam.card,
+      (I.amalgam.toCellScheme.scope c : Set (Fin (m + 2))) ⊆ Set.range f →
+        c ∈ I.attachmentCells g) :
+    restrictFace f (I.attachmentType g) = restrictFace f I.amalgam :=
+  Eq.symm <| StageType.restrictFace_eq_of_strictMono f (s := I.attachmentType g) (t := I.amalgam)
+    (φ := I.amalgam.toScheme.lowerEmb (I.attachmentCells g))
+    (I.amalgam.toScheme.lowerEmb (I.attachmentCells g)).strictMono
+    (Scheme.isLowerEmbedding_lowerEmb _ _ (I.attachmentCells_lower g)) (fun _ ↦ rfl) rfl rfl rfl
+    (fun _ ↦ rfl) fun z hz ↦ by
+      have hzL := hf z hz
+      have h := ((I.attachmentCells g).range_orderEmbOfFin rfl).symm ▸ (mem_coe.mpr hzL)
+      exact h
+
+/-- **The context face of the attachment is the first coatom type.** -/
+theorem restrictFace_left_attachmentType :
+    restrictFace Fin.castSuccEmb (I.attachmentType g) = some I.left :=
+  (I.restrictFace_attachmentType g _ fun c hc ↦ (I.mem_attachmentCells g).mpr (.inl fun x hx ↦ by
+    obtain ⟨y, rfl⟩ := hc (mem_coe.mpr hx)
+    exact mem_map_of_mem _ (mem_univ y))).trans I.restrictFace_left
+
+/-- **The donor face of the attachment is the donor.** -/
+theorem restrictFace_donor_attachmentType {d : StageType.{u} α (n + 1)}
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d) :
+    restrictFace (extendByLast (g.trans Fin.castSuccEmb)) (I.attachmentType g) = some d :=
+  (I.restrictFace_attachmentType g _ fun c hc ↦ (I.mem_attachmentCells g).mpr (.inr fun x hx ↦ by
+    obtain ⟨y, rfl⟩ := hc (mem_coe.mpr hx)
+    exact mem_map_of_mem _ (mem_univ y))).trans hd
+
+/-- **The attachment is covered by its context and donor faces.** -/
+theorem attachment_cover (c : Fin (I.attachmentType g).card) :
+    c ∈ (I.attachmentType g).toScheme.visibleCells Fin.castSuccEmb ∨
+      c ∈ (I.attachmentType g).toScheme.visibleCells (extendByLast (g.trans Fin.castSuccEmb)) := by
+  have hc := (I.mem_attachmentCells g).mp
+    ((I.attachmentCells g).orderEmbOfFin_mem rfl c)
+  rcases hc with h | h
+  · left
+    refine Scheme.mem_visibleCells.mpr fun x hx ↦ ?_
+    obtain ⟨y, -, rfl⟩ := mem_map.mp (h (mem_coe.mp hx))
+    exact ⟨y, rfl⟩
+  · right
+    refine Scheme.mem_visibleCells.mpr fun x hx ↦ ?_
+    obtain ⟨y, -, rfl⟩ := mem_map.mp (h (mem_coe.mp hx))
+    exact ⟨y, rfl⟩
 
 end Seed
 

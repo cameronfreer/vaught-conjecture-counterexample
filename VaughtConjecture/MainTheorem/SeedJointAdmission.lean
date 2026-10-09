@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthFaceAdmission
 import VaughtConjecture.Extension.FaceGluing
+import VaughtConjecture.Extension.SeedAttachment
 import VaughtConjecture.MainTheorem.SeedLadderCarrier
 
 /-!
@@ -123,6 +124,66 @@ theorem hasAdmittedCompletions_of_recognizes {Q : GrowthRequests I.left d.toSche
       funext fun j ↦ by simp only [Function.comp_apply]; rw [hdon]
     rw [e1, e2]
     exact hadm
+
+end Seed
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k n : ℕ} {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
+  {e : Fin n ↪ Fin k} {p : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
+
+/-- **Admitted completions over a one-point extension covered by its two faces**: with the labels
+pair admitted and the relative lift on the exact class, every lawful context section extends to a
+lawful section of `D` whose donor values are admitted on the exact class.  The relative lift at the
+cap `⊥` from the labels gives admitted donor values agreeing with the section on the root, and the
+two sections glue (`StageType.exists_joint_extension`). -/
+theorem exists_admitted_completion (h₁ : restrictFace Fin.castSuccEmb D = some t')
+    (h₂ : restrictFace (extendByLast e) D = some d) (ht : restrictFace e t' = some p)
+    (hd : restrictFace Fin.castSuccEmb d = some p)
+    (hcover : ∀ c, c ∈ D.toScheme.visibleCells Fin.castSuccEmb ∨
+      c ∈ D.toScheme.visibleCells (extendByLast e))
+    {Q : GrowthRequests t' d.toScheme} (hpair : ∀ j, Q.CorrectAt t'.label j (d.label j))
+    (hrel : Q.HasRelativeLiftOnClass ht hd) {u' : Fin t'.card → Label.{u}}
+    (hu' : t'.rows.IsLawful u') :
+    ∃ R : Fin D.card → Label.{u}, D.rows.IsLawful R ∧ (∀ x, R (D.faceCell h₁ x) = u' x) ∧
+      Q.AdmitsOnClass u' fun j ↦ R (D.faceCell h₂ j) := by
+  have hlab : Q.AllowedOnClass ht hd t'.label d.label :=
+    ⟨t'.isLawful, d.isLawful,
+      fun i ↦ by rw [StageType.label_faceCell, StageType.label_faceCell],
+      fun _ _ j ↦ hpair j⟩
+  obtain ⟨v', ⟨-, hv', hroot, hadm⟩, -⟩ := hrel t'.label u' d.label ⊥ hlab hu'
+    (isSelfVisible_bot _) fun x ↦ by rw [min_bot_right, min_bot_right]
+  obtain ⟨R, hR, hR₁, hR₂⟩ := exists_joint_extension h₁ h₂ ht hd hcover hu' hv' hroot
+  refine ⟨R, hR, hR₁, ?_⟩
+  have e2 : (fun j ↦ R (D.faceCell h₂ j)) = v' := funext hR₂
+  rw [e2]
+  exact hadm
+
+end StageType
+
+namespace Seed
+
+variable {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) {g : Fin n ↪ Fin m}
+  {p : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
+
+/-- **Admitted completions over the attachment are a theorem**: at a seed whose amalgam has the
+donor as its face along the root followed by the new point, with the labels pair admitted and the
+relative lift on the exact class, every lawful context section extends to a lawful section of the
+attachment with admitted donor values.  The attachment is covered by its context and donor faces
+(no cell on a mixed face), so the joint extension holds outright. -/
+theorem exists_admitted_completion_attachment
+    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p)
+    (hdp : restrictFace Fin.castSuccEmb d = some p)
+    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hpair : ∀ j, Q.CorrectAt I.left.label j (d.label j))
+    (hrel : Q.HasRelativeLiftOnClass hte hdp) {u' : Fin I.left.card → Label.{u}}
+    (hu' : I.left.rows.IsLawful u') :
+    ∃ R : Fin (I.attachmentType g).card → Label.{u}, (I.attachmentType g).rows.IsLawful R ∧
+      (∀ x, R ((I.attachmentType g).faceCell (I.restrictFace_left_attachmentType g) x) = u' x) ∧
+      Q.AdmitsOnClass u' fun j ↦
+        R ((I.attachmentType g).faceCell (I.restrictFace_donor_attachmentType g hd) j) :=
+  StageType.exists_admitted_completion (I.restrictFace_left_attachmentType g)
+    (I.restrictFace_donor_attachmentType g hd) hte hdp (I.attachment_cover g) hpair hrel hu'
 
 end Seed
 
