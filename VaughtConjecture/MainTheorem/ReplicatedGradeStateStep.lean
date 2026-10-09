@@ -32,7 +32,9 @@ that of its truncation at the threshold; the two coincide at `k = threshold`
 values of grade in `(threshold, k]`; for an anchor in the catalogue its admission is the ambient
 admission of the anchor's writing (`Seed.ambientAdmitted`), so the state step holds at every grade
 (`Seed.exists_stateStep_of_mem_towerCat`; at the apex input at the grade `3`,
-`ApexInstance.exists_stateStep_three`).
+`ApexInstance.exists_stateStep_three`).  **Status**: unconditional at `k = threshold`; for
+`k > threshold`, unconditional for an anchor in the catalogue and conditional on `hamb` for any
+other anchor (`Seed.exists_stateStep`).
 
 **Toward the serving-row short lift** (not proved here).  The lift of a serving row from the state
 `W` would be `orbitDecoder k W h ∘ w_P`, with `P` the orbit code of `W`: it reads `P` literally as
@@ -47,27 +49,53 @@ strip (`Label.lowerHeight_strip_jump`: a height of the layer `j` in `Scheme.heig
 the strip of `ω * b + k` and below it, read at least at `ω * b + k`; the hypotheses are met,
 `Label.exists_strip_jump`, e.g. at `k = 3` the height `ω + 2` under the cut `ω + 3`).
 
-**A proposed invariant: per-grade height blocks** (not implemented).  Choose block sets `D j`
-(`2 ≤ j ≤ m + 1`) from the seed, pairwise disjoint, not containing `0` or the top block `B'`
-(for instance `D j = {b < B' | b % (m + 2) = j}`), and take as heights of the layer `j`
+**The invariant at a grade `k ≥ 3`** (stated, `Scheme.IsStripFree`; not implemented).  A lift of
+a serving row at the grade `k` with the cut `h` (a cut of the grade `k`: a value of `Γ`, a height
+of the layer `k`, `Seed.reachableCut_mem`) asks three things of the heights `G j` of the layers
+`2 ≤ j ≤ m + 1`:
+* (N2) **separation**: `h ∈ G k` (`Scheme.LadderBaseData.exists_cell_le_v_of_capAgree`; without
+  it, the pin of `Seed.not_exists_lift_of_tie_of_pin`);
+* (N3) **the cut is a height of every lower layer**, for the lift by a decoded writing:
+  `h ∈ G j` for `2 ≤ j ≤ k` (the capped agreement of two writings,
+  `Scheme.LadderBaseData.min_v_eq_of_mem_heightSet`, asks it at every layer; otherwise two states
+  agreeing capped at `h` can have agreement heights differing below `h` at a cell of the layer
+  `j`);
+* (N4) **strip freedom**: no height of a layer `j < k` lies on the strip of `h` strictly below it
+  (`Scheme.IsStripFree`).  The current heights violate (N4) (`Scheme.not_isStripFree_heightSet`;
+  with the values `codeGrid (m + 1) B`, `m ≥ 2`, `Scheme.not_isStripFree_codeGrid`).
+So heights of the layer `j` only at points `ω * b_j + j` of blocks of their own grade fail (N3):
+a cut of the grade `k` must also be a height of every layer below `k`.
+
+**Proposed heights and lemma** (exact statement; not implemented).  Choose from the seed block sets
+`D k ⊆ {1, …, B' - 1}`, `2 ≤ k ≤ m + 1`, pairwise disjoint (for instance
+`D k = {b | 1 ≤ b < B', b % (m + 2) = k}`); place the codes of the grade `k` in the blocks of
+`D k` (finite parts at most `k`, so the cuts of the grade `k` are the points `ω * b + k`,
+`b ∈ D k`); and take
 ```
-G j = {⊥, ω * B' + j} ∪ {ω * b + j | b ∈ D j} ∪ {c ∈ Γ | IsSelfVisible j c, block of c ∈ D j}.
+G j = {⊥, ω * B' + j} ∪ {ω * b + k ∈ Γ | j ≤ k ≤ m + 1, b ∈ D k}.
 ```
-Proposed lemma (strip freedom): for `2 ≤ j < k`, `x ∈ G j` and `c ∈ G k` with `c ≤ ω * B' + 2`,
-not (`visibilityReplace k k x = c` and `x < c`).  The strip of `c` lies in the block of `c`, a
-block of `D k` (`c` is self-visible at `k ≥ 3` and below `ω * B' + 2`, so not in the block `B'`),
-and `x` lies in a block of `D j` or in `B'`.  The heights keep the contract `Scheme.IsHeights`
-(bottom, self-visible, the top grid point `ω * B' + j`, below it).  It changes:
-* `Scheme.heightSet Γ B' j` (`Extension/BaseLadderTower.lean`): the grid `grid j B'` of all blocks
-  is replaced by the blocks `D j` and `B'`, and the values of `Γ` are filtered by block;
-* the default heights `G` of `Scheme.LadderBaseData.ladderTower`, `Seed.attachTower` and
-  `Seed.replicated` (the argument `G (k + 2)` of `layerTower`);
-* the orbit code's blocks (`Label.codeBlock`: `2 r` and `2 r - 1`) composed with an injection into
-  `D k`, so that the codes of the grade `k` and the cuts of the grade `k` in the values (the code
-  grid `codeGrid`) lie in `D k`; the natural strip (block `0`, shared by every grade) is outside
-  every `D j`, so no height of a layer `j ≥ 2` lies there, and its finite values below a cut `k`
-  are values of the state or the ladder value `1` (the natural-strip reading of the grade `2`).
-Separation keeps the cut of the grade `k` a height of the grade `k` (it lies in a block of `D k`).
+Proposed lemma: `IsStripFree G Γ (m + 1)`, that is, for all `2 ≤ j < k ≤ m + 1`, `x ∈ G j` and
+`c ∈ G k ∩ Γ`, not (`visibilityReplace k k x = c` and `x < c`).  Proof: `c ≤ ω * B' + 2`, so
+`c = ω * b + k` with `b ∈ D k`; a label on the strip of `c` lies in the block `b`; the only height
+of `G j` in a block of `D k` is `ω * b + k = c` (the `D` are disjoint, `⊥` and `ω * B' + j` lie in
+other blocks); so `x = c`.  (N2) and (N3): `ω * b + k ∈ G j` for every `j ≤ k`.  `G` keeps the
+contract `Scheme.IsHeights` (bottom, self-visible at `j`, the top `ω * B' + j`, below it).
+
+**What it changes.**  `Scheme.heightSet Γ B' j` (`Extension/BaseLadderTower.lean`: the grid
+`grid j B'` of every block is replaced by the top point and the per-grade cut blocks, and `Γ` is
+filtered by block and grade); the default heights `G` of `Scheme.LadderBaseData.ladderTower`,
+`Seed.attachTower` and `Seed.replicated` (the argument `G (k + 2)` of `Scheme.layerTower`); the
+orbit code's blocks (`Label.codeBlock`: `2 r` and `2 r - 1`) composed with an enumeration of
+`D k`, and the code grid `codeGrid` accordingly.  The laws generic in `G` under `Scheme.IsHeights`
+are unchanged (`Scheme.LadderBaseData.ladderTower_lawful_of_isHeights`,
+`Seed.isLawful_replicatedWriting_of_isHeights`); the lemmas stated for `Scheme.heightSet` are to be
+restated (`Scheme.LadderBaseData.min_v_eq_of_mem_heightSet`,
+`Seed.replicatedWriting_castAdd_mem_heightSet`, `TieInstance.tieValue_mem_heightSet`).
+**Open point: the natural strip.**  The orbit code keeps the natural-strip key (finite values) in
+the block `0` at every grade; a finite value `f ≥ 2` of a state is a possible cut of the grade
+`f` in the block `0`, which the proposed `G f` does not contain, and finite values in `[2, f)` of
+states of higher grades lie on its strip.  The proposal needs the natural strip settled (finite
+values of the states at most `1`, or the natural key coded into `D k`); not settled here.
 
 ## References
 
@@ -159,6 +187,36 @@ theorem exists_strip_jump (k : ℕ) :
 
 end Label
 
+namespace Scheme
+
+/-- **Strip freedom of heights** (the invariant asked at a grade `k ≥ 3`, stated here): for grades
+`2 ≤ j < k ≤ M`, no height of the layer `j` lies on the strip of a cut of the grade `k` (a height
+of the layer `k` that is a value of `Γ`) strictly below the cut. -/
+def IsStripFree (G : ℕ → Finset Label.{u}) (Γ : Finset Label.{u}) (M : ℕ) : Prop :=
+  ∀ j k, 2 ≤ j → j < k → k ≤ M → ∀ x ∈ G j, ∀ c ∈ G k, c ∈ Γ →
+    ¬ (visibilityReplace k k x = c ∧ x < c)
+
+/-- **The current heights are not strip free**: a cut `ω * b + k` of `Γ`, `k ≥ 3`, `b ≤ B'`, has
+the grid height `ω * b + 2` of the layer `2` on its strip below it. -/
+theorem not_isStripFree_heightSet {Γ : Finset Label.{u}} {B' k b M : ℕ} (hk : 3 ≤ k)
+    (hkM : k ≤ M) (hb : b ≤ B') (hc : gridPoint k b ∈ Γ) :
+    ¬ IsStripFree (fun j ↦ heightSet Γ B' j) Γ M := fun h ↦
+  h 2 k le_rfl (by omega) hkM (gridPoint 2 b) (mem_heightSet.mpr (.inl (gridPoint_mem_grid hb)))
+    (gridPoint k b) (mem_heightSet.mpr (.inr ⟨hc, isSelfVisible_gridPoint k b⟩)) hc
+    ⟨Label.visibilityReplace_gridPoint_of_lt (by omega) b,
+      gridPoint_lt_gridPoint_iff_lex.mpr (.inr ⟨rfl, by omega⟩)⟩
+
+/-- **With the code grid as values the heights are not strip free** above the grade `2`: for
+`m ≥ 2` the cut `ω * b + 3` of `codeGrid (m + 1) B` has `ω * b + 2` on its strip. -/
+theorem not_isStripFree_codeGrid {m B B' b : ℕ} (hm : 2 ≤ m) (hb : b ≤ B) (hbB' : b ≤ B') :
+    ¬ IsStripFree (fun j ↦ heightSet (codeGrid.{u} (m + 1) B) B' j) (codeGrid (m + 1) B)
+      (m + 1) :=
+  not_isStripFree_heightSet (k := 3) le_rfl (by omega) hbB'
+    (Label.mem_codeGrid.mpr (.inr ⟨b, hb, 3, by omega, rfl⟩))
+
+end Scheme
+
+
 namespace Seed
 
 variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m}
@@ -190,7 +248,11 @@ state `W` of the attachment with four properties:
 (a) `W` is `w` at the context cells of grade at most `k`;
 (b) `W` is lawful below `(univ, k)`;
 (c) `W` is admitted at `k` (`Seed.attachAdmits`, vacuous below the threshold);
-(d) `W` agrees with `R₀` capped at `h` at every cell. -/
+(d) `W` agrees with `R₀` capped at `h` at every cell.
+**Status of `hamb`**: vacuous below the threshold; at `k = threshold` it is derived from the
+anchor's admission (`Seed.exists_stateStep_threshold`, unconditional there); for `k > threshold`
+this theorem is CONDITIONAL on `hamb` for a general anchor, and `hamb` is derived only for an
+anchor in the catalogue (`Seed.exists_stateStep_of_mem_towerCat`). -/
 theorem exists_stateStep (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
     (hdp : restrictFace Fin.castSuccEmb d = some p₀) (hdL : d.IsLegal) (hn : 0 < n)
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
@@ -300,9 +362,9 @@ theorem exists_stateStep (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = 
     · change min (if _ then R a else R₀ a) h = _
       rw [ite_eq_right hak]
 
-/-- **The state step at the threshold**: at the grade `k` of the threshold the admission of the
-anchor's truncation at `k` is the admission of the anchor, so the premise `hamb` of
-`Seed.exists_stateStep` holds. -/
+/-- **The state step at the threshold** (unconditional at `k = threshold`): at the grade `k` of the
+threshold the admission of the anchor's truncation at `k` is the admission of the anchor, so the
+premise `hamb` of `Seed.exists_stateStep` holds. -/
 theorem exists_stateStep_threshold
     (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
     (hdp : restrictFace Fin.castSuccEmb d = some p₀) (hdL : d.IsLegal) (hn : 0 < n)
@@ -341,7 +403,9 @@ of the catalogue of the replicated scheme (its writing a lawful section,
 `Seed.isLawful_replicatedWriting`),
 the admission of its truncation at `k` is that of the ambient state of its writing
 (`Seed.ambientAdmitted`: the controller above the cap cell carries the reads), so the premise
-`hamb` of `Seed.exists_stateStep` holds at every grade. -/
+`hamb` of `Seed.exists_stateStep` holds at every grade.  Above the threshold this is the only
+derivation of `hamb`: for an anchor outside the catalogue the state step above the threshold stays
+conditional on `hamb`. -/
 theorem exists_stateStep_of_mem_towerCat {H : ℕ} {Γ : Finset Label.{u}} {B' : ℕ}
     (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H) (hΓ0 : ⊥ ∈ Γ)
     (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
