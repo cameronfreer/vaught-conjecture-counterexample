@@ -74,7 +74,8 @@ a cut of the grade `k` must also be a height of every layer below `k`.
 ```
 G j = {⊥, ω * B' + j} ∪ {ω * b + k ∈ Γ | j ≤ k ≤ m + 1, b ∈ D k}.
 ```
-Proposed lemma: `IsStripFree G Γ (m + 1)`, that is, for all `2 ≤ j < k ≤ m + 1`, `x ∈ G j` and
+Proposed lemma: `IsStripFree G Γ (m + 1)` (with the block `0` added below:
+`IsStripFreeOffNatural G Γ (m + 1)`), that is, for all `2 ≤ j < k ≤ m + 1`, `x ∈ G j` and
 `c ∈ G k ∩ Γ`, not (`visibilityReplace k k x = c` and `x < c`).  Proof: `c ≤ ω * B' + 2`, so
 `c = ω * b + k` with `b ∈ D k`; a label on the strip of `c` lies in the block `b`; the only height
 of `G j` in a block of `D k` is `ω * b + k = c` (the `D` are disjoint, `⊥` and `ω * B' + j` lie in
@@ -91,11 +92,16 @@ are unchanged (`Scheme.LadderBaseData.ladderTower_lawful_of_isHeights`,
 `Seed.isLawful_replicatedWriting_of_isHeights`); the lemmas stated for `Scheme.heightSet` are to be
 restated (`Scheme.LadderBaseData.min_v_eq_of_mem_heightSet`,
 `Seed.replicatedWriting_castAdd_mem_heightSet`, `TieInstance.tieValue_mem_heightSet`).
-**Open point: the natural strip.**  The orbit code keeps the natural-strip key (finite values) in
-the block `0` at every grade; a finite value `f ≥ 2` of a state is a possible cut of the grade
-`f` in the block `0`, which the proposed `G f` does not contain, and finite values in `[2, f)` of
-states of higher grades lie on its strip.  The proposal needs the natural strip settled (finite
-values of the states at most `1`, or the natural key coded into `D k`); not settled here.
+**The natural strip (block `0`): settled, no block sets needed there.**  A cut in the block `0`
+at a grade `k`, self-visible and short at `k`, is the natural cut `ω * 0 + k`; a code at it is an
+orbit key, and the orbit decoder reads every label of its strip below it literally, lower-layer
+heights `ω * 0 + j` included (`Label.natural_cut_no_jump`, `Label.orbitDecoder_of_natural`,
+`Label.min_orbitDecoder_eq_of_natural`).  So the invariant to ask is strip freedom off the natural
+strip (`Scheme.IsStripFreeOffNatural`, implied by `Scheme.IsStripFree`), which the current heights
+still fail in every block `b ≥ 1` (`Scheme.not_isStripFreeOffNatural_heightSet`).  In the proposal
+the block `0` keeps its heights as now: `G j` also contains `ω * 0 + j` and the finite values of
+`Γ` self-visible at `j`, so (N2) and (N3) hold for a finite cut `f` (a height of every layer
+`j ≤ f`).
 
 ## References
 

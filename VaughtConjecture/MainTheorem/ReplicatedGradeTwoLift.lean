@@ -43,7 +43,10 @@ the strip; and the writings of the code and of `R` agree capped at `h`
 (`Seed.min_replicatedWriting_eq_of_cut`).
 
 **Scope.**  The grade `2` with `m = 1` only: at a grade `k ≥ 3` the heights of the lower layers lie
-on the strips of the cuts (`Label.lowerHeight_strip_jump`, `Scheme.not_isStripFree_heightSet`).
+on the strips of the cuts (`Label.lowerHeight_strip_jump`, `Scheme.not_isStripFree_heightSet`), in
+every block `b ≥ 1` (`Scheme.not_isStripFreeOffNatural_heightSet`); the block `0`, the natural
+strip, is read literally at every grade (`Label.orbitDecoder_of_natural`,
+`Label.natural_cut_no_jump`).
 The one-level scheme is not the scheme of the choice of the assembly (`Seed.seedValues`,
 `Seed.attachAdmits`): its values are the code grid and its catalogue keeps the canonical states
 only.
@@ -69,33 +72,20 @@ theorem visibilityReplace_one_eq_gridPoint {k : ℕ} (hk : 2 ≤ k) :
   rw [h]
   exact visibilityReplace_gridPoint_of_lt (by omega) 0
 
-/-- **The natural strip is read literally**: at a grade `k ≥ 2` and a cut `h` above `1`, the orbit
-decoder reads `1` as `1`.  A cell whose code has key at most the key `k` of `1` and at least `h`
-has its code in the block `0`, so its value has the natural key and is an orbit key
-(`Label.le_codeBlock`), and its reading of `1` moves `1` to the block `0`. -/
-theorem orbitDecoder_one {k : ℕ} (hk : 2 ≤ k) {ι : Type*} [Fintype ι] {W : ι → Label.{u}}
-    {h : Label.{u}} (h1 : (1 : Label.{u}) < h) : orbitDecoder k W h 1 = 1 := by
-  classical
-  unfold orbitDecoder
-  rw [min_eq_left h1.le]
-  refine max_eq_left (Finset.sup_le fun e he ↦ ?_)
-  have hhe : h ≤ visibilityReplace k k (orbitCode k W e) := (Finset.mem_filter.mp he).2
-  have hv1 : visibilityReplace k k (1 : Label.{u}) = gridPoint k 0 :=
-    visibilityReplace_one_eq_gridPoint hk
-  by_cases hlt : visibilityReplace k k (1 : Label.{u}) < visibilityReplace k k (orbitCode k W e)
-  · rw [cellReading, ite_eq_left hlt]
-    exact bot_le
-  have hWe : W e ≠ ⊥ := by
-    intro h0
-    rw [orbitCode_eq_bot_iff.mpr h0, visibilityReplace_bot] at hhe
-    exact absurd (h1.trans_le hhe) not_lt_bot
+/-- **A code with the natural key is an orbit key with the natural key**: if the key of the code
+of a cell is at most the least grid point `ω * 0 + k`, the cell's value is not `⊥`, its code block
+is `0`, so (`Label.le_codeBlock`, the key rank being positive) its value is an orbit key with the
+natural key `ω * 0 + k`. -/
+theorem natural_of_visibilityReplace_orbitCode_le {k : ℕ} {ι : Type*} [Fintype ι]
+    {W : ι → Label.{u}} {e : ι} (hWe : W e ≠ ⊥)
+    (hle : visibilityReplace k k (orbitCode k W e) ≤ gridPoint k 0) :
+    visibilityReplace k k (orbitCode k W e) = gridPoint k 0 ∧ IsOrbitKey k W (W e) ∧
+      visibilityReplace k k (W e) = gridPoint k 0 := by
   have hve : visibilityReplace k k (orbitCode k W e) = gridPoint k (codeBlock k W (W e)) := by
     rw [orbitCode_apply]
     exact visibilityReplace_orbitMap hWe
   have hcb : codeBlock k W (W e) = 0 := by
-    have hle : gridPoint.{u} k (codeBlock k W (W e)) ≤ gridPoint k 0 := by
-      rw [← hve, ← hv1]
-      exact not_lt.mp hlt
+    rw [hve] at hle
     exact Nat.le_zero.mp (gridPoint_le_gridPoint.mp hle)
   have hnat : IsOrbitKey k W (W e) ∧ visibilityReplace k k (W e) = gridPoint k 0 := by
     by_contra hn
@@ -103,9 +93,65 @@ theorem orbitDecoder_one {k : ℕ} (hk : 2 ≤ k) {ι : Type*} [Fintype ι] {W :
     have h3 := one_le_keyRank (isKey_apply_iff.mpr hWe : IsKey k W (W e))
     rw [hcb] at h2
     omega
-  have hc : visibilityReplace k k (1 : Label.{u}) = visibilityReplace k k (orbitCode k W e) ∧
-      IsOrbitKey k W (W e) := ⟨by rw [hv1, hve, hcb], hnat.1⟩
-  rw [cellReading, ite_eq_right hlt, ite_eq_left hc, moveToBlock_eq_self (hnat.2.trans hv1.symm)]
+  exact ⟨by rw [hve, hcb], hnat⟩
+
+/-- **The natural strip is read literally** at every grade: a label `x` on the strip of the least
+grid point `ω * 0 + k` (a finite label below `k`, or `k` itself) and below the cut `h` is read by
+`orbitDecoder k W h` as `x`.  A cell whose code has key at least `h` and at most the key of `x` has
+the natural key and an orbit key value (`Label.natural_of_visibilityReplace_orbitCode_le`), and
+its reading of `x` moves `x` to the block `0` of its value, which is `x`. -/
+theorem orbitDecoder_of_natural {k : ℕ} {ι : Type*} [Fintype ι] {W : ι → Label.{u}}
+    {h x : Label.{u}} (hx : visibilityReplace k k x = gridPoint k 0) (hxh : x < h) :
+    orbitDecoder k W h x = x := by
+  classical
+  unfold orbitDecoder
+  rw [min_eq_left hxh.le]
+  refine max_eq_left (Finset.sup_le fun e he ↦ ?_)
+  have hhe : h ≤ visibilityReplace k k (orbitCode k W e) := (Finset.mem_filter.mp he).2
+  by_cases hlt : visibilityReplace k k x < visibilityReplace k k (orbitCode k W e)
+  · rw [cellReading, ite_eq_left hlt]
+    exact bot_le
+  have hWe : W e ≠ ⊥ := by
+    intro h0
+    rw [orbitCode_eq_bot_iff.mpr h0, visibilityReplace_bot] at hhe
+    exact absurd ((bot_le.trans_lt hxh).trans_le hhe) (lt_irrefl _)
+  obtain ⟨hve, hkey, hWk⟩ :=
+    natural_of_visibilityReplace_orbitCode_le hWe (hx ▸ not_lt.mp hlt)
+  have hc : visibilityReplace k k x = visibilityReplace k k (orbitCode k W e) ∧
+      IsOrbitKey k W (W e) := ⟨hx.trans hve.symm, hkey⟩
+  rw [cellReading, ite_eq_right hlt, ite_eq_left hc, moveToBlock_eq_self (hWk.trans hx.symm)]
+
+/-- **The natural strip is read literally**: at a grade `k ≥ 2` and a cut `h` above `1`, the orbit
+decoder reads `1` as `1` (`Label.orbitDecoder_of_natural`). -/
+theorem orbitDecoder_one {k : ℕ} (hk : 2 ≤ k) {ι : Type*} [Fintype ι] {W : ι → Label.{u}}
+    {h : Label.{u}} (h1 : (1 : Label.{u}) < h) : orbitDecoder k W h 1 = 1 :=
+  orbitDecoder_of_natural (visibilityReplace_one_eq_gridPoint hk) h1
+
+/-- **On the natural strip the decoder keeps every label capped at the cut**, whatever `W` and the
+cut: above the cut both are the cut, below it the label is read literally. -/
+theorem min_orbitDecoder_eq_of_natural {k : ℕ} {ι : Type*} [Fintype ι] {W : ι → Label.{u}}
+    {h x : Label.{u}} (hx : visibilityReplace k k x = gridPoint k 0) :
+    min (orbitDecoder k W h x) h = min x h := by
+  rcases le_or_gt h x with hhx | hxh
+  · rw [min_eq_right hhx]
+    exact min_eq_right ((min_eq_right hhx).symm.trans_le (le_max_left _ _))
+  · rw [orbitDecoder_of_natural hx hxh]
+
+/-- **No strip jump in the block `0`**: a cell whose code is the natural cut `ω * 0 + k` has an
+orbit key value, so the hypothesis `¬ IsOrbitKey k W (W e)` of
+`Label.le_orbitDecoder_of_code_at_cut` fails there; and every lower-layer grid height
+`ω * 0 + j`, `j < k`, below that cut is read literally (`Label.orbitDecoder_of_natural`),
+whatever the codes.  So a cut in the block `0` asks no strip freedom (contrast
+`Label.lowerHeight_strip_jump`, in a block `b ≥ 1`). -/
+theorem natural_cut_no_jump {j k : ℕ} (hj : j < k) {ι : Type*} [Fintype ι] {W : ι → Label.{u}} :
+    (∀ e, orbitCode k W e = gridPoint k 0 → IsOrbitKey k W (W e)) ∧
+      orbitDecoder k W (gridPoint k 0) (gridPoint j 0) = gridPoint j 0 := by
+  refine ⟨fun e he ↦ ?_, orbitDecoder_of_natural (visibilityReplace_gridPoint_of_lt hj 0)
+    (gridPoint_lt_gridPoint_iff_lex.mpr (.inr ⟨rfl, hj⟩))⟩
+  have hWe : W e ≠ ⊥ := fun h0 ↦ gridPoint_ne_bot k 0 (he ▸ orbitCode_eq_bot_iff.mpr h0)
+  have hle : visibilityReplace k k (orbitCode k W e) ≤ gridPoint k 0 := by
+    rw [he, isSelfVisible_gridPoint k 0]
+  exact (natural_of_visibilityReplace_orbitCode_le hWe hle).2.1
 
 /-- **The orbit decoder keeps the labels of a writing capped at the cut** (a grade `k ≥ 2`, the
 code `orbitCode k W` agreeing with `W` capped at `h`): at `⊥`, at `1`, at a code value and at a
@@ -149,6 +195,29 @@ theorem exists_eq_gridPoint_two {h : Label.{u}} {B' : ℕ} (hh : IsSelfVisible 2
 end Label
 
 namespace Scheme
+
+/-- **Strip freedom off the natural strip** (the refined invariant at a grade `k ≥ 3`): as
+`Scheme.IsStripFree`, for the cuts other than the natural cut `ω * 0 + k`.  At the natural cut the
+decoder reads its whole strip literally and no code there jumps (`Label.natural_cut_no_jump`), so
+the block `0` asks nothing. -/
+def IsStripFreeOffNatural (G : ℕ → Finset Label.{u}) (Γ : Finset Label.{u}) (M : ℕ) : Prop :=
+  ∀ j k, 2 ≤ j → j < k → k ≤ M → ∀ x ∈ G j, ∀ c ∈ G k, c ∈ Γ → c ≠ gridPoint k 0 →
+    ¬ (visibilityReplace k k x = c ∧ x < c)
+
+theorem IsStripFree.offNatural {G : ℕ → Finset Label.{u}} {Γ : Finset Label.{u}} {M : ℕ}
+    (h : IsStripFree G Γ M) : IsStripFreeOffNatural G Γ M :=
+  fun j k hj hjk hkM x hx c hc hcΓ _ ↦ h j k hj hjk hkM x hx c hc hcΓ
+
+/-- **The current heights fail strip freedom off the natural strip as well**: a cut `ω * b + k`,
+`k ≥ 3`, of a block `b ≥ 1` has the layer-`2` grid height `ω * b + 2` on its strip below it. -/
+theorem not_isStripFreeOffNatural_heightSet {Γ : Finset Label.{u}} {B' k b M : ℕ} (hk : 3 ≤ k)
+    (hkM : k ≤ M) (hb1 : 1 ≤ b) (hb : b ≤ B') (hc : gridPoint k b ∈ Γ) :
+    ¬ IsStripFreeOffNatural (fun j ↦ heightSet Γ B' j) Γ M := fun h ↦
+  h 2 k le_rfl (by omega) hkM (gridPoint 2 b) (mem_heightSet.mpr (.inl (gridPoint_mem_grid hb)))
+    (gridPoint k b) (mem_heightSet.mpr (.inr ⟨hc, isSelfVisible_gridPoint k b⟩)) hc
+    (fun he ↦ by have := gridPoint_le_gridPoint.mp he.le; omega)
+    ⟨Label.visibilityReplace_gridPoint_of_lt (by omega) b,
+      gridPoint_lt_gridPoint_iff_lex.mpr (.inr ⟨rfl, by omega⟩)⟩
 
 variable {n : ℕ} {σ : Type*}
 
