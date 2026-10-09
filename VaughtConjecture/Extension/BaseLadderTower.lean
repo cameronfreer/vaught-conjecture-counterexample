@@ -356,6 +356,104 @@ theorem ladderController_clauses (hH : 0 < H) (hcard : B.S.card ≤ H)
     refine ⟨rankVector R d - 1, by have := hrk d; omega, ?_⟩
     rw [show rankVector R d - 1 + 1 = rankVector R d by omega, posTable_rankVector hv]
 
+/-! ### The cells of the base scheme in the tower -/
+
+/-- The cells of the base scheme in the ladder tower at the height `K`. -/
+noncomputable def baseCellEmb (K : ℕ) : Fin B.S.card → Fin (B.ladderTower H Γ A B' K).S.card :=
+  fun d ↦ B.towerEmb K (Fin.castAdd _ d)
+
+theorem strictMono_baseCellEmb (K : ℕ) :
+    StrictMono (B.baseCellEmb (H := H) (Γ := Γ) (A := A) (B' := B') K) :=
+  (strictMono_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
+    (G := fun k ↦ grid k B') K).comp (Fin.castAddOrderEmb _).strictMono
+
+/-- **The base scheme is a lower embedding into the ladder tower.** -/
+theorem isLowerEmbedding_baseCellEmb (K : ℕ) :
+    B.S.toCellScheme.IsLowerEmbedding (B.ladderTower H Γ A B' K).S.toCellScheme
+      (B.baseCellEmb K) :=
+  (isLowerEmbedding_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
+    (G := fun k ↦ grid k B') K).comp (isLowerEmbedding_castAdd (S := B.S) 1 _ _ B.noFull)
+
+/-- The cells of the base scheme keep their graded indices in the tower. -/
+theorem gradedIndex_baseCellEmb (K : ℕ) (d : Fin B.S.card) :
+    (B.ladderTower H Γ A B' K).S.toCellScheme.gradedIndex (B.baseCellEmb K d) =
+      B.S.toCellScheme.gradedIndex d :=
+  (gradedIndex_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
+    (G := fun k ↦ grid k B') _ K).trans (appendFullCellsScheme_gradedIndex_castAdd _ _ _ d)
+
+theorem scope_baseCellEmb (K : ℕ) (d : Fin B.S.card) :
+    (B.ladderTower H Γ A B' K).S.toCellScheme.scope (B.baseCellEmb K d) =
+      B.S.toCellScheme.scope d :=
+  congrArg Prod.fst (B.gradedIndex_baseCellEmb K d)
+
+/-- The rows of the tower pull back to those of the base scheme. -/
+theorem comap_rows_baseCellEmb (K : ℕ) :
+    (B.ladderTower H Γ A B' K).S.rows.comap (B.isLowerEmbedding_baseCellEmb K) = B.S.rows :=
+  (congrArg (fun R ↦ CellScheme.Rows.comap R (isLowerEmbedding_castAdd (S := B.S) 1 _ _ B.noFull))
+    (comap_rows_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
+      (G := fun k ↦ grid k B') K)).trans (comap_rows_castAdd (S := B.S))
+
+/-- The tower reads the cells of the base scheme as the base scheme does. -/
+theorem rowAt_baseCellEmb (K : ℕ) (z x : Fin B.S.card) :
+    (B.ladderTower H Γ A B' K).S.rowAt (B.baseCellEmb K z) (B.baseCellEmb K x) = B.S.rowAt z x :=
+  (rowAt_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ grid k B')
+    _ _ K).trans (rowAt_appendFullCells_castAdd (h := B.noFull) _ _)
+
+/-- **Every cell of the tower of proper scope is a cell of the base scheme.** -/
+theorem mem_range_baseCellEmb (K : ℕ) (z : Fin (B.ladderTower H Γ A B' K).S.card)
+    (hz : (B.ladderTower H Γ A B' K).S.toCellScheme.scope z ≠ univ) :
+    z ∈ Set.range (B.baseCellEmb K) := by
+  obtain ⟨t, rfl⟩ := mem_range_layerTowerEmb (B := B.towerBase H) (C := B.towerCat Γ A)
+    (G := fun k ↦ grid k B') K z hz
+  have hz' := hz
+  change (layerTower (B.towerBase H) (B.towerCat Γ A) (fun k ↦ grid k B')
+    K).S.toCellScheme.scope (layerTowerEmb K t) ≠ univ at hz'
+  rw [scope_layerTowerEmb] at hz'
+  induction t using Fin.addCases with
+  | left d => exact ⟨d, rfl⟩
+  | right j =>
+    exfalso
+    change (B.S.appendFullCellsScheme 1 _).scope (Fin.natAdd _ j) ≠ univ at hz'
+    exact hz' (appendFullCellsScheme_scope_natAdd _ _ _ j)
+
+/-- The faces of the tower are those of the base scheme. -/
+theorem faces_ladderTower (K : ℕ) :
+    (B.ladderTower H Γ A B' K).S.toCellScheme.faces = B.S.toCellScheme.faces :=
+  faces_layerTower (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ grid k B') K
+
+/-- The ground set of the tower is that of the base scheme. -/
+theorem ground_ladderTower (K : ℕ) :
+    (B.ladderTower H Γ A B' K).S.toCellScheme.ground = B.S.toCellScheme.ground :=
+  ground_layerTower (B := B.towerBase H) (C := B.towerCat Γ A) (G := fun k ↦ grid k B') K
+
+/-- **Completeness of the ladder tower at the full faces**, whatever the base completes: for
+nonempty catalogues, the tower at the height `K` has a cell of full scope at every grade from `1`
+to `K + 1`. -/
+theorem exists_gradedIndex_univ_ladderTower (hH : 0 < H)
+    (hne : ∀ k, (B.towerCat Γ A (k + 2)).Nonempty) :
+    ∀ K j, 1 ≤ j → j ≤ K + 1 → ∃ d, (B.ladderTower H Γ A B' K).S.toCellScheme.gradedIndex d =
+      ((univ : Finset (Fin n)), j)
+  | 0, j, hj1, hj => by
+    obtain ⟨a⟩ := (inferInstance : Nonempty (RankMember B.S H))
+    refine ⟨Fin.natAdd _ (ladderEquiv _ _ H (a, Sum.inl ⟨0, hH⟩)), ?_⟩
+    change (B.S.appendFullCellsScheme 1 _).gradedIndex (Fin.natAdd _ _) = _
+    rw [appendFullCellsScheme_gradedIndex_natAdd]
+    exact Prod.ext rfl (by simp only; omega)
+  | K + 1, j, hj1, hj => by
+    set T := B.ladderTower H Γ A B' K with hT
+    by_cases hjK : j ≤ K + 1
+    · obtain ⟨d, hd⟩ := exists_gradedIndex_univ_ladderTower hH hne K j hj1 hjK
+      refine ⟨Fin.castAdd _ d, ?_⟩
+      change (T.S.appendFullCellsScheme (K + 2)
+        (T.entries (B.towerCat Γ A (K + 2))).card).gradedIndex (Fin.castAdd _ d) = _
+      rw [appendFullCellsScheme_gradedIndex_castAdd]
+      exact hd
+    · classical
+      obtain ⟨R, hR⟩ := hne K
+      obtain ⟨d, hd⟩ := exists_gradedIndex_eq_catalogueLayer (S := T.S) (k := K + 2)
+        (read := fun d ↦ d) (G := grid (K + 2) B') (hS := T.not_le) ⟨_, mem_image_of_mem T.v hR⟩
+      exact ⟨d, hd.trans (Prod.ext rfl (by simp only; omega))⟩
+
 end LadderBaseData
 
 end VaughtConjecture.Scheme
