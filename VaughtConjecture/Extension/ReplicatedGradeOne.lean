@@ -177,7 +177,7 @@ theorem tower_grade_one_cases (x : Fin (I.attachTower g H Γ A B').card)
   | left e =>
     refine .inr ⟨e, ?_, rfl⟩
     have h := congrArg Prod.snd ((I.attachmentBase g).gradedIndex_baseCellEmb
-      (H := H) (Γ := Γ) (A := A) (B' := B') m e)
+      (H := H) (Γ := Γ) (A := A) (B' := B') (G := fun k ↦ Scheme.heightSet Γ B' k) m e)
     exact h.symm.trans hx
   | right j =>
     refine .inl ⟨(Scheme.ladderEquiv _ _ H).symm j, ?_⟩

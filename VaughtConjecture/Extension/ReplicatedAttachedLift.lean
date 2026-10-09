@@ -229,7 +229,7 @@ theorem cappedLift_replicated_of_tower {X Y : Finset (Fin (m + 2)) × ℕ} (h : 
       X.1 ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb)))
     (hT : (𝕋).rows.CappedLift h) : (𝔼).rows.CappedLift h := by
   refine CellScheme.Rows.cappedLift_of_forall_full h fun c hc w v hw hv hwv ↦ ?_
-  have hmix := I.not_subset_scope_tower g H Γ A B'
+  have hmix := I.not_subset_scope_tower g H Γ A B' (G := fun k ↦ Scheme.heightSet Γ B' k)
   obtain ⟨q, hq, hqc, hqw⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists h).mp hT c hc
     (fun x ↦ w (Fin.castAdd _ x.1)) (fun x ↦ v (Fin.castAdd _ x.1))
     (isLawfulBelow_castAdd_replicated hw) (isLawfulBelow_castAdd_replicated hv) fun d ↦
