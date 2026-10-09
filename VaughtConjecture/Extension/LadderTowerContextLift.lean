@@ -10,6 +10,12 @@ import VaughtConjecture.Extension.SeedLadderCompletion
 
 Roadmap, Layer 3 ((R3) and (R4), the bountifulness of the recognizing growth carrier).
 
+**Superseded.**  The carrier is now built over the replicated scheme of the attachment
+(`Seed.replicated`), not over the ladder tower of the amalgam; the context lift there is reduced in
+`VaughtConjecture.Extension.LadderTowerContextLiftReplicated` and
+`VaughtConjecture.Extension.LadderTowerContextLiftState`.  This file is kept; its statements are
+about the amalgam tower only.
+
 Let `T` be the ladder tower of a seed at the height `m` (`Seed.ladderTower`), on the points
 `Fin (m + 2)`, with the context coatom `univ.erase (Fin.last (m + 1))`.  Bountifulness of `T` is
 reduced to the lifts from the two coatoms into the full faces `(univ, j)`, `2 ≤ j ≤ m + 1`

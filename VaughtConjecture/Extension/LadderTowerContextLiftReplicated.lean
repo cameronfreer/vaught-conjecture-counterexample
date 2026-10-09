@@ -34,7 +34,10 @@ reduced to two statements:
   `CellScheme.Rows.IsLawfulBelow.map_of_bot_iff`): the decoder may send positive labels to `⊥`.
 
 **The reduction** (`Seed.cappedLift_context_replicated_of_stateLift`,
-`Seed.hasContextLift_of_stateLift`).
+`Seed.hasContextLift_of_stateLift`) runs one way: from the state lift and the coding of states to
+the capped lift.  The three statements stay separate, and none of them gives a lawful labelling of
+`E` extending the labels of the attachment (`Seed.HasExtendingLabel`): the decoded writings of
+catalogue states need not read those labels.
 
 **The bottom-reflecting form is false** (`Seed.not_stateCodingReflecting`, `j ≥ 1`): at the cap
 `⊤`, the bottom ambient and the bottom state, the writing of a lawful state is positive at the

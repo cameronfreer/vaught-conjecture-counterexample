@@ -12,6 +12,12 @@ import VaughtConjecture.MainTheorem.SeedLadderCarrier
 
 Roadmap, Layer 3 ((R3) and (R4), the bountifulness of the recognizing growth carrier).
 
+**Superseded.**  The carrier is now built over the replicated scheme of the attachment
+(`Seed.replicated`), not over the ladder tower of the amalgam; the context lift there is reduced in
+`VaughtConjecture.Extension.LadderTowerContextLiftReplicated` and
+`VaughtConjecture.Extension.LadderTowerContextLiftState`.  This file is kept; its statements are
+about the amalgam tower only.
+
 For the admission predicate of the ladder tower (`Seed.towerAdmits`), a state vanishing above a
 grade below the threshold is admitted: its cap value is `⊥`
 (`Seed.towerAdmits_of_vanishing`).  So at every grade `j` with `2 ≤ j` and `j` below the threshold
