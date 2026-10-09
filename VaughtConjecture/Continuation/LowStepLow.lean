@@ -66,9 +66,24 @@ open Finset Label StageType
 variable {α : Ordinal.{u}} {n : ℕ}
 
 /-- **Raising below a gap.**  Let `R` be lawful at `K`, `j ≤ K`, and `h` a label such that `R`
-reads every cell of grade in `(j, K]` below `h`.  If `W` is lawful at `j`, equals `R` at every
-cell of grade at most `j` read by `R` below `h`, and is at least `h` at every cell of grade at most
-`j` read by `R` at least at `h`, then `W` spliced with `R` above `j` is lawful at `K`. -/
+reads every cell of grade in `(j, K]` below `h` (`hmid`).  If `W` is lawful at `j`, equals `R` at
+every cell of grade at most `j` read by `R` below `h` (`hlo`), and is at least `h` at every cell of
+grade at most `j` read by `R` at least at `h` (`hhi`), then `V`, equal to `W` at the cells of grade
+at most `j` and to `R` at the others, is lawful at `K`.
+
+*Which cells change.*  `V` differs from `R` only at cells of grade at most `j` that `R` reads at
+least at `h` (by `hlo`), and there `V` is at least `h` (by `hhi`).  Above `K`, `V = R = ⊥`.
+
+*The three laws* (checked pointwise, `CellScheme.Rows.isLawfulBelow_iff_forall`).  Order: at a cell
+of grade at most `j` it is the order law of `W`, at the others that of `R`.  Availability: the
+cells compared have equal grades, so both lie at most `j` (availability of `W`, the cell found has
+the same grade) or both above (availability of `R`).  Locality at a cell `s`: if the grade of `s`
+is at most `j`, so is that of every cell below `s`, and the target `d ↦ min (V d) (V s)` is
+`d ↦ min (W d) (W s)` (locality of `W`).  If the grade of `s` is in `(j, K]`, then `V s = R s < h`
+by `hmid`, and the target is `d ↦ min (R d) (R s)` (locality of `R`): at a cell `d` with `R d < h`,
+`V d = R d`; at a cell `d` with `R d ≥ h`, both `V d` and `R d` are at least `h > R s`, so both
+minima are `R s`.  The capping by the label `R s < h` of the reader erases the change.  This is the
+only place `hmid` is used. -/
 theorem lawfulAt_raise_below {t : StageType.{u} α n} {j K : ℕ} (hjK : j ≤ K) {h : Label.{u}}
     {R W : Fin t.card → Label.{u}} (hR : LawfulAt t K R) (hW : LawfulAt t j W)
     (hmid : ∀ d, j < t.toCellScheme.grade d → t.toCellScheme.grade d ≤ K → R d < h)
@@ -135,12 +150,29 @@ open Finset Label H2
 variable {α : Ordinal.{u}} {n : ℕ}
 
 /-- **The raise of the tops.**  In a legal stage type `tb` on `n` points of top grade at most
-`K ≤ n`, let `R` be lawful at `K` with a gap at a positive label `h`: every cell labelled `⊤` read
-at least at `h`, every other cell of grade at most `K` below `h`.  For every `c` self-visible at
-`K`, some `W` lawful at `K` equals `R` at every cell not labelled `⊤` and reads every cell labelled
-`⊤` at least at `c`.  The raise of `R` truncated above the largest grade `j` of a top through the
-row of a cell labelled `⊤` of graded index `(univ, j)` (`StageType.exists_raised_at_top`), spliced
-with `R` above `j` (`H2.lawfulAt_raise_below`). -/
+`K ≤ n` (`htg`), let `R` be lawful at `K` with a gap at a positive label `h`: every cell labelled
+`⊤` read at least at `h` (`htop`), every other cell of grade at most `K` below `h` (`hlow`).  For
+every `c` self-visible at `K`, some `W` lawful at `K` equals `R` at every cell not labelled `⊤`
+and reads every cell labelled `⊤` at least at `c`.
+
+*Construction.*  Without tops, `W = R`.  Otherwise `j` is the largest grade of a top (so every top
+has grade at most `j`, and `j ≤ K` by `htg`), `Z` a cell labelled `⊤` of graded index `(univ, j)`
+(`StageType.exists_top_cell_univ`).  `W'` is the raise of `R` truncated above `j` through the row
+of `Z` at the grade `j` (`StageType.exists_raised_at_top`, with `c` self-visible at `j ≤ K`): it
+reads a proper cell `d` of grade at most `j` as `min (R d) (R Z)`, which is `R d` since
+`R d < h ≤ R Z` (`hlow` and `htop` at `Z`), and every top `d` as `max (min (R d) (R Z)) c ≥ c`
+(`R d ≠ ⊥` by `htop` and `⊥ < h`).  Then `W` is `W'` at the cells of grade at most `j` and `R`
+above (`H2.lawfulAt_raise_below`).
+
+*Which cells change.*  Only the tops, all of grade at most `j`: every proper cell keeps `R`.
+
+*Hypotheses of the splice.*  `hmid`: a cell of grade in `(j, K]` is not a top (maximality of `j`),
+so `R` reads it below `h` by `hlow`.  `hlo`: a cell of grade at most `j` read below `h` is not a
+top (`htop`), so it keeps `R`.  `hhi`: a cell of grade at most `j` read at least at `h` is a top
+(`hlow`), read by `W'` at least at `min (R d) (R Z) ≥ h`.
+
+Capped agreement with `R` at `h` and literalness on a root are not claimed here; they are
+established in `StageType.IsLowFamily.lowStepTie`. -/
 theorem exists_raised_tops {tb : StageType.{u} α n} (htb : tb.IsLegal) {K : ℕ} (hKn : K ≤ n)
     (htg : tb.topGrade ≤ K) {R : Fin tb.card → Label.{u}} (hR : LawfulAt tb K R)
     {h c : Label.{u}} (hb : ⊥ < h) (hc : IsSelfVisible K c)
@@ -202,12 +234,27 @@ theorem exists_raised_tops {tb : StageType.{u} α n} (htb : tb.IsLegal) {K : ℕ
 variable {k K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {o r : Fin t'.card}
 
 /-- **The tie case holds at every LOW family**, indeed the conclusion of `StageType.LowStepTie`
-without its tie premise.  The ambient donor face `R` has a gap at the cap `h` (every top at least
-`h`, the root tops through the private face, every proper cell of grade at most `K` below `h`);
-its raise of the tops at the frontier `c` (`StageType.exists_raised_tops`) agrees with `R` capped
-at `h` and with the private face on the root capped at `c`; the capped lift at `c` from the root
-of the private face with this ambient (bountifulness of the donor) is literal on the root and
-reads every top at least at `c`. -/
+without its tie premise.
+
+*The gap.*  Every top `d` of the donor has `h ≤ R d`: off the root by the hypothesis of the tie
+case, on the root because the private face reads its copy at least at the frontier `c > h` (strict
+source gaps, `H2.frontier_le_lawfulAt`) and agrees there with `R` capped at `h`.  Every proper cell
+of grade at most `K` has `R d < h` (hypothesis of the tie case).  So `StageType.exists_raised_tops`
+gives `W'` lawful at `K`, equal to `R` at every proper cell, at least `c` at every top.
+
+*Capped agreement at `h`* (`W'` with `R`): at proper cells `W' = R`; at tops both are at least `h`
+(`W' ≥ c > h`).
+
+*Agreement on the root capped at `c`* (`W'` with the private face `f`): at a root top both are at
+least `c`; at a proper root cell of grade at most `K`, `R < h` and `f` agrees with `R` capped at
+`h`, so `f = R = W'`; above `K` both are `⊥`.
+
+*Literal root.*  The capped lift at `c` from the root of `f` with the ambient `W'`
+(`H2.hasCappedLifts_lawfulAt'`, bountifulness of the donor) gives `W` lawful at `K`, equal to `f`
+at every root cell, and agreeing with `W'` capped at `c`.  The root cells that `W'` moved are the
+root tops (to at least `c`), and `W` puts them back to `f` exactly; no other root cell moved.
+From the capped agreement at `c`: `W` agrees with `R` capped at `h` (since `h < c`), and reads
+every top off the root at least at `c`. -/
 theorem IsLowFamily.lowStepTie (hF : IsLowFamily K t' tb p o r) :
     LowStepTie K t' tb hF.face_private hF.face_donor o r := by
   classical
