@@ -196,6 +196,132 @@ theorem min_decode_eq_decode (hU : U ∈ I.mixedFaces g) (hcard : (I.attachmentB
     rw [min_min_min_comm, min_self]
   exact lat _ _ _
 
+/-! ### Readings of the ladder -/
+
+/-- **A cell of full scope reads the ladder through the indices of one member**: a cell `f` of the
+tower at `(univ, K)`, `1 ≤ K ≤ m + 1`, reads every ladder point `v` as `Φ` of the index of `v` for
+some member `b`, `Φ` monotone, and every cell of the attachment of grade one as `Φ` of its rank for
+`b` (a ladder point through its codes, a controller through the positive table of its state). -/
+theorem exists_ladder_reading (hcard : (I.attachmentBase g).S.card ≤ H) {K : ℕ} (hK1 : 1 ≤ K)
+    (hKm : K ≤ m + 1) {f : Fin (𝕋).card}
+    (hf : (𝕋).toCellScheme.gradedIndex f = ((univ : Finset (Fin (m + 2))), K)) :
+    ∃ (b : Scheme.RankMember (I.attachmentBase g).S H) (Φ : ℕ → Label.{u}), Monotone Φ ∧
+      (∀ v, (𝕋).rowAt f (ladCell H Γ A B' v) =
+        Φ (ladderIndex H (Scheme.rankProf (I.attachmentBase g).S H) Prod.fst
+          (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H)) b v)) ∧
+      ∀ e : Fin (I.attachment g).card, (I.attachment g).toCellScheme.grade e = 1 →
+        (𝕋).rowAt f ((I.attachmentBase g).baseCellEmb m e) =
+          Φ (Scheme.rankProf (I.attachmentBase g).S H b e) := by
+  rcases Nat.lt_or_ge K 2 with hK | hK
+  · have hK' : K = 1 := by omega
+    subst hK'
+    rcases tower_grade_one_cases f (congrArg Prod.snd hf) with ⟨p, rfl⟩ | ⟨e', -, rfl⟩
+    · refine ⟨p.1, ladderSource (Scheme.ladderCeil (Scheme.rankProf _ H) p),
+        monotone_ladderSource _, fun v ↦ ?_, fun e he ↦ ?_⟩
+      · rw [rowAt_ladCell_ladCell, Scheme.baseIndex_natAdd, Equiv.symm_apply_apply]
+      · rw [rowAt_ladCell_baseCellEmb p he, rowAt_ladCell_ladCell, Scheme.baseIndex_natAdd,
+          Equiv.symm_apply_apply]
+        congr 1
+        exact ladderIndex_parent (Scheme.ladderCeil_le (Scheme.rankProf_le _ H)) (p.1, Sum.inr e)
+    · exfalso
+      exact (I.attachmentBase g).scope_ne_univ e'
+        ((congrArg Prod.fst (Scheme.LadderBaseData.gradedIndex_baseCellEmb (H := H) (Γ := Γ)
+          (A := A) (B' := B') m e')).symm.trans (congrArg Prod.fst hf))
+  · have hf' : (𝕋).toCellScheme.gradedIndex f = ((univ : Finset (Fin (m + 2))), K - 2 + 2) := by
+      rw [show K - 2 + 2 = K by omega]; exact hf
+    obtain ⟨R, -, hR, hrowA, hrowL⟩ :=
+      Scheme.LadderBaseData.exists_controller_ladderTower (B := I.attachmentBase g) (A := A)
+        (Γ := Γ) (B' := B') hcard (K - 2) m (by omega) f hf'
+    refine ⟨Scheme.RankMember.ofLawful (I.attachmentBase g).wf hcard hR, posTable R,
+      monotone_posTable, fun v ↦ ?_, fun e he ↦ ?_⟩
+    · refine (hrowL v).trans ?_
+      rw [Scheme.baseIndex_natAdd, Equiv.symm_apply_apply]
+    · refine (hrowA e (show (I.attachment g).toCellScheme.grade e ≤ K - 2 + 2 by omega)).trans ?_
+      exact (posTable_rankVector ((I.attachmentBase g).isSelfVisible_one_of_isLawful hR) e).symm
+
+/-- **The grade-one reading of a cell of the attachment, capped at a controller, is the
+controller's reading**, through capped decoders at the copies at a mixed face `U`, when the
+grade-one reading is through the top rung of a member whose copy dominates the copied ladder. -/
+theorem min_decode_eq_decode_one (hU : U ∈ I.mixedFaces g)
+    (hcard : (I.attachmentBase g).S.card ≤ H) (hH : 0 < H) {P : Fin (𝔼).card → Label.{u}}
+    {K : ℕ} (hK1 : 1 ≤ K) (hKm : K ≤ m + 1) (hKU : K ≤ #U) {f : Fin (𝕋).card}
+    (hf : (𝕋).toCellScheme.gradedIndex f = ((univ : Finset (Fin (m + 2))), K))
+    (a : Scheme.RankMember (I.attachmentBase g).S H)
+    (hmax : ∀ v, P (copyFull H Γ A B' hU (ladCell H Γ A B' v) (gradedIndex_ladCell v)
+        (hK1.trans hKU)) ≤
+      P (copyFull H Γ A B' hU (ladCell H Γ A B' (a, Sum.inl ⟨H - 1, by omega⟩))
+        (gradedIndex_ladCell _) (hK1.trans hKU)))
+    {θf θ1 : Label.{u} → Label.{u}} (hθf_mono : Monotone θf)
+    (hθf_le : ∀ x, θf x ≤ P (copyFull H Γ A B' hU f hf hKU))
+    (hθf : ∀ d ∈ (𝔼).toCellScheme.below
+        ((𝔼).toCellScheme.gradedIndex (copyFull H Γ A B' hU f hf hKU)),
+      θf ((𝔼).rowAt (copyFull H Γ A B' hU f hf hKU) d) =
+        min (P d) (P (copyFull H Γ A B' hU f hf hKU)))
+    (hθ1 : ∀ d ∈ (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex
+        (copyFull H Γ A B' hU (ladCell H Γ A B' (a, Sum.inl ⟨H - 1, by omega⟩))
+          (gradedIndex_ladCell _) (hK1.trans hKU))),
+      θ1 ((𝔼).rowAt (copyFull H Γ A B' hU (ladCell H Γ A B' (a, Sum.inl ⟨H - 1, by omega⟩))
+          (gradedIndex_ladCell _) (hK1.trans hKU)) d) =
+        min (P d) (P (copyFull H Γ A B' hU (ladCell H Γ A B' (a, Sum.inl ⟨H - 1, by omega⟩))
+          (gradedIndex_ladCell _) (hK1.trans hKU))))
+    {e : Fin (I.attachment g).card} (he : (I.attachment g).toCellScheme.grade e = 1) :
+    min (θ1 ((𝕋).rowAt (ladCell H Γ A B' (a, Sum.inl ⟨H - 1, by omega⟩))
+        ((I.attachmentBase g).baseCellEmb m e))) (P (copyFull H Γ A B' hU f hf hKU)) =
+      θf ((𝕋).rowAt f ((I.attachmentBase g).baseCellEmb m e)) := by
+  set top : Scheme.LadderPt (I.attachmentBase g).S
+    (Scheme.RankMember (I.attachmentBase g).S H) H := (a, Sum.inl ⟨H - 1, by omega⟩) with htop
+  have hU1 : 1 ≤ #U := hK1.trans hKU
+  -- the grade-one reading
+  have r1 : θ1 ((𝕋).rowAt (ladCell H Γ A B' top) ((I.attachmentBase g).baseCellEmb m e)) =
+      P (copyFull H Γ A B' hU (ladCell H Γ A B' (a, Sum.inr e)) (gradedIndex_ladCell _) hU1) := by
+    rw [rowAt_ladCell_baseCellEmb top he]
+    rw [decode_copyFull hU (gradedIndex_ladCell top) hU1 hθ1 (gradedIndex_ladCell _) le_rfl]
+    exact min_eq_left (hmax _)
+  rw [r1]
+  -- the reading by `f`
+  obtain ⟨b, Φ, hΦ, hrl, hre⟩ := exists_ladder_reading (Γ := Γ) (A := A) (B' := B') hcard hK1
+    hKm hf
+  set κ := rankCut H (Scheme.rankProf (I.attachmentBase g).S H b)
+    (Scheme.rankProf (I.attachmentBase g).S H a) with hκ
+  have hagr := rankAgree_rankCut H (Scheme.rankProf (I.attachmentBase g).S H b)
+    (Scheme.rankProf (I.attachmentBase g).S H a) e
+  have hidx_sh : ladderIndex H (Scheme.rankProf (I.attachmentBase g).S H) Prod.fst
+      (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H)) b
+        ((a, Sum.inr e) : Scheme.LadderPt (I.attachmentBase g).S
+          (Scheme.RankMember (I.attachmentBase g).S H) H) =
+      min (Scheme.rankProf (I.attachmentBase g).S H b e) κ := by
+    change min κ (Scheme.rankProf (I.attachmentBase g).S H a e) = _
+    rw [min_comm]
+    exact hagr.symm
+  have hidx_top : ladderIndex H (Scheme.rankProf (I.attachmentBase g).S H) Prod.fst
+      (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H)) b top = κ := by
+    unfold ladderIndex
+    simp only [top, Scheme.ladderCeil, Sum.elim_inl]
+    have hκH := rankCut_le H (Scheme.rankProf (I.attachmentBase g).S H b)
+      (Scheme.rankProf (I.attachmentBase g).S H a)
+    exact min_eq_left (by omega)
+  have hrow_sh : (𝕋).rowAt f (ladCell H Γ A B' (a, Sum.inr e)) =
+      min ((𝕋).rowAt f ((I.attachmentBase g).baseCellEmb m e))
+        ((𝕋).rowAt f (ladCell H Γ A B' top)) := by
+    rw [hrl, hrl, hre e he, hidx_sh, hidx_top, hΦ.map_min]
+  have hdec_sh := decode_copyFull hU hf hKU hθf (gradedIndex_ladCell (a, Sum.inr e)) hK1
+  have hdec_top := decode_copyFull hU hf hKU hθf (gradedIndex_ladCell top) hK1
+  -- the reading of `e` by `f` is at most the copied top rung
+  have hle_top : θf ((𝕋).rowAt f ((I.attachmentBase g).baseCellEmb m e)) ≤
+      P (copyFull H Γ A B' hU (ladCell H Γ A B' top) (gradedIndex_ladCell _) hU1) := by
+    have hsh : (𝕋).rowAt f ((I.attachmentBase g).baseCellEmb m e) =
+        (𝕋).rowAt f (ladCell H Γ A B' (b, Sum.inr e)) := by
+      rw [hre e he, hrl]
+      congr 1
+      exact (ladderIndex_parent (Scheme.ladderCeil_le (Scheme.rankProf_le _ H))
+        (b, Sum.inr e)).symm
+    rw [hsh, decode_copyFull hU hf hKU hθf (gradedIndex_ladCell (b, Sum.inr e)) hK1]
+    exact (min_le_left _ _).trans (hmax _)
+  have h1 := congrArg θf hrow_sh
+  rw [hθf_mono.map_min, hdec_sh, hdec_top,
+    min_eq_left (le_min hle_top (hθf_le _))] at h1
+  exact h1
+
 end Seed
 
 end VaughtConjecture
