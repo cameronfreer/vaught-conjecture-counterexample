@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedLadderCarrier
 import VaughtConjecture.MainTheorem.SeedLadderInputs
+import VaughtConjecture.Extension.ReplicatedMixedLift
 
 /-!
 # Ladder carriers at the seed position from the inputs of the replicated scheme
@@ -18,7 +19,9 @@ the attachment with the admission predicate of `Q`,
 * the capped lifts into the mixed faces (`Seed.HasMixedLifts`, open),
 * the capped lifts from the two coatoms into the full faces of the grades `1, …, m + 1`: the
   context lift (`Seed.HasContextLift`, open) and the mixed-coatom lift
-  (`Seed.HasMixedCoatomLift`, open; the second coatom is a mixed face when the root is not onto),
+  (`Seed.HasMixedCoatomLift`; when the root is not onto the second coatom is a mixed face
+  (`Seed.mem_mixedFaces_coatom`) and the lift holds, `Seed.hasMixedCoatomLift`, by the lift from a
+  mixed face into the full face `Seed.cappedLift_mixed_univ`),
 * a lawful labelling extending the labels of the attachment (`Seed.HasExtendingLabel`, open): a
   mathematical hypothesis on the replicated scheme, not a step of the assembly; it follows from a
   lawful labelling of the ladder tower extending them (`Seed.hasExtendingLabel_of_tower`, the
@@ -122,6 +125,46 @@ theorem hasExtendingLabel_of_tower {qT : Fin (I.attachTower g H Γ A B').card �
       change qT ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ _)) = _
       rw [Scheme.mirrorOrig_castAdd]
       exact hqe c⟩
+
+/-- **The second coatom is a mixed face** when the root is not onto: it contains the new point
+(so it is not inside the context face) and a point of the context outside the root (so it is not
+inside the donor face). -/
+theorem mem_mixedFaces_coatom (hg : ¬ Function.Surjective g) :
+    univ.erase (Fin.castSucc (Fin.last m)) ∈ I.mixedFaces g := by
+  rw [mem_mixedFaces]
+  refine ⟨?_, fun he ↦ ?_, fun hsub ↦ ?_, fun hsub ↦ ?_⟩
+  · rw [← Coatom.univ_map_right]
+    exact ((StageType.restrictFace_eq_some_iff _ _).mp I.restrictFace_right).1
+  · have h := mem_univ (Fin.castSucc (Fin.last m) : Fin (m + 2))
+    rw [← he, mem_erase] at h
+    exact h.1 rfl
+  · have hl : Fin.last (m + 1) ∈ univ.erase (Fin.castSucc (Fin.last m)) :=
+      mem_erase.mpr ⟨(Fin.castSucc_lt_last _).ne', mem_univ _⟩
+    exact Coatom.last_notMem_univ_map_left (hsub hl)
+  · obtain ⟨i, hi⟩ : ∃ i, ∀ x, g x ≠ i := by
+      by_contra h
+      push Not at h
+      exact hg fun i ↦ (h i).imp fun _ h ↦ h
+    have hmem : Fin.castSucc (Fin.castSucc i) ∈ univ.erase (Fin.castSucc (Fin.last m)) :=
+      mem_erase.mpr ⟨fun h ↦ (Fin.castSucc_lt_last i).ne (Fin.castSucc_injective _ h),
+        mem_univ _⟩
+    obtain ⟨y, -, hy⟩ := mem_map.mp (hsub hmem)
+    induction y using Fin.lastCases with
+    | last =>
+      rw [extendByLast_last] at hy
+      exact (Fin.castSucc_lt_last _).ne' hy
+    | cast y =>
+      rw [extendByLast_castSucc, Function.Embedding.trans_apply] at hy
+      exact hi y (Fin.castSucc_injective _ (Fin.castSucc_injective _ hy))
+
+/-- **The mixed-coatom lift holds when the root is not onto** (`Seed.cappedLift_mixed_univ` at the
+second coatom, a mixed face of size `m + 1`). -/
+theorem hasMixedCoatomLift (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hA0 : ∀ k, A k fun _ ↦ ⊥) (hg : ¬ Function.Surjective g) :
+    I.HasMixedCoatomLift g H Γ A B' := fun j hj1 hjm ↦
+  cappedLift_mixed_univ hH hcard hΓ0 hΓ hA hA0 (mem_mixedFaces_coatom hg) hj1 hjm
+    (by rw [card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin]; omega)
 
 variable (I g) {d : StageType.{u} α (n + 1)}
   (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
