@@ -516,6 +516,71 @@ theorem exists_copiedTopRung_ne_bot (hH : 0 < H) (hcard : (I.attachmentBase g).S
     rw [← e]
     exact h0
 
+/-! ### The shape of the copied ladder -/
+
+/-- **The copied ladder is lawful on the ladder table**: a section lawful below a pair above
+`(U, 1)`, read on the copied ladder points at the mixed face `U`, is self-visible at `1` and local
+at every copied ladder point for the ladder row (`Label.LadderLawful`): the copies at `U` read one
+another with the rows of the ladder (`Seed.rowAt_copyLadder`). -/
+theorem ladderLawful_copyLadder (hU : U ∈ I.mixedFaces g) {Y : Finset (Fin (m + 2)) × ℕ}
+    {w : Fin (I.replicated g H Γ A B').card → Label.{u}}
+    (hw : (I.replicated g H Γ A B').rows.IsLawfulBelow Y fun d ↦ w d) (hUY : (U, 1) ≤ Y) :
+    LadderLawful H (Scheme.rankProf (I.attachmentBase g).S H) Prod.fst
+      (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H))
+      fun p ↦ w (copyLadder H Γ A B' hU p) := by
+  obtain ⟨hord, hloc, -⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hw
+  have hg1 (p : Scheme.LadderPt (I.attachmentBase g).S
+      (Scheme.RankMember (I.attachmentBase g).S H) H) :
+      (I.replicated g H Γ A B').toCellScheme.grade (copyLadder H Γ A B' hU p) = 1 :=
+    congrArg Prod.snd (gradedIndex_copyLadder hU p)
+  have hmY (p : Scheme.LadderPt (I.attachmentBase g).S
+      (Scheme.RankMember (I.attachmentBase g).S H) H) :
+      copyLadder H Γ A B' hU p ∈ (I.replicated g H Γ A B').toCellScheme.below Y := by
+    rw [CellScheme.mem_below, gradedIndex_copyLadder]
+    exact hUY
+  refine ⟨fun p ↦ ?_, fun c ↦ ?_⟩
+  · have h := hord _ (hmY p)
+    rwa [hg1] at h
+  · have hb (p : Scheme.LadderPt (I.attachmentBase g).S
+        (Scheme.RankMember (I.attachmentBase g).S H) H) :
+        copyLadder H Γ A B' hU p ∈ (I.replicated g H Γ A B').toCellScheme.below
+          ((I.replicated g H Γ A B').toCellScheme.gradedIndex (copyLadder H Γ A B' hU c)) := by
+      rw [CellScheme.mem_below, gradedIndex_copyLadder, gradedIndex_copyLadder]
+    have h := (hloc _ (hmY c)).reindex fun p ↦ (⟨_, hb p⟩ :
+      (I.replicated g H Γ A B').toCellScheme.below
+        ((I.replicated g H Γ A B').toCellScheme.gradedIndex (copyLadder H Γ A B' hU c)))
+    convert h using 1
+    · funext p
+      exact (hg1 p).symm
+    · funext p
+      simp only [Function.comp_apply]
+      rw [← Scheme.rowAt_of_mem (hb p), rowAt_copyLadder, Scheme.baseIndex_natAdd,
+        Equiv.symm_apply_apply]
+      rfl
+    · rfl
+
+/-- **The shape of the copied ladder** at a mixed face: a section lawful below a pair above
+`(U, 1)` is `⊥` at every copied ladder point at `U`, or there, for the member `a` with the largest
+copied top rung, the chart image of the table of `a`, `⊥` exactly at its index `0`
+(`Label.LadderLawful.exists_shape`).  In particular the copied shadows of `a` read the ranks of
+`a` at every cell of the attachment, inside `U` or not. -/
+theorem copyLadder_exists_shape (hH : 0 < H) (hU : U ∈ I.mixedFaces g)
+    {Y : Finset (Fin (m + 2)) × ℕ} {w : Fin (I.replicated g H Γ A B').card → Label.{u}}
+    (hw : (I.replicated g H Γ A B').rows.IsLawfulBelow Y fun d ↦ w d) (hUY : (U, 1) ≤ Y) :
+    (∀ p, w (copyLadder H Γ A B' hU p) = ⊥) ∨
+      ∃ (a : Scheme.RankMember (I.attachmentBase g).S H) (gg : ℕ → Label.{u})
+        (σ : Label.{u} → Label.{u}), IsWitness gg σ ∧
+        (∀ p, w (copyLadder H Γ A B' hU p) = min (σ (ladderSource H
+          (ladderIndex H (Scheme.rankProf (I.attachmentBase g).S H) Prod.fst
+            (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H)) a p))) (gg 1)) ∧
+        ∀ p, w (copyLadder H Γ A B' hU p) = ⊥ ↔
+          ladderIndex H (Scheme.rankProf (I.attachmentBase g).S H) Prod.fst
+            (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H)) a p = 0 :=
+  (ladderLawful_copyLadder hU hw hUY).exists_shape hH
+    (Scheme.ladderCeil_le (Scheme.rankProf_le _ H))
+    (fun a i ↦ (a, Sum.inl ⟨min i (H - 1), by omega⟩)) (fun _ _ _ ↦ rfl)
+    fun _ i hi ↦ by simp only [Scheme.ladderCeil, Sum.elim_inl]; omega
+
 end Seed
 
 end VaughtConjecture
