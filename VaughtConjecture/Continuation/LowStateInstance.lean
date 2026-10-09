@@ -9,7 +9,7 @@ import VaughtConjecture.Continuation.LowStateStep
 # The step for states above the controllers: a rigid reading refutes it
 
 Roadmap, Layer 3 ((R2), the state tower of the LOW construction; the step for states above the
-controllers, `StageType.StateStepsAbove`).
+controllers, `ProfileTower.StateCatStep` at the grades above `K`).
 
 **Scope.**  A conditional obstruction to the state tower of
 `VaughtConjecture.Continuation.LowStateTower` (whose code splices the fields above each layer and
@@ -45,8 +45,9 @@ asks `t` at least the frontier, above `θ`.  In a legal instance `θ` is the cap
 the state could not be active, by the same rigidity applied to it.
 
 This is a statement about `ProfileTower.StateCatStep` (the hypothesis form of
-`StageType.StateStepsAbove`), not about the lifts of the state tower themselves; whether a legal
-family realizes the configuration is not compiled here.
+`StageType.StateStepsAbove`, on the research branch `research/port-low-padded`), not about the lifts
+of the state tower themselves; whether a legal family realizes the configuration is not compiled
+here.
 
 ## References
 
