@@ -23,14 +23,16 @@ and admitted with the prescription; the two sections glue over the attachment
 by the anchor: the lawfulness below `(univ, k)` and the admission (read at the threshold) are
 unchanged, and the capped agreement holds at every cell.
 
-**The premise left.**  From the threshold on, the donor step asks the admission of the anchor's
-**truncation at `k`** (`hamb`).  The admission of the anchor (`Seed.attachAdmits`) is that of its
-truncation at the threshold; the two coincide at `k = threshold`
-(`Seed.exists_stateStep_threshold`, which derives `hamb` from the anchor's admission), as at the
-top grade `2` of the tie input (`TieInstance.exists_stateStep_two`).  Above the threshold the
-truncation at `k` keeps donor values of grade in `(threshold, k]`, which the requests read through
-the cap value (`StageType.GrowthRequests.CorrectAt`); their admission is not implied by the
-anchor's.
+**The premise on the anchor.**  From the threshold on, the donor step asks the admission of the
+anchor's **truncation at `k`** (`hamb`).  The admission of the anchor (`Seed.attachAdmits`) is
+that of its truncation at the threshold; the two coincide at `k = threshold`
+(`Seed.exists_stateStep_threshold`), as at the top grade `2` of the tie input
+(`TieInstance.exists_stateStep_two`) and at the grade `2` of the apex input, below its top grade
+(`ApexInstance.exists_stateStep_two`).  Above the threshold the truncation at `k` keeps donor
+values of grade in `(threshold, k]`; for an anchor in the catalogue its admission is the ambient
+admission of the anchor's writing (`Seed.ambientAdmitted`), so the state step holds at every grade
+(`Seed.exists_stateStep_of_mem_towerCat`; at the apex input at the grade `3`,
+`ApexInstance.exists_stateStep_three`).
 
 **Toward the serving-row short lift** (not proved here).  The lift of a serving row from the state
 `W` would be `orbitDecoder k W h ∘ w_P`, with `P` the orbit code of `W`: it reads `P` literally as
@@ -40,8 +42,32 @@ value `h`, as at the cut of `Seed.not_gap_of_context_cell`) makes it jump on the
 (`Label.le_orbitDecoder_of_code_at_cut`): a row value on the strip of `h` below `h` that is not a
 code value is read at least at `h`, against the capped agreement with the row.  At the grade `2`
 the row values of the strip below a cut `ω * b + 2` are values `ω * b + 1` of the state, read
-literally; at a grade `k ≥ 3` the heights `ω * b + j`, `2 ≤ j < k`, of the lower layers lie on the
-strip.
+literally.  At a grade `k ≥ 3` the heights `ω * b + j`, `2 ≤ j < k`, of the lower layers lie on the
+strip (`Label.lowerHeight_strip_jump`: a height of the layer `j` in `Scheme.heightSet Γ B' j`, on
+the strip of `ω * b + k` and below it, read at least at `ω * b + k`; the hypotheses are met,
+`Label.exists_strip_jump`, e.g. at `k = 3` the height `ω + 2` under the cut `ω + 3`).
+
+**A proposed invariant: per-grade height blocks** (not implemented).  Choose block sets `D j`
+(`2 ≤ j ≤ m + 1`) from the seed, pairwise disjoint, not containing `0` or the top block `B'`
+(for instance `D j = {b < B' | b % (m + 2) = j}`), and take as heights of the layer `j`
+```
+G j = {⊥, ω * B' + j} ∪ {ω * b + j | b ∈ D j} ∪ {c ∈ Γ | IsSelfVisible j c, block of c ∈ D j}.
+```
+Proposed lemma (strip freedom): for `2 ≤ j < k`, `x ∈ G j` and `c ∈ G k` with `c ≤ ω * B' + 2`,
+not (`visibilityReplace k k x = c` and `x < c`).  The strip of `c` lies in the block of `c`, a
+block of `D k` (`c` is self-visible at `k ≥ 3` and below `ω * B' + 2`, so not in the block `B'`),
+and `x` lies in a block of `D j` or in `B'`.  The heights keep the contract `Scheme.IsHeights`
+(bottom, self-visible, the top grid point `ω * B' + j`, below it).  It changes:
+* `Scheme.heightSet Γ B' j` (`Extension/BaseLadderTower.lean`): the grid `grid j B'` of all blocks
+  is replaced by the blocks `D j` and `B'`, and the values of `Γ` are filtered by block;
+* the default heights `G` of `Scheme.LadderBaseData.ladderTower`, `Seed.attachTower` and
+  `Seed.replicated` (the argument `G (k + 2)` of `layerTower`);
+* the orbit code's blocks (`Label.codeBlock`: `2 r` and `2 r - 1`) composed with an injection into
+  `D k`, so that the codes of the grade `k` and the cuts of the grade `k` in the values (the code
+  grid `codeGrid`) lie in `D k`; the natural strip (block `0`, shared by every grade) is outside
+  every `D j`, so no height of a layer `j ≥ 2` lies there, and its finite values below a cut `k`
+  are values of the state or the ladder value `1` (the natural-strip reading of the grade `2`).
+Separation keeps the cut of the grade `k` a height of the grade `k` (it lies in a block of `D k`).
 
 ## References
 
@@ -80,6 +106,56 @@ theorem le_orbitDecoder_of_code_at_cut {k : ℕ} {ι : Type*} [Fintype ι] {W : 
   rw [ite_eq_right (not_lt.mpr hkey.ge), ite_eq_right (fun hc ↦ hno hc.2)]
   calc h = visibilityReplace k k h := hh.symm
     _ ≤ visibilityReplace k k (W e) := monotone_visibilityReplace le_rfl hWe
+
+/-- A grid point of a lower grade lies on the strip of the grid point of the same block. -/
+theorem visibilityReplace_gridPoint_of_lt {j k : ℕ} (hj : j < k) (b : ℕ) :
+    visibilityReplace k k (gridPoint.{u} j b) = gridPoint k b := by
+  rw [gridPoint, visibilityReplace_block, ite_eq_left hj, gridPoint]
+
+/-- **The strip jump at a lower-layer height** (the failing step at a grade `k ≥ 3`): for grades
+`j < k` and a block `b ≤ B'`, the grid point `ω * b + j` is a height of the layer `j`
+(`Scheme.heightSet Γ B' j`, for every `Γ`), lies on the strip of the cut `ω * b + k` strictly
+below it, and, when a cell `e` has its orbit code at that cut (its value at least the cut, its key
+not an orbit key), `orbitDecoder k W (ω * b + k)` reads it at least at the cut
+(`le_orbitDecoder_of_code_at_cut`): its reading capped at the cut differs from the height itself
+capped at the cut.  At the grade `2` no layer lies below, so no lower-layer height meets the
+strip. -/
+theorem lowerHeight_strip_jump {j k b B' : ℕ} (hj : j < k) (hb : b ≤ B') (Γ : Finset Label.{u})
+    {ι : Type*} [Fintype ι] {W : ι → Label.{u}} {e : ι} (he : orbitCode k W e = gridPoint k b)
+    (hno : ¬ IsOrbitKey k W (W e)) (hWe : gridPoint k b ≤ W e) :
+    gridPoint j b ∈ Scheme.heightSet Γ B' j ∧
+      visibilityReplace k k (gridPoint.{u} j b) = gridPoint k b ∧
+      gridPoint.{u} j b < gridPoint k b ∧
+      gridPoint k b ≤ orbitDecoder k W (gridPoint k b) (gridPoint j b) ∧
+      min (orbitDecoder k W (gridPoint k b) (gridPoint j b)) (gridPoint k b) ≠
+        min (gridPoint j b) (gridPoint k b) := by
+  have hlt : gridPoint.{u} j b < gridPoint k b :=
+    gridPoint_lt_gridPoint_iff_lex.mpr (.inr ⟨rfl, hj⟩)
+  have hjump := le_orbitDecoder_of_code_at_cut (isSelfVisible_gridPoint k b) he hno hWe
+    (visibilityReplace_gridPoint_of_lt hj b)
+  refine ⟨Scheme.mem_heightSet.mpr (.inl (gridPoint_mem_grid hb)),
+    visibilityReplace_gridPoint_of_lt hj b, hlt, hjump, ?_⟩
+  rw [min_eq_right hjump, min_eq_left hlt.le]
+  exact hlt.ne'
+
+/-- **The hypotheses of the strip jump are met**: on one cell with the value `ω * 2 + k`, the
+orbit code is the cut `ω + k` (the value is self-visible, so its key is a key and not an orbit
+key, of key rank `1` and code block `1`), and the value is above the cut.  So at the grade `3`
+the layer-`2` height `ω + 2` is read by `orbitDecoder 3 W (ω + 3)` at least at `ω + 3`. -/
+theorem exists_strip_jump (k : ℕ) :
+    ∃ W : Fin 1 → Label.{u}, orbitCode k W 0 = gridPoint k 1 ∧ ¬ IsOrbitKey k W (W 0) ∧
+      gridPoint k 1 ≤ W 0 := by
+  classical
+  refine ⟨fun _ ↦ gridPoint k 2, ?_, ?_, gridPoint_le_gridPoint.mpr (by omega)⟩
+  · have hno : ¬ IsOrbitKey k (fun _ : Fin 1 ↦ gridPoint.{u} k 2) (gridPoint k 2) :=
+      fun ⟨_, _, hs⟩ ↦ hs (isSelfVisible_gridPoint k 2)
+    have hkey : IsKey k (fun _ : Fin 1 ↦ gridPoint.{u} k 2) (gridPoint k 2) :=
+      isKey_apply_iff (d := 0).mpr (gridPoint_ne_bot k 2)
+    have hr : keyRank k (fun _ : Fin 1 ↦ gridPoint.{u} k 2) (gridPoint k 2) = 1 :=
+      le_antisymm ((keyRank_le_card _ _ _).trans (by simp)) (one_le_keyRank hkey)
+    rw [orbitCode_apply, orbitMap_of_not_isOrbitKey (gridPoint_ne_bot k 2) hno, codeBlock,
+      ite_eq_right (fun h ↦ hno h.1), hr, ite_eq_left ⟨hkey, hno⟩]
+  · exact fun ⟨_, _, hs⟩ ↦ hs (isSelfVisible_gridPoint k 2)
 
 end Label
 
