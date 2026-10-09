@@ -364,7 +364,10 @@ The warnings for (R2)–(R4) below are compiled in separate open changes, not in
 - (R2): extensions satisfying the per-top reading criterion for arbitrary relevant donors.  The
   version with one fixed **lost top** (an old top of the context read for every new top) is
   *refuted* in a separate open change (`StageType.HasSeparatedPinnedExtensions`, false at every
-  stage); the replacement reads each new top through its own old reference top.
+  stage); the replacement reads each new top through its own old reference top.  (R2) for
+  receiving models is compiled by another construction, LOW displays
+  (`Realization.receivingResidualReceiving_of_padded`), so the receiving-models route does not need
+  this one.
 - (R3): uniform acquisition of marked-cap contexts (`StageType.IsMarkedCapContext`) and **reading
   carriers** (legal one-point extensions carrying the donor whose cells of full scope read the
   new tops); **marked closure** (an entry agreeing with a marked one above its cap is marked) for
@@ -610,7 +613,11 @@ Status of each:
    (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
    contexts: the reduction is a template.  One predicate is defined, the source-gap context below,
    with acquisition compiled and determination open; no other predicate for (R2) is defined, and
-   determination is proved for no `P` beyond the rigid-core instance.  For `P` always true,
+   determination is proved for no `P` beyond the rigid-core instance and the source-gap contexts
+   with the coatom off the lost point closed (`StageType.IsSourceGapContextOff`:
+   `Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff` applied
+   to the compiled `Realization.boundedCoatomCutoffDetermination_sourceGapLast`).  For `P` always
+   true,
    acquisition is immediate and determination fails (compiled; top-free roots,
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
    The cofaces in which the root is a rigid core need only (R1) in the same form
