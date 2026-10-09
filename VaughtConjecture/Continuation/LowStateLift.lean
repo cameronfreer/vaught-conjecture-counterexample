@@ -273,8 +273,8 @@ theorem orbitCode_withCut_mem_sCat {W : Prof I} (hW : IsCutLawful I (g + 1) W) {
 level readable at the canonical states, for `g + 1 ≤ m`, when `A` holds with the cutoff `⊥`: the
 one-grade lift `CellScheme.Rows.cappedLift_of_boundary_short` with the boundary triple of the
 coatom, the lift of the level at `g`, the cap `⊥` by
-`ProfileTower.Lvl.Good.exists_cutLawful_of_coatom` on the forgetful level, and the positive caps by the state step and
-`ProfileTower.SLvl.Good.exists_extension_s`. -/
+`ProfileTower.Lvl.Good.exists_cutLawful_of_coatom` on the forgetful level, and the positive caps by
+the state step and `ProfileTower.SLvl.Good.exists_extension_s`. -/
 theorem SLvl.Good.cappedLift_sS (hN : N.Good A) (hR : N.ReadableS) (hgm : g + 1 ≤ m)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hA0 : ∀ W : Prof I, A (withCut W ⊥))
     (hstep : N.SCatStep A x) :
@@ -435,12 +435,12 @@ theorem exists_jointCutoff (hK : K ≤ k) {P : CProf I} (hPlow : lowPred K Nf T 
   exact hVlow.map (isWitness_orbitMap k V) (stepSuppressor_of_le hK)
 
 variable (N) in
-/-- **The frontier step** from the coatom `univ.erase x` at the grade `g + 1`, for the LOW clause
-at `K`: at every state `P` of the catalogue and every positive cap self-visible and short at
-`g + 1`, every labelling lawful below the coatom agreeing there with `P` capped at the cap is, at
-the amalgam cells below the coatom, an amalgam profile lawful on the cut agreeing with the amalgam part
-of `P` capped at the cap, satisfying the frontier condition when its donor maximum is below the
-capped cutoff of `P`. -/
+/-- **The frontier step** from the coatom `univ.erase x` at the grade `g + 1`, for the LOW clause at
+`K`: at every state `P` of the catalogue and every positive cap self-visible and short at `g + 1`,
+every labelling lawful below the coatom agreeing there with `P` capped at the cap is, at the amalgam
+cells below the coatom, an amalgam profile lawful on the cut agreeing with the amalgam part of `P`
+capped at the cap, satisfying the frontier condition when its donor maximum is below the capped
+cutoff of `P`. -/
 def SLvl.SFrontierStep (N : SLvl I g) (K : ℕ) (Nf : Finset (Fin I.amalgam.card ⊕ Unit))
     (T : Set (Fin I.amalgam.card ⊕ Unit)) (o r : Fin I.amalgam.card) (x : Fin (m + 2)) : Prop :=
   ∀ P ∈ sCat I (g + 1) (lowPred K Nf T o r), ∀ h : Label.{u}, IsSelfVisible (g + 1) h →
