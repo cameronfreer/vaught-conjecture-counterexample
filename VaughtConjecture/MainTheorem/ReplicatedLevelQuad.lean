@@ -29,7 +29,7 @@ seed position stay explicit until their proof is composed there: requests calibr
 * the root `{0}` (the face `pointFace α`), the donor `ApexInstance.bareDonor α` labelled `⊥`; the
   seed exists (`QuadInstance.exists_seed`);
 * the bottom requests `QuadInstance.req hα` with the cap and the marker at the apex: threshold
-  `4 = m + 1`, the top grade, as the chain lemma asks.
+  `4 = m + 1`, the top grade.
 
 **The test below the top grade** (`QuadInstance.lvLevel_cappedLift_quad`): at every seed of the
 input, the level at every grade `j + 1 ≤ 4` lifts capped from the context coatom into
