@@ -8,44 +8,60 @@ import VaughtConjecture.Extension.ReplicatedTieReading
 import VaughtConjecture.Continuation.SourceGapSeparationObstruction
 
 /-!
-# The context lift at the seed position fails at a legal two-point context
+# The tie input at the seed position: a standing test of the agreement heights
 
 Roadmap, Layer 3 ((R3) and (R4), the context lift of the replicated scheme at the seed position).
 
-`StageType.HasContextLiftAtSeed H Γ B'` asks the context lift at EVERY seed position, so one seed
-position refutes it.  **Generically** (`StageType.not_hasContextLiftAtSeed_of_pair`): at one seed
-position, for a choice meeting the side conditions there (`0 < H`, `#cells ≤ H`,
-`Γ ≤ gridPoint 2 B'`, the code set inside `Γ`), a lawful section of the context with two positive
-values `⊥ < u' x₂ < u' x₁` at cells of one grade `2 ≤ k ≤ m + 1` refutes it
-(`Seed.not_cappedLift_context_of_section_pair`).
+**The input** (namespace `TieInstance`; stage `ω`, `m = n = 1`, every premise of
+`StageType.HasContextLiftAtSeed` instantiated):
 
-**The relative lift for bottom requests**
-(`StageType.GrowthRequests.hasRelativeLiftOnClass_of_bottoms`): requests with every donor cell a
-bottom request, no exact or high request, and the context labelled `⊥` at the root cells have the
-relative lift on the exact class over a legal donor with a nonempty root.
-
-**The instance** (namespace `TieInstance`), at the stage `ω`, `m = n = 1`:
-
-* the context `ctx`: the legal scheme `SeparationObstruction.S` on two points (cells `y` at
-  `({0}, 1)`, `e` at `({1}, 1)`, `z` at `(univ, 1)`, `o` and `r` at `(univ, 2)`), labelled `⊤` at
-  `r` and `⊥` elsewhere (lawful by `SeparationObstruction.isLawful_lab`); its first coatom face
-  `pt` on the point `0`; the root `Function.Embedding.refl (Fin 1)`, with the same face;
-* the donor `don`: the same scheme labelled `⊥`, a legal coface of `pt` (`don_mem_cofaces`, the
-  labels agree at the cells visible on the point `0`);
-* the requests `req`: cap and marker `r`, every donor cell a bottom request; the labels pair is
+* the stage `ω`, a limit (`Ordinal.isSuccLimit_omega0`);
+* the first coatom type `ctx ω`: the legal scheme `SeparationObstruction.S` on two points (cells
+  `y` at `({0}, 1)`, `e` at `({1}, 1)`, `z` at `(univ, 1)`, `o` and `r` at `(univ, 2)`), labelled
+  `⊤` at `r` and `⊥` elsewhere; its face on the point `0` is `pt ω` (`restrictFace_ctx`);
+* the root `Function.Embedding.refl (Fin 1)`, with the face `pt ω` (`restrictFace_ctx_root`);
+* the donor `don ω`: the same scheme labelled `⊥`, a legal coface of `pt ω`
+  (`don_mem_cofaces`), the face of the amalgam of the seed (`exists_seed`, from
+  `StageType.exists_growthSeed_of_isSuccLimit`);
+* `0 < n = 1`;
+* the requests `req ω`: cap and marker `r`, every donor cell a bottom request; the labels pair is
   admitted (`correctAt_req`), they are calibrated on the class (`classCalibrated_req`, threshold
-  `2 = n + 1`), with the relative lift on the exact class (`hasRelativeLiftOnClass_req`);
-* the section `sep`: `ω + 3` at `y`, `z`, `o` and `3` at `r`, lawful.
+  `2 = n + 1`), with the relative lift on the exact class (`hasRelativeLiftOnClass_req`, by
+  `StageType.GrowthRequests.hasRelativeLiftOnClass_of_bottoms`);
+* the grade `2 ∈ [2, m + 1]`; the lawful context section `sep ω` (`ω + 3` at `y`, `z`, `o`, `3`
+  at `r`).  In the refutation over the grid alone (below) the positive cap was `3` (self-visible at
+  `2`), the prescription the decoded writing of the code of the admitted completion of `sep ω`
+  shifted by one block, the ambient the writing of the positive constant `3` on its support, with
+  the capped agreement below the context coatom.
 
-The seed is that of `StageType.exists_growthSeed_of_isSuccLimit`.  **Conclusions**
-(`StageType.not_hasContextLiftAtSeed_seedChoice`, `StageType.not_towerExtensionAtSeed_seedChoice`,
-`StageType.not_towerExtensionPosAtSeed_seedChoice`): at the choice of the assembly
-(`Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`) the context lift, the extension over
-the tower and its case at a positive cap at the seed position are false, in every universe.  So
-the hypotheses `hctx` of `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_seedLifts` and
-`hE` of `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_towerExtension` and
-`…_of_towerExtensionPos` are false.  This says nothing about the main theorem or about
-`StageType.HasReplicatedInputsAtSeed` (some seed and some choice per seed position).
+`repairedContextLift_of_hasContextLiftAtSeed` compiles the instantiation: the context lift at
+the seed position, at the choice of the assembly, gives the lift at this input.
+
+**Old scheme (agreement heights in the grid alone): refuted.**  At commit `86a30a0` (branch
+`research/port-growth-pos-test`) this module compiled, with the tower of that commit,
+
+    theorem StageType.not_hasContextLiftAtSeed_seedChoice :
+        ¬ HasContextLiftAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound
+
+(and `not_towerExtensionAtSeed_seedChoice`, `not_towerExtensionPosAtSeed_seedChoice`), by the tie
+of `o` and `r` at the code value `3`, strictly inside the block `0` of the grid at `2`.  The base
+lane replaced the grid by the height set in `Scheme.LadderBaseData.ladderTower` itself
+(`Scheme.heightSet`, research/port-growth `5edcc2e`); the grid-only tower is no longer a value of
+the definitions (the height set is not a parameter of the tower, of `Seed.attachTower` or of
+`Seed.replicated`), so the old refutation is not restated here.  Making both reachable side by
+side needs one parameter (the height function) threaded through the ladder tower, the attachment
+tower and the replicated scheme; that is a change to the base files, left to the base lane.
+
+**Why the old refutation does not transfer** (`TieInstance.not_pin_cellR`, from
+`Seed.not_pin_of_grade`): the tied value is a value of a state of the catalogue at a cell of grade
+`2`, hence self-visible at `2` and a height of the repaired scheme; no cell of grade `2` is pinned
+below it.
+
+**Repaired scheme: the same input, open** (`TieInstance.RepairedContextLift`, a `Prop` to be
+proved by the base lane): the context lift at the grade `2` at every seed of this input, at the
+choice of the assembly, with agreement heights in the height set.  Not proved here: it is the
+context lift at a concrete but chosen seed (the second coatom of the seed comes from
+`StageType.exists_pinned_extension_of_isSuccPrelimit`), with every cap, prescription and ambient.
 
 ## References
 
@@ -98,40 +114,29 @@ theorem hasRelativeLiftOnClass_of_bottoms {Q : GrowthRequests t' d.toScheme}
 
 end StageType.GrowthRequests
 
+
 namespace StageType
 
-/-- **The context lift at the seed position fails at a lawful context section with two values at
-one grade**: for a choice `H`, `Γ`, `B'` meeting the side conditions at ONE seed position (a limit
-stage, a seed with the context as its first coatom type, a root, a legal coface, requests with the
-labels pair admitted, calibrated on the class and with the relative lift on the exact class), a
-lawful section `u'` of the context with `⊥ < u' x₂ < u' x₁` at two cells of one grade
-`2 ≤ k ≤ m + 1` refutes `StageType.HasContextLiftAtSeed H Γ B'`
-(`Seed.not_cappedLift_context_of_section_pair` at the grade `k`). -/
-theorem not_hasContextLiftAtSeed_of_pair
+/-- **The context lift at the seed position read at one seed position**, with the first coatom
+type given up to equality (the requests transported along it). -/
+theorem cappedLift_of_hasContextLiftAtSeed
     {H : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ}
     {Γ : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → Finset Label.{u}}
     {B' : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ}
-    {α : Ordinal.{u}} (hα : Order.IsSuccLimit α) {n m : ℕ} (I : Seed.{u} α m)
-    (g : Fin n ↪ Fin m) {t' : StageType.{u} α (m + 1)} (hI : I.left = t')
+    (h : HasContextLiftAtSeed.{u} H Γ B') {α : Ordinal.{u}} (hα : Order.IsSuccLimit α) {n m : ℕ}
+    (I : Seed.{u} α m) (g : Fin n ↪ Fin m) {t' : StageType.{u} α (m + 1)} (hI : I.left = t')
     {p' : StageType.{u} α m} (hp' : restrictFace Fin.castSuccEmb t' = some p')
     {p : StageType.{u} α n} (hte : restrictFace (g.trans Fin.castSuccEmb) t' = some p)
     {d : StageType.{u} α (n + 1)} (hd : d ∈ p.cofaces)
     (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
-    (hn : 0 < n) {Q : GrowthRequests t' d.toScheme}
-    (hpair : ∀ j, Q.CorrectAt t'.label j (d.label j))
-    (hQ : Q.ClassCalibrated hte) (hrel : Q.HasRelativeLiftOnClass hte hd.2)
-    (hH : 0 < H I g) (hcard : (I.attachmentBase g).S.card ≤ H I g)
-    (hΓ : ∀ x ∈ Γ I g, x ≤ gridPoint 2 (B' I g))
-    (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ I g)
-    {u' : Fin t'.card → Label.{u}} (hu' : t'.rows.IsLawful u') {k : ℕ} (hk2 : 2 ≤ k)
-    (hkm : k ≤ m + 1) {x₁ x₂ : Fin t'.card} (hx₁ : t'.toCellScheme.grade x₁ = k)
-    (hx₂ : t'.toCellScheme.grade x₂ = k) (h20 : u' x₂ ≠ ⊥) (h21 : u' x₂ < u' x₁) :
-    ¬ HasContextLiftAtSeed.{u} H Γ B' := by
-  intro h
+    (hn : 0 < n) (Q : GrowthRequests t' d.toScheme)
+    (hpair : ∀ j, Q.CorrectAt t'.label j (d.label j)) (hQ : Q.ClassCalibrated hte)
+    (hrel : Q.HasRelativeLiftOnClass hte hd.2) (j : ℕ) (hj : 2 ≤ j) (hjm : j ≤ m + 1) :
+    (I.replicated g (H I g) (Γ I g) (I.attachAdmits g hdA (hI ▸ Q)) (B' I g)).rows.CappedLift
+      (X := (univ.erase (Fin.last (m + 1)), j)) (Y := ((univ : Finset (Fin (m + 2))), j))
+      ⟨erase_subset _ _, le_rfl⟩ := by
   subst hI
-  exact Seed.not_cappedLift_context_of_section_pair hH hcard hΓ hΓc hte hd.2 hdA hQ hpair hrel hu'
-    hk2 hkm hx₁ hx₂ h20 h21
-    (h I g p' hα I.isLegal_left hp' p hte d hd hdA hn Q hpair hQ hrel k hk2 hkm)
+  exact h I g p' hα I.isLegal_left hp' p hte d hd hdA hn Q hpair hQ hrel j hj hjm
 
 end StageType
 
@@ -272,51 +277,65 @@ theorem isLawful_sep : (ctx α).rows.IsLawful (sep α) :=
 
 end TieInstance
 
-namespace StageType
 
-open TieInstance
+namespace TieInstance
 
-/-- **The context lift at the seed position fails at the choice of the assembly**
-(`Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`): at the stage `ω`, the seed of
-`StageType.exists_growthSeed_of_isSuccLimit` over the context `TieInstance.ctx` (the legal
-two-point scheme `SeparationObstruction.S`, labelled `⊤` at one cell of graded index `(univ, 2)`
-and `⊥` elsewhere), the root `{0}`, the donor `TieInstance.don` (the same scheme labelled `⊥`),
-and the bottom requests `TieInstance.req`, together with the lawful section `TieInstance.sep`
-(`ω + 3` and `3` at the two cells of graded index `(univ, 2)`), refute it
-(`StageType.not_hasContextLiftAtSeed_of_pair`). -/
-theorem not_hasContextLiftAtSeed_seedChoice :
-    ¬ HasContextLiftAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound := by
-  have hα : Order.IsSuccLimit (ω : Ordinal.{u}) := Ordinal.isSuccLimit_omega0
-  have hp : restrictFace (Function.Embedding.refl (Fin 1)) (pt ω) = some (pt ω) :=
-    (restrictFace_trans (ctx ω) _ _ (restrictFace_ctx ω)).trans (restrictFace_ctx_root ω)
-  obtain ⟨I, hI, hdA⟩ := exists_growthSeed_of_isSuccLimit hα (t' := ctx ω)
+/-- **The seed position of the input exists**: a seed with first coatom type `ctx ω` whose donor
+face along the root followed by the new point is `don ω`
+(`StageType.exists_growthSeed_of_isSuccLimit`). -/
+theorem exists_seed :
+    ∃ I : Seed.{u} ω 1, I.left = ctx ω ∧
+      restrictFace (extendByLast ((Function.Embedding.refl (Fin 1)).trans Fin.castSuccEmb))
+        I.amalgam = some (don ω) :=
+  exists_growthSeed_of_isSuccLimit Ordinal.isSuccLimit_omega0 (t' := ctx ω)
     SeparationObstruction.isLegal_S
-    (restrictFace_ctx ω) hp (don_mem_cofaces ω)
-  refine not_hasContextLiftAtSeed_of_pair hα I (Function.Embedding.refl (Fin 1)) hI
-    (restrictFace_ctx ω) (restrictFace_ctx_root ω) (don_mem_cofaces ω) hdA Nat.one_pos
-    (correctAt_req ω) (classCalibrated_req ω) (hasRelativeLiftOnClass_req ω)
-    (I.seedHeight_pos _) (I.card_le_seedHeight _) (fun _ hx ↦ I.le_gridPoint_of_mem_seedValues _ hx)
-    (I.codeSet_subset_seedValues _) (isLawful_sep ω) le_rfl le_rfl (x₁ := cellO.{u} ω)
-    (x₂ := cellR.{u} ω) rfl rfl WithBot.coe_ne_bot ?_
-  change labelAdd 0 3 < labelAdd ω 3
-  rw [labelAdd, labelAdd, zero_add, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
-  exact (Ordinal.natCast_lt_omega0 3).trans_le le_self_add
+    (restrictFace_ctx ω) ((restrictFace_trans (ctx ω) _ _ (restrictFace_ctx ω)).trans
+      (restrictFace_ctx_root ω)) (don_mem_cofaces ω)
 
-/-- **The extension over the tower at the seed position fails at the choice of the assembly**: it
-gives the context lift (`StageType.hasContextLiftAtSeed_of_towerExtension`). -/
-theorem not_towerExtensionAtSeed_seedChoice :
-    ¬ TowerExtensionAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound := fun hE ↦
-  not_hasContextLiftAtSeed_seedChoice (hasContextLiftAtSeed_of_towerExtension
-    Seed.seedHeight_pos Seed.card_le_seedHeight Seed.bot_mem_seedValues hE)
+/-- **The context lift of the repaired scheme at the input** (open; the statement to be proved,
+the local check of the repair): at every seed with first coatom type `ctx ω` and donor `don ω`,
+with the root `{0}` and the requests `req`, the replicated scheme at the choice of the assembly
+(`Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`; agreement heights in
+`Scheme.heightSet`) lifts capped from the context coatom into the full face at the grade `2`. -/
+def RepairedContextLift : Prop :=
+  ∀ (I : Seed.{u} ω 1) (hI : I.left = ctx ω)
+    (hdA : restrictFace (extendByLast ((Function.Embedding.refl (Fin 1)).trans Fin.castSuccEmb))
+      I.amalgam = some (don ω)),
+    (I.replicated (Function.Embedding.refl (Fin 1))
+        (I.seedHeight (Function.Embedding.refl (Fin 1)))
+        (I.seedValues (Function.Embedding.refl (Fin 1)))
+        (I.attachAdmits (Function.Embedding.refl (Fin 1)) hdA (hI ▸ req ω))
+        (I.seedGridBound (Function.Embedding.refl (Fin 1)))).rows.CappedLift
+      (X := (univ.erase (Fin.last 2), 2)) (Y := ((univ : Finset (Fin 3)), 2))
+      ⟨erase_subset _ _, le_rfl⟩
 
-/-- **The extension over the tower at a positive cap at the seed position fails at the choice of
-the assembly**: it gives the extension (`StageType.towerExtensionAtSeed_of_pos`). -/
-theorem not_towerExtensionPosAtSeed_seedChoice :
-    ¬ TowerExtensionPosAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound := fun hE ↦
-  not_towerExtensionAtSeed_seedChoice (towerExtensionAtSeed_of_pos Seed.seedHeight_pos
-    Seed.card_le_seedHeight (fun I g _ hx ↦ I.le_gridPoint_of_mem_seedValues g hx)
-    Seed.codeSet_subset_seedValues hE)
+/-- **Every premise of the context lift at the seed position is instantiated by the input**: the
+context lift at the seed position at the choice of the assembly gives the context lift of the
+repaired scheme at the input (stage `ω` a limit, the first coatom type legal with its face on the
+point `0`, the root with that face, the donor a legal coface of it and the face of the amalgam,
+`0 < n`, the labels pair admitted, calibration on the class, the relative lift on the exact class,
+the grade `2` in `[2, m + 1]`). -/
+theorem repairedContextLift_of_hasContextLiftAtSeed
+    (h : HasContextLiftAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound) :
+    RepairedContextLift.{u} := fun I hI hdA ↦
+  cappedLift_of_hasContextLiftAtSeed h Ordinal.isSuccLimit_omega0 I _ hI (restrictFace_ctx ω)
+    (restrictFace_ctx_root ω) (don_mem_cofaces ω) hdA Nat.one_pos (req ω) (correctAt_req ω)
+    (classCalibrated_req ω) (hasRelativeLiftOnClass_req ω) 2 le_rfl le_rfl
 
-end StageType
+/-- **The old tie is no pin of the repaired scheme**: the ambient of the refutation over the grid
+alone tied the cells `o` and `r`, of the grade `2`, at a value of the catalogue; every such value is
+self-visible at `2`, a height, so no cell at `(univ, 2)` is pinned below it
+(`Seed.not_pin_of_grade`). -/
+theorem not_pin_cellR {I : Seed.{u} ω 1} {Γ : Finset Label.{u}} {B' : ℕ}
+    {A : ℕ → (Fin (I.attachmentBase (Function.Embedding.refl (Fin 1))).S.card → Label.{u}) → Prop}
+    {K : ℕ} {R' : Fin (I.attachment (Function.Embedding.refl (Fin 1))).card → Label.{u}}
+    (hR' : R' ∈ (I.attachmentBase (Function.Embedding.refl (Fin 1))).towerCat Γ A K)
+    {a : Fin (I.attachment (Function.Embedding.refl (Fin 1))).card}
+    (ha : (I.attachment (Function.Embedding.refl (Fin 1))).toCellScheme.grade a = 2)
+    {σ : Label.{u} → Label.{u}} {c : Label.{u}} (hc : c ≤ σ (R' a)) :
+    ¬ ∀ x ∈ Scheme.heightSet Γ B' 2, c ≤ σ x → R' a < x :=
+  Seed.not_pin_of_grade hR' ha hc
+
+end TieInstance
 
 end VaughtConjecture
