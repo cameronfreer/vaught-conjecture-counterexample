@@ -7,6 +7,7 @@ import VaughtConjecture.MainTheorem.ReplicatedAttachedInputs
 import VaughtConjecture.Extension.ReplicatedStateCoding
 import VaughtConjecture.MainTheorem.GrowthRelabelStable
 import VaughtConjecture.Extension.LadderTowerContextLiftOne
+import VaughtConjecture.Extension.LadderTowerContextLiftCap
 import VaughtConjecture.Extension.ReplicatedOntoRoot
 
 /-!
@@ -24,6 +25,17 @@ and from ONE open statement at the seed position:
 * `StageType.TowerExtensionAtSeed H Γ B'` (open): the extension over the tower
   (`Seed.TowerExtension`) at the grades `2, …, m + 1`, at every seed and requests of the seed
   position, for the replicated scheme with the admission predicate of the requests.
+
+It follows from its case at a positive cap the state exceeds,
+`StageType.TowerExtensionPosAtSeed H Γ B'` (`Seed.TowerExtensionPos`: caps `⊥ < c`, some cell of
+the attachment of grade at most `j` where the state is not at most `c`), once `Γ` contains the code
+set (`StageType.towerExtensionAtSeed_of_pos`, by `Seed.towerExtension_of_pos`: at the cap `⊥` the
+decoded writing of the code of the state extends it, and a state at most the cap is extended by the
+ambient capped).  Every use of the extension below (the context lift, the lifts into the mixed
+faces, the lift from the second coatom at an onto root) goes through
+`Seed.TowerExtension`, so the positive case suffices for all of them
+(`StageType.hasReplicatedInputsAtSeed_of_towerExtensionPos`,
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos`).
 
 It gives three lift statements at the seed position, each for the same `H`, `Γ`, `B'` (they are
 kept as statements of their own, readable separately, so that the assembly
@@ -438,6 +450,46 @@ theorem hasOntoRootCoatomLiftAtSeed_of_towerExtension
 
 end TowerExtension
 
+/-- **The extension over the tower at a positive cap at the seed position, at the grades
+`2, …, m + 1`** (open), for the choice `H`, `Γ`, `B'`: as `StageType.TowerExtensionAtSeed`, with
+`Seed.TowerExtensionPos` (the extension asked only at caps `c ≠ ⊥` and for states exceeding `c`
+at some cell of the attachment of grade at most `j`) in place of `Seed.TowerExtension`. -/
+def TowerExtensionPosAtSeed
+    (H : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
+    (Γ : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → Finset Label.{u})
+    (B' : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ) : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃n m : ℕ⦄ (I : Seed.{u} α m) (g : Fin n ↪ Fin m)
+    (p' : StageType.{u} α m), Order.IsSuccLimit α → I.left.IsLegal →
+    restrictFace Fin.castSuccEmb I.left = some p' → ∀ (p : StageType.{u} α n)
+      (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p) (d : StageType.{u} α (n + 1))
+      (hd : d ∈ p.cofaces)
+      (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d), 0 < n →
+      ∀ Q : GrowthRequests I.left d.toScheme,
+        (∀ j, Q.CorrectAt I.left.label j (d.label j)) → Q.ClassCalibrated hte →
+        Q.HasRelativeLiftOnClass hte hd.2 →
+        ∀ j, 2 ≤ j → j ≤ m + 1 →
+          Seed.TowerExtensionPos I g (H I g) (Γ I g) (I.attachAdmits g hdA Q) (B' I g) j
+
+/-- **The extension over the tower at the seed position from its case at a positive cap**, for a
+choice with `H` positive and at least the number of cells of the attachment, `Γ` below the grid
+point `ω * B' + 2` and containing the code set `codeSet #cells (m + 2)`
+(`Seed.towerExtension_of_pos`). -/
+theorem towerExtensionAtSeed_of_pos
+    {H : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ}
+    {Γ : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → Finset Label.{u}}
+    {B' : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ}
+    (hH : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), 0 < H I g)
+    (hcard : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      (I.attachment g).card ≤ H I g)
+    (hΓ : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      ∀ x ∈ Γ I g, x ≤ gridPoint 2 (B' I g))
+    (hcode : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      codeSet (I.attachment g).card (m + 2) ⊆ Γ I g)
+    (hE : TowerExtensionPosAtSeed.{u} H Γ B') : TowerExtensionAtSeed.{u} H Γ B' := by
+  intro α n m I g p' hα hI hp' p hte d hd hdA hn Q hpair hQ hrel j hj hjm
+  exact Seed.towerExtension_of_pos (hH I g) (hcard I g) (hΓ I g) hdA hQ (hcode I g) (by omega)
+    (hE I g p' hα hI hp' p hte d hd hdA hn Q hpair hQ hrel j hj hjm)
+
 /-! ### The assembly -/
 
 /-- **The inputs of the replicated scheme at the seed position from the three lift statements**,
@@ -543,6 +595,41 @@ theorem hasReplicatedInputsAtSeed_of_seedTowerExtension
     Seed.image_compressedLabel_subset_seedValues Seed.codeSet_subset_seedValues
     Seed.card_add_one_le_seedGridBound hE
 
+/-- **The inputs of the replicated scheme at the seed position from the extension over the tower
+at a positive cap**, for a choice with the side conditions of
+`StageType.hasReplicatedInputsAtSeed_of_towerExtension`; here the code set inside `Γ` is used
+(`StageType.towerExtensionAtSeed_of_pos`). -/
+theorem hasReplicatedInputsAtSeed_of_towerExtensionPos
+    (H : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
+    (Γ : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → Finset Label.{u})
+    (B' : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
+    (hH : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), 0 < H I g)
+    (hcard : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      (I.attachment g).card ≤ H I g)
+    (hΓ0 : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m), ⊥ ∈ Γ I g)
+    (hΓ : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      ∀ x ∈ Γ I g, x ≤ gridPoint 2 (B' I g))
+    (hΓω : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      ∀ x ∈ Γ I g, x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}))
+    (hsub : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      univ.image (I.compressedLabel g) ⊆ Γ I g)
+    (hcode : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      codeSet (I.attachment g).card (m + 2) ⊆ Γ I g)
+    (hB : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      (I.attachment g).card + 1 ≤ B' I g)
+    (hE : TowerExtensionPosAtSeed.{u} H Γ B') : HasReplicatedInputsAtSeed.{u} :=
+  hasReplicatedInputsAtSeed_of_towerExtension H Γ B' hH hcard hΓ0 hΓ hΓω hsub hcode hB
+    (towerExtensionAtSeed_of_pos hH hcard hΓ hcode hE)
+
+/-- **The inputs of the replicated scheme at the seed position from the extension over the tower
+at a positive cap, at the choice** `Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`. -/
+theorem hasReplicatedInputsAtSeed_of_seedTowerExtensionPos
+    (hE : TowerExtensionPosAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound) :
+    HasReplicatedInputsAtSeed.{u} :=
+  hasReplicatedInputsAtSeed_of_seedTowerExtension
+    (towerExtensionAtSeed_of_pos Seed.seedHeight_pos Seed.card_le_seedHeight
+      (fun I g _ hx ↦ I.le_gridPoint_of_mem_seedValues g hx) Seed.codeSet_subset_seedValues hE)
+
 end StageType
 
 namespace MainTheorem
@@ -577,6 +664,17 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_towerExtension
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed hres
     (hasReplicatedInputsAtSeed_of_seedTowerExtension hE).hasLadderGrowthCarriersStableAtSeed
+
+/-- **The main theorem from (R2) and the extension over the tower at a positive cap at the seed
+position** (both hypotheses open): `StageType.TowerExtensionPosAtSeed` at the grades
+`2, …, m + 1`, at the choice `Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`.  Through
+`StageType.hasReplicatedInputsAtSeed_of_seedTowerExtensionPos`. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_towerExtensionPos
+    (hres : ReceivingResidualReceiving.{0, 0})
+    (hE : TowerExtensionPosAtSeed.{0} Seed.seedHeight Seed.seedValues Seed.seedGridBound) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed hres
+    (hasReplicatedInputsAtSeed_of_seedTowerExtensionPos hE).hasLadderGrowthCarriersStableAtSeed
 
 end MainTheorem
 
