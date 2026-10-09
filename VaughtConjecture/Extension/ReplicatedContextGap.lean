@@ -96,8 +96,8 @@ the top `gridPoint 2 B'` of the heights.
 **The gap cannot occur when** a context cell of grade `2` reads `a` and `a'` with the prescription
 there at least `v` and `v'` (`Seed.not_gap_of_context_cell`), in particular when `a₃` has the
 whole context coatom as scope (`Seed.not_gap_of_full_context_cell`); a legal context has such a
-cell at `(ctxCoatom 1, 2)` above `a₃` by availability (not compiled here).  So for context-only prescriptions this
-obstruction is void wherever such a cell exists. -/
+cell at `(ctxCoatom 1, 2)` above `a₃` by availability (not compiled here).  So for context-only
+prescriptions this obstruction is void wherever such a cell exists. -/
 theorem not_cappedLift_context_of_gap (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
     (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
     {R₀ : Fin (I.attachment g).card → Label.{u}}
