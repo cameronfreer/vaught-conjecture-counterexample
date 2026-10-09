@@ -152,21 +152,20 @@ theorem agreementHeight_sepHi_sepLo_top
 
 /-- **The LOW layer at the top of a legal display**: at a stage that is zero or a limit, for the
 seed of a LOW family at `K = m + 1` (the private context a source-gap context of grade `m + 1` with
-the lost point last, the donor of top grade at most `m + 1`, a donor top of grade `m + 1`), over a
-good level at the grade `m`, the decoded row of the controller of the actual profile,
-reduced to the stage, completes the LOW layer to a legal display with literal faces, carrying a
-LOW layer whose separator is labelled by a proper label and by `⊤`. -/
+the lost point last, the donor of top grade at most `m + 1`), over a good level at the grade `m`
+whose LOW layer is a good level (`ProfileTower.Lvl.Good.lowNext_top`), the decoded row of the
+controller of the actual profile, reduced to the stage, completes the LOW layer to a legal display
+with literal faces, carrying a LOW layer whose separator is labelled by a proper label and by
+`⊤`. -/
 theorem exists_isLowLayer_top (hα : Order.IsSuccPrelimit α) (hL : L.Good)
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o r)
-    (htb : I.right.topGrade ≤ m + 1) {z : Fin I.right.card} (hz : I.right.label z = ⊤)
-    (hzK : I.right.toCellScheme.grade z = m + 1) :
+    (htb : I.right.topGrade ≤ m + 1) (hN : (L.catNext 𝒜).Good) :
     ∃ (D : StageType.{u} α (m + 2)) (h₁ : restrictFace Fin.castSuccEmb D = some I.left)
       (h₂ : restrictFace (extendByLast Fin.castSuccEmb) D = some I.right)
       (G : Finset Label.{u}) (entry : Fin D.card → LowField D → Label.{u})
       (s : LowField D → Label.{u}) (lo hi : Fin D.card), D.IsLegal ∧ D.label lo ≠ ⊤ ∧
         D.label hi = ⊤ ∧ IsLowLayer (m + 1) h₁ h₂ o r G entry s lo hi := by
   classical
-  have hN : (L.catNext 𝒜).Good := hL.lowNext_top hs htb hz hzK
   obtain ⟨ihi, hihi⟩ := exists_equivFin_eq (sepHi_mem (o := o) (r := r) hs htb)
   obtain ⟨ilo, hilo⟩ := exists_equivFin_eq (sepLo_mem (o := o) (r := r) hs htb)
   set u : Fin (L.catS 𝒞).card := Fin.natAdd L.S.card ihi with hu_def
@@ -250,7 +249,8 @@ theorem hasLowLayersOn_fullGrade : HasLowLayersOn.{u} LowFullGradeClass := by
   exact ProfileTower.exists_isLowLayer_top
     (I := Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private hF.face_donor)
     hα.isSuccPrelimit (ProfileTower.lvlZero_good k le_rfl) hF.isSourceGapContextAt
-    hF.topGrade_donor hz hzK
+    hF.topGrade_donor ((ProfileTower.lvlZero_good k le_rfl).lowNext_top hF.isSourceGapContextAt
+      hF.topGrade_donor hz hzK)
 
 /-- **LOW displays on the class of the full grade**: (R2) for the LOW families with `K = k + 1`
 and a donor top of grade `K`. -/
