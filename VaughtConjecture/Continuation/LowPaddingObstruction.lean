@@ -42,9 +42,13 @@ sub-catalogue, since a profile `⊥` on every donor cell is active at a positive
 tops are below it.  More generally, no sub-catalogue all of whose profiles are positive somewhere
 below a coatom has the provision at `⊥` from that coatom.
 
-So the padding cannot be a section of amalgam profiles over the shared levels with a cutoff chosen
-from the profile, and the restriction of the layers above `K` must keep the profiles that are `⊥`
-below a coatom.  The padded construction of [AFK26] carries the cutoff as a field of every profile
+So, under the premises of these theorems, a capped-continuous cutoff chosen from the profile reads
+`hi` above `⊥` only at a profile with no capped-equal LOW profile having a donor top below its
+frontier, and a restriction of the layers above `K` to the profiles LOW at a positive constant
+cutoff loses the provision at `⊥` from a coatom below which lie every proper donor field and some
+donor top.  Neither theorem gives such a profile or such a coatom in general, so they do not
+show that every padding with a cutoff read off the profile fails; they show where these two designs
+fail.  The padded construction of [AFK26] carries the cutoff as a field of every profile
 above `K` (states: donor labels, private labels, cutoff), with one cell per LOW state at every
 grade; `VaughtConjecture.Continuation.LowPaddingLevel` takes the cutoff from the owner instead,
 which keeps the profiles `⊥` below the donor coatom.

@@ -52,7 +52,10 @@ compiled in this repository).  For the LOW designations (owner and lost top the 
 the private context, donor tops the copies of the tops of the donor, proper donor fields the
 copies of the proper cells of the donor of grade at most `K`, all below the donor coatom), the
 LOW step from either coatom, hence the capped lift into the LOW layer at the grade `K`, follows
-from exactly two named open cases:
+from exactly two named cases, open in this file and proved later (the unserved case with the lost
+point last, `StageType.lowStepUnserved`, in `VaughtConjecture.Continuation.LowFullGradeUnserved`;
+the tie case at every LOW family, `StageType.IsLowFamily.lowStepTie`, in
+`VaughtConjecture.Continuation.LowStepLow`):
 
 * `StageType.LowStepUnserved` (from the donor coatom): a lifted private face with
   `h < u o ≤ R_K (u r)` and a cell read by the owner above the threshold and by the lift above the
@@ -78,7 +81,7 @@ proper cells (`StageType.visibilityReplace_rowAt_lt_of_top`, compiled in this re
 raising through it, literal on the root and agreeing with the ambient capped at the cap, is not
 constructed here.
 
-Both open cases are statements about one face: the unserved case about the private context
+Both cases are statements about one face: the unserved case about the private context
 alone, the tie case about the donor alone given the prescribed private frontier.  The gluing of
 the two faces on the amalgam and the layers below are compiled above; so the two cases do not come
 from the two-coatom geometry, and they reappear when the donor is attached along a smaller root
@@ -486,7 +489,9 @@ variable {α : Ordinal.{u}} {k : ℕ}
 variable (K : ℕ) (t' tb : StageType.{u} α (k + 1)) {p : StageType.{u} α k}
   (hp : restrictFace Fin.castSuccEmb t' = some p) (hpb : restrictFace Fin.castSuccEmb tb = some p)
   (o r : Fin t'.card) in
-/-- **The tie case of the donor face** (open): for a private face `f` and a donor face `R`, lawful
+/-- **The tie case of the donor face** (proved at every LOW family,
+`StageType.IsLowFamily.lowStepTie`, in `VaughtConjecture.Continuation.LowStepLow`): for a private
+face `f` and a donor face `R`, lawful
 at `K`, agreeing on the root capped at a positive cap `h` below the frontier `c` of `f`, with
 every donor top off the root read by `R` at least at `h` and every proper donor cell below `h`,
 if the cap is the replaced low maximum
@@ -518,7 +523,9 @@ frontier `c` of `f` above `h` and every donor top off the root read by `R` at le
 donor face lawful at `K`, literal on the root and agreeing with `R` capped at `h`, reads every donor
 top off the root at least at `c`: by donor raising with the gap (`IsLowFamily.donorRaisingGap`)
 off the tie, where the second outcome would put a top at most the replaced low maximum, below
-the cap; and by `LowStepTie` at the tie or at a donor top determined by the root. -/
+the cap; and by `LowStepTie` at the tie or at a donor top determined by the root.  The same
+conclusion with neither `LowStepTie` nor donor raising is
+`StageType.IsLowFamily.exists_raised_of_gap`, in `VaughtConjecture.Continuation.LowStepLow`. -/
 theorem IsLowFamily.exists_raised (hF : IsLowFamily K t' tb p o r)
     (hT : LowStepTie K t' tb hF.face_private hF.face_donor o r) {h c : Label.{u}}
     (hh : IsSelfVisible K h) (hb : ⊥ < h) (hhc : h < c) {R : Fin tb.card → Label.{u}}

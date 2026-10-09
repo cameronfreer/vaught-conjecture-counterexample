@@ -235,7 +235,7 @@ theorem agreementHeight_sepHi_sepLo
     · cases z
       rw [sepLo, Function.update_self, min_eq_right hlt.le, min_self]
 
-/-- **The reading of the completed display holds when the glued labels are `⊤`-free above `K`**:
+/-- **The reading of the completed display holds when the glued labels above `K` are `⊥`**:
 at a stage that is zero or a limit, for the seed of a LOW family at `K = g + 1` (the private
 context a source-gap context of grade `K`, the donor of top grade at most `K`), over every good
 level at `g` whose LOW layer is a good level, when every glued label of grade in `(K, m]` is `⊥`.

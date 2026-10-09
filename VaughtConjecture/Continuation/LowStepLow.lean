@@ -39,13 +39,20 @@ row of `Z` (`StageType.exists_raised_at_top` at the grade `j`): the proper cells
 the raise spliced with `R` above `j` is lawful at `K` by raising below the gap.  The reading grade
 stays `K`; the template is needed only up to the grade of the tops.
 
+**The donor face for every LOW family, with no tie premise**
+(`StageType.IsLowFamily.exists_raised_of_gap`, compiled in this repository).  The ambient donor
+face `R` has the gap at the cap `h` (the hypotheses of `StageType.LowStepTie` other than the tie
+premise, with the root tops at least `h` through the private face, which reads them at least at
+the frontier `c > h`).  Its raise at `c` agrees with `R` capped at `h` and with the private face on
+the root capped at `c`, and the capped lift at `c` from the root of the private face with this
+ambient (bountifulness of the donor) is the face asked for, exactly as in
+`StageType.lowStepTie_of_top`.  The tie premise (the cap is the replaced low maximum of `R`, or
+some donor top off the root is determined by the root) is not used, so this is the conclusion of
+`StageType.IsLowFamily.exists_raised` with no premise `StageType.LowStepTie` and without the
+donor raising of its other case (`StageType.IsLowFamily.donorRaisingGap`).
+
 **The tie case for every LOW family** (`StageType.IsLowFamily.lowStepTie`,
-`StageType.IsLowFamily.lowStepTieLow`, compiled in this repository).  The ambient donor face `R`
-has the gap at the cap `h` (the hypotheses of `StageType.LowStepTie`, with the root tops at least
-`h` through the private face, which reads them at least at the frontier `c > h`).  Its raise at
-`c` agrees with `R` capped at `h` and with the private face on the root capped at `c`, and the
-capped lift at `c` from the root of the private face with this ambient (bountifulness of the
-donor) is the face asked for, exactly as in `StageType.lowStepTie_of_top`.
+`StageType.IsLowFamily.lowStepTieLow`, compiled in this repository): from the donor face above.
 
 **The capped lift into the LOW layer, and the LOW level, for every donor**
 (`ProfileTower.Lvl.Good.cappedLift_lowS_seed'`, `ProfileTower.Lvl.Good.lowNext'`, compiled in this
@@ -233,13 +240,21 @@ theorem exists_raised_tops {tb : StageType.{u} α n} (htb : tb.IsLegal) {K : ℕ
 
 variable {k K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {o r : Fin t'.card}
 
-/-- **The tie case holds at every LOW family**, indeed the conclusion of `StageType.LowStepTie`
-without its tie premise.
+/-- **The donor face from the private coatom, at every LOW family, with no tie premise.**  For a
+private face `f` and a donor face `R`, lawful at `K`, agreeing on the root capped at a label
+`⊥ < h` below the frontier `c` of `f`, with every donor top off the root read by `R` at least at
+`h` and every proper donor cell of grade at most `K` read below `h`, some donor face lawful at `K`,
+literal on the root and agreeing with `R` capped at `h`, reads every donor top off the root at least
+at `c`.  This is the conclusion of `StageType.IsLowFamily.exists_raised` without its premises
+`StageType.LowStepTie` and `IsSelfVisible K h`, and the conclusion of `StageType.LowStepTie`
+without its premise that the cap is the replaced low maximum of `R` or that some donor top off the
+root is determined by the root, nor its self-visibility of the cap: none of these is used (the
+frontier `c`, not the cap, is the label the capped lift needs self-visible).
 
-*The gap.*  Every top `d` of the donor has `h ≤ R d`: off the root by the hypothesis of the tie
-case, on the root because the private face reads its copy at least at the frontier `c > h` (strict
-source gaps, `H2.frontier_le_lawfulAt`) and agrees there with `R` capped at `h`.  Every proper cell
-of grade at most `K` has `R d < h` (hypothesis of the tie case).  So `StageType.exists_raised_tops`
+*The gap.*  Every top `d` of the donor has `h ≤ R d`: off the root by `htop`, on the root because
+the private face reads its copy at least at the frontier `c > h` (strict source gaps,
+`H2.frontier_le_lawfulAt`) and agrees there with `R` capped at `h`.  Every proper cell of grade at
+most `K` has `R d < h` (`hlow`).  So `StageType.exists_raised_tops`
 gives `W'` lawful at `K`, equal to `R` at every proper cell, at least `c` at every top.
 
 *Capped agreement at `h`* (`W'` with `R`): at proper cells `W' = R`; at tops both are at least `h`
@@ -255,10 +270,20 @@ at every root cell, and agreeing with `W'` capped at `c`.  The root cells that `
 root tops (to at least `c`), and `W` puts them back to `f` exactly; no other root cell moved.
 From the capped agreement at `c`: `W` agrees with `R` capped at `h` (since `h < c`), and reads
 every top off the root at least at `c`. -/
-theorem IsLowFamily.lowStepTie (hF : IsLowFamily K t' tb p o r) :
-    LowStepTie K t' tb hF.face_private hF.face_donor o r := by
+theorem IsLowFamily.exists_raised_of_gap (hF : IsLowFamily K t' tb p o r) {h c : Label.{u}}
+    (hb : ⊥ < h) (hhc : h < c) {R : Fin tb.card → Label.{u}}
+    {f : Fin t'.card → Label.{u}} (hR : LawfulAt tb K R) (hf : LawfulAt t' K f)
+    (hag : ∀ x, min (f (faceCell hF.face_private x)) h = min (R (faceCell hF.face_donor x)) h)
+    (hlow : ∀ x, tb.label x ≠ ⊤ → tb.toCellScheme.grade x ≤ K → R x < h)
+    (hc : c = min (f o) (visibilityReplace K K (f r)))
+    (htop : ∀ t, tb.label t = ⊤ → tb.toCellScheme.grade t ≤ K →
+      t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → h ≤ R t) :
+    ∃ W : Fin tb.card → Label.{u}, LawfulAt tb K W ∧
+      (∀ x, W (faceCell hF.face_donor x) = f (faceCell hF.face_private x)) ∧
+      (∀ d, min (W d) h = min (R d) h) ∧
+      ∀ t, tb.label t = ⊤ → tb.toCellScheme.grade t ≤ K →
+        t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → c ≤ W t := by
   classical
-  intro h c hh hb hhc R f hR hf hag hc htop hlow _
   have hs := hF.isSourceGapContextAt
   have hK0 : 0 < K := hs.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
   have hKk : K ≤ k + 1 := hs.grade_owner ▸ t'.grade_le o
@@ -315,6 +340,13 @@ theorem IsLowFamily.lowStepTie (hF : IsLowFamily K t' tb p o r) :
   · have h2 := hWc d
     rw [min_eq_right (hW't d hd)] at h2
     exact min_eq_right_iff.mp h2
+
+/-- **The tie case holds at every LOW family**: `StageType.IsLowFamily.exists_raised_of_gap`,
+which does not use the tie premise. -/
+theorem IsLowFamily.lowStepTie (hF : IsLowFamily K t' tb p o r) :
+    LowStepTie K t' tb hF.face_private hF.face_donor o r :=
+  fun _ hb hhc _ _ hR hf hag hc htop hlow _ ↦
+    hF.exists_raised_of_gap hb hhc hR hf hag hlow hc htop
 
 /-- **The case of a donor without a top of grade `K` holds** at every LOW family
 (`StageType.IsLowFamily.lowStepTie`). -/

@@ -49,7 +49,9 @@ the following hypotheses, of which the first three are compiled in this reposito
 named) (`MainTheorem.capToModel`, `forcingDonors_blockStage`, and for `hinst`
 `MainTheorem.hasNonemptyCofaceInstances_blockStage_add_one`, which follows in one line from
 `StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions` and
-`StageType.hasApexCoatomExtensions_blockStage`) and the others are still to be proved:
+`StageType.hasApexCoatomExtensions_blockStage`), (R2) for receiving models is compiled
+(`Realization.receivingResidualReceiving_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`), and the others are still to be proved:
 * the cap-to-model theorem at `ω` (`hcap`): the first domain;
 * forcing donors at every countable block index (`hF`): next-block uniqueness of receiving models
   (`Expansion.ReceivingNextBlockUniqueness.of_forcingDonors`), for the limit clause;
@@ -254,7 +256,8 @@ theorem densitySentence_isThinOnNatModels_of_receivingModels (hcap : CapToModel.
 /-- **The thin `ℵ₁` spectrum through receiving models**: the density sentence has exactly `ℵ₁`
 classes of models coded on `ℕ` and no perfect set of pairwise nonisomorphic ones, conditional on
 the following four hypotheses, each still to be proved except `hext`, compiled as
-`StageType.hasApexCoatomExtensions_blockStage` (the three-hypothesis form below):
+`StageType.hasApexCoatomExtensions_blockStage` (the three-hypothesis form below), and `hres`,
+compiled as `Realization.receivingResidualReceiving_of_padded`:
 * the coatom extension property with apex at every countable block stage (`hext`);
 * (R4) for receiving models (`hR4`, `Expansion.ReceivingStableCappedReceiving`);
 * (R2) for receiving models (`hres`, `Realization.ReceivingResidualReceiving`);
@@ -304,11 +307,12 @@ The coatom extension property with apex at every countable block stage is not as
 `StageType.hasApexCoatomExtensions_blockStage`.  The other statements are derived as in the
 four-hypothesis form.
 
-These three hypotheses are open.  Building receiving into the class does not prove (R1)
-(`Expansion.FiniteCutReceiving`, that every model at a countable limit stage receives): the
-receiving shown here is that of particular models, never that of an arbitrary model, and (R1) is
-not used.  The theorem is a reduction of the counterexample to
-(R2), (R3) and (R4) in their receiving forms. -/
+(R2) for receiving models is proved (`Realization.receivingResidualReceiving_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`); (R4) and (R3) for receiving models are open.
+Building receiving into the class does not prove (R1) (`Expansion.FiniteCutReceiving`, that every
+model at a countable limit stage receives): the receiving shown here is that of particular models,
+never that of an arbitrary model, and (R1) is not used.  The theorem is a reduction of the
+counterexample to (R2), (R3) and (R4) in their receiving forms. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_receivingModels'
     (hR4 : ReceivingStableCappedReceiving.{0}) (hres : ReceivingResidualReceiving.{0, 0})
     (hhol : HollowReceiving.{0, 0} IsReceivingCoverHollowAtBlock) :

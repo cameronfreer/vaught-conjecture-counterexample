@@ -53,8 +53,10 @@ so its coatom face has top grade at most `K`
 * the main theorem with (R2) in the bounded form with the lost point last
   (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_boundedCoatom_sourceGapLast_markedCap`).
 
-**Not claimed.**  That the bounded coatom form holds for the source-gap contexts: that is the
-finite construction of the carrier, open.
+**Not claimed here.**  That the bounded coatom form holds for the source-gap contexts.  With the
+lost point last it is compiled (`Realization.boundedCoatomCutoffDetermination_sourceGapLast`, from
+LOW displays, in `VaughtConjecture.MainTheorem.LowPaddedRoute`); for `IsSourceGapContext` it is
+not proved.
 
 ## Placement
 

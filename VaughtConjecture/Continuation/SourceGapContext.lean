@@ -363,7 +363,11 @@ grade `K` along `h` at a lost point `l` (`IsSourceGapContextAt`) such that the c
 `univ.erase l` of the lost point is a closed face of `t'`; equivalently, the lost point is an
 extreme point of the plan of `t'` (`StageType.erase_mem_faces_iff_mem_extremes`, by
 `Geometry.mem_extremes`).  Residual acquisition is compiled
-(`Realization.residualAcquisition_isSourceGapContextOff`); determination is open. -/
+(`Realization.residualAcquisition_isSourceGapContextOff`); cutoff determination follows from the
+compiled bounded coatom form with the lost point last
+(`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff` applied
+to `Realization.boundedCoatomCutoffDetermination_sourceGapLast`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`). -/
 def IsSourceGapContextOff (K : ℕ) (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
   ∃ (l : Fin k) (o r : Fin t'.card), t'.IsSourceGapContextAt K h l o r ∧
     univ.erase l ∈ t'.toCellScheme.faces

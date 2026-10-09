@@ -48,7 +48,7 @@ variable {g : ℕ} {L : Lvl I g} {A : CProf I → Prop}
 local notation "𝒞" => predCat I (g + 1) A
 
 /-- **The capped lift from a coatom into the catalogue layer over a good level**, at the grade `g +
-1`, for `g + 1 ≤ m`, given the catalogue step on the amalgam:
+1`, for `g + 1 ≤ m + 1`, given the catalogue step on the amalgam:
 
 * at the cap `⊥`, every labelling lawful below the coatom is, at the amalgam cells below the coatom,
   an amalgam profile lawful on the grade-`(g + 1)` cut;
@@ -188,7 +188,7 @@ variable {L : Lvl I m} {A : CProf I → Prop} {C : Finset (CProf I)}
 
 local notation "𝒞" => predCat I (m + 1) A
 
-/-- **The catalogue step at the cap `⊥`**: for `m + 1 ≤ m`, every labelling of the catalogue layer
+/-- **The catalogue step at the cap `⊥`**: every labelling of the catalogue layer
 lawful below a coatom at the grade `m + 1` is, at the amalgam cells below the coatom, an amalgam
 profile lawful on the grade-`(m + 1)` cut: lift its trace on the common face into the other coatom
 at the cap `⊥` (bountifulness of the amalgam) and glue. -/

@@ -3931,8 +3931,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    `(h2 : BoundedCoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h)`
    `(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
    `HasThinAlephOneSpectrum densitySentence`.  The bounded (R2) form for `IsSourceGapContextLast`
-   (and for `IsSourceGapContext`) is not proved: the bounded receiving hypothesis remains open; no
-   (R2) closure is claimed.
+   is compiled (`Realization.boundedCoatomCutoffDetermination_sourceGapLast`, from LOW displays,
+   `StageType.hasLowDisplays_of_padded`, `MainTheorem/LowPaddedRoute`); the form for
+   `IsSourceGapContext` is not proved.
 
 7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
    presentations"): for a countable `β`, on every countably infinite carrier, a model at
@@ -4637,7 +4638,10 @@ requirement is stated with its construction below.
   version with one fixed **lost top** (an old top of the context read for every new top),
   `StageType.HasSeparatedPinnedExtensions`, is refuted at every stage
   (`SeparationObstruction.not_hasSeparatedPinnedExtensions`, in a separate open change); the
-  replacement reads each new top through its own old reference top.
+  replacement reads each new top through its own old reference top.  (R2) for receiving models is
+  compiled by another construction, LOW displays
+  (`Realization.receivingResidualReceiving_of_padded`, `MainTheorem/LowPaddedRoute`), so the
+  receiving-models route does not need this one.
 - (R3): uniform acquisition of marked-cap contexts (`StageType.IsMarkedCapContext`,
   `Stage/MarkedCap.lean`) and **reading carriers** (legal one-point extensions carrying the donor
   whose cells of full scope read the new tops): **marked closure** (an entry agreeing with a

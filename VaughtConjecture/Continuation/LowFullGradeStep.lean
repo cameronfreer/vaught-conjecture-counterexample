@@ -529,8 +529,9 @@ theorem Lvl.Good.cappedLift_lowS_of_unserved_tie_top (hL : L.Good)
     exact hL.lowStep_donor_top hs hU ho hr hNQ hTQ hNroot
 
 /-- **The capped lift from either coatom into the LOW layer over a good level, from the tie case
-alone**: below the full grade the unserved case holds (`StageType.lowStepUnserved_of_le`), so
-`ProfileTower.Lvl.Good.cappedLift_lowS_of_unserved_tie` needs only `StageType.LowStepTie`. -/
+alone**: at the full grade the unserved case holds (`StageType.lowStepUnserved`, `K = k + 1`
+included), so `ProfileTower.Lvl.Good.cappedLift_lowS_of_unserved_tie_top` needs only
+`StageType.LowStepTie`. -/
 theorem Lvl.Good.cappedLift_lowS_of_tie_top (hL : L.Good)
     {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o' r')
@@ -771,7 +772,7 @@ theorem Lvl.Good.catNext_succ (hL : L.Good) (hgm : g + 1 ≤ m + 1)
 
 /-- **The LOW layer at the grade `m + 1` is a good level**, for the LOW designations of the seed,
 when the private context is a source-gap context of grade `m + 1` with the lost point last and the
-donor has top grade `m + 1`, attained, with `1 ≤ m` (`ProfileTower.Lvl.Good.catNext_succ`,
+donor has top grade `m + 1`, attained (`ProfileTower.Lvl.Good.catNext_succ`,
 `ProfileTower.Lvl.Good.cappedLift_lowS_seed_top`). -/
 theorem Lvl.Good.lowNext_top {L : Lvl I m} (hL : L.Good) {o' r' : Fin I.left.card}
     (hs : I.left.IsSourceGapContextAt (m + 1) Fin.castSuccEmb (Fin.last m) o' r')
