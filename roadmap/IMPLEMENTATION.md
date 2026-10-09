@@ -1279,8 +1279,9 @@ corresponding declarations here: compiled in this repository (theorem named), co
 proof that its system `K[L]` is a Knight system has been formalized; in this repository every
 compiled form of the main theorem is conditional on named hypotheses: on the retained all-model
 terminal-classification route, at fewest the four of `DASHBOARD.md` (hypotheses 2 and 4–6), or
-hypotheses derived from them; on the receiving-models route, the three open hypotheses (R4), (R2)
-and (R3) for receiving models; each still to be proved; hypothesis 8 is compiled in this
+hypotheses derived from them; on the receiving-models route, (R4) and (R3) for receiving models,
+each still to be proved ((R2) for receiving models is compiled,
+`Realization.receivingResidualReceiving_of_padded`); hypothesis 8 is compiled in this
 repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstrings of
 `VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026.
 
@@ -2267,8 +2268,9 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     states that this proof has been formalized; in this repository every compiled form of the
     main theorem is conditional on named hypotheses: on the retained all-model
     terminal-classification route, at fewest the four of `DASHBOARD.md` ((R1), the continuation
-    criterion, (R2), (R3)), or hypotheses derived from them; on the receiving-models route, the
-    three open hypotheses (R4), (R2) and (R3) for receiving models; each still to be proved;
+    criterion, (R2), (R3)), or hypotheses derived from them; on the receiving-models route, (R4)
+    and (R3) for receiving models, each still to be proved ((R2) for receiving models is compiled,
+    `Realization.receivingResidualReceiving_of_padded`);
     hypothesis 8 is compiled in this repository (theorem named).
 48. [AFK26, Theorem 2.19] (weak Knight systems and perfect sets of models): if `K` is a weak
     Knight system and, for every `β`, the members of the base `K_{-∞}` with no lift in `K_β`
@@ -3782,7 +3784,8 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`MainTheorem.infinite_of_realize_densitySentence`).
 
    **The main theorem: four forms on the all-model terminal-classification route** (retained;
-   the receiving-models route, with three open hypotheses, is at the end of this item).
+   the receiving-models route, with two open hypotheses, (R4) and (R3) for receiving models, is at
+   the end of this item).
    `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
    (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on seven named hypotheses:
    `CapToModel`, (R1), forcing donors, `ContinuationCriterion`, (R2), (R3), and nonempty losses.
@@ -5153,7 +5156,11 @@ longer first; this departs from the order of this section.
   included.  (4) *Recovery*: every lawful labelling with the literal private face reads `D`
   exactly, tops included (`Correct` with the cap and the marker `⊤`).  (5) *Padding* (`README.md`,
   Layer 3, 3.4, "Base cases").
-- *Missing steps for (R2).*  The LOW construction of `README.md`, Layer 3, 3.3, as data.  The
+- *Missing steps for (R2).*  For receiving models none: LOW displays at source-gap contexts are
+  compiled (`StageType.hasLowDisplays_of_padded`, the padded tower of the LOW clause over the
+  proper donor fields of every grade, `MainTheorem/LowPaddedRoute`), and with them (R2) for
+  receiving models (`Realization.receivingResidualReceiving_of_padded`).  For every model (the
+  form below) the steps remain.  The LOW construction of `README.md`, Layer 3, 3.3, as data.  The
   private context and the private gap acquired in the residual model are compiled in the form of a
   source-gap context (`Realization.residualAcquisition_isSourceGapContext`,
   `Continuation/SourceGapContext`; legal source-gap types exist at every stage,
