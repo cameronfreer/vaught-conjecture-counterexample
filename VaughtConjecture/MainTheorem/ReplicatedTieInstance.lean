@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedAssembly
 import VaughtConjecture.Extension.ReplicatedTieReading
+import VaughtConjecture.Extension.RepairedTieLift
 import VaughtConjecture.Continuation.SourceGapSeparationObstruction
 
 /-!
@@ -52,16 +53,27 @@ the definitions (the height set is not a parameter of the tower, of `Seed.attach
 side needs one parameter (the height function) threaded through the ladder tower, the attachment
 tower and the replicated scheme; that is a change to the base files, left to the base lane.
 
-**Why the old refutation does not transfer** (`TieInstance.not_pin_cellR`, from
+**The old counterexample mechanism is eliminated** (`TieInstance.not_pin_cellR`, from
 `Seed.not_pin_of_grade`): the tied value is a value of a state of the catalogue at a cell of grade
 `2`, hence self-visible at `2` and a height of the repaired scheme; no cell of grade `2` is pinned
 below it.
 
-**Repaired scheme: the same input, open** (`TieInstance.RepairedContextLift`, a `Prop` to be
-proved by the base lane): the context lift at the grade `2` at every seed of this input, at the
-choice of the assembly, with agreement heights in the height set.  Not proved here: it is the
-context lift at a concrete but chosen seed (the second coatom of the seed comes from
-`StageType.exists_pinned_extension_of_isSuccPrelimit`), with every cap, prescription and ambient.
+**The repaired lift at the old input: proved** (`TieInstance.exists_lift_of_tie`, from
+`Seed.exists_lift_of_tie`): at every seed of the input, at the choice of the assembly, for every
+complete lawful admitted state (the admitted completion of `sep ω` among them), the cap `3`, the
+tie ambient and every code of the shifted state as prescription, a lift below `(univ, 2)` exists.
+The two steps asked first: **separation** (`TieInstance.tieValue_mem_heightSet`,
+`TieInstance.exists_cell_le_tieValue`: the cap `3` is a height at the grade `2`, and the cell of
+the reading state at `(univ, 2)` carries the tie's writing at a value at least `3`) and
+**compatibility** (`TieInstance.ladderTower_lawful_isCoded`: the tower with the height sets is
+consistent, lawful on the catalogue and coded at the choice).  The cap is the code value `3` of
+`Γ`: no value outside the values of the choice is used.
+
+**The repaired context lift at every input of the seed: open** (`TieInstance.RepairedContextLift`,
+a `Prop`): the context lift at the grade `2` at every seed of this input, at the choice of the
+assembly, for every cap, prescription and ambient.  It is the extension over the tower at a
+positive cap at the grades `1` and `2` for this seed (`Seed.TowerExtensionPos`), the general open
+step specialized to `m = n = 1`; not proved here.
 
 ## References
 
@@ -335,6 +347,138 @@ theorem not_pin_cellR {I : Seed.{u} ω 1} {Γ : Finset Label.{u}} {B' : ℕ}
     {σ : Label.{u} → Label.{u}} {c : Label.{u}} (hc : c ≤ σ (R' a)) :
     ¬ ∀ x ∈ Scheme.heightSet Γ B' 2, c ≤ σ x → R' a < x :=
   Seed.not_pin_of_grade hR' ha hc
+
+/-! ### The repaired scheme at the tie input -/
+
+/-- The root of the input. -/
+local notation "𝕣" => Function.Embedding.refl (Fin 1)
+
+/-- **Separation at the input** (the cap is a height): the cap `3 = Seed.tieValue 1` of the tie
+input lies in the code set, so in the values of the choice, and is self-visible at `2`; it is a
+height at the grade `2`. -/
+theorem tieValue_mem_heightSet (I : Seed.{u} ω 1) :
+    Seed.tieValue.{u} 1 ∈ Scheme.heightSet (I.seedValues 𝕣) (I.seedGridBound 𝕣) 2 :=
+  Scheme.mem_heightSet.mpr (.inr ⟨I.codeSet_subset_seedValues 𝕣 (Seed.tieValue_mem_codeSet _ 1),
+    (Seed.isSelfVisible_tieValue 1).mono (by omega)⟩)
+
+/-- **Separation at the input** (the stopping cell): for a state `R` of the catalogue at the
+grade `2` and a lawful state `R'` agreeing with it capped at the cap `3`, some cell of the ladder
+tower at `(univ, 2)` reads `R` on the cells of the attachment of grade at most `2` and carries the
+writing of `R'` at a value at least `3` (`Scheme.LadderBaseData.exists_cell_le_v_of_capAgree`).
+This is the step the refutation over the grid alone could not take. -/
+theorem exists_cell_le_tieValue (I : Seed.{u} ω 1)
+    {A : ℕ → (Fin (I.attachmentBase 𝕣).S.card → Label.{u}) → Prop}
+    {R R' : Fin (I.attachmentBase 𝕣).S.card → Label.{u}}
+    (hRC : R ∈ (I.attachmentBase 𝕣).towerCat (I.seedValues 𝕣) A 2)
+    (hR' : (I.attachmentBase 𝕣).S.rows.IsLawful R')
+    (hag : ∀ d, min (R' d) (Seed.tieValue 1) = min (R d) (Seed.tieValue 1)) :
+    ∃ u : Fin ((I.attachmentBase 𝕣).ladderTower (I.seedHeight 𝕣) (I.seedValues 𝕣) A
+        (I.seedGridBound 𝕣) 1).S.card,
+      ((I.attachmentBase 𝕣).ladderTower (I.seedHeight 𝕣) (I.seedValues 𝕣) A
+        (I.seedGridBound 𝕣) 1).S.toCellScheme.gradedIndex u = ((univ : Finset (Fin 3)), 2) ∧
+      (∀ d : Fin (I.attachmentBase 𝕣).S.card, (I.attachmentBase 𝕣).S.toCellScheme.grade d ≤ 2 →
+        ((I.attachmentBase 𝕣).ladderTower (I.seedHeight 𝕣) (I.seedValues 𝕣) A
+          (I.seedGridBound 𝕣) 1).S.rowAt u
+          ((I.attachmentBase 𝕣).towerEmb (H := I.seedHeight 𝕣) (Γ := I.seedValues 𝕣) (A := A)
+            (B' := I.seedGridBound 𝕣) 1 (Fin.castAdd _ d)) = R d) ∧
+      Seed.tieValue 1 ≤ ((I.attachmentBase 𝕣).ladderTower (I.seedHeight 𝕣) (I.seedValues 𝕣) A
+        (I.seedGridBound 𝕣) 1).v R' u := by
+  obtain ⟨u, -, hu, hrow, -, hv⟩ := Scheme.LadderBaseData.exists_cell_le_v_of_capAgree
+    (B' := I.seedGridBound 𝕣) (I.card_le_seedHeight 𝕣) (k := 0) (K := 1) le_rfl
+    (I.codeSet_subset_seedValues 𝕣 (Seed.tieValue_mem_codeSet _ 1)) (Seed.tieValue_ne_bot 1)
+    ((Seed.isSelfVisible_tieValue 1).mono (by omega)) hRC hR' hag
+  exact ⟨u, hu, hrow, hv⟩
+
+/-- **Compatibility at the input**: at the choice of the assembly the ladder tower with agreement
+heights in the height set is consistent, the writing of every state of the catalogue is lawful and
+at most the grid point, and the tower is coded (`Scheme.LadderBaseData.ladderTower_lawful`,
+`Scheme.LadderBaseData.isCoded_ladderTower`, the values of the choice below the grid point at `2`
+and below `ω ^ 2`). -/
+theorem ladderTower_lawful_isCoded (I : Seed.{u} ω 1)
+    {A : ℕ → (Fin (I.attachmentBase 𝕣).S.card → Label.{u}) → Prop}
+    (hA : ∀ k R, A (k + 3) R → A (k + 2) R) (k : ℕ) :
+    (((I.attachmentBase 𝕣).ladderTower (I.seedHeight 𝕣) (I.seedValues 𝕣) A
+        (I.seedGridBound 𝕣) k).S.rows.IsConsistent ∧
+      ∀ R ∈ (I.attachmentBase 𝕣).towerCat (I.seedValues 𝕣) A (k + 2),
+        ((I.attachmentBase 𝕣).ladderTower (I.seedHeight 𝕣) (I.seedValues 𝕣) A
+          (I.seedGridBound 𝕣) k).S.rows.IsLawful
+          (((I.attachmentBase 𝕣).ladderTower (I.seedHeight 𝕣) (I.seedValues 𝕣) A
+            (I.seedGridBound 𝕣) k).v R) ∧
+        ∀ x, ((I.attachmentBase 𝕣).ladderTower (I.seedHeight 𝕣) (I.seedValues 𝕣) A
+          (I.seedGridBound 𝕣) k).v R x ≤ gridPoint (k + 2) (I.seedGridBound 𝕣)) ∧
+      ((I.attachmentBase 𝕣).ladderTower (I.seedHeight 𝕣) (I.seedValues 𝕣) A
+        (I.seedGridBound 𝕣) k).S.IsCoded :=
+  ⟨Scheme.LadderBaseData.ladderTower_lawful (I.seedHeight_pos 𝕣) (I.card_le_seedHeight 𝕣)
+      (fun _ hx ↦ I.le_gridPoint_of_mem_seedValues 𝕣 hx) hA k,
+    Scheme.LadderBaseData.isCoded_ladderTower (I.card_le_seedHeight 𝕣)
+      (fun _ hx ↦ I.lt_omega0_sq_of_mem_seedValues 𝕣 hx) hA k⟩
+
+/-- The lift at the tie input, for the first coatom type given up to equality. -/
+theorem exists_lift_of_tie_aux {I : Seed.{u} ω 1} {t' : StageType.{u} ω 2} (hI : I.left = t')
+    {p : StageType.{u} ω 1} {hte : restrictFace ((𝕣).trans Fin.castSuccEmb) t' = some p}
+    {d : StageType.{u} ω 2}
+    (hdA : restrictFace (extendByLast ((𝕣).trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests t' d.toScheme} (hQ : Q.ClassCalibrated hte)
+    {P₀ : Fin (I.attachment 𝕣).card → Label.{u}} (hP₀ : (I.attachment 𝕣).rows.IsLawful P₀)
+    (hP₀A : I.attachAdmits 𝕣 hdA (hI ▸ Q) (1 + 2) P₀) {RP : Fin (I.attachment 𝕣).card → Label.{u}}
+    (hRP : RP ∈ (I.attachmentBase 𝕣).towerCat (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ Q))
+      (1 + 2))
+    {σ : Label.{u} → Label.{u}} (hσR : ∀ a, σ (RP a) = Label.omegaShift (P₀ a)) :
+    ∃ q' : (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ Q))
+        (I.seedGridBound 𝕣)).toCellScheme.below ((univ : Finset (Fin 3)), 2) → Label.{u},
+      (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ Q))
+        (I.seedGridBound 𝕣)).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) q' ∧
+      (∀ e, min (q' e) (Seed.tieValue 1) = min (I.replicatedWriting 𝕣 (I.seedHeight 𝕣)
+        (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ Q)) (I.seedGridBound 𝕣)
+        (Label.posConst (Seed.tieValue 1) ∘ P₀) e.1) (Seed.tieValue 1)) ∧
+      ∀ e : (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ Q))
+          (I.seedGridBound 𝕣)).toCellScheme.below (univ.erase (Fin.last 2), 2),
+        q' (Set.inclusion ((I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+          (I.attachAdmits 𝕣 hdA (hI ▸ Q)) (I.seedGridBound 𝕣)).toCellScheme.below_mono
+          (show ((univ.erase (Fin.last 2), 2) : Finset (Fin 3) × ℕ) ≤
+            ((univ : Finset (Fin 3)), 2) from ⟨erase_subset _ _, le_rfl⟩)) e) =
+          σ (I.replicatedWriting 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+            (I.attachAdmits 𝕣 hdA (hI ▸ Q)) (I.seedGridBound 𝕣) RP e.1) := by
+  subst hI
+  exact Seed.exists_lift_of_tie (I.seedHeight_pos 𝕣) (I.card_le_seedHeight 𝕣)
+    (fun _ hx ↦ I.le_gridPoint_of_mem_seedValues 𝕣 hx) (I.codeSet_subset_seedValues 𝕣) hdA hQ
+    le_rfl hP₀ hP₀A hRP hσR
+
+/-- **The repaired scheme lifts at the tie input** (the input of the refutation over the grid
+alone): at every seed of the input, at the choice of the assembly, for every complete lawful
+admitted state `P₀` of the attachment (the admitted completion of `sep ω` among them), the cap
+`3`, the ambient the writing of the positive constant `3` on the support of `P₀`, and the
+prescription the decoded writing of any code `(RP, σ)` of `P₀` shifted by one block, some
+labelling lawful below `(univ, 2)` keeps the ambient at `3` and is the prescription below the
+context coatom (`Seed.exists_lift_of_tie`).  This is the lift at one input; the context lift at
+every input (`TieInstance.RepairedContextLift`) is not proved here. -/
+theorem exists_lift_of_tie (I : Seed.{u} ω 1) (hI : I.left = ctx ω)
+    (hdA : restrictFace (extendByLast ((𝕣).trans Fin.castSuccEmb)) I.amalgam = some (don ω))
+    {P₀ : Fin (I.attachment 𝕣).card → Label.{u}} (hP₀ : (I.attachment 𝕣).rows.IsLawful P₀)
+    (hP₀A : I.attachAdmits 𝕣 hdA (hI ▸ req ω) (1 + 2) P₀)
+    {RP : Fin (I.attachment 𝕣).card → Label.{u}}
+    (hRP : RP ∈ (I.attachmentBase 𝕣).towerCat (I.seedValues 𝕣)
+      (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (1 + 2))
+    {σ : Label.{u} → Label.{u}} (hσR : ∀ a, σ (RP a) = Label.omegaShift (P₀ a)) :
+    ∃ q' : (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+        (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)).toCellScheme.below
+          ((univ : Finset (Fin 3)), 2) → Label.{u},
+      (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ req ω))
+        (I.seedGridBound 𝕣)).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) q' ∧
+      (∀ e, min (q' e) (Seed.tieValue 1) = min (I.replicatedWriting 𝕣 (I.seedHeight 𝕣)
+        (I.seedValues 𝕣) (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)
+        (Label.posConst (Seed.tieValue 1) ∘ P₀) e.1) (Seed.tieValue 1)) ∧
+      ∀ e : (I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+          (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)).toCellScheme.below
+            (univ.erase (Fin.last 2), 2),
+        q' (Set.inclusion ((I.replicated 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+          (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣)).toCellScheme.below_mono
+          (show ((univ.erase (Fin.last 2), 2) : Finset (Fin 3) × ℕ) ≤
+            ((univ : Finset (Fin 3)), 2) from ⟨erase_subset _ _, le_rfl⟩)) e) =
+          σ (I.replicatedWriting 𝕣 (I.seedHeight 𝕣) (I.seedValues 𝕣)
+            (I.attachAdmits 𝕣 hdA (hI ▸ req ω)) (I.seedGridBound 𝕣) RP e.1) :=
+  exists_lift_of_tie_aux hI (hte := restrictFace_ctx_root ω) hdA (classCalibrated_req ω) hP₀
+    hP₀A hRP hσR
 
 end TieInstance
 

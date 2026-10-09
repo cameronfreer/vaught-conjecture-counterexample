@@ -25,9 +25,14 @@ height the tie is broken (`Scheme.LadderBaseData.exists_cell_le_v_of_capAgree`).
 * **Agreement heights capped at a height** (`Label.min_agreementHeight_eq_of_mem`): for `y` a
   height, two labellings agreeing capped at `y` have agreement heights with a third agreeing
   capped at `y`.
-* **Writings capped at `y`** (`Scheme.LadderBaseData.min_stateExt_eq`,
-  `Scheme.LadderBaseData.min_v_eq_of_capAgree`): two states agreeing capped at a value `y ≠ ⊥` of
-  `Γ` have writings agreeing capped at `y` at every height `K` with `y` self-visible at `K + 1`.
+* **Writings capped at `y`, cell class by cell class**: the cells of the attachment
+  (`Scheme.LadderBaseData.min_stateExt_castAdd_eq`) and the ladder cells
+  (`Scheme.LadderBaseData.min_stateExt_natAdd_eq`) are generic in `y`; the old cells of a layer
+  are carried, and the cells of a new layer need `y` as a height of the layer
+  (`Scheme.min_layerRow_eq`).  So two states agreeing capped at `y ≠ ⊥` have writings agreeing
+  capped at `y` at every height `K` at whose layers `y` is a height
+  (`Scheme.LadderBaseData.min_v_eq_of_mem_heightSet`), in particular for `y ∈ Γ` self-visible at
+  `K + 1` (`Scheme.LadderBaseData.min_v_eq_of_capAgree`).
 * **The cell above the tie** (`Scheme.exists_layerTower_cell_of_mem_v`,
   `Scheme.LadderBaseData.exists_cell_le_v_of_capAgree`): the cell of a state `R` of the catalogue
   at `k + 2` carries the writing of every `R'` agreeing with `R` capped at `y` (self-visible at
@@ -324,6 +329,21 @@ theorem exists_layerTower_cell_of_mem_v (k : ℕ) {R : σ} (hR : R ∈ C (k + 2)
       rw [layerRow_castAdd]
       exact hv R'
 
+/-- **Cell class: the cells of a new layer** (uses the cap `y` as a height of the layer): the
+writing there is an agreement height in `G`; writings agreeing capped at `y` on the old cells give
+agreement heights agreeing capped at `y` when `y ∈ G` (`Label.min_agreementHeight_eq_of_mem`).
+**Cell class: the old cells** (generic): the layer row carries the old writing. -/
+theorem min_layerRow_eq {n : ℕ} {S : Scheme.{u} n} {G : Finset Label.{u}}
+    {E : Finset (Fin S.card → Label.{u})} (hG0 : ⊥ ∈ G) {y : Label.{u}} (hyG : y ∈ G)
+    {w w' : Fin S.card → Label.{u}} (hag : ∀ x, min (w' x) y = min (w x) y)
+    (x : Fin (S.card + E.card)) :
+    min (layerRow S (fun d ↦ d) G E w' x) y = min (layerRow S (fun d ↦ d) G E w x) y := by
+  induction x using Fin.addCases with
+  | left x => rw [layerRow_castAdd, layerRow_castAdd]; exact hag x
+  | right i =>
+    rw [layerRow_natAdd, layerRow_natAdd]
+    exact min_agreementHeight_eq_of_mem hG0 hyG hag _
+
 end Scheme
 
 namespace Scheme.LadderBaseData
@@ -331,62 +351,82 @@ namespace Scheme.LadderBaseData
 variable {n : ℕ} {B : LadderBaseData.{u} n} {H : ℕ} {Γ : Finset Label.{u}}
   {A : ℕ → (Fin B.S.card → Label.{u}) → Prop} {B' : ℕ}
 
+/-- **Cell class: the cells of the attachment** (generic in the cap `y`): the extension of a
+lawful state is the state there, so two states agreeing capped at `y` have extensions agreeing
+capped at `y` at these cells. -/
+theorem min_stateExt_castAdd_eq (hcard : B.S.card ≤ H) {y : Label.{u}}
+    {R R' : Fin B.S.card → Label.{u}} (hR : B.S.rows.IsLawful R) (hR' : B.S.rows.IsLawful R')
+    (hag : ∀ d, min (R' d) y = min (R d) y) (d : Fin B.S.card) :
+    min (B.stateExt H R' (Fin.castAdd _ d)) y = min (B.stateExt H R (Fin.castAdd _ d)) y := by
+  rw [stateExt_castAdd hR' hcard, stateExt_castAdd hR hcard]
+  exact hag d
+
+/-- **Cell class: the ladder cells** (generic in the cap `y`, for `y ≠ ⊥` self-visible at `1`):
+the indices of the two rank members agree up to `lowCount + 1`, through the cut of the two rank
+vectors (`Scheme.baseIndex_agree`, `Label.rankAgree_of_min_eq`), and the positive tables agree
+capped at `y` there (`Label.min_posTable_eq`).  No height is used. -/
+theorem min_stateExt_natAdd_eq (hcard : B.S.card ≤ H) {y : Label.{u}} (hy0 : y ≠ ⊥)
+    (hy1 : IsSelfVisible 1 y) {R R' : Fin B.S.card → Label.{u}} (hR : B.S.rows.IsLawful R)
+    (hR' : B.S.rows.IsLawful R') (hag : ∀ d, min (R' d) y = min (R d) y)
+    (j : Fin (ladderCard B.S (RankMember B.S H) H)) :
+    min (B.stateExt H R' (Fin.natAdd _ j)) y = min (B.stateExt H R (Fin.natAdd _ j)) y := by
+  rw [stateExt_of_isLawful hR hcard, stateExt_of_isLawful hR' hcard, Fin.append_right,
+    Fin.append_right]
+  set a := RankMember.ofLawful B.wf hcard hR with ha
+  set a' := RankMember.ofLawful B.wf hcard hR' with ha'
+  set L := lowCount R y with hL
+  have hag' : RankAgree (rankProf B.S H a') (rankProf B.S H a) (L + 1) :=
+    rankAgree_of_min_eq hag hy0
+  have hcut := baseIndex_agree (H := H) (prof := rankProf B.S H) a' a (Fin.natAdd _ j)
+  have hle (b : RankMember B.S H) : baseIndex H (rankProf B.S H) b (Fin.natAdd _ j) ≤ H :=
+    baseIndex_le (rankProf_le _ H) b _
+  refine min_posTable_eq hag (one_le_of_isSelfVisible hy1 hy0) ?_
+  rcases le_or_gt (L + 1) H with hLH | hLH
+  · have hc : L + 1 ≤ rankCut H (rankProf B.S H a') (rankProf B.S H a) := le_rankCut hLH hag'
+    have e := congrArg (min · (L + 1)) hcut
+    simp only [min_assoc, min_eq_right hc] at e
+    exact e
+  · have hc : H ≤ rankCut H (rankProf B.S H a') (rankProf B.S H a) :=
+      le_rankCut le_rfl (hag'.mono hLH.le)
+    rw [min_eq_left ((hle a').trans hc), min_eq_left ((hle a).trans hc)] at hcut
+    rw [hcut]
+
 /-- **The extensions of two states agreeing capped at `y` agree capped at `y`** on the padded base:
-on the ladder the indices of their rank members agree up to `lowCount + 1`, through the cut of the
-two rank vectors (`Scheme.baseIndex_agree`, `Label.rankAgree_of_min_eq`), and the positive tables
-agree capped at `y` there (`Label.min_posTable_eq`). -/
+the cells of the attachment (`min_stateExt_castAdd_eq`) and the ladder cells
+(`min_stateExt_natAdd_eq`). -/
 theorem min_stateExt_eq (hcard : B.S.card ≤ H) {y : Label.{u}} (hy0 : y ≠ ⊥)
     (hy1 : IsSelfVisible 1 y) {R R' : Fin B.S.card → Label.{u}} (hR : B.S.rows.IsLawful R)
     (hR' : B.S.rows.IsLawful R') (hag : ∀ d, min (R' d) y = min (R d) y)
     (t : Fin (B.ladderBase H).card) :
     min (B.stateExt H R' t) y = min (B.stateExt H R t) y := by
-  rw [stateExt_of_isLawful hR hcard, stateExt_of_isLawful hR' hcard]
   induction t using Fin.addCases with
-  | left d => rw [Fin.append_left, Fin.append_left]; exact hag d
-  | right j =>
-    rw [Fin.append_right, Fin.append_right]
-    set a := RankMember.ofLawful B.wf hcard hR with ha
-    set a' := RankMember.ofLawful B.wf hcard hR' with ha'
-    set L := lowCount R y with hL
-    have hag' : RankAgree (rankProf B.S H a') (rankProf B.S H a) (L + 1) :=
-      rankAgree_of_min_eq hag hy0
-    have hcut := baseIndex_agree (H := H) (prof := rankProf B.S H) a' a (Fin.natAdd _ j)
-    have hle (b : RankMember B.S H) : baseIndex H (rankProf B.S H) b (Fin.natAdd _ j) ≤ H :=
-      baseIndex_le (rankProf_le _ H) b _
-    refine min_posTable_eq hag (one_le_of_isSelfVisible hy1 hy0) ?_
-    rcases le_or_gt (L + 1) H with hLH | hLH
-    · have hc : L + 1 ≤ rankCut H (rankProf B.S H a') (rankProf B.S H a) := le_rankCut hLH hag'
-      have e := congrArg (min · (L + 1)) hcut
-      simp only [min_assoc, min_eq_right hc] at e
-      exact e
-    · have hc : H ≤ rankCut H (rankProf B.S H a') (rankProf B.S H a) :=
-        le_rankCut le_rfl (hag'.mono hLH.le)
-      rw [min_eq_left ((hle a').trans hc), min_eq_left ((hle a).trans hc)] at hcut
-      rw [hcut]
+  | left d => exact min_stateExt_castAdd_eq hcard hR hR' hag d
+  | right j => exact min_stateExt_natAdd_eq hcard hy0 hy1 hR hR' hag j
+
+/-- **The writings of two states agreeing capped at `y` agree capped at `y`** at every height `K`
+at whose layers `y` is a height (`Scheme.heightSet Γ B' (K' + 2)` for `K' < K`): on the padded
+base by `min_stateExt_eq` (generic in `y`), and on every layer by `Scheme.min_layerRow_eq` (the
+one step using `y` as a height). -/
+theorem min_v_eq_of_mem_heightSet (hcard : B.S.card ≤ H) {y : Label.{u}} (hy0 : y ≠ ⊥)
+    (hy1 : IsSelfVisible 1 y) {R R' : Fin B.S.card → Label.{u}} (hR : B.S.rows.IsLawful R)
+    (hR' : B.S.rows.IsLawful R') (hag : ∀ d, min (R' d) y = min (R d) y) :
+    ∀ K, (∀ K' < K, y ∈ heightSet Γ B' (K' + 2)) → ∀ x,
+      min ((B.ladderTower H Γ A B' K).v R' x) y = min ((B.ladderTower H Γ A B' K).v R x) y
+  | 0, _, x => min_stateExt_eq hcard hy0 hy1 hR hR' hag x
+  | K + 1, hyH, x => by
+    have ih := min_v_eq_of_mem_heightSet hcard hy0 hy1 hR hR' hag K
+      fun K' hK' ↦ hyH K' (by omega)
+    exact Scheme.min_layerRow_eq (bot_mem_heightSet _ _ _) (hyH K (by omega)) ih x
 
 /-- **The writings of two states agreeing capped at a value `y` of `Γ` agree capped at `y`** at
-every height `K` with `y` self-visible at `K + 1`: on the padded base by `min_stateExt_eq`, and on
-every layer through the agreement heights, `y` being a height there
-(`Label.min_agreementHeight_eq_of_mem`). -/
+every height `K` with `y` self-visible at `K + 1`: `y` is then a height of every layer
+(`min_v_eq_of_mem_heightSet`). -/
 theorem min_v_eq_of_capAgree (hcard : B.S.card ≤ H) {y : Label.{u}} (hyΓ : y ∈ Γ) (hy0 : y ≠ ⊥)
     {R R' : Fin B.S.card → Label.{u}} (hR : B.S.rows.IsLawful R) (hR' : B.S.rows.IsLawful R')
-    (hag : ∀ d, min (R' d) y = min (R d) y) :
-    ∀ K, IsSelfVisible (K + 1) y → ∀ x,
-      min ((B.ladderTower H Γ A B' K).v R' x) y = min ((B.ladderTower H Γ A B' K).v R x) y
-  | 0, hy, x => min_stateExt_eq hcard hy0 hy hR hR' hag x
-  | K + 1, hy, x => by
-    have ih := min_v_eq_of_capAgree hcard hyΓ hy0 hR hR' hag K (hy.mono (by omega))
-    set T := B.ladderTower H Γ A B' K with hT
-    change min (layerRow T.S (fun d ↦ d) (heightSet Γ B' (K + 2))
-        (T.entries (B.towerCat Γ A (K + 2))) (T.v R') x) y =
-      min (layerRow T.S (fun d ↦ d) (heightSet Γ B' (K + 2))
-        (T.entries (B.towerCat Γ A (K + 2))) (T.v R) x) y
-    induction x using Fin.addCases with
-    | left x => rw [layerRow_castAdd, layerRow_castAdd]; exact ih x
-    | right i =>
-      rw [layerRow_natAdd, layerRow_natAdd]
-      exact min_agreementHeight_eq_of_mem (bot_mem_heightSet _ _ _)
-        (mem_heightSet.mpr (.inr ⟨hyΓ, hy⟩)) ih _
+    (hag : ∀ d, min (R' d) y = min (R d) y) (K : ℕ) (hy : IsSelfVisible (K + 1) y) (x) :
+    min ((B.ladderTower H Γ A B' K).v R' x) y = min ((B.ladderTower H Γ A B' K).v R x) y :=
+  min_v_eq_of_mem_heightSet hcard hy0 (hy.mono (by omega)) hR hR' hag K
+    (fun K' hK' ↦ mem_heightSet.mpr (.inr ⟨hyΓ, hy.mono (by omega)⟩)) x
 
 /-- **The tie is broken by the height set** (tower form): for a state `R` of the catalogue at
 `k + 2` and a lawful state `R'` agreeing with it capped at a value `y ≠ ⊥` of `Γ` self-visible at
