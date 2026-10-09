@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.ReplicatedGradeOne
+import VaughtConjecture.Extension.ReplicatedMixedLift
 import VaughtConjecture.Extension.LadderLift
 import VaughtConjecture.Extension.SourcePrefix
 
@@ -30,13 +30,24 @@ of the attachment inside `U` and the copies of the ladder at the mixed faces ins
   `(V, 1)` into the full face of grade one when the attachment does (the padded grade-one base is
   a source prefix of the tower at `(univ, 1)`, and the rank members glue).
 
+* **Capping a class of cells of the top grade** (`CellScheme.Rows.isLawfulBelow_capOn`): a section
+  lawful below a pair, capped at a self-visible label on a class of cells of the top grade closed
+  upward and under availability, is lawful.
+* **The root and the donor face** (`Seed.inter_map_eq_root`, `Seed.card_root`,
+  `Seed.root_mem_faces`, `Seed.donor_mem_faces`): the intersection of the context face and the
+  donor face is the image of the root, a face of the amalgam when the root is a face of the
+  context; the donor face is a face of the amalgam when the donor is.
+* **Through the full face** (`Seed.cappedLift_attached_mixed_of_univ`): a lift from `(V, k)` into
+  `(univ, k)` gives one into every mixed face `U ⊇ V` with `k ≤ |U|` (`Seed.cappedLift_mixed_univ`).
+
 **The lift** (`Seed.cappedLift_attached_mixed_one`): the replicated scheme lifts capped from
 `(V, 1)` to `(U, 1)` when the attachment lifts capped from `(V, 1)` into `(univ, 1)`: through the
 full face of grade one, with the extension from `(U, 1)` given by the lift from a mixed face into
 the full face at the grade one (`Seed.cappedLift_mixed_univ_one`).  The attachment lifts so
 (`Seed.cappedLift_attachment_univ_one`) when the donor face and the root (its intersection with
-the context face) are faces of the amalgam and the root is nonempty: the lifts of the amalgam
-within the context face and the donor face glue along the root
+the context face) are faces of the amalgam and the root is nonempty, at every grade
+`k ≤ |V|` (`Seed.cappedLift_attachment_univ`): the lifts of the amalgam within the context face and
+the donor face glue along the root
 (`Seed.cappedLift_attached_mixed_one_of_faces`).
 
 ## References
@@ -82,6 +93,54 @@ theorem cappedLift_of_extend (hXY : X ≤ Y) (hYZ : Y ≤ Z) (hg : Y.2 = Z.2)
     exact congrArg (min · c) (hvv e he)
   · rw [extendBot_of_mem q (D.below_mono (hXY.trans hYZ) he)]
     exact hqw ⟨e, he⟩
+
+/-- **Capping a class of cells of the top grade**: let `w` be lawful below `X`, `c` self-visible at
+the grade `X.2`, and `K` a class of cells of the grade `X.2`, determined by the graded index, closed
+upward below `X`, and containing every cell of its grade whose scope lies inside the scope of one of
+its cells.  Then `w` capped at `c` on `K` is lawful below `X`: a cell of `K` reads the row of `w`
+capped at `c`, a cell outside `K` reads no cell of `K`, and availability inside `K` is capped
+alike. -/
+theorem isLawfulBelow_capOn {w : ι → Label.{u}} (hw : R.IsLawfulBelow X fun d ↦ w d)
+    {c : Label.{u}} (hc : IsSelfVisible X.2 c) (K : ι → Prop) [DecidablePred K]
+    (hKg : ∀ a, K a → D.grade a = X.2)
+    (hup : ∀ d s, K d → d ∈ D.below (D.gradedIndex s) → s ∈ D.below X → K s)
+    (hav : ∀ s t, D.scope s ⊆ D.scope t → D.grade s = D.grade t → t ∈ D.below X → K t → K s)
+    (hgi : ∀ u t, D.gradedIndex u = D.gradedIndex t → K t → K u) :
+    R.IsLawfulBelow X fun d ↦ if K d then min (w d) c else w d := by
+  obtain ⟨ho, hl, ha⟩ := isLawfulBelow_iff_forall.mp hw
+  refine (isLawfulBelow_iff_forall (w := fun d ↦ if K d then min (w d) c else w d)).mpr
+    ⟨fun d hd ↦ ?_, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
+  · split_ifs with h
+    · exact (ho d hd).min (hKg d h ▸ hc)
+    · exact ho d hd
+  · by_cases hKs : K s
+    · have he : (fun d : D.below (D.gradedIndex s) ↦
+          min (if K d.1 then min (w d.1) c else w d.1) (if K s then min (w s) c else w s)) =
+          fun d ↦ min (min (w d.1) (w s)) c := by
+        funext d
+        rw [ite_eq_left hKs]
+        split_ifs
+        · rw [min_min_min_comm, min_self]
+        · rw [← min_assoc]
+      rw [he]
+      exact (hl s hs).min_const (fun d ↦ d.2.2.trans hs.2) hc
+    · have he : (fun d : D.below (D.gradedIndex s) ↦
+          min (if K d.1 then min (w d.1) c else w d.1) (if K s then min (w s) c else w s)) =
+          fun d ↦ min (w d.1) (w s) := by
+        funext d
+        rw [ite_eq_right hKs, ite_eq_right fun h ↦ hKs (hup d.1 s h d.2 hs)]
+      rw [he]
+      exact hl s hs
+  · obtain ⟨u, hu, hle⟩ := ha s t ht hst hg
+    refine ⟨u, hu, ?_⟩
+    by_cases hKt : K t
+    · rw [ite_eq_left (hav s t hst hg ht hKt), ite_eq_left (hgi u t hu hKt)]
+      exact min_le_min_right c hle
+    · have hKu : ¬ K u := fun h ↦ hKt (hgi t u hu.symm h)
+      rw [ite_eq_right hKu]
+      split_ifs
+      · exact (min_le_left _ _).trans hle
+      · exact hle
 
 end CellScheme.Rows
 
@@ -229,6 +288,52 @@ theorem cappedLift_attachTower_one (hH : 0 < H) (hcard : (I.attachmentBase g).S.
     from hrows]
   exact Scheme.cappedLift_ladderBase_rankMember (I.attachmentBase g).wf hH hcard hXU hX hold
 
+/-! ### The donor face and the root -/
+
+/-- **The root**: the intersection of the context face and the donor face is the image of the
+root. -/
+theorem inter_map_eq_root :
+    univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+        univ.map (extendByLast (g.trans Fin.castSuccEmb)) =
+      univ.map ((g.trans Fin.castSuccEmb).trans Fin.castSuccEmb) := by
+  ext x
+  simp only [mem_inter, mem_map, mem_univ, true_and, Function.Embedding.trans_apply,
+    Fin.castSuccEmb_apply]
+  constructor
+  · rintro ⟨⟨a, rfl⟩, ⟨y, hy⟩⟩
+    induction y using Fin.lastCases with
+    | last =>
+      rw [extendByLast_last] at hy
+      exact absurd hy (Fin.castSucc_lt_last a).ne'
+    | cast i =>
+      rw [extendByLast_castSucc, Function.Embedding.trans_apply, Fin.castSuccEmb_apply] at hy
+      exact ⟨i, hy⟩
+  · rintro ⟨i, rfl⟩
+    refine ⟨⟨_, rfl⟩, ⟨Fin.castSucc i, ?_⟩⟩
+    rw [extendByLast_castSucc, Function.Embedding.trans_apply, Fin.castSuccEmb_apply]
+
+/-- The root has `n` points. -/
+theorem card_root :
+    #(univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+      univ.map (extendByLast (g.trans Fin.castSuccEmb))) = n := by
+  rw [inter_map_eq_root, card_map, card_univ, Fintype.card_fin]
+
+/-- **The root is a face of the amalgam** when it is a face of the context. -/
+theorem root_mem_faces {p : StageType.{u} α n}
+    (hte : StageType.restrictFace (g.trans Fin.castSuccEmb) I.left = some p) :
+    univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+      univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces := by
+  rw [inter_map_eq_root]
+  have h := (StageType.restrictFace_trans I.amalgam _ (g.trans Fin.castSuccEmb)
+    I.restrictFace_left).symm.trans hte
+  exact ((StageType.restrictFace_eq_some_iff _ _).mp h).1
+
+/-- **The donor face is a face of the amalgam** when the amalgam has the donor as a face. -/
+theorem donor_mem_faces {d : StageType.{u} α (n + 1)}
+    (hd : StageType.restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d) :
+    univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces :=
+  ((StageType.restrictFace_eq_some_iff _ _).mp hd).1
+
 /-- **The attachment lifts like the amalgam below its faces**: between graded faces `X ≤ Y` of the
 amalgam with `Y` inside the context face or the donor face, the attachment lifts capped (below
 `Y` it is the amalgam). -/
@@ -248,11 +353,85 @@ theorem cappedLift_attachment_of_subset {X Y : Finset (Fin (m + 2)) × ℕ}
         exact h'⟩
   exact (hpreA.cappedLift_iff (R := I.amalgam.rows) h le_rfl).mpr (I.isBountiful hX hY h)
 
-/-- **The attachment lifts into the full face at the grade one** from a face inside the context
-face or the donor face, when the donor face and its intersection with the context face (the root)
-are faces of the amalgam, the root nonempty: the cells of grade one lie below the context face or
-the donor face, those below both below the root, and the lifts within the two faces glue
+/-- **The attachment lifts into the full face** at a grade `k ≤ |V|` from a face `V` inside the
+context face or the donor face, when the donor face and its intersection with the context face (the
+root) are faces of the amalgam, the root nonempty: the cells below `(univ, k)` lie below the context
+face or the donor face (at the grade `min k |D|`), those below both below the root (at the grade
+`min k |root|`), and the lifts of the amalgam within the two faces glue
 (`CellScheme.Rows.cappedLift_of_union`). -/
+theorem cappedLift_attachment_univ
+    (hdF : univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
+    (hrF : univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+      univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
+    (hr1 : 1 ≤ #(univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+      univ.map (extendByLast (g.trans Fin.castSuccEmb))))
+    (hVF : V ∈ I.amalgam.toCellScheme.faces) {k : ℕ} (hk1 : 1 ≤ k) (hkV : k ≤ #V)
+    (hV : V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∨
+      V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb))) :
+    (I.attachmentBase g).S.rows.CappedLift
+      (X := (V, k)) (Y := ((univ : Finset (Fin (m + 2))), k)) ⟨subset_univ _, le_rfl⟩ := by
+  set C := univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) with hC
+  set D := univ.map (extendByLast (g.trans Fin.castSuccEmb)) with hD
+  have hCF : C ∈ I.amalgam.toCellScheme.faces :=
+    ((StageType.restrictFace_eq_some_iff _ _).mp I.restrictFace_left).1
+  have hC1 : 1 ≤ #C := by rw [hC, card_map, card_univ, Fintype.card_fin]; omega
+  have hD1 : 1 ≤ #D := by rw [hD, card_map, card_univ, Fintype.card_fin]; omega
+  have hgc (d : Fin (I.attachmentBase g).S.card) :
+      (I.attachmentBase g).S.toCellScheme.grade d ≤
+        #((I.attachmentBase g).S.toCellScheme.scope d) :=
+    (I.isWellFormed_attachment g).isWellFormed.grade_le_card d
+  have hbelow (d : Fin (I.attachmentBase g).S.card) (Z : Finset (Fin (m + 2))) (i : ℕ)
+      (hdZ : (I.attachmentBase g).S.toCellScheme.scope d ⊆ Z)
+      (hdi : (I.attachmentBase g).S.toCellScheme.grade d ≤ i) :
+      d ∈ (I.attachmentBase g).S.toCellScheme.below (Z, min i #Z) :=
+    ⟨hdZ, le_min hdi ((hgc d).trans (card_le_card hdZ))⟩
+  have hcover (d) (hd : d ∈ (I.attachmentBase g).S.toCellScheme.below
+      ((univ : Finset (Fin (m + 2))), k)) :
+      d ∈ (I.attachmentBase g).S.toCellScheme.below (C, min k #C) ∨
+        d ∈ (I.attachmentBase g).S.toCellScheme.below (D, min k #D) :=
+    (I.scope_attachment g d).imp (fun h ↦ hbelow d C k h hd.2) fun h ↦ hbelow d D k h hd.2
+  have hinter (d) (h1 : d ∈ (I.attachmentBase g).S.toCellScheme.below (C, min k #C))
+      (h2 : d ∈ (I.attachmentBase g).S.toCellScheme.below (D, min k #D)) :
+      d ∈ (I.attachmentBase g).S.toCellScheme.below (C ∩ D, min k #(C ∩ D)) :=
+    hbelow d _ k (subset_inter h1.1 h2.1) (h1.2.trans (min_le_left _ _))
+  have hsub (X Y : Finset (Fin (m + 2))) (i j : ℕ) (hX : X ∈ I.amalgam.toCellScheme.faces)
+      (hi : 1 ≤ i) (hiX : i ≤ #X) (hY : Y ∈ I.amalgam.toCellScheme.faces) (hjY : j ≤ #Y)
+      (hXY : X ⊆ Y) (hij : i ≤ j) (hYc : Y = C ∨ Y = D) :
+      (I.attachmentBase g).S.rows.CappedLift (X := (X, i)) (Y := (Y, j)) ⟨hXY, hij⟩ :=
+    cappedLift_attachment_of_subset ⟨hX, by omega, hiX⟩ ⟨hY, by omega, hjY⟩ _
+      (by rcases hYc with rfl | rfl; exacts [.inl subset_rfl, .inr subset_rfl])
+  have hkC : min k #C = k := min_eq_left
+    (hkV.trans (hV.elim (card_le_card) fun h ↦ (card_le_card h).trans (by
+      have hnm : n ≤ m := by simpa using Fintype.card_le_of_embedding g
+      rw [hD, hC, card_map, card_map, card_univ, card_univ, Fintype.card_fin, Fintype.card_fin]
+      omega)))
+  have hr : 1 ≤ min k #(C ∩ D) := le_min hk1 hr1
+  rcases hV with hV | hV
+  · have h := CellScheme.Rows.cappedLift_of_union (O := (C ∩ D, min k #(C ∩ D)))
+      (U := (C, min k #C)) (V := (D, min k #D)) (Y := ((univ : Finset (Fin (m + 2))), k))
+      (⟨hV, hkC.symm.le⟩ : ((V, k) : Finset (Fin (m + 2)) × ℕ) ≤ (C, min k #C))
+      ⟨inter_subset_left, min_le_min_left _ (card_le_card inter_subset_left)⟩
+      ⟨inter_subset_right, min_le_min_left _ (card_le_card inter_subset_right)⟩
+      ⟨subset_univ _, min_le_left _ _⟩ ⟨subset_univ _, min_le_left _ _⟩ hcover hinter
+      (hsub V C k _ hVF hk1 hkV hCF (min_le_right _ _) hV hkC.symm.le (.inl rfl))
+      (hsub _ D _ _ hrF hr (min_le_right _ _) hdF (min_le_right _ _) inter_subset_right
+        (min_le_min_left _ (card_le_card inter_subset_right)) (.inr rfl))
+    exact h
+  · have hkD : min k #D = k := min_eq_left (hkV.trans (card_le_card hV))
+    have h := CellScheme.Rows.cappedLift_of_union (O := (C ∩ D, min k #(C ∩ D)))
+      (U := (D, min k #D)) (V := (C, min k #C)) (Y := ((univ : Finset (Fin (m + 2))), k))
+      (⟨hV, hkD.symm.le⟩ : ((V, k) : Finset (Fin (m + 2)) × ℕ) ≤ (D, min k #D))
+      ⟨inter_subset_right, min_le_min_left _ (card_le_card inter_subset_right)⟩
+      ⟨inter_subset_left, min_le_min_left _ (card_le_card inter_subset_left)⟩
+      ⟨subset_univ _, min_le_left _ _⟩ ⟨subset_univ _, min_le_left _ _⟩
+      (fun d hd ↦ (hcover d hd).symm) (fun d h1 h2 ↦ hinter d h2 h1)
+      (hsub V D k _ hVF hk1 hkV hdF (min_le_right _ _) hV hkD.symm.le (.inr rfl))
+      (hsub _ C _ _ hrF hr (min_le_right _ _) hCF (min_le_right _ _) inter_subset_left
+        (min_le_min_left _ (card_le_card inter_subset_left)) (.inl rfl))
+    exact h
+
+/-- **The attachment lifts into the full face at the grade one** (`Seed.cappedLift_attachment_univ`
+at `k = 1`). -/
 theorem cappedLift_attachment_univ_one
     (hdF : univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
     (hrF : univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
@@ -263,44 +442,8 @@ theorem cappedLift_attachment_univ_one
     (hV : V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∨
       V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb))) :
     (I.attachmentBase g).S.rows.CappedLift
-      (X := (V, 1)) (Y := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_univ _, le_rfl⟩ := by
-  set C := univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) with hC
-  set D := univ.map (extendByLast (g.trans Fin.castSuccEmb)) with hD
-  have hCF : C ∈ I.amalgam.toCellScheme.faces :=
-    ((StageType.restrictFace_eq_some_iff _ _).mp I.restrictFace_left).1
-  have hC1 : 1 ≤ #C := by rw [hC, card_map, card_univ, Fintype.card_fin]; omega
-  have hD1 : 1 ≤ #D := by rw [hD, card_map, card_univ, Fintype.card_fin]; omega
-  have hcover (d) (hd : d ∈ (I.attachmentBase g).S.toCellScheme.below
-      ((univ : Finset (Fin (m + 2))), 1)) :
-      d ∈ (I.attachmentBase g).S.toCellScheme.below (C, 1) ∨
-        d ∈ (I.attachmentBase g).S.toCellScheme.below (D, 1) :=
-    (I.scope_attachment g d).imp (fun h ↦ ⟨h, hd.2⟩) fun h ↦ ⟨h, hd.2⟩
-  have hinter (P Q : Finset (Fin (m + 2))) (hPQ : P ∩ Q = C ∩ D) (d)
-      (h1 : d ∈ (I.attachmentBase g).S.toCellScheme.below (P, 1))
-      (h2 : d ∈ (I.attachmentBase g).S.toCellScheme.below (Q, 1)) :
-      d ∈ (I.attachmentBase g).S.toCellScheme.below (C ∩ D, 1) :=
-    ⟨hPQ ▸ subset_inter h1.1 h2.1, h1.2⟩
-  have hsub (X Y : Finset (Fin (m + 2))) (hX : X ∈ I.amalgam.toCellScheme.faces) (hX1 : 1 ≤ #X)
-      (hY : Y ∈ I.amalgam.toCellScheme.faces) (hY1 : 1 ≤ #Y) (hXY : X ⊆ Y) (hYc : Y = C ∨ Y = D) :
-      (I.attachmentBase g).S.rows.CappedLift (X := (X, 1)) (Y := (Y, 1)) ⟨hXY, le_rfl⟩ :=
-    cappedLift_attachment_of_subset ⟨hX, by omega, hX1⟩ ⟨hY, by omega, hY1⟩ _
-      (by rcases hYc with rfl | rfl; exacts [.inl subset_rfl, .inr subset_rfl])
-  rcases hV with hV | hV
-  · exact CellScheme.Rows.cappedLift_of_union (O := (C ∩ D, 1)) (U := (C, 1)) (V := (D, 1))
-      (Y := ((univ : Finset (Fin (m + 2))), 1))
-      (⟨hV, le_rfl⟩ : ((V, 1) : Finset (Fin (m + 2)) × ℕ) ≤ (C, 1))
-      ⟨inter_subset_left, le_rfl⟩ ⟨inter_subset_right, le_rfl⟩
-      ⟨subset_univ _, le_rfl⟩ ⟨subset_univ _, le_rfl⟩ hcover (hinter C D rfl)
-      (hsub V C hVF hV1 hCF hC1 hV (.inl rfl))
-      (hsub _ D hrF hr1 hdF hD1 inter_subset_right (.inr rfl))
-  · exact CellScheme.Rows.cappedLift_of_union (O := (C ∩ D, 1)) (U := (D, 1)) (V := (C, 1))
-      (Y := ((univ : Finset (Fin (m + 2))), 1))
-      (⟨hV, le_rfl⟩ : ((V, 1) : Finset (Fin (m + 2)) × ℕ) ≤ (D, 1))
-      ⟨inter_subset_right, le_rfl⟩ ⟨inter_subset_left, le_rfl⟩
-      ⟨subset_univ _, le_rfl⟩ ⟨subset_univ _, le_rfl⟩ (fun d hd ↦ (hcover d hd).symm)
-      (hinter D C (inter_comm _ _))
-      (hsub V D hVF hV1 hdF hD1 hV (.inr rfl))
-      (hsub _ C hrF hr1 hCF hC1 inter_subset_left (.inl rfl))
+      (X := (V, 1)) (Y := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_univ _, le_rfl⟩ :=
+  cappedLift_attachment_univ hdF hrF hr1 hVF le_rfl hV1 hV
 
 /-- **The lift from a face of the attachment into a mixed face at the grade one.**  For a face `V`
 inside the context face or the donor face and a mixed face `U ⊇ V`, the replicated scheme lifts
@@ -327,6 +470,21 @@ theorem cappedLift_attached_mixed_one (hH : 0 < H) (hcard : (I.attachmentBase g)
     (Z := ((univ : Finset (Fin (m + 2))), 1))
     ⟨hVU, le_rfl⟩ ⟨subset_univ _, le_rfl⟩ rfl
     (cappedLift_replicated_of_tower _ rfl hV hT) (cappedLift_mixed_univ_one hH hcard hΓ hA hU)
+
+/-- **Lifts into a mixed face through the full face**: for a mixed face `U ⊇ V` and a grade
+`1 ≤ k ≤ m + 1` with `k ≤ |U|`, a capped lift of the replicated scheme from `(V, k)` into
+`(univ, k)` gives one into `(U, k)`, since the lift from `(U, k)` into `(univ, k)`
+(`Seed.cappedLift_mixed_univ`) extends every section lawful below `(U, k)`. -/
+theorem cappedLift_attached_mixed_of_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hA0 : ∀ k, A k fun _ ↦ ⊥) (hU : U ∈ I.mixedFaces g) (hVU : V ⊆ U) {k : ℕ} (hk1 : 1 ≤ k)
+    (hkm : k ≤ m + 1) (hkU : k ≤ #U)
+    (hl : (𝔼).rows.CappedLift (X := (V, k)) (Y := ((univ : Finset (Fin (m + 2))), k))
+      ⟨subset_univ _, le_rfl⟩) :
+    (𝔼).rows.CappedLift (X := (V, k)) (Y := (U, k)) ⟨hVU, le_rfl⟩ :=
+  CellScheme.Rows.cappedLift_of_extend (X := (V, k)) (Y := (U, k))
+    (Z := ((univ : Finset (Fin (m + 2))), k)) ⟨hVU, le_rfl⟩ ⟨subset_univ _, le_rfl⟩ rfl hl
+    (cappedLift_mixed_univ hH hcard hΓ0 hΓ hA hA0 hU hk1 hkm hkU)
 
 /-- **The lift from a face of the attachment into a mixed face at the grade one**, when the donor
 face and the root are faces of the amalgam, the root nonempty
