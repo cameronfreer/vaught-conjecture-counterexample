@@ -106,6 +106,20 @@ theorem exists_controller_agree_ladderTower (k K : ℕ) (hkK : k ≤ K)
   exists_layerTower_controller_agree (B := B.towerBase H) (C := B.towerCat Γ A)
     (G := fun k ↦ grid k B') (fun _ ↦ bot_mem_grid _ _) k K hkK N hN f u hf hu
 
+/-- **The extension of a lawful state reads a cell at its shadow**: at the shadow of a cell `d`
+for the rank member of `R`, the extension of `R` is `R d`. -/
+theorem stateExt_shadow (hcard : B.S.card ≤ H) {R : Fin B.S.card → Label.{u}}
+    (hR : B.S.rows.IsLawful R) (d : Fin B.S.card) :
+    B.stateExt H R (Fin.natAdd _ (ladderEquiv _ _ H (RankMember.ofLawful B.wf hcard hR,
+      Sum.inr d))) = R d := by
+  rw [stateExt_of_grade_one hR hcard _ (appendFullCellsScheme_grade_natAdd _ _ _ _)]
+  have h := baseIndex_self (rankProf_le B.S H)
+    ((RankMember.ofLawful B.wf hcard hR, Sum.inr d) :
+      LadderPt B.S (RankMember B.S H) H)
+  simp only [ladderCeil] at h
+  rw [h]
+  exact posTable_rankVector (B.isSelfVisible_one_of_isLawful hR) d
+
 end LadderBaseData
 
 end VaughtConjecture.Scheme
