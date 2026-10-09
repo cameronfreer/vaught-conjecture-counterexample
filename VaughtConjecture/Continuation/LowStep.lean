@@ -518,7 +518,9 @@ frontier `c` of `f` above `h` and every donor top off the root read by `R` at le
 donor face lawful at `K`, literal on the root and agreeing with `R` capped at `h`, reads every donor
 top off the root at least at `c`: by donor raising with the gap (`IsLowFamily.donorRaisingGap`)
 off the tie, where the second outcome would put a top at most the replaced low maximum, below
-the cap; and by `LowStepTie` at the tie or at a donor top determined by the root. -/
+the cap; and by `LowStepTie` at the tie or at a donor top determined by the root.  The same
+conclusion with neither `LowStepTie` nor donor raising is
+`StageType.IsLowFamily.exists_raised_of_gap`, in `VaughtConjecture.Continuation.LowStepLow`. -/
 theorem IsLowFamily.exists_raised (hF : IsLowFamily K t' tb p o r)
     (hT : LowStepTie K t' tb hF.face_private hF.face_donor o r) {h c : Label.{u}}
     (hh : IsSelfVisible K h) (hb : ⊥ < h) (hhc : h < c) {R : Fin tb.card → Label.{u}}
