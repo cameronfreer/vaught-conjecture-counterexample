@@ -46,14 +46,15 @@ state agreeing with the ambient's state capped at the cut is at least the cut at
 state is `ω * C + 4` there), so it would need such a code: the fresh codes above a reachable cut
 fail for the single set of values at this input.
 
-**The single set of values and a set per grade.**  The replicated scheme takes the states of its
+**The single set of values and a set per grade.** The replicated scheme takes the states of its
 catalogue at every grade from one set `Γ`, here `Seed.seedValues`; the reachable cuts at the grade
 `k` lie in the values of `Γ` self-visible at `k` (`Seed.reachableCut_mem`), the codes above a cut
-must lie in `Γ` too, and at the input a reachable cut lies in the top block of `Γ`, above which
-`Γ` has only labels self-visible at `k`.  A set `Γ_k` per grade, with codes in blocks above the values reachable at the grades below
-`k`, would avoid this; it is a change of the catalogue of the tower, not made here.  The single
-decoder of the gate (agreement with the ambient's decoder below the cut, the codes read above it,
-the capped agreement at every class of cells) is not attempted, the fresh codes failing first.
+must lie in `Γ` too, and at the input a reachable cut lies in the top block of `Γ`, above which `Γ`
+has only labels self-visible at `k`. A set `Γ_k` per grade, with codes in blocks above the values
+reachable at the grades below `k`, would avoid this; it is a change of the catalogue of the tower,
+not made here. The single decoder of the gate (agreement with the ambient's decoder below the cut,
+the codes read above it, the capped agreement at every class of cells) is not attempted, the fresh
+codes failing first.
 
 ## References
 
