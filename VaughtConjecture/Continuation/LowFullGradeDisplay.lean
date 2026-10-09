@@ -5,7 +5,6 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.LowFullGradeStep
 import VaughtConjecture.Continuation.LowDisplayActual
-import VaughtConjecture.MainTheorem.LowDisplayReadingRoute
 
 /-!
 # LOW displays at the full grade `K = k + 1`
@@ -31,9 +30,11 @@ level and no field layer is placed above it.
   controller of its partner (`ProfileTower.sepLo`) below the stage.  The display (the apex added)
   is legal, has literal faces, and carries a LOW layer with this separator
   (`ProfileTower.isLowLayer_of_isGradePrefix`).
-* **The route** (`StageType.hasLowLayersOn_fullGrade`, `StageType.hasLowDisplaysOn_fullGrade`):
-  LOW displays on the class `StageType.LowFullGradeClass` (a donor top of grade `K`, `K = k + 1`):
-  (R2) for these LOW families, with no condition on labels.
+* **The route** is `StageType.hasLowLayersOn_fullGradeAll` and
+  `StageType.hasLowDisplaysOn_fullGradeAll` (`VaughtConjecture.Continuation.LowFullGradeAll`), for
+  every LOW family with `K = k + 1`, with no condition on labels.  The earlier route on the class
+  with a donor top of grade `K` (`StageType.hasLowDisplaysOn_fullGrade`) remains on the research
+  branch `research/port-low-padded`.
 
 ## References
 
@@ -226,47 +227,3 @@ theorem exists_isLowLayer_top (hα : Order.IsSuccPrelimit α) (hL : L.Good)
 end Top
 
 end VaughtConjecture.ProfileTower
-
-/-! ### The route at the full grade -/
-
-namespace VaughtConjecture.StageType
-
-open Finset
-
-variable (α : Ordinal.{u}) in
-/-- **The class of the full grade**: the LOW families with a donor top of grade `K` and
-`K = k + 1` (the owner is the cell of full scope and full grade of the private context).  No
-condition on labels: there is no grade above `K` below the apex. -/
-def LowFullGradeClass (K k : ℕ) (t' tb : StageType.{u} α (k + 1)) (_ : StageType.{u} α k)
-    (_ _ : Fin t'.card) : Prop :=
-  (∃ z, tb.label z = ⊤ ∧ tb.toCellScheme.grade z = K) ∧ K = k + 1
-
-/-- **LOW layers on the class of the full grade** (`ProfileTower.exists_isLowLayer_top`, over the
-good level at the grade `k` of the seed of the family). -/
-theorem hasLowLayersOn_fullGrade : HasLowLayersOn.{u} LowFullGradeClass := by
-  intro α K k t' tb p o r hα hF ⟨⟨z, hz, hzK⟩, hKk⟩
-  subst hKk
-  exact ProfileTower.exists_isLowLayer_top
-    (I := Seed.ofCoatoms hF.isLegal_private hF.isLegal_donor hF.face_private hF.face_donor)
-    hα.isSuccPrelimit (ProfileTower.lvlZero_good k le_rfl) hF.isSourceGapContextAt
-    hF.topGrade_donor ((ProfileTower.lvlZero_good k le_rfl).lowNext_top hF.isSourceGapContextAt
-      hF.topGrade_donor hz hzK)
-
-/-- **LOW displays on the class of the full grade**: (R2) for the LOW families with `K = k + 1`
-and a donor top of grade `K`. -/
-theorem hasLowDisplaysOn_fullGrade : HasLowDisplaysOn.{u} LowFullGradeClass :=
-  hasLowLayersOn_fullGrade.hasLowDisplaysOn
-
-/-- **LOW displays on the union of the class of the faces `⊥` above `K` and the class of the full
-grade**: with a donor top of grade `K`, every LOW family with `K ≤ k` and the faces `⊥` above `K`,
-or with `K = k + 1`, has a LOW display (`StageType.hasLowDisplaysOn_lowBot`,
-`StageType.hasLowDisplaysOn_fullGrade`). -/
-theorem hasLowDisplaysOn_lowBot_or_fullGrade :
-    HasLowDisplaysOn.{u} fun α K k t' tb p o r ↦ LowBotClass α K k t' tb p o r ∨
-      LowFullGradeClass α K k t' tb p o r := by
-  intro α K k t' tb p o r hα hF hS
-  rcases hS with hS | hS
-  · exact hasLowDisplaysOn_lowBot t' tb p o r hα hF hS
-  · exact hasLowDisplaysOn_fullGrade t' tb p o r hα hF hS
-
-end VaughtConjecture.StageType

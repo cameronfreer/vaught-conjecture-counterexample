@@ -11,20 +11,19 @@ import VaughtConjecture.Continuation.LowStateTower
 Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3: the lifts of the state
 tower); semantic contract, items 3 and 8.
 
-The lifts of the state tower (`ProfileTower.STowerLifts`) are the hypothesis of the LOW displays
-on the families whose state tower lifts (`StageType.hasLowDisplaysOn_stateLifts`).  This file
-reduces the lift of every layer of the state tower to a **state step** on the amalgam, the state
-form of the catalogue step of `VaughtConjecture.Extension.TowerCatalogueLayer`.
+This file reduces the capped lift of a state layer to a **state step** on the amalgam, the state
+form of the catalogue step of `VaughtConjecture.Extension.TowerCatalogueLayer`; the padded tower
+(`VaughtConjecture.Continuation.LowPaddedTower`) lifts through it.
 
 **Readability at the states** (`ProfileTower.SLvl.ReadableS`).  The extension through a state
 layer at a positive cap decodes the row of the orbit code `Q` of a state over all fields with the
 orbit decoder of the state at the cap, and needs the section of the level at `Q` read literally
 below the cap: readable for `Q`.  `ProfileTower.SLvl.Good` asks readability only at the states with
 the cutoff `⊥` (what the forgetful level needs); the extension needs it at every canonical state.
-It holds at every next state level (`ProfileTower.SLvl.Good.readableS_next`) and at a canonical
-next level read as a state level (`ProfileTower.Lvl.Good.readableS_toS_next`), since both sections
-are upper decoders of splices of the state, readable for any canonical reader whose values they
-take (`Label.isReadableAt_upperDecoderAt_of_mem`); compiled in this repository.
+It holds at a canonical next level read as a state level
+(`ProfileTower.Lvl.Good.readableS_toS_next`), since the section is an upper decoder of a splice of
+the state, readable for any canonical reader whose values it takes
+(`Label.isReadableAt_upperDecoderAt_of_mem`); compiled in this repository.
 
 **The extension through a state layer** (`ProfileTower.SLvl.Good.exists_extension_s`,
 `ProfileTower.SLvl.Good.exists_extension_s_bot`, compiled in this repository): as for the
@@ -40,16 +39,11 @@ amalgam profile `W` lawful on the cut whose state `withCut W β`, for some `β`,
 capped at the cap, cutoff included, with orbit code over all fields satisfying `A`.  The cap `⊥`
 needs no hypothesis (`ProfileTower.Lvl.Good.exists_cutLawful_of_coatom` on the forgetful level).
 
-**The LOW state step from the frontier condition** (`ProfileTower.exists_jointCutoff`,
-`ProfileTower.SLvl.sCatStep_of_frontier`, compiled in this repository).  For the LOW clause, the
-state step follows from the **frontier step** (`ProfileTower.SLvl.SFrontierStep`): an amalgam
-profile `W` lawful on the cut, extending the prescription, agreeing with the amalgam part of `P`
-capped at the cap, satisfying the frontier condition when its donor maximum is below the capped
-cutoff of `P`.  The cutoff is `min (P β) h`, and the orbit map over all fields, a witness bounded by
-the grade, carries the frontier condition.  The frontier step is what the LOW steps of the
-catalogue layer build before they code the cutoff (`ProfileTower.Lvl.Good.lowStep_donor`,
-`ProfileTower.Lvl.Good.lowStep_private`, which use the profile `P` only through its code-grid
-values, its amalgam part lawful on the cut, its LOW clause, and the coding of the cutoff).
+The lifts of the state tower from its frontier steps or from its steps on the amalgam
+(`ProfileTower.sTowerLifts_of_frontier`, `ProfileTower.sTowerLifts_of_amalgam`), with the frontier
+step and the joint cutoff, remain on the research branch `research/port-low-padded`; their only
+use was the conditional LOW displays on the state tower, which `StageType.hasLowDisplays_of_padded`
+supersedes.
 
 ## Placement
 
@@ -82,25 +76,6 @@ theorem isReadableAt_hatS (k K : ℕ) (Q : CProf I) (f : Fin I.amalgam.card ⊕ 
     · change IsReadableAt K Q (hat I k (camal Q) d)
       rw [hat_of_lt (_root_.not_le.mp hd)]; exact .inl rfl
   · exact isReadableAt_apply Q _
-
-/-- **A next state level is readable at the canonical states.** -/
-theorem SLvl.Good.readableS_next {N : SLvl I g} (hN : N.Good A) (C : Finset (CProf I)) :
-    (N.next C).ReadableS := by
-  intro Q hQ hQB z
-  change IsReadableAt (g + 1 + 1) Q (N.nextσ C Q z)
-  by_cases hz : (N.S.appendFullCellsScheme (g + 1) C.card).grade z ≤ g + 1
-  · rw [SLvl.nextσ_of_le hz]
-    refine isReadableAt_upperDecoderAt_of_mem (B' := bound I) hQ (by omega)
-      (hatS_mem_codeGrid hQB)
-      (isReadableAt_hatS _ _ Q) ?_
-    induction z using Fin.addCases with
-    | left e => rw [SLvl.Φs_castAdd]; exact hN.mem _ (scode_mem_codeGrid _ _) e
-    | right i =>
-      rw [SLvl.Φs_natAdd]
-      exact grid_subset_codeGrid _ _ (agreementHeight_spec (bot_mem_grid _ _) _ _).1
-  · obtain ⟨d, rfl⟩ := hN.exists_old_of_lt hz
-    rw [hN.nextσ_old_of_lt hz]
-    exact isReadableAt_apply Q _
 
 /-- **A canonical next level read as a state level is readable at the canonical states.** -/
 theorem Lvl.Good.readableS_toS_next {L : Lvl I g} (hL : L.Good) : L.next.toS.ReadableS := by
@@ -377,141 +352,6 @@ theorem SLvl.Good.cappedLift_sS (hN : N.Good A) (hR : N.ReadableS) (hgm : g + 1 
 
 end Lift
 
-/-! ### The LOW state step from the frontier condition -/
-
-section Frontier
-
-variable {K k : ℕ} {Nf : Finset (Fin I.amalgam.card ⊕ Unit)} {T : Set (Fin I.amalgam.card ⊕ Unit)}
-  {o r : Fin I.amalgam.card}
-
-/-- **The joint cutoff.**  Let `P` be a canonical LOW state over all fields at `k ≥ K`, `h`
-self-visible and short at `k`, and `W` an amalgam profile agreeing with the amalgam part of `P`
-capped at `h` that satisfies the frontier condition when its donor maximum is below the capped
-cutoff of `P` (the cutoff being neither a proper donor field nor a donor top).  Then the state of
-`W` with the cutoff `min (P β) h` agrees with `P` capped at `h` and its orbit code over all fields
-is LOW. -/
-theorem exists_jointCutoff (hK : K ≤ k) {P : CProf I} (hPlow : lowPred K Nf T o r P)
-    {h : Label.{u}} {W : Prof I} (hWP : ∀ d, min (W d) h = min (P (Sum.inl d)) h)
-    (hN : Sum.inr () ∉ Nf) (hT : Sum.inr () ∉ T)
-    (hfr : donorMax Nf (withCut W ⊥) < min (P (Sum.inr ())) h →
-      ∀ x ∈ T, Label.frontier K (Sum.inl o) (Sum.inl r) (withCut W ⊥) ≤ withCut W ⊥ x) :
-    (∀ f, min (withCut W (min (P (Sum.inr ())) h) f) h = min (P f) h) ∧
-      lowPred K Nf T o r (orbitCode k (withCut W (min (P (Sum.inr ())) h))) := by
-  set β := min (P (Sum.inr ())) h with hβ
-  set V : CProf I := withCut W β with hV
-  have hVP (f : Fin I.amalgam.card ⊕ Unit) : min (V f) h = min (P f) h := by
-    rcases f with d | z
-    · exact hWP d
-    · change min β h = _; rw [hβ, min_assoc, min_self]
-  refine ⟨hVP, ?_⟩
-  have hdm : donorMax Nf V = donorMax Nf (withCut W ⊥) := donorMax_congr fun f hf ↦ by
-    rcases f with d | z
-    · rfl
-    · cases z; exact absurd hf hN
-  have hVlow : lowPred K Nf T o r V := by
-    intro hact x hx
-    obtain ⟨x', rfl⟩ : ∃ x', x = Sum.inl x' := by
-      rcases x with x' | z
-      · exact ⟨x', rfl⟩
-      · cases z; exact absurd hx hT
-    refine max_le ?_ ?_
-    · -- the serving state is active, so its donor tops reach its cutoff
-      have hβh : β ≤ h := min_le_right _ _
-      have hMh : donorMax Nf V < h := hact.trans_le hβh
-      have hPN : ∀ f ∈ Nf, P f = V f := fun f hf ↦ by
-        have hf' : V f < h := (le_donorMax hf).trans_lt hMh
-        exact eq_of_min_eq_of_lt (hVP f) hf'
-      have hPact : donorMax Nf P < P (Sum.inr ()) := by
-        rw [donorMax_congr hPN]
-        exact hact.trans_le (min_le_left _ _)
-      have hx' := (le_max_left _ _).trans (hPlow hPact _ hx)
-      have h1 : min β h ≤ min (V (Sum.inl x')) h := by
-        rw [hVP (Sum.inl x')]
-        exact min_le_min_right _ ((min_le_left _ _).trans hx')
-      rw [min_eq_left hβh] at h1
-      exact h1.trans (min_le_left _ _)
-    · have := hfr (by rw [← hdm]; exact hact) _ hx
-      exact this
-  exact hVlow.map (isWitness_orbitMap k V) (stepSuppressor_of_le hK)
-
-variable (N) in
-/-- **The frontier step** from the coatom `univ.erase x` at the grade `g + 1`, for the LOW clause at
-`K`: at every state `P` of the catalogue and every positive cap self-visible and short at `g + 1`,
-every labelling lawful below the coatom agreeing there with `P` capped at the cap is, at the amalgam
-cells below the coatom, an amalgam profile lawful on the cut agreeing with the amalgam part of `P`
-capped at the cap, satisfying the frontier condition when its donor maximum is below the capped
-cutoff of `P`. -/
-def SLvl.SFrontierStep (N : SLvl I g) (K : ℕ) (Nf : Finset (Fin I.amalgam.card ⊕ Unit))
-    (T : Set (Fin I.amalgam.card ⊕ Unit)) (o r : Fin I.amalgam.card) (x : Fin (m + 2)) : Prop :=
-  ∀ P ∈ sCat I (g + 1) (lowPred K Nf T o r), ∀ h : Label.{u}, IsSelfVisible (g + 1) h →
-    IsShort (g + 1) h → ⊥ < h →
-    ∀ w : Fin (N.sS (sCat I (g + 1) (lowPred K Nf T o r))).card → Label.{u},
-    (N.sS (sCat I (g + 1) (lowPred K Nf T o r))).rows.IsLawfulBelow (univ.erase x, g + 1)
-      (fun z ↦ w z) →
-    (∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
-      I.amalgam.toCellScheme.scope d ⊆ univ.erase x →
-        min (w (Fin.castAdd _ (N.embed d))) h = min (P (Sum.inl d)) h) →
-    ∃ W : Prof I, IsCutLawful I (g + 1) W ∧
-      (∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
-        I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (N.embed d))) ∧
-      (∀ d, min (W d) h = min (P (Sum.inl d)) h) ∧
-      (donorMax Nf (withCut W ⊥) < min (P (Sum.inr ())) h →
-        ∀ y ∈ T, Label.frontier K (Sum.inl o) (Sum.inl r) (withCut W ⊥) ≤ withCut W ⊥ y)
-
-/-- **The LOW state step from the frontier step**, at a grade `g + 1 ≥ K`, the cutoff being neither
-a proper donor field nor a donor top (`ProfileTower.exists_jointCutoff`). -/
-theorem SLvl.sCatStep_of_frontier {N : SLvl I g} (hK : K ≤ g + 1) (hN : Sum.inr () ∉ Nf)
-    (hT : Sum.inr () ∉ T) {x : Fin (m + 2)} (h : N.SFrontierStep K Nf T o r x) :
-    N.SCatStep (lowPred K Nf T o r) x := by
-  intro P hP c hc hs hb w hw hwP
-  obtain ⟨W, hW, hWw, hWP, hfr⟩ := h P hP c hc hs hb w hw hwP
-  obtain ⟨hVP, hlow⟩ := exists_jointCutoff hK (mem_sCat.mp hP).2.2.2 hWP hN hT hfr
-  exact ⟨W, _, hW, hWw, hVP, hlow⟩
-
-end Frontier
-
-
-/-! ### The lifts of the state tower from the frontier steps -/
-
-section TowerLifts
-
-variable {L : Lvl I g}
-
-/-- **The frontier steps of the state tower of the LOW clause** below the layer `J₀`: every layer at
-a grade `g + J + 1` with `J < J₀` has the frontier step from the two coatoms. -/
-def STowerFrontier (L : Lvl I g) (K : ℕ) (Nf : Finset (Fin I.amalgam.card ⊕ Unit))
-    (T : Set (Fin I.amalgam.card ⊕ Unit)) (o r : Fin I.amalgam.card) (J₀ : ℕ) : Prop :=
-  ∀ J < J₀, ∀ x ∈ (Pts : Finset (Fin (m + 2))),
-    (sTower L (lowPred K Nf T o r) J).SFrontierStep K Nf T o r x
-
-/-- **The state tower of the LOW clause lifts from its frontier steps**, over a good level read as a
-state level readable at the canonical states, up to the grade `m`, when the LOW clause is at
-`K ≤ g + 1`, is kept by the state codes from `g + 1` on, and its cutoff is neither a proper donor
-field nor a donor top. -/
-theorem sTowerLifts_of_frontier (hL : L.Good) (hRL : L.toS.ReadableS) {K : ℕ}
-    {Nf : Finset (Fin I.amalgam.card ⊕ Unit)} {T : Set (Fin I.amalgam.card ⊕ Unit)}
-    {o r : Fin I.amalgam.card} (hK : K ≤ g + 1) (hN : Sum.inr () ∉ Nf) (hT : Sum.inr () ∉ T)
-    (hAc : ∀ j, g + 1 ≤ j → ∀ P : CProf I, lowPred K Nf T o r P →
-      lowPred K Nf T o r (scode j P)) :
-    ∀ J₀, g + J₀ ≤ m → STowerFrontier L K Nf T o r J₀ →
-      STowerLifts L (lowPred K Nf T o r) J₀
-  | 0, _, _ => fun J hJ ↦ absurd hJ (Nat.not_lt_zero J)
-  | J₀ + 1, hm, hfr => by
-    have ih := sTowerLifts_of_frontier hL hRL hK hN hT hAc J₀ (by omega)
-      (fun J hJ ↦ hfr J (by omega))
-    intro J hJ x hx
-    have hgood := sTower_good hL (fun W ↦ lowPred_withCut_bot W) hAc ih J (by omega) (by omega)
-    have hR : (sTower L (lowPred K Nf T o r) J).ReadableS := by
-      rcases J with _ | J
-      · exact hRL
-      · exact (sTower_good hL (fun W ↦ lowPred_withCut_bot W) hAc ih J (by omega)
-          (by omega)).readableS_next _
-    exact hgood.cappedLift_sS hR (by omega) hx (fun W ↦ lowPred_withCut_bot W)
-      (SLvl.sCatStep_of_frontier (by omega) hN hT (hfr J hJ x hx))
-
-end TowerLifts
-
-
 /-! ### The state step from the step on the amalgam -/
 
 section Amalgam
@@ -565,27 +405,6 @@ def STowerAmalgamSteps (g : ℕ) (A : CProf I → Prop) (J₀ : ℕ) : Prop :=
         (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, g + J + 1), W d = a d) ∧
         (∀ d, min (W d) h = min (P (Sum.inl d)) h) ∧ β ∈ codeGrid (g + J + 1) (bound I) ∧
         min β h = min (P (Sum.inr ())) h ∧ A (withCut W β)
-
-/-- **The state tower lifts from the steps for states on the amalgam**, over a good level read as
-a state level readable at the canonical states, up to the grade `m`, when `A` holds with the
-cutoff `⊥` and is kept by the state codes and the orbit codes over all fields from `g + 1` on. -/
-theorem sTowerLifts_of_amalgam {L : Lvl I g} (hL : L.Good) (hRL : L.toS.ReadableS)
-    (hA0 : ∀ W : Prof I, A (withCut W ⊥))
-    (hAc : ∀ j, g + 1 ≤ j → ∀ P : CProf I, A P → A (scode j P))
-    (hAo : ∀ j, g + 1 ≤ j → ∀ V : CProf I, A V → A (orbitCode j V)) :
-    ∀ J₀, g + J₀ ≤ m → STowerAmalgamSteps g A J₀ → STowerLifts L A J₀
-  | 0, _, _ => fun J hJ ↦ absurd hJ (Nat.not_lt_zero J)
-  | J₀ + 1, hm, hst => by
-    have ih := sTowerLifts_of_amalgam hL hRL hA0 hAc hAo J₀ (by omega)
-      (fun J hJ ↦ hst J (by omega))
-    intro J hJ x hx
-    have hgood := sTower_good hL hA0 hAc ih J (by omega) (by omega)
-    have hR : (sTower L A J).ReadableS := by
-      rcases J with _ | J
-      · exact hRL
-      · exact (sTower_good hL hA0 hAc ih J (by omega) (by omega)).readableS_next _
-    exact hgood.cappedLift_sS hR (by omega) hx hA0
-      (SLvl.sCatStep_of_amalgam hgood (hAo _ (by omega)) (hst J hJ x hx))
 
 end Amalgam
 

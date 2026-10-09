@@ -28,7 +28,7 @@ states agree capped (cutoff included), and readable at the states with the cutof
 this repository).  The section of an amalgam profile is the section of the state with the cutoff
 `⊥`.  When `A` holds with the cutoff `⊥`, a good state level is a good level, so the completion
 below the full grade (`ProfileTower.Lvl.Good.completion`) and the reading of
-`ProfileTower.ReadsActual` apply to it unchanged.  Conversely a good level is a good state level
+`ProfileTower.ReadsActualOn` apply to it unchanged.  Conversely a good level is a good state level
 reading the amalgam part (`ProfileTower.Lvl.Good.toS`).
 
 **The next state level** (`ProfileTower.SLvl.next`, `ProfileTower.SLvl.Good.next`, compiled in this

@@ -6,7 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.LowStateLevel
 
 /-!
-# The state tower above the controllers and the reading of the actual state
+# The state tower above the controllers
 
 Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3: the levels above the
 controllers when the faces carry labels other than `⊥` above `K`); semantic contract, items 3, 4
@@ -28,24 +28,15 @@ of every layer extends at `⊥`.
 repository): the designated fields have grade at most `K`, where the splice keeps them, and the
 orbit map is a witness with suppressor `⊤` at `K`.
 
-**The two chain bounds** (`ProfileTower.le_sTower_hi`, `ProfileTower.sTower_lo_le`, compiled in this
-repository).  The **bottom state** of `P` through `J` layers (`ProfileTower.sBot`) is the state code
-of the state code … of `P` down to `K + 1`.  At every state `P`, the section of the layer at
-`K + J` reads the controller of the state code at `K` of the bottom state at least at the cutoff
-of `P` (the controller of a state reads itself at the ceiling of the grid, decoded above the code of
-the cutoff; each decoder above reads the code of the cutoff back as the cutoff), and the controller
-of its partner over all proper donor cells at most at the cutoff cut of the donor maximum of `P`
-(the agreement height with the partner is at most the cutoff cut, and every decoder commutes with
-the visibility replacement at `K` and reads codes back).
+**Separated states** (`ProfileTower.SepInv`, `ProfileTower.cutoffCut_lt_of_sepInv`, compiled in
+this repository).  A state is separated when its owner and donor tops carry its cutoff and its
+proper donor values lie in keys strictly below the key of its cutoff at every grade; its cutoff cut
+then lies below its cutoff.  The partner of a canonical state whose owner carries its cutoff is
+canonical (`ProfileTower.orbitCode_update_cutoffCut`).
 
-**The separator of the actual state** (`ProfileTower.SepInv`, `ProfileTower.sepInv_scode`, compiled
-in this repository).  A state whose owner and donor tops carry its cutoff, and whose proper donor
-values lie in keys strictly below the key of its cutoff at every grade, keeps both properties under
-the state code: equal values have equal codes, and keys strictly apart have code blocks strictly
-apart (`Label.codeBlock_lt_codeBlock`), hence keys strictly apart at every grade
-(`Label.visibilityReplace_lt_of_block_lt`).  The actual state (the glued labels with the cutoff `⊤`)
-is such a state; so its bottom code `s` has its cutoff cut in the grid and below its cutoff, and `s`
-and its partner are LOW states of the catalogue at `K`.
+The bottom state, the two chain bounds of the state tower and the separation of state codes, which
+served the reading of the actual state by the state tower given its lifts, remain on the research
+branch `research/port-low-padded`.
 
 ## Placement
 
@@ -237,52 +228,6 @@ theorem sTower_good (hL : L.Good) (hA0 : ∀ W : Prof I, A (withCut W ⊥))
   | J + 1, hJ, hm => (sTower_good hL hA0 hAc hlift J (by omega) (by omega)).next (by omega) hA0
       (hAc _ (by omega)) (hlift J (by omega))
 
-/-- The cells of the layer of controllers among those of the layers above. -/
-noncomputable def sEmb : (J : ℕ) → Fin (sTower L A 1).S.card → Fin (sTower L A (J + 1)).S.card
-  | 0 => id
-  | J + 1 => Fin.castAdd _ ∘ sEmb J
-
-/-- **The layer of controllers is a grade prefix of every layer above**, at `K = g + 1`. -/
-theorem isGradePrefix_sEmb :
-    ∀ J, Scheme.IsGradePrefix (sTower L A 1).S (sTower L A (J + 1)).S (sEmb (L := L) (A := A) J)
-      (g + 1)
-  | 0 => Scheme.IsGradePrefix.id _ _
-  | J + 1 => (Scheme.IsGradePrefix.castAdd (S := (sTower L A (J + 1)).S) (k := g + (J + 1) + 1)
-      (M := (sCat I (g + (J + 1) + 1) A).card)
-      (r := fun i ↦ (sTower L A (J + 1)).Φs (sCat I (g + (J + 1) + 1) A)
-        ((sCat I (g + (J + 1) + 1) A).equivFin.symm i).1)
-      (h := (sTower L A (J + 1)).not_le) (by omega)).comp (isGradePrefix_sEmb J)
-
-/-- The **bottom state** of `P` through `J` layers: the state code at `g + J + 1`, …, `g + 2`. -/
-noncomputable def sBot (g : ℕ) : (J : ℕ) → CProf I → CProf I
-  | 0 => id
-  | J + 1 => fun P ↦ sBot g J (scode (g + J + 2) P)
-
-/-- The splice of a state is at most the state. -/
-theorem hatS_le (k : ℕ) (P : CProf I) (f : Fin I.amalgam.card ⊕ Unit) : hatS k P f ≤ P f := by
-  rcases f with d | z
-  · by_cases hd : I.amalgam.toCellScheme.grade d ≤ k
-    · exact (hat_of_le hd).le
-    · exact (hat_of_lt (_root_.not_le.mp hd)).le.trans bot_le
-  · exact le_rfl
-
-/-- **A decoder reads the cutoff cut of the donor maximum of a state code at most at the cutoff
-cut of the donor maximum of the state**, at the grades `k ≥ K`. -/
-theorem upperDecoder_cutoff_le {K k : ℕ} (hK : K ≤ k) (N : Finset (Fin I.amalgam.card ⊕ Unit))
-    (P : CProf I) :
-    upperDecoderAt k (k + 1) (bound I) (hatS k P)
-      (visibilityReplace K K (donorMax N (scode k P))) ≤
-      visibilityReplace K K (donorMax N P) := by
-  have hw := isWitness_upperDecoderAt (k := k) (K := k + 1) (w := hatS k P) (B := bound I)
-    (by omega)
-  rw [hw.visibilityReplace_comm _ K (by rw [stepSuppressor_of_le hK]; exact le_top) K le_rfl]
-  refine monotone_visibilityReplace le_rfl ?_
-  rcases N.eq_empty_or_nonempty with he | hne
-  · rw [donorMax, he, sup_empty, upperDecoderAt_bot]; exact bot_le
-  obtain ⟨f, hf, hfeq⟩ := exists_mem_eq_sup _ hne (scode k P)
-  rw [donorMax, hfeq, upperDecoderAt_orbitCode]
-  exact (hatS_le k P f).trans (le_donorMax hf)
-
 /-- The agreement height with the partner is at most the lowered cutoff. -/
 theorem agreementHeight_update_le {G : Finset Label.{u}} (hG : ⊥ ∈ G) (s : CProf I)
     {c : Label.{u}} (hc : c < s (Sum.inr ())) :
@@ -294,64 +239,6 @@ theorem agreementHeight_update_le {G : Finset Label.{u}} (hG : ⊥ ∈ G) (s : C
   exact (lt_min hc hgt).ne' h
 
 local notation "𝒦" => sCat I (g + 1) A
-
-/-- **The first chain bound**: the section of the layer at `g + J + 1` reads the controller of the
-state code at `K` of the bottom state of `P` at least at the cutoff of `P`. -/
-theorem le_sTower_hi : ∀ (J : ℕ) (P : CProf I) (i : Fin (𝒦).card),
-    ((𝒦).equivFin.symm i).1 = scode (g + 1) (sBot g J P) →
-    P (Sum.inr ()) ≤ (sTower L A (J + 1)).σs P (sEmb J (Fin.natAdd L.S.card i))
-  | 0, P, i, hi => by
-    change P (Sum.inr ()) ≤ L.toS.nextσ 𝒦 P (Fin.natAdd _ i)
-    rw [SLvl.nextσ_of_le (by rw [Scheme.appendFullCellsScheme_grade_natAdd]), SLvl.Φs_natAdd, hi]
-    change P (Sum.inr ()) ≤ upperDecoderAt (g + 1) (g + 2) (bound I) (hatS (g + 1) P)
-      (agreementHeight (grid (g + 1) (bound I)) (scode (g + 1) P) (scode (g + 1) P))
-    rw [agreementHeight_self (gridPoint_mem_grid le_rfl) (fun _ hx ↦ le_gridPoint_of_mem_grid hx)]
-    have h := upperDecoderAt_orbitCode (k := g + 1) (K := g + 2) (B := bound I)
-      (w := hatS (g + 1) P) (Sum.inr ())
-    refine le_of_eq_of_le h.symm ((isWitness_upperDecoderAt (by omega)).monotone ?_)
-    exact le_gridPoint_of_mem_codeGrid (scode_mem_codeGrid _ _ _)
-  | J + 1, P, i, hi => by
-    have ih := le_sTower_hi J (scode (g + J + 2) P) i hi
-    have hgr : (sTower L A (J + 1)).S.toCellScheme.grade (sEmb J (Fin.natAdd L.S.card i)) =
-        g + 1 :=
-      ((isGradePrefix_sEmb J).lowerEmb.grade_eq _).trans
-        (Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i)
-    change P (Sum.inr ()) ≤ (sTower L A (J + 1)).nextσ (sCat I (g + (J + 1) + 1) A) P
-      (Fin.castAdd _ (sEmb J (Fin.natAdd L.S.card i)))
-    rw [SLvl.nextσ_of_le (by rw [Scheme.appendFullCellsScheme_grade_castAdd, hgr]; omega),
-      SLvl.Φs_castAdd]
-    have h := upperDecoderAt_orbitCode (k := g + J + 2) (K := g + J + 2 + 1) (B := bound I)
-      (w := hatS (g + J + 2) P) (Sum.inr ())
-    exact le_of_eq_of_le h.symm ((isWitness_upperDecoderAt (by omega)).monotone ih)
-
-/-- **The second chain bound**: the section of the layer at `g + J + 1` reads the controller of the
-partner, over a set `N` of fields, of the state code at `K` of the bottom state of `P` at most at
-the cutoff cut over `N` of `P`, when that partner lowers the cutoff. -/
-theorem sTower_lo_le (N : Finset (Fin I.amalgam.card ⊕ Unit)) :
-    ∀ (J : ℕ) (P : CProf I) (i : Fin (𝒦).card),
-    ((𝒦).equivFin.symm i).1 = Function.update (scode (g + 1) (sBot g J P)) (Sum.inr ())
-      (cutoffCut (g + 1) N (scode (g + 1) (sBot g J P))) →
-    cutoffCut (g + 1) N (scode (g + 1) (sBot g J P)) <
-      scode (g + 1) (sBot g J P) (Sum.inr ()) →
-    (sTower L A (J + 1)).σs P (sEmb J (Fin.natAdd L.S.card i)) ≤ cutoffCut (g + 1) N P
-  | 0, P, i, hi, hlt => by
-    change L.toS.nextσ 𝒦 P (Fin.natAdd _ i) ≤ _
-    rw [SLvl.nextσ_of_le (by rw [Scheme.appendFullCellsScheme_grade_natAdd]), SLvl.Φs_natAdd, hi]
-    refine ((isWitness_upperDecoderAt (by omega)).monotone
-      (agreementHeight_update_le (bot_mem_grid _ _) _ hlt)).trans ?_
-    exact upperDecoder_cutoff_le le_rfl N P
-  | J + 1, P, i, hi, hlt => by
-    have ih := sTower_lo_le N J (scode (g + J + 2) P) i hi hlt
-    have hgr : (sTower L A (J + 1)).S.toCellScheme.grade (sEmb J (Fin.natAdd L.S.card i)) =
-        g + 1 :=
-      ((isGradePrefix_sEmb J).lowerEmb.grade_eq _).trans
-        (Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i)
-    change (sTower L A (J + 1)).nextσ (sCat I (g + (J + 1) + 1) A) P
-      (Fin.castAdd _ (sEmb J (Fin.natAdd L.S.card i))) ≤ _
-    rw [SLvl.nextσ_of_le (by rw [Scheme.appendFullCellsScheme_grade_castAdd, hgr]; omega),
-      SLvl.Φs_castAdd]
-    exact ((isWitness_upperDecoderAt (by omega)).monotone ih).trans
-      (upperDecoder_cutoff_le (by omega) N P)
 
 end Tower
 
@@ -369,37 +256,6 @@ grade. -/
 def SepInv (P : CProf I) : Prop :=
   P (Sum.inr ()) ≠ ⊥ ∧ P (Sum.inl o) = P (Sum.inr ()) ∧ (∀ x ∈ T, P x = P (Sum.inr ())) ∧
     ∀ f ∈ N, P f ≠ ⊥ → ∀ k, visibilityReplace k k (P f) < visibilityReplace k k (P (Sum.inr ()))
-
-/-- **The state code keeps separated states**, at a grade `j ≥ K` above the designated fields. -/
-theorem sepInv_scode {K j : ℕ}
-    (hT' : ∀ f ∈ T, ∃ d, f = Sum.inl d ∧ I.amalgam.toCellScheme.grade d ≤ K)
-    (ho' : I.amalgam.toCellScheme.grade o ≤ K) (hj : K ≤ j) {P : CProf I}
-    (h : SepInv N T o P) : SepInv N T o (scode j P) := by
-  obtain ⟨h0, ho, hT, hN⟩ := h
-  have hhat : ∀ d, I.amalgam.toCellScheme.grade d ≤ K → hatS j P (Sum.inl d) = P (Sum.inl d) :=
-    fun d hd ↦ hat_of_le (hd.trans hj)
-  have hcode (f : Fin I.amalgam.card ⊕ Unit) :
-      scode j P f = orbitMap j (hatS j P) (hatS j P f) := rfl
-  have hkey : IsKey j (hatS j P) (hatS j P (Sum.inr ())) := isKey_apply_iff.mpr h0
-  refine ⟨?_, ?_, fun x hx ↦ ?_, fun f hf hf0 k ↦ ?_⟩
-  · rw [hcode, Ne, orbitMap_eq_bot_iff]; exact h0
-  · rw [hcode, hcode, hhat o ho', ho]; rfl
-  · obtain ⟨d, rfl, hd⟩ := hT' x hx
-    rw [hcode, hcode, hhat d hd, hT _ hx]; rfl
-  · rw [hcode, Ne, orbitMap_eq_bot_iff] at hf0
-    have hle := hatS_le j P f
-    have hP0 : P f ≠ ⊥ := fun h' ↦ hf0 (le_bot_iff.mp (h' ▸ hle))
-    have hPf : hatS j P f = P f := by
-      rcases f with d | z
-      · by_cases hd : I.amalgam.toCellScheme.grade d ≤ j
-        · exact hat_of_le hd
-        · exact absurd (hat_of_lt (_root_.not_le.mp hd)) hf0
-      · rfl
-    have hlt := hN f hf hP0 j
-    rw [← hPf] at hlt
-    have hcb := codeBlock_lt_codeBlock hf0 hkey hlt
-    exact visibilityReplace_lt_of_block_lt (visibilityReplace_orbitMap hf0)
-      (visibilityReplace_orbitMap h0) hcb k
 
 /-- **The cutoff cut of a separated state code lies below its cutoff.** -/
 theorem cutoffCut_lt_of_sepInv {K : ℕ} {P : CProf I} (h : SepInv N T o P) :
