@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedAttachedInputs
+import VaughtConjecture.Extension.ReplicatedStateCoding
 import VaughtConjecture.MainTheorem.GrowthRelabelStable
 import VaughtConjecture.Extension.LadderTowerContextLiftOne
 import VaughtConjecture.Extension.ReplicatedOntoRoot
@@ -56,8 +57,18 @@ asks `Γ` to contain the compressed labels (`Γ₀ ⊆ Γ`, `Γ₀ = univ.image 
 every value of `Γ` to lie below the grid point `ω * B' + 2` (for `Γ₀` this is `B₀ ≤ B'`,
 `B₀ = blockCount (I.attachLabels g) + 1`).
 
+**The code set.**  The extension over the tower is to be proved from the coding of the states of
+the attachment (`Seed` lemmas of `VaughtConjecture.Extension.ReplicatedStateCoding`), whose values
+lie in the code set `Label.codeSet #cells (m + 2)` (below `ω ^ 2`,
+`Label.lt_omega0_sq_of_mem_codeSet`, and below the grid point `ω * B' + 2` once
+`#cells + 1 ≤ B'`, `Label.le_gridPoint_of_mem_codeSet`).  So the general assembly
+`StageType.hasReplicatedInputsAtSeed_of_towerExtension` also asks `codeSet #cells (m + 2) ⊆ Γ` and
+`#cells + 1 ≤ B'`: the assembly itself does not use them; they make `StageType.TowerExtensionAtSeed`
+asked only at values containing the code set.
+
 **The choice** (`Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`): `H` the number of
-cells of the attachment plus one, `Γ = insert ⊥ Γ₀`, `B' = B₀`.  It meets every side condition
+cells of the attachment plus one, `Γ = insert ⊥ (Γ₀ ∪ codeSet #cells (m + 2))`,
+`B' = max B₀ (#cells + 1)`.  It meets every side condition
 (`StageType.hasReplicatedInputsAtSeed_of_seedTowerExtension`), so the main theorem follows from
 (R2) and the extension over the tower at the seed position at this choice
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_towerExtension`, through the transport of
@@ -89,12 +100,15 @@ variable {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m
 /-- **The height of the choice**: the number of cells of the attachment plus one. -/
 noncomputable def seedHeight : ℕ := (I.attachment g).card + 1
 
-/-- **The values of the choice**: `⊥` and the compressed labels of the attachment. -/
-noncomputable def seedValues : Finset Label.{u} := insert ⊥ (univ.image (I.compressedLabel g))
+/-- **The values of the choice**: `⊥`, the compressed labels of the attachment, and the code set
+`codeSet #cells (m + 2)` of the coding of the states of the attachment. -/
+noncomputable def seedValues : Finset Label.{u} :=
+  insert ⊥ (univ.image (I.compressedLabel g) ∪ codeSet (I.attachment g).card (m + 2))
 
-/-- **The grid bound of the choice**: the number of blocks of the labels of the attachment plus
-one. -/
-noncomputable def seedGridBound : ℕ := blockCount (I.attachLabels g) + 1
+/-- **The grid bound of the choice**: the larger of the number of blocks of the labels of the
+attachment plus one and the number of cells of the attachment plus one. -/
+noncomputable def seedGridBound : ℕ :=
+  max (blockCount (I.attachLabels g) + 1) ((I.attachment g).card + 1)
 
 theorem seedHeight_pos : 0 < I.seedHeight g := Nat.succ_pos _
 
@@ -103,21 +117,33 @@ theorem card_le_seedHeight : (I.attachment g).card ≤ I.seedHeight g := Nat.le_
 theorem bot_mem_seedValues : (⊥ : Label.{u}) ∈ I.seedValues g := mem_insert_self _ _
 
 theorem image_compressedLabel_subset_seedValues :
-    univ.image (I.compressedLabel g) ⊆ I.seedValues g := subset_insert _ _
+    univ.image (I.compressedLabel g) ⊆ I.seedValues g :=
+  subset_union_left.trans (subset_insert _ _)
+
+theorem codeSet_subset_seedValues :
+    codeSet (I.attachment g).card (m + 2) ⊆ I.seedValues g :=
+  subset_union_right.trans (subset_insert _ _)
+
+theorem card_add_one_le_seedGridBound : (I.attachment g).card + 1 ≤ I.seedGridBound g :=
+  le_max_right _ _
 
 theorem le_gridPoint_of_mem_seedValues {x : Label.{u}} (hx : x ∈ I.seedValues g) :
     x ≤ gridPoint 2 (I.seedGridBound g) := by
   rcases mem_insert.mp hx with rfl | hx
   · exact bot_le
+  rcases mem_union.mp hx with hx | hx
   · obtain ⟨c, -, rfl⟩ := mem_image.mp hx
-    exact compressedLabel_le_gridPoint le_rfl c
+    exact compressedLabel_le_gridPoint (le_max_left _ _) c
+  · exact le_gridPoint_of_mem_codeSet (card_add_one_le_seedGridBound I g) hx
 
 theorem lt_omega0_sq_of_mem_seedValues {x : Label.{u}} (hx : x ∈ I.seedValues g) :
     x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
   rcases mem_insert.mp hx with rfl | hx
   · exact WithBot.bot_lt_coe _
+  rcases mem_union.mp hx with hx | hx
   · obtain ⟨c, -, rfl⟩ := mem_image.mp hx
     exact compressedLabel_lt_omega0_sq c
+  · exact lt_omega0_sq_of_mem_codeSet hx
 
 /-! ### The lifts at a seed from their parts above the grade one -/
 
@@ -457,8 +483,8 @@ theorem hasReplicatedInputsAtSeed_of_lifts
       (honto I g p' hα ht' hp' p hte d hd hdA hn Q hpair hQ hrel))
 
 /-- **The inputs of the replicated scheme at the seed position from the three lift statements at
-the choice** `H = #cells + 1`, `Γ = insert ⊥ Γ₀`, `B' = B₀` (`Seed.seedHeight`, `Seed.seedValues`,
-`Seed.seedGridBound`), which meets every side condition of
+the choice** `Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`, which meets every side
+condition of
 `StageType.hasReplicatedInputsAtSeed_of_lifts`. -/
 theorem hasReplicatedInputsAtSeed_of_seedLifts
     (hatt : HasAttachedMixedLiftsAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound)
@@ -476,7 +502,10 @@ tower**, for a choice `H`, `Γ`, `B'` with the side conditions of
 `StageType.hasReplicatedInputsAtSeed_of_lifts`: the three lift statements follow from it
 (`StageType.hasAttachedMixedLiftsAtSeed_of_towerExtension`,
 `StageType.hasContextLiftAtSeed_of_towerExtension`,
-`StageType.hasOntoRootCoatomLiftAtSeed_of_towerExtension`). -/
+`StageType.hasOntoRootCoatomLiftAtSeed_of_towerExtension`).  The two further side conditions,
+the code set `codeSet #cells (m + 2)` inside `Γ` and `#cells + 1 ≤ B'`, are not used by the
+assembly: they are asked so that the extension over the tower is asked only at values containing
+the code set of the coding of the states (`VaughtConjecture.Extension.ReplicatedStateCoding`). -/
 theorem hasReplicatedInputsAtSeed_of_towerExtension
     (H : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → ℕ)
     (Γ : ∀ {α : Ordinal.{u}} {m n : ℕ}, Seed.{u} α m → (Fin n ↪ Fin m) → Finset Label.{u})
@@ -491,6 +520,10 @@ theorem hasReplicatedInputsAtSeed_of_towerExtension
       ∀ x ∈ Γ I g, x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}))
     (hsub : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
       univ.image (I.compressedLabel g) ⊆ Γ I g)
+    (_hcode : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      codeSet (I.attachment g).card (m + 2) ⊆ Γ I g)
+    (_hB : ∀ {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m),
+      (I.attachment g).card + 1 ≤ B' I g)
     (hE : TowerExtensionAtSeed.{u} H Γ B') : HasReplicatedInputsAtSeed.{u} :=
   hasReplicatedInputsAtSeed_of_lifts H Γ B' hH hcard hΓ0 hΓ hΓω hsub
     (hasAttachedMixedLiftsAtSeed_of_towerExtension hH hcard hΓ0 hΓ hE)
@@ -498,15 +531,17 @@ theorem hasReplicatedInputsAtSeed_of_towerExtension
     (hasOntoRootCoatomLiftAtSeed_of_towerExtension hH hcard hΓ0 hE)
 
 /-- **The inputs of the replicated scheme at the seed position from the extension over the tower
-at the choice** `H = #cells + 1`, `Γ = insert ⊥ Γ₀`, `B' = B₀` (`Seed.seedHeight`,
-`Seed.seedValues`, `Seed.seedGridBound`), which meets every side condition. -/
+at the choice** `H = #cells + 1`, `Γ = insert ⊥ (Γ₀ ∪ codeSet #cells (m + 2))`,
+`B' = max B₀ (#cells + 1)` (`Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`), which
+meets every side condition, the code set and its grid bound included. -/
 theorem hasReplicatedInputsAtSeed_of_seedTowerExtension
     (hE : TowerExtensionAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound) :
     HasReplicatedInputsAtSeed.{u} :=
   hasReplicatedInputsAtSeed_of_towerExtension _ _ _ Seed.seedHeight_pos Seed.card_le_seedHeight
     Seed.bot_mem_seedValues (fun I g _ hx ↦ I.le_gridPoint_of_mem_seedValues g hx)
     (fun I g _ hx ↦ I.lt_omega0_sq_of_mem_seedValues g hx)
-    Seed.image_compressedLabel_subset_seedValues hE
+    Seed.image_compressedLabel_subset_seedValues Seed.codeSet_subset_seedValues
+    Seed.card_add_one_le_seedGridBound hE
 
 end StageType
 
