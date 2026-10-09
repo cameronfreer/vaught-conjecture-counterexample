@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthRequests
+import VaughtConjecture.Extension.CappedDecoder
 
 /-!
 # Recovery through an admitted controller at the activation grade
@@ -17,7 +18,8 @@ below `u`.  Locality at `u` gives a witness `(g, σ)` with `min (v d) (v u) = mi
 
 (`Scheme.exists_controllerRead`), and `Φ` is monotone, fixes `⊥`, and commutes with visibility
 replacement at the threshold `N` with every value `i ≤ N` (the commutation law of the witness
-below the suppressor at `N`, and `Label.IsWitness.lt_apply_visibilityReplace` above it).  So
+below the suppressor at `N`, and `Label.IsWitness.lt_apply_visibilityReplace` above it;
+`Label.IsWitness.min_visibilityReplace`).  So
 every relation of the form of the requests (`StageType.GrowthRequests.CorrectAt`) that the row of
 `u` satisfies, the section `v` satisfies:
 bottom requests, exact requests read through a reference at an offset `≤ N`, and high requests
@@ -56,18 +58,6 @@ theorem isSelfVisible_rowAt (hcons : S.rows.IsConsistent) {u x : Fin S.card}
     IsSelfVisible (S.toCellScheme.grade x) (S.rowAt u x) := by
   rw [rowAt_of_mem hx]
   exact (hcons u).orderly ⟨x, hx⟩
-
-/-- **The capped controller map commutes with visibility replacement**: for a witness `(g, σ)`,
-`x ↦ min (σ x) (g N)` commutes with visibility replacement at `N` with every value `i ≤ N`. -/
-theorem _root_.VaughtConjecture.Label.IsWitness.min_visibilityReplace {g : ℕ → Label.{u}}
-    {σ : Label.{u} → Label.{u}} (hw : IsWitness g σ) {N i : ℕ} (hi : i ≤ N) (x : Label.{u}) :
-    min (σ (visibilityReplace N i x)) (g N) = visibilityReplace N i (min (σ x) (g N)) := by
-  by_cases hx : σ x ≤ g N
-  · rw [hw.visibilityReplace_comm x N hx i hi, min_eq_left hx,
-      min_eq_left (visibilityReplace_le_of_le hi (hw.isSelfVisible N) hx)]
-  · have hlt := hw.lt_apply_visibilityReplace (not_le.mp hx) hi
-    rw [min_eq_right hlt.le, min_eq_right (not_le.mp hx).le,
-      (hw.isSelfVisible N).visibilityReplace_eq]
 
 /-- **The controller read**: under a section `v` local at `u` (as a lawful section is), with
 `v c ≤ v u`, `c` of grade `N` below
