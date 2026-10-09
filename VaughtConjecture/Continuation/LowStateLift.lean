@@ -20,10 +20,10 @@ layer at a positive cap decodes the row of the orbit code `Q` of a state over al
 orbit decoder of the state at the cap, and needs the section of the level at `Q` read literally
 below the cap: readable for `Q`.  `ProfileTower.SLvl.Good` asks readability only at the states with
 the cutoff `⊥` (what the forgetful level needs); the extension needs it at every canonical state.
-It holds at a canonical next level read as a state level
-(`ProfileTower.Lvl.Good.readableS_toS_next`), since the section is an upper decoder of a splice of
-the state, readable for any canonical reader whose values it takes
-(`Label.isReadableAt_upperDecoderAt_of_mem`); compiled in this repository.
+It holds at every next state level (`ProfileTower.SLvl.Good.readableS_next`) and at a canonical
+next level read as a state level (`ProfileTower.Lvl.Good.readableS_toS_next`), since both sections
+are upper decoders of splices of the state, readable for any canonical reader whose values they
+take (`Label.isReadableAt_upperDecoderAt_of_mem`); compiled in this repository.
 
 **The extension through a state layer** (`ProfileTower.SLvl.Good.exists_extension_s`,
 `ProfileTower.SLvl.Good.exists_extension_s_bot`, compiled in this repository): as for the
@@ -39,11 +39,13 @@ amalgam profile `W` lawful on the cut whose state `withCut W β`, for some `β`,
 capped at the cap, cutoff included, with orbit code over all fields satisfying `A`.  The cap `⊥`
 needs no hypothesis (`ProfileTower.Lvl.Good.exists_cutLawful_of_coatom` on the forgetful level).
 
-The lifts of the state tower from its frontier steps or from its steps on the amalgam
-(`ProfileTower.sTowerLifts_of_frontier`, `ProfileTower.sTowerLifts_of_amalgam`), with the frontier
-step and the joint cutoff, remain on the research branch `research/port-low-padded`; their only
-use was the conditional LOW displays on the state tower, which `StageType.hasLowDisplays_of_padded`
-supersedes.
+**The lifts of the state tower from the steps on the amalgam**
+(`ProfileTower.sTowerLifts_of_amalgam`, compiled in this repository): for any predicate `A`
+holding with the cutoff `⊥` and kept by the state codes and the orbit codes, the steps for states
+on the amalgam at every layer (`ProfileTower.STowerAmalgamSteps`) give the lifts of the state
+tower (`ProfileTower.STowerLifts`).  The lifts from the frontier steps
+(`ProfileTower.sTowerLifts_of_frontier`), with the frontier step and the joint cutoff, remain on
+the research branch `research/port-low-padded`.
 
 ## Placement
 
@@ -76,6 +78,25 @@ theorem isReadableAt_hatS (k K : ℕ) (Q : CProf I) (f : Fin I.amalgam.card ⊕ 
     · change IsReadableAt K Q (hat I k (camal Q) d)
       rw [hat_of_lt (_root_.not_le.mp hd)]; exact .inl rfl
   · exact isReadableAt_apply Q _
+
+/-- **A next state level is readable at the canonical states.** -/
+theorem SLvl.Good.readableS_next {N : SLvl I g} (hN : N.Good A) (C : Finset (CProf I)) :
+    (N.next C).ReadableS := by
+  intro Q hQ hQB z
+  change IsReadableAt (g + 1 + 1) Q (N.nextσ C Q z)
+  by_cases hz : (N.S.appendFullCellsScheme (g + 1) C.card).grade z ≤ g + 1
+  · rw [SLvl.nextσ_of_le hz]
+    refine isReadableAt_upperDecoderAt_of_mem (B' := bound I) hQ (by omega)
+      (hatS_mem_codeGrid hQB)
+      (isReadableAt_hatS _ _ Q) ?_
+    induction z using Fin.addCases with
+    | left e => rw [SLvl.Φs_castAdd]; exact hN.mem _ (scode_mem_codeGrid _ _) e
+    | right i =>
+      rw [SLvl.Φs_natAdd]
+      exact grid_subset_codeGrid _ _ (agreementHeight_spec (bot_mem_grid _ _) _ _).1
+  · obtain ⟨d, rfl⟩ := hN.exists_old_of_lt hz
+    rw [hN.nextσ_old_of_lt hz]
+    exact isReadableAt_apply Q _
 
 /-- **A canonical next level read as a state level is readable at the canonical states.** -/
 theorem Lvl.Good.readableS_toS_next {L : Lvl I g} (hL : L.Good) : L.next.toS.ReadableS := by
@@ -405,6 +426,27 @@ def STowerAmalgamSteps (g : ℕ) (A : CProf I → Prop) (J₀ : ℕ) : Prop :=
         (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, g + J + 1), W d = a d) ∧
         (∀ d, min (W d) h = min (P (Sum.inl d)) h) ∧ β ∈ codeGrid (g + J + 1) (bound I) ∧
         min β h = min (P (Sum.inr ())) h ∧ A (withCut W β)
+
+/-- **The state tower lifts from the steps for states on the amalgam**, over a good level read as
+a state level readable at the canonical states, up to the grade `m`, when `A` holds with the
+cutoff `⊥` and is kept by the state codes and the orbit codes over all fields from `g + 1` on. -/
+theorem sTowerLifts_of_amalgam {L : Lvl I g} (hL : L.Good) (hRL : L.toS.ReadableS)
+    (hA0 : ∀ W : Prof I, A (withCut W ⊥))
+    (hAc : ∀ j, g + 1 ≤ j → ∀ P : CProf I, A P → A (scode j P))
+    (hAo : ∀ j, g + 1 ≤ j → ∀ V : CProf I, A V → A (orbitCode j V)) :
+    ∀ J₀, g + J₀ ≤ m → STowerAmalgamSteps g A J₀ → STowerLifts L A J₀
+  | 0, _, _ => fun J hJ ↦ absurd hJ (Nat.not_lt_zero J)
+  | J₀ + 1, hm, hst => by
+    have ih := sTowerLifts_of_amalgam hL hRL hA0 hAc hAo J₀ (by omega)
+      (fun J hJ ↦ hst J (by omega))
+    intro J hJ x hx
+    have hgood := sTower_good hL hA0 hAc ih J (by omega) (by omega)
+    have hR : (sTower L A J).ReadableS := by
+      rcases J with _ | J
+      · exact hRL
+      · exact (sTower_good hL hA0 hAc ih J (by omega) (by omega)).readableS_next _
+    exact hgood.cappedLift_sS hR (by omega) hx hA0
+      (SLvl.sCatStep_of_amalgam hgood (hAo _ (by omega)) (hst J hJ x hx))
 
 end Amalgam
 
