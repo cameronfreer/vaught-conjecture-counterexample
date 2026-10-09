@@ -281,7 +281,10 @@ local notation "𝒞" => lowCat I (g + 1) (lowN I (g + 1)) (lowT I)
   (StageType.faceCell I.restrictFace_left o) (StageType.faceCell I.restrictFace_left r)
 
 variable (o r) in
-/-- **The reading of the completed display** (open) over a good level `L` at the grade `g` whose
+/-- **The reading of the completed display** (at a stage that is zero or a limit it holds exactly
+when the two faces are `⊥` above `K`: `ProfileTower.LowReading.face_label_eq_bot`, and
+`ProfileTower.lowReading_of_bot` in `VaughtConjecture.Continuation.LowDisplayActual`) over a good
+level `L` at the grade `g` whose
 LOW layer is a good level: a lawful labelling `q` at the stage of the completed scheme extending the
 glued labels, and two controllers whose profiles are a profile of the LOW catalogue and its partner
 over all proper donor cells, with the cutoff cut in the grid and below the cutoff, labelled by `q`

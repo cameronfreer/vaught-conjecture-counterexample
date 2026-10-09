@@ -37,7 +37,8 @@ and donor cells are not controllers: their scopes miss a point
 (`StageType.gradedIndex_faceCell_ne`).
 
 **LOW layers at source-gap contexts** (`StageType.HasLowLayers`, in
-`VaughtConjecture.MainTheorem.LowDisplayRoute`; open): every LOW family has a legal display with a
+`VaughtConjecture.MainTheorem.LowDisplayRoute`; proved, `StageType.hasLowLayers_of_padded`, in
+`VaughtConjecture.MainTheorem.LowPaddedRoute`): every LOW family has a legal display with a
 LOW layer at `K` whose separator is labelled by a proper label and `⊤`.  It gives controlled LOW
 displays (`StageType.HasLowLayers.hasControlledLowDisplays`), hence (R2) for receiving models.
 
