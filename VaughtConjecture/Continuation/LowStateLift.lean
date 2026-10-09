@@ -589,4 +589,18 @@ theorem sTowerLifts_of_amalgam {L : Lvl I g} (hL : L.Good) (hRL : L.toS.Readable
 
 end Amalgam
 
+
+/-! ### Readability of the levels from the grade `0` -/
+
+/-- **The level at the grade `0`, read as a state level, is readable at the canonical states**: its
+section is the amalgam part of the state, a value of the state. -/
+theorem readableS_base₀ : (base₀ I).toS.ReadableS :=
+  fun Q _ _ z ↦ isReadableAt_apply Q (Sum.inl z)
+
+/-- **Every level from the grade `0` up to `m`, read as a state level, is readable at the canonical
+states** (`ProfileTower.readableS_base₀`, `ProfileTower.Lvl.Good.readableS_toS_next`). -/
+theorem readableS_lvlZero : ∀ g, g ≤ m → (lvlZero I g).toS.ReadableS
+  | 0, _ => readableS_base₀
+  | g + 1, h => (lvlZero_good g (by omega)).readableS_toS_next
+
 end VaughtConjecture.ProfileTower
