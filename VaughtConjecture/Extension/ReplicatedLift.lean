@@ -322,6 +322,87 @@ theorem min_decode_eq_decode_one (hU : U ∈ I.mixedFaces g)
     min_eq_left (le_min hle_top (hθf_le _))] at h1
   exact h1
 
+/-! ### The cells at a mixed face -/
+
+/-- **The cells at a mixed face are copies**: a cell of the replicated scheme at `(U, k)`, for a
+mixed face `U`, is the copy at `U` of a cell of full scope of the tower at the grade `k`. -/
+theorem exists_eq_copyFull (hU : U ∈ I.mixedFaces g) {k : ℕ} (hkU : k ≤ #U)
+    (z : Fin (𝔼).card) (hz : (𝔼).toCellScheme.gradedIndex z = (U, k)) :
+    ∃ v, ∃ hv : (𝕋).toCellScheme.gradedIndex v = ((univ : Finset (Fin (m + 2))), k),
+      z = copyFull H Γ A B' hU v hv hkU := by
+  induction z using Fin.addCases with
+  | left x =>
+    exfalso
+    have hs : (𝕋).toCellScheme.scope x = U :=
+      (congrArg Prod.fst (Scheme.gradedIndex_mirror_castAdd
+        (hmix := I.not_subset_scope_tower g H Γ A B') x)).symm.trans (congrArg Prod.fst hz)
+    have hne : (𝕋).toCellScheme.scope x ≠ univ := hs ▸ ((I.mem_mixedFaces g).mp hU).2.1
+    exact I.not_subset_scope_tower g H Γ A B' x hne U hU (hs ▸ subset_rfl)
+  | right j =>
+    set q := ((𝕋).copyEquiv (I.mixedFaces g)).symm j with hq
+    have hj : j = (𝕋).copyEquiv (I.mixedFaces g) q := by rw [hq, Equiv.apply_symm_apply]
+    obtain ⟨⟨U', f⟩, hU', hf, hfg⟩ := q
+    have hsU : U' = U := by
+      have h := congrArg Prod.fst hz
+      change (𝕋).mirrorScope (I.mixedFaces g) (Fin.natAdd _ j) = U at h
+      rw [Scheme.mirrorScope_natAdd, ← hq] at h
+      exact h
+    subst hsU
+    have hfk : (𝕋).toCellScheme.grade f = k := by
+      have h := congrArg Prod.snd hz
+      change (𝕋).toCellScheme.grade ((𝕋).mirrorOrig (I.mixedFaces g) (Fin.natAdd _ j)) = k at h
+      rw [Scheme.mirrorOrig_natAdd, ← hq] at h
+      exact h
+    exact ⟨f, Prod.ext hf hfk, by rw [hj]; rfl⟩
+
+/-- **The labelling at a cell at a mixed face is at most the maximal copy at its grade**: in a
+section lawful below `(U, j)`, every cell below `(U, j)` of grade `k` carries at most the label of
+a copy at `U` of grade `k` maximal among them. -/
+theorem le_max_copy (hU : U ∈ I.mixedFaces g) {j : ℕ} {P : Fin (𝔼).card → Label.{u}}
+    (hP : (𝔼).rows.IsLawfulBelow (U, j) fun d ↦ P d) {k : ℕ} (hkj : k ≤ j) (hkU : k ≤ #U)
+    {u : Fin (𝕋).card} (hu : (𝕋).toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), k))
+    (hmax : ∀ w (hw : (𝕋).toCellScheme.gradedIndex w = ((univ : Finset (Fin (m + 2))), k)),
+      P (copyFull H Γ A B' hU w hw hkU) ≤ P (copyFull H Γ A B' hU u hu hkU))
+    {d : Fin (𝔼).card} (hd : d ∈ (𝔼).toCellScheme.below (U, j))
+    (hdk : (𝔼).toCellScheme.grade d = k) : P d ≤ P (copyFull H Γ A B' hU u hu hkU) := by
+  obtain ⟨-, -, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hP
+  have hcu : copyFull H Γ A B' hU u hu hkU ∈ (𝔼).toCellScheme.below (U, j) := by
+    rw [CellScheme.mem_below, gradedIndex_copyFull]; exact ⟨subset_rfl, hkj⟩
+  obtain ⟨z, hz, hle⟩ := havail d _ hcu
+    (hd.1.trans (le_of_eq (congrArg Prod.fst (gradedIndex_copyFull hU u hu hkU)).symm))
+    (hdk.trans (congrArg Prod.snd (gradedIndex_copyFull hU u hu hkU)).symm)
+  obtain ⟨v, hv, rfl⟩ := exists_eq_copyFull hU hkU z (hz.trans (gradedIndex_copyFull hU u hu hkU))
+  exact hle.trans (hmax v hv)
+
 end Seed
+
+namespace Label
+
+/-- **Agreement at the cap of a reading by a reader of the maximal grade.**  The arithmetic of the
+observation of the ambient: if a reader of label `z` reads `d` as `ℓ` (`min d z = min ℓ z`), the
+ambient and the prescription agree capped at `c` at `ℓ` and at the reader (`min z c = min M c`),
+and `d` is at most a label `w` with `min w c ≤ min M c`, then `min (min p M) c = min d c`. -/
+theorem min_min_eq_of_reader {d z ℓ p M w c : Label.{u}} (hdz : min d z = min ℓ z)
+    (hℓ : min ℓ c = min p c) (hzM : min z c = min M c) (hdw : d ≤ w)
+    (hwM : min w c ≤ min M c) : min (min p M) c = min d c := by
+  rcases le_or_gt d z with hle | hlt
+  · rw [min_eq_left hle] at hdz
+    rw [hdz]
+    calc min (min p M) c = min (min p c) (min M c) := by rw [min_min_min_comm, min_self]
+      _ = min (min ℓ c) (min z c) := by rw [hℓ, hzM]
+      _ = min (min ℓ z) c := by rw [min_min_min_comm, min_self]
+  · rcases le_or_gt c z with hcz | hzc
+    · rw [min_eq_right (hcz.trans hlt.le)]
+      rw [min_eq_right hlt.le] at hdz
+      have hℓz : z ≤ ℓ := hdz ▸ min_le_left _ _
+      have hpc : min p c = c := by rw [← hℓ]; exact min_eq_right (hcz.trans hℓz)
+      have hMc : min M c = c := by rw [← hzM]; exact min_eq_right hcz
+      rw [min_assoc, hMc, hpc]
+    · exfalso
+      have h1 : min w c ≤ z := hwM.trans (le_of_eq (hzM.symm.trans (min_eq_left hzc.le)))
+      have h2 : z < min w c := lt_min (hlt.trans_le hdw) hzc
+      exact absurd h1 (not_le.mpr h2)
+
+end Label
 
 end VaughtConjecture
