@@ -304,13 +304,14 @@ theorem exists_reading_of_writing (hcard : (I.attachmentBase g).S.card ≤ H) {k
     ∃ R ∈ (I.attachmentBase g).towerCat Γ A k,
       (∀ a, (I.attachment g).toCellScheme.grade a ≤ k →
         (𝔼).rowAt (Fin.castAdd _ f) (I.attachEmb g H Γ A B' a) = R a) ∧
-      ((I.attachmentBase g).ladderTower H Γ A B' m).v R' f ∈ grid k B' ∧
+      ((I.attachmentBase g).ladderTower H Γ A B' m).v R' f ∈ Scheme.heightSet Γ B' k ∧
       ∀ a, R' a < ((I.attachmentBase g).ladderTower H Γ A B' m).v R' f → R a = R' a := by
   have hf' : (𝕋).toCellScheme.gradedIndex f = ((univ : Finset (Fin (m + 2))), k - 2 + 2) := by
     rw [show k - 2 + 2 = k by omega]; exact hf
   obtain ⟨R, hRC, hrow, hagr⟩ := Scheme.exists_layerTower_layerCell
     (B := (I.attachmentBase g).towerBase H) (C := (I.attachmentBase g).towerCat Γ A)
-    (G := fun k ↦ grid k B') (fun _ ↦ bot_mem_grid _ _) (k - 2) m (by omega) f hf'
+    (G := fun k ↦ Scheme.heightSet Γ B' k) (fun _ ↦ Scheme.bot_mem_heightSet _ _ _) (k - 2) m
+    (by omega) f hf'
   have hk : k - 2 + 2 = k := by omega
   rw [hk] at hRC
   have hRl : (I.attachment g).rows.IsLawful R :=
@@ -322,8 +323,8 @@ theorem exists_reading_of_writing (hcard : (I.attachmentBase g).S.card ≤ H) {k
     rw [Scheme.appendFullCellsScheme_grade_castAdd]
     omega
   · have h := Scheme.layerTower_v_mem (B := (I.attachmentBase g).towerBase H)
-      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ grid k B')
-      (fun _ ↦ bot_mem_grid _ _) (k - 2) R' m (by omega) f hf'
+      (C := (I.attachmentBase g).towerCat Γ A) (G := fun k ↦ Scheme.heightSet Γ B' k)
+      (fun _ ↦ Scheme.bot_mem_heightSet _ _ _) (k - 2) R' m (by omega) f hf'
     rwa [hk] at h
   · have e := hagr R' (Fin.castAdd _ a)
     change min ((I.attachmentBase g).stateExt H R' (Fin.castAdd _ a)) _ =
@@ -350,7 +351,7 @@ theorem not_lawful_of_tie (hcard : (I.attachmentBase g).S.card ≤ H)
     {c : Label.{u}} {a₁ a₂ : Fin (I.attachment g).card}
     (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
     (ha₂ : (I.attachment g).toCellScheme.grade a₂ = k) (hR'12 : R' a₁ ≤ R' a₂)
-    (hgrid : ∀ x ∈ grid k B', x ≤ R' a₂ → σ x < c) {v₁ v₂ : Label.{u}} (h21 : v₂ < v₁)
+    (hgrid : ∀ x ∈ Scheme.heightSet Γ B' k, x ≤ R' a₂ → σ x < c) {v₁ v₂ : Label.{u}} (h21 : v₂ < v₁)
     (hc1 : ¬ v₁ ≤ c)
     {r : (𝔼).toCellScheme.below 𝕐[j] → Label.{u}}
     (hr : (𝔼).rows.IsLawfulBelow 𝕐[j] r)
@@ -448,7 +449,7 @@ theorem not_towerExtensionPos_of_tie (hH : 0 < H) (hcard : (I.attachmentBase g).
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
     (ha₂ : (I.attachment g).toCellScheme.grade a₂ = k) (hR'12 : R' a₁ ≤ R' a₂)
     (hP12 : P a₂ < P a₁) (hPc : ¬ P a₁ ≤ c)
-    (hgrid : ∀ x ∈ grid k B', x ≤ R' a₂ → σ x < c) :
+    (hgrid : ∀ x ∈ Scheme.heightSet Γ B' k, x ≤ R' a₂ → σ x < c) :
     ¬ TowerExtensionPos I g H Γ A B' j := by
   intro h
   have hR'l : (I.attachment g).rows.IsLawful R' :=
@@ -519,6 +520,7 @@ theorem not_towerExtensionPos_attachAdmits (hH : 0 < H) (hcard : (I.attachmentBa
     {P : Fin (I.attachment g).card → Label.{u}}
     (hP : P ∈ (I.attachmentBase g).towerCat Γ (I.attachAdmits g hd Q) (m + 2)) {y : Label.{u}}
     (hy : y ∈ Γ) (hy0 : y ≠ ⊥) (hyv : IsSelfVisible (m + 2) y)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
     (ha₂ : (I.attachment g).toCellScheme.grade a₂ = k) (hy2 : y ≤ P a₂) (h21 : P a₂ < P a₁) :
     ¬ TowerExtensionPos I g H Γ (I.attachAdmits g hd Q) B' j := by
@@ -535,10 +537,12 @@ theorem not_towerExtensionPos_attachAdmits (hH : 0 < H) (hcard : (I.attachmentBa
   · change x < y
     change x ≤ min (P a₂) y at hxy
     rw [min_eq_right hy2] at hxy
-    refine lt_of_le_of_ne hxy ?_
-    rcases (mem_grid.mp hx) with rfl | ⟨b, -, rfl⟩
-    · exact hy0.symm
-    · exact gridPoint_ne_of_isSelfVisible (by omega) b hyv
+    rcases Scheme.mem_heightSet.mp hx with hx | ⟨hxΓ, hxv⟩
+    · refine lt_of_le_of_ne hxy ?_
+      rcases (mem_grid.mp hx) with rfl | ⟨b, -, rfl⟩
+      · exact hy0.symm
+      · exact gridPoint_ne_of_isSelfVisible (by omega) b hyv
+    · rw [hΓk x hxΓ hxv]; exact bot_lt_iff_ne_bot.mpr hy0
 
 /-- **The context lift fails for the admission predicate** whenever a state `P` of the catalogue
 at `m + 2` carries two values `P a₂ < P a₁` at context cells of one grade `2 ≤ k ≤ m + 1`, both at
@@ -554,6 +558,7 @@ theorem not_cappedLift_context_attachAdmits (hH : 0 < H) (hcard : (I.attachmentB
     (hkm : k ≤ m + 1) {P : Fin (I.attachment g).card → Label.{u}}
     (hP : P ∈ (I.attachmentBase g).towerCat Γ (I.attachAdmits g hd Q) (m + 2)) {y : Label.{u}}
     (hy : y ∈ Γ) (hy0 : y ≠ ⊥) (hyv : IsSelfVisible (m + 2) y)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
     (ha₂ : (I.attachment g).toCellScheme.grade a₂ = k)
     (hs₁ : (I.attachment g).toCellScheme.scope a₁ ⊆ ctxCoatom m)
@@ -602,10 +607,12 @@ theorem not_cappedLift_context_attachAdmits (hH : 0 < H) (hcard : (I.attachmentB
     (fun x hx hxy ↦ by
       change x ≤ min (P a₂) y at hxy
       rw [min_eq_right hy2] at hxy
-      refine lt_of_le_of_ne hxy ?_
-      rcases (mem_grid.mp hx) with rfl | ⟨b, -, rfl⟩
-      · exact hy0.symm
-      · exact gridPoint_ne_of_isSelfVisible (by omega) b hyv)
+      rcases Scheme.mem_heightSet.mp hx with hx | ⟨hxΓ, hxv⟩
+      · refine lt_of_le_of_ne hxy ?_
+        rcases (mem_grid.mp hx) with rfl | ⟨b, -, rfl⟩
+        · exact hy0.symm
+        · exact gridPoint_ne_of_isSelfVisible (by omega) b hyv
+      · rw [hΓk x hxΓ hxv]; exact bot_lt_iff_ne_bot.mpr hy0)
     h21 (not_le.mpr (hy2.trans_lt h21)) hq' (hval a₁ ha₁ hs₁) (hval a₂ ha₂ hs₂) hq'q
 
 /-- **The code of a state keeps the values self-visible at `m + 2`** (`Seed.exists_stateCode` with
@@ -666,6 +673,7 @@ theorem not_towerExtensionPos_of_state (hH : 0 < H) (hcard : (I.attachmentBase g
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     {j k : ℕ} (hk2 : 2 ≤ k) (hkj : k ≤ j) (hjm : j ≤ m + 1)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     {P₀ : Fin (I.attachment g).card → Label.{u}} (hP₀ : (I.attachment g).rows.IsLawful P₀)
     (hP₀A : I.attachAdmits g hd Q (m + 2) P₀)
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
@@ -675,7 +683,8 @@ theorem not_towerExtensionPos_of_state (hH : 0 < H) (hcard : (I.attachmentBase g
   obtain ⟨R, hR, σ, hσm, hσ0, hσR, hvis⟩ := exists_stateCode_isSelfVisible hd hQ hΓc hP₀ hP₀A
   have hRΓ := (Scheme.LadderBaseData.mem_towerCat.mp hR).1
   refine not_towerExtensionPos_attachAdmits hH hcard hΓ hd hQ hk2 hkj hjm hR (hRΓ a₂)
-    (fun h ↦ h20 ((hσR a₂).symm.trans ((congrArg σ h).trans hσ0))) (hvis a₂ h2v) ha₁ ha₂ le_rfl
+    (fun h ↦ h20 ((hσR a₂).symm.trans ((congrArg σ h).trans hσ0))) (hvis a₂ h2v) hΓk ha₁ ha₂
+    le_rfl
     (lt_of_not_ge fun h ↦ ?_)
   exact absurd ((hσR a₁).symm.le.trans ((hσm h).trans (hσR a₂).le)) (not_le.mpr h21)
 
@@ -689,14 +698,15 @@ theorem not_hasContextLift_attachAdmits (hH : 0 < H) (hcard : (I.attachmentBase 
     (hkm : k ≤ m + 1) {P : Fin (I.attachment g).card → Label.{u}}
     (hP : P ∈ (I.attachmentBase g).towerCat Γ (I.attachAdmits g hd Q) (m + 2)) {y : Label.{u}}
     (hy : y ∈ Γ) (hy0 : y ≠ ⊥) (hyv : IsSelfVisible (m + 2) y)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
     (ha₂ : (I.attachment g).toCellScheme.grade a₂ = k)
     (hs₁ : (I.attachment g).toCellScheme.scope a₁ ⊆ ctxCoatom m)
     (hs₂ : (I.attachment g).toCellScheme.scope a₂ ⊆ ctxCoatom m)
     (hy2 : y ≤ P a₂) (h21 : P a₂ < P a₁) :
     ¬ I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' := fun h ↦
-  not_cappedLift_context_attachAdmits hH hcard hΓ hd hQ hk2 hkm hP hy hy0 hyv ha₁ ha₂ hs₁ hs₂ hy2
-    h21 (h k (by omega) hkm)
+  not_cappedLift_context_attachAdmits hH hcard hΓ hd hQ hk2 hkm hP hy hy0 hyv hΓk ha₁ ha₂ hs₁
+    hs₂ hy2 h21 (h k (by omega) hkm)
 
 /-- **The context lift fails for the admission predicate at a lawful admitted state with two
 values at one grade of the context**: as `Seed.not_towerExtensionPos_of_state`, with `a₁`, `a₂`
@@ -706,6 +716,7 @@ theorem not_cappedLift_context_of_state (hH : 0 < H) (hcard : (I.attachmentBase 
     {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte) {k : ℕ} (hk2 : 2 ≤ k)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     (hkm : k ≤ m + 1) {P₀ : Fin (I.attachment g).card → Label.{u}}
     (hP₀ : (I.attachment g).rows.IsLawful P₀) (hP₀A : I.attachAdmits g hd Q (m + 2) P₀)
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
@@ -719,8 +730,8 @@ theorem not_cappedLift_context_of_state (hH : 0 < H) (hcard : (I.attachmentBase 
   obtain ⟨R, hR, σ, hσm, hσ0, hσR, hvis⟩ := exists_stateCode_isSelfVisible hd hQ hΓc hP₀ hP₀A
   have hRΓ := (Scheme.LadderBaseData.mem_towerCat.mp hR).1
   refine not_cappedLift_context_attachAdmits hH hcard hΓ hd hQ hk2 hkm hR (hRΓ a₂)
-    (fun h ↦ h20 ((hσR a₂).symm.trans ((congrArg σ h).trans hσ0))) (hvis a₂ h2v) ha₁ ha₂ hs₁ hs₂
-    le_rfl
+    (fun h ↦ h20 ((hσR a₂).symm.trans ((congrArg σ h).trans hσ0))) (hvis a₂ h2v) hΓk ha₁ ha₂ hs₁
+    hs₂ le_rfl
     (lt_of_not_ge fun h ↦ ?_)
   exact absurd ((hσR a₁).symm.le.trans ((hσm h).trans (hσR a₂).le)) (not_le.mpr h21)
 
@@ -731,6 +742,7 @@ theorem not_hasContextLift_of_state (hH : 0 < H) (hcard : (I.attachmentBase g).S
     {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte) {k : ℕ} (hk2 : 2 ≤ k)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     (hkm : k ≤ m + 1) {P₀ : Fin (I.attachment g).card → Label.{u}}
     (hP₀ : (I.attachment g).rows.IsLawful P₀) (hP₀A : I.attachAdmits g hd Q (m + 2) P₀)
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
@@ -739,7 +751,7 @@ theorem not_hasContextLift_of_state (hH : 0 < H) (hcard : (I.attachmentBase g).S
     (hs₂ : (I.attachment g).toCellScheme.scope a₂ ⊆ ctxCoatom m) (h21 : P₀ a₂ < P₀ a₁)
     (h20 : P₀ a₂ ≠ ⊥) (h2v : IsSelfVisible (m + 2) (P₀ a₂)) :
         ¬ I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' := fun h ↦
-  not_cappedLift_context_of_state hH hcard hΓ hΓc hd hQ hk2 hkm hP₀ hP₀A ha₁ ha₂ hs₁ hs₂ h21 h20
+  not_cappedLift_context_of_state hH hcard hΓ hΓc hd hQ hk2 hΓk hkm hP₀ hP₀A ha₁ ha₂ hs₁ hs₂ h21 h20
     h2v (h k (by omega) hkm)
 
 /-- **The extension over the tower at a positive cap fails for the admission predicate at a
@@ -752,6 +764,7 @@ theorem not_towerExtensionPos_of_blocks (hH : 0 < H) (hcard : (I.attachmentBase 
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     {j k : ℕ} (hk2 : 2 ≤ k) (hkj : k ≤ j) (hjm : j ≤ m + 1)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     {P₀ : Fin (I.attachment g).card → Label.{u}} (hP₀ : (I.attachment g).rows.IsLawful P₀)
     (hP₀A : I.attachAdmits g hd Q (m + 2) P₀)
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
@@ -760,7 +773,7 @@ theorem not_towerExtensionPos_of_blocks (hH : 0 < H) (hcard : (I.attachmentBase 
     ¬ TowerExtensionPos I g H Γ (I.attachAdmits g hd Q) B' j := by
   have hgr (a : Fin (I.attachment g).card) : (I.attachment g).toCellScheme.grade a ≤ m + 2 :=
     (I.attachmentType g).grade_le a
-  refine not_towerExtensionPos_of_state hH hcard hΓ hΓc hd hQ hk2 hkj hjm
+  refine not_towerExtensionPos_of_state hH hcard hΓ hΓc hd hQ hk2 hkj hjm hΓk
     (P₀ := finRaise (m + 2) ∘ P₀)
     (hP₀.map_of_bot_iff hP₀ hgr (isWitness_finRaise (m + 2)) fun _ ↦ finRaise_eq_bot_iff _)
     (attachAdmits_comp hd hQ hP₀A (isWitness_finRaise (m + 2)) (fun _ ↦ finRaise_eq_bot_iff _) _)
@@ -823,12 +836,15 @@ theorem min_omegaShift_tieValue (m : ℕ) (x : Label.{u}) :
   · rw [min_eq_right (tieValue_le_omegaShift m hx), posConst, ite_eq_right hx, min_self]
 
 /-- No grid point at a grade `k ≤ m + 1` lies at or below the tie except below it. -/
-theorem lt_tieValue_of_mem_grid {k : ℕ} (hk : k ≤ m + 1) {x : Label.{u}} (hx : x ∈ grid k B')
-    (hxv : x ≤ tieValue m) : x < tieValue m := by
-  refine lt_of_le_of_ne hxv ?_
-  rcases mem_grid.mp hx with rfl | ⟨b, -, rfl⟩
-  · exact (tieValue_ne_bot m).symm
-  · exact gridPoint_ne_of_isSelfVisible (by omega) b (isSelfVisible_tieValue m)
+theorem lt_tieValue_of_mem_grid {k : ℕ} (hk : k ≤ m + 1)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥) {x : Label.{u}}
+    (hx : x ∈ Scheme.heightSet Γ B' k) (hxv : x ≤ tieValue m) : x < tieValue m := by
+  rcases Scheme.mem_heightSet.mp hx with hx | ⟨hxΓ, hxk⟩
+  · refine lt_of_le_of_ne hxv ?_
+    rcases mem_grid.mp hx with rfl | ⟨b, -, rfl⟩
+    · exact (tieValue_ne_bot m).symm
+    · exact gridPoint_ne_of_isSelfVisible (by omega) b (isSelfVisible_tieValue m)
+  · rw [hΓk x hxΓ hxk]; exact bot_lt_iff_ne_bot.mpr (tieValue_ne_bot m)
 
 /-- **The extension over the tower at a positive cap fails for the admission predicate at every
 lawful admitted state with two positive values at one grade**: if `P₀` carries
@@ -843,6 +859,7 @@ theorem not_towerExtensionPos_of_pair (hH : 0 < H) (hcard : (I.attachmentBase g)
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     {j k : ℕ} (hk2 : 2 ≤ k) (hkj : k ≤ j) (hjm : j ≤ m + 1)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     {P₀ : Fin (I.attachment g).card → Label.{u}} (hP₀ : (I.attachment g).rows.IsLawful P₀)
     (hP₀A : I.attachAdmits g hd Q (m + 2) P₀)
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
@@ -862,7 +879,7 @@ theorem not_towerExtensionPos_of_pair (hH : 0 < H) (hcard : (I.attachmentBase g)
       (fun _ ↦ omegaShift_eq_bot_iff) _)
     (fun a _ ↦ min_omegaShift_tieValue m (P₀ a)) ha₁ ha₂ ?_ (omegaShift_strictMono h21)
     (not_le.mpr (hv2.trans_lt (omegaShift_strictMono h21)))
-    fun x hx hxv ↦ lt_tieValue_of_mem_grid (by omega) hx (by
+    fun x hx hxv ↦ lt_tieValue_of_mem_grid (by omega) hΓk hx (by
       change x ≤ posConst (tieValue m) (P₀ a₂) at hxv
       rwa [posConst, ite_eq_right h20] at hxv)
   change posConst (tieValue m) (P₀ a₁) ≤ posConst (tieValue m) (P₀ a₂)
@@ -877,6 +894,7 @@ theorem not_cappedLift_context_of_pair (hH : 0 < H) (hcard : (I.attachmentBase g
     {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
     (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte) {k : ℕ} (hk2 : 2 ≤ k)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     (hkm : k ≤ m + 1) {P₀ : Fin (I.attachment g).card → Label.{u}}
     (hP₀ : (I.attachment g).rows.IsLawful P₀) (hP₀A : I.attachAdmits g hd Q (m + 2) P₀)
     {a₁ a₂ : Fin (I.attachment g).card} (ha₁ : (I.attachment g).toCellScheme.grade a₁ = k)
@@ -943,7 +961,7 @@ theorem not_cappedLift_context_of_pair (hH : 0 < H) (hcard : (I.attachmentBase g
     hk2 le_rfl hkm hR' ha₁ ha₂
     (by change posConst _ (P₀ a₁) ≤ posConst _ (P₀ a₂); rw [posConst, posConst, ite_eq_right h10,
       ite_eq_right h20])
-    (fun x hx hxv ↦ lt_tieValue_of_mem_grid hkm hx (by
+    (fun x hx hxv ↦ lt_tieValue_of_mem_grid hkm hΓk hx (by
       change x ≤ posConst (tieValue m) (P₀ a₂) at hxv
       rwa [posConst, ite_eq_right h20] at hxv))
     (omegaShift_strictMono h21)
@@ -965,6 +983,7 @@ theorem not_cappedLift_context_of_section (hH : 0 < H) (hcard : (I.attachmentBas
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
     {u' : Fin I.left.card → Label.{u}} (hu' : I.left.rows.IsLawful u') {k : ℕ} (hk2 : 2 ≤ k)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     (hkm : k ≤ m + 1) {x₁ x₂ : Fin I.left.card} (hx₁ : I.left.toCellScheme.grade x₁ = k)
     (hx₂ : I.left.toCellScheme.grade x₂ = k) (h21 : u' x₂ < u' x₁) (h20 : u' x₂ ≠ ⊥)
     (h2v : IsSelfVisible (m + 2) (u' x₂)) :
@@ -977,7 +996,7 @@ theorem not_cappedLift_context_of_section (hH : 0 < H) (hcard : (I.attachmentBas
     attachAdmits_of_admitsOnClass hd hQ (m + 2) (by
       rw [show (fun x ↦ R (I.attachCtxCell g x)) = u' from funext hRc]
       exact hadm)
-  refine not_cappedLift_context_of_state hH hcard hΓ hΓc hd hQ hk2 hkm hRl hRA
+  refine not_cappedLift_context_of_state hH hcard hΓ hΓc hd hQ hk2 hΓk hkm hRl hRA
     ((grade_attachCtxCell x₁).trans hx₁) ((grade_attachCtxCell x₂).trans hx₂)
     (scope_attachCtxCell_subset x₁) (scope_attachCtxCell_subset x₂) ?_ ?_ ?_
   · rw [hRc, hRc]; exact h21
@@ -994,11 +1013,13 @@ theorem not_hasContextLift_of_section (hH : 0 < H) (hcard : (I.attachmentBase g)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
     {u' : Fin I.left.card → Label.{u}} (hu' : I.left.rows.IsLawful u') {k : ℕ} (hk2 : 2 ≤ k)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     (hkm : k ≤ m + 1) {x₁ x₂ : Fin I.left.card} (hx₁ : I.left.toCellScheme.grade x₁ = k)
     (hx₂ : I.left.toCellScheme.grade x₂ = k) (h21 : u' x₂ < u' x₁) (h20 : u' x₂ ≠ ⊥)
     (h2v : IsSelfVisible (m + 2) (u' x₂)) :
         ¬ I.HasContextLift g H Γ (I.attachAdmits g hd Q) B' := fun h ↦
-  not_cappedLift_context_of_section hH hcard hΓ hΓc hte hdp hd hQ hpair hrel hu' hk2 hkm hx₁ hx₂
+  not_cappedLift_context_of_section hH hcard hΓ hΓc hte hdp hd hQ hpair hrel hu' hk2 hΓk hkm hx₁
+    hx₂
     h21 h20 h2v (h k (by omega) hkm)
 
 /-- **The context lift fails for the admission predicate at every lawful context section with two
@@ -1017,6 +1038,7 @@ theorem not_cappedLift_context_of_section_pair (hH : 0 < H)
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
     {u' : Fin I.left.card → Label.{u}} (hu' : I.left.rows.IsLawful u') {k : ℕ} (hk2 : 2 ≤ k)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     (hkm : k ≤ m + 1) {x₁ x₂ : Fin I.left.card} (hx₁ : I.left.toCellScheme.grade x₁ = k)
     (hx₂ : I.left.toCellScheme.grade x₂ = k) (h20 : u' x₂ ≠ ⊥) (h21 : u' x₂ < u' x₁) :
     ¬ (I.replicated g H Γ (I.attachAdmits g hd Q) B').rows.CappedLift
@@ -1028,7 +1050,7 @@ theorem not_cappedLift_context_of_section_pair (hH : 0 < H)
     attachAdmits_of_admitsOnClass hd hQ (m + 2) (by
       rw [show (fun x ↦ R (I.attachCtxCell g x)) = u' from funext hRc]
       exact hadm)
-  refine not_cappedLift_context_of_pair hH hcard hΓ hΓc hd hQ hk2 hkm hRl hRA
+  refine not_cappedLift_context_of_pair hH hcard hΓ hΓc hd hQ hk2 hΓk hkm hRl hRA
     ((grade_attachCtxCell x₁).trans hx₁) ((grade_attachCtxCell x₂).trans hx₂)
     (scope_attachCtxCell_subset x₁) (scope_attachCtxCell_subset x₂) ?_ ?_
   · rw [hRc]; exact h20
@@ -1049,6 +1071,7 @@ theorem not_hasContextLift_of_blocks (hH : 0 < H) (hcard : (I.attachmentBase g).
     {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
     (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
     {u' : Fin I.left.card → Label.{u}} (hu' : I.left.rows.IsLawful u') {k : ℕ} (hk2 : 2 ≤ k)
+    (hΓk : ∀ x ∈ Γ, IsSelfVisible k x → x = ⊥)
     (hkm : k ≤ m + 1) {x₁ x₂ : Fin I.left.card} (hx₁ : I.left.toCellScheme.grade x₁ = k)
     (hx₂ : I.left.toCellScheme.grade x₂ = k) {o₁ o₂ : Ordinal.{u}} (h₁ : u' x₁ = o₁)
     (h₂ : u' x₂ = o₂) (hb : blockOf o₂ < blockOf o₁) :
@@ -1056,7 +1079,8 @@ theorem not_hasContextLift_of_blocks (hH : 0 < H) (hcard : (I.attachmentBase g).
   have hu'' : I.left.rows.IsLawful (finRaise (m + 2) ∘ u') :=
     hu'.map_of_bot_iff hu' (fun x ↦ (I.left.grade_le x).trans (Nat.le_succ _))
       (isWitness_finRaise (m + 2)) fun _ ↦ finRaise_eq_bot_iff _
-  refine not_hasContextLift_of_section hH hcard hΓ hΓc hte hdp hd hQ hpair hrel hu'' hk2 hkm hx₁
+  refine not_hasContextLift_of_section hH hcard hΓ hΓc hte hdp hd hQ hpair hrel hu'' hk2 hΓk hkm
+    hx₁
     hx₂ ?_ ?_ ?_
   · change finRaise (m + 2) (u' x₂) < finRaise (m + 2) (u' x₁)
     rw [h₁, h₂]; exact finRaise_lt_finRaise hb

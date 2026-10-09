@@ -124,13 +124,14 @@ theorem not_hasContextLiftAtSeed_of_pair
     (hΓ : ∀ x ∈ Γ I g, x ≤ gridPoint 2 (B' I g))
     (hΓc : codeSet (I.attachment g).card (m + 2) ⊆ Γ I g)
     {u' : Fin t'.card → Label.{u}} (hu' : t'.rows.IsLawful u') {k : ℕ} (hk2 : 2 ≤ k)
+    (hΓk : ∀ x ∈ Γ I g, IsSelfVisible k x → x = ⊥)
     (hkm : k ≤ m + 1) {x₁ x₂ : Fin t'.card} (hx₁ : t'.toCellScheme.grade x₁ = k)
     (hx₂ : t'.toCellScheme.grade x₂ = k) (h20 : u' x₂ ≠ ⊥) (h21 : u' x₂ < u' x₁) :
     ¬ HasContextLiftAtSeed.{u} H Γ B' := by
   intro h
   subst hI
   exact Seed.not_cappedLift_context_of_section_pair hH hcard hΓ hΓc hte hd.2 hdA hQ hpair hrel hu'
-    hk2 hkm hx₁ hx₂ h20 h21
+    hk2 hΓk hkm hx₁ hx₂ h20 h21
     (h I g p' hα I.isLegal_left hp' p hte d hd hdA hn Q hpair hQ hrel k hk2 hkm)
 
 end StageType
@@ -271,52 +272,5 @@ theorem isLawful_sep : (ctx α).rows.IsLawful (sep α) :=
     (isSelfVisible_coe_add Order.isSuccPrelimit_bot (by omega)) le_rfl rfl
 
 end TieInstance
-
-namespace StageType
-
-open TieInstance
-
-/-- **The context lift at the seed position fails at the choice of the assembly**
-(`Seed.seedHeight`, `Seed.seedValues`, `Seed.seedGridBound`): at the stage `ω`, the seed of
-`StageType.exists_growthSeed_of_isSuccLimit` over the context `TieInstance.ctx` (the legal
-two-point scheme `SeparationObstruction.S`, labelled `⊤` at one cell of graded index `(univ, 2)`
-and `⊥` elsewhere), the root `{0}`, the donor `TieInstance.don` (the same scheme labelled `⊥`),
-and the bottom requests `TieInstance.req`, together with the lawful section `TieInstance.sep`
-(`ω + 3` and `3` at the two cells of graded index `(univ, 2)`), refute it
-(`StageType.not_hasContextLiftAtSeed_of_pair`). -/
-theorem not_hasContextLiftAtSeed_seedChoice :
-    ¬ HasContextLiftAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound := by
-  have hα : Order.IsSuccLimit (ω : Ordinal.{u}) := Ordinal.isSuccLimit_omega0
-  have hp : restrictFace (Function.Embedding.refl (Fin 1)) (pt ω) = some (pt ω) :=
-    (restrictFace_trans (ctx ω) _ _ (restrictFace_ctx ω)).trans (restrictFace_ctx_root ω)
-  obtain ⟨I, hI, hdA⟩ := exists_growthSeed_of_isSuccLimit hα (t' := ctx ω)
-    SeparationObstruction.isLegal_S
-    (restrictFace_ctx ω) hp (don_mem_cofaces ω)
-  refine not_hasContextLiftAtSeed_of_pair hα I (Function.Embedding.refl (Fin 1)) hI
-    (restrictFace_ctx ω) (restrictFace_ctx_root ω) (don_mem_cofaces ω) hdA Nat.one_pos
-    (correctAt_req ω) (classCalibrated_req ω) (hasRelativeLiftOnClass_req ω)
-    (I.seedHeight_pos _) (I.card_le_seedHeight _) (fun _ hx ↦ I.le_gridPoint_of_mem_seedValues _ hx)
-    (I.codeSet_subset_seedValues _) (isLawful_sep ω) le_rfl le_rfl (x₁ := cellO.{u} ω)
-    (x₂ := cellR.{u} ω) rfl rfl WithBot.coe_ne_bot ?_
-  change labelAdd 0 3 < labelAdd ω 3
-  rw [labelAdd, labelAdd, zero_add, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
-  exact (Ordinal.natCast_lt_omega0 3).trans_le le_self_add
-
-/-- **The extension over the tower at the seed position fails at the choice of the assembly**: it
-gives the context lift (`StageType.hasContextLiftAtSeed_of_towerExtension`). -/
-theorem not_towerExtensionAtSeed_seedChoice :
-    ¬ TowerExtensionAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound := fun hE ↦
-  not_hasContextLiftAtSeed_seedChoice (hasContextLiftAtSeed_of_towerExtension
-    Seed.seedHeight_pos Seed.card_le_seedHeight Seed.bot_mem_seedValues hE)
-
-/-- **The extension over the tower at a positive cap at the seed position fails at the choice of
-the assembly**: it gives the extension (`StageType.towerExtensionAtSeed_of_pos`). -/
-theorem not_towerExtensionPosAtSeed_seedChoice :
-    ¬ TowerExtensionPosAtSeed.{u} Seed.seedHeight Seed.seedValues Seed.seedGridBound := fun hE ↦
-  not_towerExtensionAtSeed_seedChoice (towerExtensionAtSeed_of_pos Seed.seedHeight_pos
-    Seed.card_le_seedHeight (fun I g _ hx ↦ I.le_gridPoint_of_mem_seedValues g hx)
-    Seed.codeSet_subset_seedValues hE)
-
-end StageType
 
 end VaughtConjecture
