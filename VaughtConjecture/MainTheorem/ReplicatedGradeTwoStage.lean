@@ -23,16 +23,18 @@ the code grid.  Second, `ρ` is applied with the ambient as the lawful companion
 decoded lift with the ambient at the cap `c ≠ ⊥`.  The companion introduces no other premise: the
 ambient is lawful below `(univ, k)` by the input of the lift.
 
-**The strip of the cut** (`Label.eq_at_cut_of_strip`, `Label.eq_at_two_of_one`).  The capped
-agreement asked above fails exactly at the labels of the strip of the cut that the ambient reads
-below the cap: if `visibilityReplace k k x = h` and the ambient's decoder `τ` reads `x` below `c`,
-every witness `σ` bounded by `k` agreeing with `τ` capped at `c` at `x` agrees with `τ` at the cut
-itself, `σ h = τ h`.  So a code placed at the cut is read as the ambient reads the cut, not as a
-prescription value above it.  The case of the ladder value `1` below the cut `2`: `σ 2 = τ 2`
-whenever `τ 1 < c` and `σ 1` agrees with it capped at `c`.  The orbit code places a code at the cut
-exactly when the anchor takes the value of the cut at a cell; the decoder of
-`Label.singleDecoder_spec` then reads that code as the prescription there, so the capped agreement
-at `1` holds only if the prescription at that cell is read by `τ` at the cut.
+**The strip of the cut** (`Label.eq_at_cut_of_strip`, `Label.twoStage_eq_at_cut`,
+`Label.twoStage_eq_at_two_of_one`). If `visibilityReplace k k x = h` and the ambient's decoder `τ`
+reads `x` below `c`, every map commuting with `visibilityReplace k k` and agreeing with `τ` capped
+at `c` at `x` agrees with `τ` at the cut itself. The two-stage decoder `ρ ∘ orbitDecoder k f h` is
+such a map (`Label.twoStage_comm_self`: both stages are witnesses bounded by `k`), though it need
+not be a witness; so the constraint holds for the actual construction. So a code placed at the cut
+is read as the ambient reads the cut, not as a prescription value above it. The case of the ladder
+value `1` below the cut `2`: the two-stage decoder reads `2` as `τ` does whenever `τ 1 < c` and it
+agrees with `τ` capped at `c` at `1`. The orbit code places a code at the cut exactly when the
+anchor takes the value of the cut at a cell; the decoder of `Label.singleDecoder_spec` then reads
+that code as the prescription there, so the capped agreement at `1` holds only if the prescription
+at that cell is read by `τ` at the cut.
 
 ## References
 
@@ -50,27 +52,58 @@ namespace Label
 
 variable {k : ℕ}
 
-/-- **On the strip of the cut a witness is fixed by its value below the cap**: if
-`visibilityReplace k k x = h`, `τ x < c`, and `σ` agrees with `τ` capped at `c` at `x`, then two
-witnesses bounded by `k` agree at `h`. -/
-theorem eq_at_cut_of_strip {σ τ : Label.{u} → Label.{u}} (hσ : IsWitness (stepSuppressor k) σ)
-    (hτ : IsWitness (stepSuppressor k) τ) {x h c : Label.{u}} (hxh : visibilityReplace k k x = h)
-    (hτc : τ x < c) (hag : min (σ x) c = min (τ x) c) : σ h = τ h := by
+/-- **A map commuting with the replacement `visibilityReplace k k` is fixed on the strip of the
+cut by its value below the cap**: if `visibilityReplace k k x = h`, `τ x < c`, and `σ` agrees with
+`τ` capped at `c` at `x`, then `σ h = τ h`.  Only the commutation at the threshold and value `k`
+is used, not the witness property. -/
+theorem eq_at_cut_of_strip {σ τ : Label.{u} → Label.{u}}
+    (hσ : ∀ y, σ (visibilityReplace k k y) = visibilityReplace k k (σ y))
+    (hτ : ∀ y, τ (visibilityReplace k k y) = visibilityReplace k k (τ y)) {x h c : Label.{u}}
+    (hxh : visibilityReplace k k x = h) (hτc : τ x < c) (hag : min (σ x) c = min (τ x) c) :
+    σ h = τ h := by
   have hσx : σ x = τ x := by
     rw [min_eq_left hτc.le] at hag
     rcases le_total (σ x) c with h' | h'
     · rwa [min_eq_left h'] at hag
     · rw [min_eq_right h'] at hag; exact absurd hag.symm hτc.ne
-  have hg : ∀ z : Label.{u}, z ≤ stepSuppressor k k := fun _ ↦ by
-    rw [stepSuppressor_of_le le_rfl]; exact le_top
-  rw [← hxh, hσ.visibilityReplace_comm x k (hg _) k le_rfl,
-    hτ.visibilityReplace_comm x k (hg _) k le_rfl, hσx]
+  rw [← hxh, hσ x, hτ x, hσx]
 
-/-- **The ladder value `1` below the cut `2`**: two witnesses bounded by `2` agreeing capped at
-`c` at `1`, with `τ 1 < c`, agree at `2`. -/
-theorem eq_at_two_of_one {σ τ : Label.{u} → Label.{u}} (hσ : IsWitness (stepSuppressor 2) σ)
-    (hτ : IsWitness (stepSuppressor 2) τ) {c : Label.{u}} (hτc : τ 1 < c)
-    (hag : min (σ 1) c = min (τ 1) c) : σ 2 = τ 2 := by
+/-- A witness bounded by `k` commutes with `visibilityReplace k k`. -/
+theorem IsWitness.comm_self {σ : Label.{u} → Label.{u}} (hσ : IsWitness (stepSuppressor k) σ)
+    (y : Label.{u}) : σ (visibilityReplace k k y) = visibilityReplace k k (σ y) :=
+  hσ.visibilityReplace_comm y k (by rw [stepSuppressor_of_le le_rfl]; exact le_top) k le_rfl
+
+/-- **The two-stage decoder commutes with `visibilityReplace k k`**: the orbit decoder and `ρ` are
+witnesses bounded by `k`, so their composite commutes at the threshold `k`, though it need not be a
+witness. -/
+theorem twoStage_comm_self {ρ : Label.{u} → Label.{u}} (hρ : IsWitness (stepSuppressor k) ρ)
+    {ι : Type*} [Fintype ι] {f : ι → Label.{u}} {h : Label.{u}} (hh : IsSelfVisible k h)
+    (h0 : h ≠ ⊥) (y : Label.{u}) :
+    ρ (orbitDecoder k f h (visibilityReplace k k y)) =
+      visibilityReplace k k (ρ (orbitDecoder k f h y)) := by
+  rw [(isWitness_orbitDecoder hh h0).comm_self, hρ.comm_self]
+
+/-- **The constraint on the actual two-stage decoder**: if the ambient's decoder `τ`, a witness
+bounded by `k`, reads a label `x` of the strip of the cut (`visibilityReplace k k x = h`) below the
+cap, and the two-stage decoder `ρ ∘ orbitDecoder k f h` agrees with it capped at `c` at `x`, then
+the two-stage decoder reads the cut as `τ` does. -/
+theorem twoStage_eq_at_cut {ρ τ : Label.{u} → Label.{u}} (hρ : IsWitness (stepSuppressor k) ρ)
+    (hτ : IsWitness (stepSuppressor k) τ) {ι : Type*} [Fintype ι] {f : ι → Label.{u}}
+    {h x c : Label.{u}} (hh : IsSelfVisible k h) (h0 : h ≠ ⊥)
+    (hxh : visibilityReplace k k x = h) (hτc : τ x < c)
+    (hag : min (ρ (orbitDecoder k f h x)) c = min (τ x) c) :
+    ρ (orbitDecoder k f h h) = τ h :=
+  eq_at_cut_of_strip (σ := fun y ↦ ρ (orbitDecoder k f h y)) (twoStage_comm_self hρ hh h0)
+    hτ.comm_self hxh hτc hag
+
+/-- **The ladder value `1` below the cut `2`**, for the actual two-stage decoder at the grade `2`:
+if `τ 1 < c` and the two-stage decoder agrees with `τ` capped at `c` at `1`, it reads `2` as `τ`
+does. -/
+theorem twoStage_eq_at_two_of_one {ρ τ : Label.{u} → Label.{u}}
+    (hρ : IsWitness (stepSuppressor 2) ρ) (hτ : IsWitness (stepSuppressor 2) τ) {ι : Type*}
+    [Fintype ι] {f : ι → Label.{u}} {c : Label.{u}} (hτc : τ 1 < c)
+    (hag : min (ρ (orbitDecoder 2 f 2 1)) c = min (τ 1) c) :
+    ρ (orbitDecoder 2 f 2 2) = τ 2 := by
   have h12 : visibilityReplace 2 2 (1 : Label.{u}) = 2 := by
     have h1 : (1 : Label.{u}) = (((Ordinal.omega0 * (0 : Ordinal.{u}) + ((1 : ℕ) : Ordinal.{u}) :
         Ordinal.{u})) : Label.{u}) := by simp
@@ -78,7 +111,12 @@ theorem eq_at_two_of_one {σ τ : Label.{u} → Label.{u}} (hσ : IsWitness (ste
         Ordinal.{u})) : Label.{u}) := by simp
     rw [h1, h2, visibilityReplace_coe, Ordinal.visibilityReplace_omega0_mul_add_natCast]
     simp
-  exact eq_at_cut_of_strip hσ hτ h12 hτc hag
+  have h2' : (2 : Label.{u}) = (((Ordinal.omega0 * (0 : Ordinal.{u}) + ((2 : ℕ) : Ordinal.{u}) :
+      Ordinal.{u})) : Label.{u}) := by simp
+  have h2v : IsSelfVisible 2 (2 : Label.{u}) := by
+    rw [h2']; exact isSelfVisible_coe_add (Label.isSuccPrelimit_omega0_mul _) le_rfl
+  have h20 : (2 : Label.{u}) ≠ ⊥ := by rw [h2']; exact WithBot.coe_ne_bot
+  exact twoStage_eq_at_cut hρ hτ h2v h20 h12 hτc hag
 
 end Label
 
@@ -91,7 +129,11 @@ admitted `P` with values in the code grid at `k` (a state of the catalogue of th
 with the values `codeGrid k B` and the block bound `B'` of its heights, `codeGrid k B` below the
 grid point at `2`), a cut `h ≠ ⊥` self-visible at `k`, a witness `ρ` bounded by `k`, a cap
 `c ≠ ⊥`, and an ambient `q` lawful below `(univ, k)` with which the decoded lift agrees capped at
-`c`, the lift `ρ ∘ orbitDecoder k f h ∘ w_P` is lawful below `(univ, k)`. -/
+`c`, the lift `ρ ∘ orbitDecoder k f h ∘ w_P` is lawful below `(univ, k)`.
+
+The transport is sound, but two premises are those of the current tower and are not available for
+a level of the values per grade: the membership of `P` in the catalogue at `m + 2` (full
+lawfulness, values in `codeGrid (m + 1) B`), and the decreasing admission `hA`. -/
 theorem isLawfulBelow_twoStage {B B' : ℕ}
     {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop}
     (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)

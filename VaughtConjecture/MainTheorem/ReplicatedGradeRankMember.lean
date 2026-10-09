@@ -72,6 +72,47 @@ namespace Scheme
 
 variable {n : ℕ} {S : Scheme.{u} n}
 
+/-- **A state lawful below `(univ, k)`, truncated to `⊥` above the grade `k`, is lawful**: the
+cells above `k` read and are read at `⊥`, and below `k` the order, locality and availability are
+those below `(univ, k)`. -/
+theorem isLawful_truncate {R : Fin S.card → Label.{u}} {k : ℕ}
+    (hR : S.rows.IsLawfulBelow ((univ : Finset (Fin n)), k) fun d ↦ R d) :
+    S.rows.IsLawful fun d ↦ if S.toCellScheme.grade d ≤ k then R d else ⊥ := by
+  classical
+  obtain ⟨hord, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hR
+  have hmem (d : Fin S.card) (hd : S.toCellScheme.grade d ≤ k) :
+      d ∈ S.toCellScheme.below ((univ : Finset (Fin n)), k) := by
+    rw [CellScheme.mem_below, CellScheme.gradedIndex_le_iff]; exact ⟨subset_univ _, hd⟩
+  refine ⟨fun d ↦ ?_, fun s ↦ ?_, fun s t hst hg ↦ ?_⟩
+  · split_ifs with hd
+    · exact hord d (hmem d hd)
+    · exact isSelfVisible_bot _
+  · by_cases hs : S.toCellScheme.grade s ≤ k
+    · have hle (d : S.toCellScheme.below (S.toCellScheme.gradedIndex s)) :
+          S.toCellScheme.grade d ≤ k := (d.2.2 : S.toCellScheme.grade d ≤ _).trans hs
+      have e : (fun d : S.toCellScheme.below (S.toCellScheme.gradedIndex s) ↦
+          min ((fun d ↦ if S.toCellScheme.grade d ≤ k then R d else ⊥) d.1)
+            (if S.toCellScheme.grade s ≤ k then R s else ⊥)) =
+          fun d : S.toCellScheme.below (S.toCellScheme.gradedIndex s) ↦ min (R d) (R s) := by
+        funext d; beta_reduce; rw [ite_eq_left (hle d), ite_eq_left hs]
+      rw [e]
+      exact hloc s (hmem s hs)
+    · have e : (fun d : S.toCellScheme.below (S.toCellScheme.gradedIndex s) ↦
+          min ((fun d ↦ if S.toCellScheme.grade d ≤ k then R d else ⊥) d.1)
+            (if S.toCellScheme.grade s ≤ k then R s else ⊥)) = fun _ ↦ ⊥ := by
+        funext d; rw [ite_eq_right hs, min_bot_right]
+      rw [e]
+      exact TransformsTo.bot _ _
+  · by_cases ht : S.toCellScheme.grade t ≤ k
+    · obtain ⟨u, hu, hle⟩ := havail s t (hmem t ht) hst hg
+      have hgu : S.toCellScheme.grade u ≤ k := (congrArg Prod.snd hu).trans_le ht
+      refine ⟨u, hu, ?_⟩
+      simp only [ite_eq_left (hg.trans_le ht), ite_eq_left hgu]
+      exact hle
+    · refine ⟨t, rfl, ?_⟩
+      simp only [ite_eq_right (hg ▸ ht : ¬ S.toCellScheme.grade s ≤ k)]
+      exact bot_le
+
 /-- **The rank tables of a state lawful below `(univ, 1)` are lawful**: the tables read the cells
 of grade one only, where the state's order, locality and availability are those below
 `(univ, 1)`. -/
@@ -175,6 +216,63 @@ theorem stateExtOf_eq_stateExt (hcard : B.S.card ≤ H) {R : Fin B.S.card → La
       B.stateExt H R := by
   rw [stateExt_of_isLawful hR hcard, RankMember.ofLawfulBelowOne_eq_ofLawful]
   rfl
+
+/-- **The extension with the rank member from the grade one is lawful below the grade `k`**,
+for a state lawful below `(univ, k)` (`k ≥ 1`) whose values are self-visible at `1`: it agrees below
+`(univ, k)` with the extension of the truncation of the state to the grades at most `k`, a lawful
+state, along the same rank member (`Scheme.isLawful_ladderExtend`). -/
+theorem isLawfulBelow_stateExtOf (hH : 0 < H) (hcard : B.S.card ≤ H) {k : ℕ} (hk : 1 ≤ k)
+    {R : Fin B.S.card → Label.{u}}
+    (hR : B.S.rows.IsLawfulBelow ((univ : Finset (Fin n)), k) fun d ↦ R d)
+    (hv1 : ∀ e, IsSelfVisible 1 (R e)) :
+    (B.ladderBase H).rows.IsLawfulBelow ((univ : Finset (Fin n)), k) fun t ↦
+      B.stateExtOf R (RankMember.ofLawfulBelowOne B.wf hcard
+        (hR.mono (show ((univ : Finset (Fin n)), 1) ≤ ((univ : Finset (Fin n)), k) from
+          ⟨subset_rfl, hk⟩))) t := by
+  classical
+  set a := RankMember.ofLawfulBelowOne B.wf hcard
+    (hR.mono (show ((univ : Finset (Fin n)), 1) ≤ ((univ : Finset (Fin n)), k) from
+      ⟨subset_rfl, hk⟩)) with ha
+  set T : Fin B.S.card → Label.{u} := fun d ↦ if B.S.toCellScheme.grade d ≤ k then R d else ⊥
+    with hT
+  set v : Fin (B.ladderBase H).card → Label.{u} :=
+    Fin.append T fun j ↦ posTable R (baseIndex H (rankProf B.S H) a (Fin.natAdd _ j)) with hv
+  have hlaw : (B.ladderBase H).rows.IsLawful v := by
+    refine isLawful_ladderExtend B.wf hH (rankProf_le _ H) a (monotone_posTable)
+      posTable_zero (isSelfVisible_posTable hv1) (fun _ hi _ ↦ posTable_ne_bot (by omega))
+      ?_ fun t ht ↦ ?_
+    · have e : (fun d ↦ v (Fin.castAdd _ d)) = T := funext fun d ↦ Fin.append_left _ _ d
+      rw [e]
+      exact isLawful_truncate hR
+    · induction t using Fin.addCases with
+      | left d =>
+        rw [appendFullCellsScheme_grade_castAdd] at ht
+        change Fin.append T _ (Fin.castAdd _ d) = _
+        rw [Fin.append_left, baseIndex_castAdd]
+        change (if B.S.toCellScheme.grade d ≤ k then R d else ⊥) = _
+        rw [ite_eq_left (ht.trans_le hk)]
+        exact (posTable_rankVector hv1 d).symm
+      | right j => exact Fin.append_right _ _ j
+  have e : (fun t : (B.ladderBase H).toCellScheme.below ((univ : Finset (Fin n)), k) ↦
+      B.stateExtOf R a t) =
+      fun t : (B.ladderBase H).toCellScheme.below ((univ : Finset (Fin n)), k) ↦ v t := by
+    funext t
+    obtain ⟨t, htk⟩ := t
+    induction t using Fin.addCases with
+    | left d =>
+      have hd : B.S.toCellScheme.grade d ≤ k := by
+        have := htk.2
+        change (B.S.appendFullCellsScheme 1 _).grade (Fin.castAdd _ d) ≤ k at this
+        rwa [appendFullCellsScheme_grade_castAdd] at this
+      change Fin.append R _ (Fin.castAdd _ d) = Fin.append T _ (Fin.castAdd _ d)
+      rw [Fin.append_left, Fin.append_left, hT]
+      beta_reduce
+      rw [ite_eq_left hd]
+    | right j =>
+      change Fin.append R _ (Fin.natAdd _ j) = Fin.append T _ (Fin.natAdd _ j)
+      rw [Fin.append_right, Fin.append_right]
+  rw [e]
+  exact hlaw.isLawfulBelow _
 
 end Scheme.LadderBaseData
 
