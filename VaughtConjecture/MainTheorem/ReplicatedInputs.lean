@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedLadderCarrier
 import VaughtConjecture.MainTheorem.SeedLadderInputs
+import VaughtConjecture.Extension.ReplicatedMixedLift
 
 /-!
 # Ladder carriers at the seed position from the inputs of the replicated scheme
@@ -18,10 +19,21 @@ the attachment with the admission predicate of `Q`,
 * the capped lifts into the mixed faces (`Seed.HasMixedLifts`, open),
 * the capped lifts from the two coatoms into the full faces of the grades `1, …, m + 1`: the
   context lift (`Seed.HasContextLift`, open) and the mixed-coatom lift
-  (`Seed.HasMixedCoatomLift`, open; the second coatom is a mixed face when the root is not onto),
-* a lawful labelling extending the labels of the attachment (`Seed.HasExtendingLabel`, open; it
-  follows from a lawful labelling of the ladder tower extending them,
-  `Seed.hasExtendingLabel_of_tower`, the copies reading the labels of their originals).
+  (`Seed.HasMixedCoatomLift`; when the root is not onto the second coatom is a mixed face
+  (`Seed.mem_mixedFaces_coatom`) and the lift holds, `Seed.hasMixedCoatomLift`, by the lift from a
+  mixed face into the full face `Seed.cappedLift_mixed_univ`),
+* a lawful labelling extending the labels of the attachment (`Seed.HasExtendingLabel`): a
+  mathematical hypothesis on the replicated scheme, not a step of the assembly; it follows from a
+  lawful labelling of the ladder tower extending them (`Seed.hasExtendingLabel_of_tower`, the
+  copies reading the labels of their originals), and it holds for the admission predicate of
+  requests calibrated on the class with the labels pair admitted, once the values contain the
+  compressed labels of the attachment (`Seed.hasExtendingLabel_attachAdmits` in
+  `VaughtConjecture.MainTheorem.ReplicatedLabel`: the block expansion of the writing of the
+  compressed labels).
+
+The inputs are kept separate: the lifts into the mixed faces, the coatom lifts (the context lift,
+whose target below the full face contains the copies, and the mixed-coatom lift), and the extending
+lawful labelling.
 
 From them the ladder carrier exists (`Seed.exists_ladderCarrier_of_replicatedInputs`: the
 replicated scheme is bountiful by `Seed.isBountiful_replicated_of_lifts`, and
@@ -30,8 +42,12 @@ context face or the donor face no lift is asked: there the replicated scheme is 
 
 **At the seed position** the inputs at some seed of the context
 (`StageType.HasReplicatedInputsAtSeed`, open) give ladder carriers
-(`StageType.HasReplicatedInputsAtSeed.hasLadderGrowthCarriersStableAtSeed`).  Only the requests'
-threshold `≥ 2` is used; no exactness, no root cleanness.
+(`StageType.HasReplicatedInputsAtSeed.hasLadderGrowthCarriersStableAtSeed`).  Of the hypotheses
+of the contract the implication itself uses exactly: the stage is a limit (`Order.IsSuccLimit α`,
+for the completion at a stage that is zero or a limit), and the threshold of the requests is at
+least `2`, from `ClassCalibrated.arity` (`n + 1 ≤` the threshold) together with the positive arity
+of the root (`0 < n`).  Every other hypothesis is handed to the inputs at the seed.  No exactness,
+no root cleanness, no bound on the donor's top grade.
 
 ## References
 
@@ -57,7 +73,9 @@ def HasMixedLifts : Prop :=
     Y.1 ∈ I.mixedFaces g → (I.replicated g H Γ A B').rows.CappedLift h
 
 /-- **The context lift** (open): the replicated scheme lifts capped from the context coatom (the
-points other than the new one) into the full face at every grade `1, …, m + 1`. -/
+points other than the new one) into the full face at every grade `1, …, m + 1`.  Below the context
+coatom lie only cells of the context; below the full face lie also the cells of full scope and
+their copies at the mixed faces, which the lift must label. -/
 def HasContextLift : Prop :=
   ∀ j, 1 ≤ j → j ≤ m + 1 →
     (I.replicated g H Γ A B').rows.CappedLift (X := (univ.erase (Fin.last (m + 1)), j))
@@ -87,8 +105,9 @@ theorem hasCoatomLifts_of_lifts (hc : I.HasContextLift g H Γ A B')
   · rw [mem_singleton.mp hx]
     exact hm
 
-/-- **A labelling extending the labels of the attachment** (open): a lawful section of the
-replicated scheme that is the labelling of the attachment on its cells. -/
+/-- **A labelling extending the labels of the attachment**: a lawful section of the replicated
+scheme that is the labelling of the attachment on its cells.  For the admission predicate of
+calibrated requests it holds (`Seed.hasExtendingLabel_attachAdmits`). -/
 def HasExtendingLabel : Prop :=
   ∃ q : Fin (I.replicated g H Γ A B').card → Label.{u},
     (I.replicated g H Γ A B').rows.IsLawful q ∧
@@ -111,6 +130,46 @@ theorem hasExtendingLabel_of_tower {qT : Fin (I.attachTower g H Γ A B').card �
       change qT ((I.attachTower g H Γ A B').mirrorOrig (I.mixedFaces g) (Fin.castAdd _ _)) = _
       rw [Scheme.mirrorOrig_castAdd]
       exact hqe c⟩
+
+/-- **The second coatom is a mixed face** when the root is not onto: it contains the new point
+(so it is not inside the context face) and a point of the context outside the root (so it is not
+inside the donor face). -/
+theorem mem_mixedFaces_coatom (hg : ¬ Function.Surjective g) :
+    univ.erase (Fin.castSucc (Fin.last m)) ∈ I.mixedFaces g := by
+  rw [mem_mixedFaces]
+  refine ⟨?_, fun he ↦ ?_, fun hsub ↦ ?_, fun hsub ↦ ?_⟩
+  · rw [← Coatom.univ_map_right]
+    exact ((StageType.restrictFace_eq_some_iff _ _).mp I.restrictFace_right).1
+  · have h := mem_univ (Fin.castSucc (Fin.last m) : Fin (m + 2))
+    rw [← he, mem_erase] at h
+    exact h.1 rfl
+  · have hl : Fin.last (m + 1) ∈ univ.erase (Fin.castSucc (Fin.last m)) :=
+      mem_erase.mpr ⟨(Fin.castSucc_lt_last _).ne', mem_univ _⟩
+    exact Coatom.last_notMem_univ_map_left (hsub hl)
+  · obtain ⟨i, hi⟩ : ∃ i, ∀ x, g x ≠ i := by
+      by_contra h
+      push Not at h
+      exact hg fun i ↦ (h i).imp fun _ h ↦ h
+    have hmem : Fin.castSucc (Fin.castSucc i) ∈ univ.erase (Fin.castSucc (Fin.last m)) :=
+      mem_erase.mpr ⟨fun h ↦ (Fin.castSucc_lt_last i).ne (Fin.castSucc_injective _ h),
+        mem_univ _⟩
+    obtain ⟨y, -, hy⟩ := mem_map.mp (hsub hmem)
+    induction y using Fin.lastCases with
+    | last =>
+      rw [extendByLast_last] at hy
+      exact (Fin.castSucc_lt_last _).ne' hy
+    | cast y =>
+      rw [extendByLast_castSucc, Function.Embedding.trans_apply] at hy
+      exact hi y (Fin.castSucc_injective _ (Fin.castSucc_injective _ hy))
+
+/-- **The mixed-coatom lift holds when the root is not onto** (`Seed.cappedLift_mixed_univ` at the
+second coatom, a mixed face of size `m + 1`). -/
+theorem hasMixedCoatomLift (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hA0 : ∀ k, A k fun _ ↦ ⊥) (hg : ¬ Function.Surjective g) :
+    I.HasMixedCoatomLift g H Γ A B' := fun j hj1 hjm ↦
+  cappedLift_mixed_univ hH hcard hΓ0 hΓ hA hA0 (mem_mixedFaces_coatom hg) hj1 hjm
+    (by rw [card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin]; omega)
 
 variable (I g) {d : StageType.{u} α (n + 1)}
   (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
