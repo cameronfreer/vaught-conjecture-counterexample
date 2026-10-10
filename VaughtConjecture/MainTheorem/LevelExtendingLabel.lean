@@ -44,8 +44,11 @@ asked (`Seed.hasExtendingLabel_attachAdmits` asks a set of values containing the
 and a grid point above them).
 
 **The bottom state.**  The labelling uses only the literal reading of the attachment and the
-lawfulness of the section, both of which hold at every state, the bottom state included; the
-ladder recovery (`Seed.lvLevel_σ_embed`, which asks a value other than `⊥`) is not used.
+lawfulness of the section: the literal reading holds at every state lawful below `(univ, 1)`, and
+the lawfulness of the section at every lawful admitted state with values self-visible at `1`.  The
+compressed labelling is such a state (`Seed.attachAdmits_compressedLabel`), and it is the bottom
+state when every label is `⊥`.  The ladder recovery (`Seed.lvLevel_σ_embed`, which asks a value
+other than `⊥`) is not used.
 * When some label of the attachment is not `⊥`, the labelling reads the ladder base as the
   expansion of the first level at the compressed labelling (`Seed.lvLevel_extLabel_embed`).
 * When every label of the attachment is `⊥` (the bottom state), the compressed labelling is the
