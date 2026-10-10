@@ -83,7 +83,7 @@ exactly (R4), (R2) and (R3) for receiving models.  All three are proved: (R2) fo
 by `Realization.receivingResidualReceiving_of_padded` (in
 `VaughtConjecture.MainTheorem.LowPaddedRoute`), (R4) and (R3) for receiving models by
 `Expansion.receivingStableCappedReceiving_levels` and `Realization.hollowReceiving_levels` (in
-`VaughtConjecture.MainTheorem.GrowthLevelRoute`; not yet reviewed).
+`VaughtConjecture.MainTheorem.GrowthLevelRoute`).
 Building receiving into the class does not prove (R1): (R1) asks that every model at a countable
 limit stage receive, and the receiving shown here is that of particular models (the realizations of
 models of the density sentence, the top-free witnesses, glued limits of receiving models, and
@@ -311,10 +311,10 @@ four-hypothesis form.
 
 All three hypotheses are proved: (R2) by `Realization.receivingResidualReceiving_of_padded`, (R4)
 and (R3) by `Expansion.receivingStableCappedReceiving_levels` and
-`Realization.hollowReceiving_levels` (not yet reviewed).  Building receiving into the class does
-not prove (R1) (`Expansion.FiniteCutReceiving`, that every model at a countable limit stage
-receives): the receiving shown here is that of particular models, never that of an arbitrary model,
-and (R1) is not used.  The theorem is a reduction of the counterexample to (R2), (R3) and (R4) in
+`Realization.hollowReceiving_levels`.  Building receiving into the class does not prove (R1)
+(`Expansion.FiniteCutReceiving`, that every model at a countable limit stage receives): the
+receiving shown here is that of particular models, never that of an arbitrary model, and (R1) is
+not used.  The theorem is a reduction of the counterexample to (R2), (R3) and (R4) in
 their receiving forms. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_receivingModels'
     (hR4 : ReceivingStableCappedReceiving.{0}) (hres : ReceivingResidualReceiving.{0, 0})
@@ -328,10 +328,10 @@ conclusion of `vaughtCounterexample_allCarriers_of_expansionDomains` for the rec
 domains, conditional on exactly the three hypotheses of
 `densitySentence_hasThinAlephOneSpectrum_of_receivingModels'` ((R4), (R2) and (R3) for receiving
 models; all three are proved: (R2) by `Realization.receivingResidualReceiving_of_padded`, (R4) and
-(R3) by `Expansion.receivingStableCappedReceiving_levels` and `Realization.hollowReceiving_levels`,
-not yet reviewed).  The cap-to-model theorem on the carriers of the universe `w`, for the reduction
-to `ℕ`, is `MainTheorem.capToModel`; the other statements are derived as for the spectrum.  (R1) is
-not a hypothesis and is not proved. -/
+(R3) by `Expansion.receivingStableCappedReceiving_levels` and `Realization.hollowReceiving_levels`).
+The cap-to-model theorem on the carriers of the universe `w`, for the reduction to `ℕ`, is
+`MainTheorem.capToModel`; the other statements are derived as for the spectrum.  (R1) is not a
+hypothesis and is not proved. -/
 theorem vaughtCounterexample_allCarriers_of_receivingModels'
     (hR4 : ReceivingStableCappedReceiving.{0}) (hres : ReceivingResidualReceiving.{0, 0})
     (hhol : HollowReceiving.{0, 0} IsReceivingCoverHollowAtBlock) :
