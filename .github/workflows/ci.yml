@@ -219,3 +219,29 @@ jobs:
       # the `VaughtConjecture` namespace uses only the standard axioms.
       - name: Audits
         run: bash scripts/check.sh --no-build
+
+      # Dependency manifest, for reproducible cleanup audits, generated from this checkout after
+      # the build above: for the main theorem
+      # `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels` and its components
+      # (R2) `Realization.receivingResidualReceiving_of_padded`,
+      # (R3) `Realization.hollowReceiving_levels`,
+      # (R4) `Expansion.receivingStableCappedReceiving_levels` and
+      # `StageType.hasLadderGrowthCarriersStableAtSeed_levels`, it records the commit, tree and
+      # toolchain; each elaborated statement; each declaration dependency cone (what the proofs
+      # use), with its library declarations, their modules and its axioms; and, separately, the
+      # import closure of the top module (what is imported).  The step fails if a theorem name is
+      # not found; its first command checks that on a deliberately wrong name.  The summary is
+      # printed below and the full manifest is uploaded as the run's `dependency-manifest`
+      # artifact (it is not committed).  Locally: `bash scripts/manifest.sh [OUT]`.
+      - name: Dependency manifest
+        run: |
+          bash scripts/manifest.sh --test
+          bash scripts/manifest.sh "$RUNNER_TEMP/dependency-manifest.txt"
+
+      - name: Upload the dependency manifest
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependency-manifest
+          path: ${{ runner.temp }}/dependency-manifest.txt
+          if-no-files-found: error
+          retention-days: 30
