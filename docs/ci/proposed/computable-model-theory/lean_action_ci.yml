@@ -1,0 +1,88 @@
+# PROPOSED for cameronfreer/computable-model-theory: .github/workflows/lean_action_ci.yml
+# (not active here; see docs/ci/remote-cache.md).  The existing steps are unchanged except for
+# `persist-credentials: false` on the checkout; the staging steps and the `publish` job are new
+# and inert until the repository variable LAKE_CACHE_UPLOAD_ENDPOINT is set.  Only the root
+# package is published: the Mathlib fork is published by InfinitaryLogic's CI (one publisher per
+# scope), and this repository's InfinitaryLogic pin is not the one consumers use.
+name: Lean Action CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+# A newer push to the same ref supersedes a running check.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      staged: ${{ steps.stage.outputs.staged }}
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      # The audit runner's own regression test: fast, and needs no build.
+      - run: scripts/test-run-audit-modules.sh
+      # `lake build --wfail`: any build warning fails CI. This gates the library build only; the
+      # strict classical check and the audit runner below have their own warning policies.
+      - uses: leanprover/lean-action@v1
+        with:
+          build-args: "--wfail"
+      # The classical Fraïssé layer, strictly: warnings as errors, and without the package's
+      # compatibility settings (see the script's header).
+      - run: scripts/check-classical-layer.sh
+      # Audit modules live outside the root import spine; the runner discovers them via
+      # git ls-files so a new *Audit.lean can never be silently skipped, and runs them in parallel
+      # with the package's Lean options (`lake lean`).
+      - run: scripts/run-audit-modules.sh
+
+      # --- Lake artifact cache: staging (main pushes only; inert until configured) -------------
+      # Root-package mappings and archives only; no credential, no network (see the
+      # InfinitaryLogic proposal for the reasons the key lives in a separate job).
+      - name: Stage the Lake artifacts for publication
+        id: stage
+        if: >-
+          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+          vars.LAKE_CACHE_UPLOAD_ENDPOINT != ''
+        env:
+          LAKE_ARTIFACT_CACHE: "true"
+          LAKE_CACHE_DIR: ${{ runner.temp }}/lake-cache
+          STAGING: ${{ runner.temp }}/lake-cache-staging
+        run: |
+          set -euo pipefail
+          TARGETS="ComputableModelTheory ComputableModelTheory.Classical"
+          find .lake/build \( -name '*.ltar' -o -name '*.ltar.hash' \) -delete 2>/dev/null || true
+          lake build $TARGETS > /dev/null
+          lake build $TARGETS --no-build --rehash -o "$RUNNER_TEMP/cmt.jsonl"
+          echo "ComputableModelTheory mappings: $(($(wc -l < "$RUNNER_TEMP/cmt.jsonl") - 1))"
+          lake cache stage "$RUNNER_TEMP/cmt.jsonl" "$STAGING/ComputableModelTheory"
+          du -sh "$STAGING"/*
+          echo "staged=true" >> "$GITHUB_OUTPUT"
+
+      - name: Hand the staged artifacts to the publish job
+        if: ${{ steps.stage.outputs.staged == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lake-cache-staging
+          path: ${{ runner.temp }}/lake-cache-staging
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  publish:
+    needs: build
+    if: ${{ needs.build.outputs.staged == 'true' }}
+    uses: ./.github/workflows/publish-lake-cache.yml
+    with:
+      revision: ${{ github.sha }}
+      artifact-name: lake-cache-staging
+    secrets:
+      LAKE_CACHE_KEY: ${{ secrets.LAKE_CACHE_KEY }}

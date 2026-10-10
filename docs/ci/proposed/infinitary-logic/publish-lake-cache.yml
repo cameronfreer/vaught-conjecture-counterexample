@@ -1,0 +1,211 @@
+# PROPOSED for cameronfreer/infinitary-logic: .github/workflows/publish-lake-cache.yml
+# (not active here; see docs/ci/remote-cache.md).
+#
+# The only job that holds LAKE_CACHE_KEY.  The staging job ran Lean code that landed on master, so
+# everything it hands over is treated as untrusted data: this job checks out three repository files
+# at the published revision (the toolchain pin, the manifest, the package configuration), checks
+# the staged tree, and runs no code from the repository or its dependencies.  `lake cache
+# put-staged` does not configure a workspace, so the scope halves Lake would derive from it (the
+# platform and the toolchain) are supplied here from those trusted files.
+name: publish-lake-cache
+
+on:
+  workflow_call:
+    inputs:
+      revision:
+        description: The InfinitaryLogic commit whose outputs are published
+        required: true
+        type: string
+      artifact-name:
+        description: Name of the staging artifact uploaded by the build job
+        required: true
+        type: string
+    secrets:
+      LAKE_CACHE_KEY:
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pins of the published revision
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.revision }}
+          sparse-checkout: |
+            lean-toolchain
+            lake-manifest.json
+            lakefile.toml
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      - name: Download the staged artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ runner.temp }}/staging
+
+      # `put-staged` joins every artifact name in outputs.jsonl to the staging directory without
+      # checking that the result stays inside it, so only flat directories of regular files with
+      # plain `<hash>.<ext>` names are admitted, and only the two expected packages.
+      - name: Check the staged tree
+        env:
+          STAGING: ${{ runner.temp }}/staging
+        run: |
+          set -euo pipefail
+          for d in "$STAGING"/*; do
+            case "$(basename "$d")" in
+              InfinitaryLogic|mathlib) ;;
+              *) echo "::error::unexpected staged entry $(basename "$d")"; exit 1 ;;
+            esac
+            if [ ! -d "$d" ] || [ -L "$d" ]; then echo "::error::$d is not a directory"; exit 1; fi
+            if find "$d" -mindepth 2 -print -quit | grep -q .; then
+              echo "::error::$d is nested"; exit 1
+            fi
+            if find "$d" -mindepth 1 ! -type f -print -quit | grep -q .; then
+              echo "::error::$d holds an entry that is not a regular file"; exit 1
+            fi
+            python3 - "$d/outputs.jsonl" <<'PY'
+          import json, re, sys
+          NAME = re.compile(r"\A[0-9A-Za-z]+(\.[0-9A-Za-z]+)*\Z")
+          def check(v, n):
+              if isinstance(v, str):
+                  if not NAME.match(v):
+                      sys.exit(f"::error::line {n}: {v!r} is not a plain artifact name")
+              elif isinstance(v, list):
+                  for x in v: check(x, n)
+              elif isinstance(v, dict):
+                  for k, x in v.items(): check(k, n); check(x, n)
+          lines = 0
+          with open(sys.argv[1], encoding="utf-8") as h:
+              for n, line in enumerate(h, start=1):
+                  lines = n
+                  if n > 1: check(json.loads(line), n)
+          if lines < 2:
+              sys.exit(f"::error::{sys.argv[1]} holds no mappings")
+          PY
+          done
+          test -f "$STAGING/InfinitaryLogic/outputs.jsonl"
+
+      - name: Install elan (pinned + checksum) and the pinned toolchain
+        id: toolchain
+        env:
+          ELAN_VER: v4.2.3
+          ELAN_SHA256: df0b2b3a439961ffcbb3985214365ffe40f49bc871df04dff268c7d8e21ca8b2
+        run: |
+          set -euo pipefail
+          TOOLCHAIN="$(cat lean-toolchain)"
+          case "$TOOLCHAIN" in
+            leanprover/lean4:v[0-9]*) ;;
+            *) echo "::error::lean-toolchain names '$TOOLCHAIN', not a leanprover/lean4 release"; exit 1 ;;
+          esac
+          curl -sSL -H "Accept: application/octet-stream" \
+            "https://github.com/leanprover/elan/releases/download/${ELAN_VER}/elan-x86_64-unknown-linux-gnu.tar.gz" \
+            -o elan.tar.gz
+          echo "${ELAN_SHA256}  elan.tar.gz" | sha256sum -c -
+          tar -xzf elan.tar.gz elan-init
+          ./elan-init -y --default-toolchain none
+          rm -f elan.tar.gz elan-init
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install "$TOOLCHAIN"
+          echo "name=$TOOLCHAIN" >> "$GITHUB_OUTPUT"
+
+      # Scopes (must match what `lake cache get --package <p> --repo <r>` derives downstream):
+      #   InfinitaryLogic: cameronfreer/infinitary-logic + pt/<platform> (the package does not set
+      #     platformIndependent) + tc/<toolchain>;
+      #   mathlib: cameronfreer/mathlib4, no platform and no toolchain (the fork's lakefile sets
+      #     platformIndependent and fixedToolchain), revision = the fork commit in the manifest.
+      - name: Publish
+        id: upload
+        env:
+          UPLOAD_ENDPOINT: ${{ vars.LAKE_CACHE_UPLOAD_ENDPOINT }}
+          LAKE_CACHE_KEY_RAW: ${{ secrets.LAKE_CACHE_KEY }}
+          ELAN_TOOLCHAIN: ${{ steps.toolchain.outputs.name }}
+          STAGING: ${{ runner.temp }}/staging
+          REVISION: ${{ inputs.revision }}
+        run: |
+          set -euo pipefail
+          [[ "$REVISION" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::revision is not a commit id"; exit 1; }
+          if [ -z "$UPLOAD_ENDPOINT" ] || [ -z "$LAKE_CACHE_KEY_RAW" ]; then
+            echo "::notice::Lake cache upload not configured; nothing published"
+            exit 0
+          fi
+          LAKE_CACHE_KEY="$(printf '%s' "$LAKE_CACHE_KEY_RAW" | tr -d '[:space:]')"
+          export LAKE_CACHE_KEY
+          echo "::add-mask::$LAKE_CACHE_KEY"
+          export LAKE_CONFIG="$RUNNER_TEMP/lake-cache.toml"
+          cat > "$LAKE_CONFIG" <<TOML
+          [[cache.service]]
+          name = "vc-r2"
+          kind = "s3"
+          artifactEndpoint = "${UPLOAD_ENDPOINT%/}/artifacts"
+          revisionEndpoint = "${UPLOAD_ENDPOINT%/}/revisions"
+          TOML
+          PLATFORM=(--platform x86_64-unknown-linux-gnu)
+          if grep -Eq '^[[:space:]]*platformIndependent[[:space:]]*=[[:space:]]*true' lakefile.toml; then
+            PLATFORM=()
+          fi
+          TC=(--toolchain "$ELAN_TOOLCHAIN")
+          if grep -Eq '^[[:space:]]*(fixedToolchain|bootstrap)[[:space:]]*=[[:space:]]*true' lakefile.toml; then
+            TC=()
+          fi
+          lake cache put-staged "$STAGING/InfinitaryLogic" --service vc-r2 \
+            --repo cameronfreer/infinitary-logic --rev "$REVISION" "${PLATFORM[@]}" "${TC[@]}"
+          if [ -d "$STAGING/mathlib" ]; then
+            URL="$(jq -r '.packages[] | select(.name == "mathlib") | .url' lake-manifest.json)"
+            MATHLIB_REV="$(jq -r '.packages[] | select(.name == "mathlib") | .rev' lake-manifest.json)"
+            [[ "$MATHLIB_REV" =~ ^[0-9a-f]{40}$ ]] || { echo "::error::bad Mathlib revision"; exit 1; }
+            case "$URL" in
+              https://github.com/cameronfreer/mathlib4|https://github.com/cameronfreer/mathlib4.git) ;;
+              *) echo "::error::Mathlib is not the cameronfreer/mathlib4 fork ($URL)"; exit 1 ;;
+            esac
+            # The platform-free, toolchain-free scope is right only while the fork's lakefile
+            # sets both options; read it from the fork itself, not from the staging job.
+            LF="$(curl -fsSL "https://raw.githubusercontent.com/cameronfreer/mathlib4/$MATHLIB_REV/lakefile.lean")"
+            grep -q 'platformIndependent := true' <<< "$LF" \
+              || { echo "::error::the fork is not platformIndependent at $MATHLIB_REV"; exit 1; }
+            grep -q 'fixedToolchain := true' <<< "$LF" \
+              || { echo "::error::the fork does not set fixedToolchain at $MATHLIB_REV"; exit 1; }
+            lake cache put-staged "$STAGING/mathlib" --service vc-r2 \
+              --repo cameronfreer/mathlib4 --rev "$MATHLIB_REV"
+            echo "mathlib_rev=$MATHLIB_REV" >> "$GITHUB_OUTPUT"
+          fi
+          echo "uploaded=true" >> "$GITHUB_OUTPUT"
+
+      # A separate step without the key: the published maps must be readable anonymously and
+      # byte-identical to the staged ones.
+      - name: Confirm the maps on the public endpoint
+        if: ${{ steps.upload.outputs.uploaded == 'true' }}
+        env:
+          PUBLIC: ${{ vars.LAKE_CACHE_ENDPOINT }}
+          ELAN_TOOLCHAIN: ${{ steps.toolchain.outputs.name }}
+          STAGING: ${{ runner.temp }}/staging
+          REVISION: ${{ inputs.revision }}
+          MATHLIB_REV: ${{ steps.upload.outputs.mathlib_rev }}
+        run: |
+          set -euo pipefail
+          [ -n "$PUBLIC" ] || { echo "::warning::LAKE_CACHE_ENDPOINT unset; not confirmed"; exit 0; }
+          TCDIR="$(printf '%s' "$ELAN_TOOLCHAIN" | sed -e 's|/|--|g' -e 's|:|---|g')"
+          PT="pt/x86_64-unknown-linux-gnu/"
+          if grep -Eq '^[[:space:]]*platformIndependent[[:space:]]*=[[:space:]]*true' lakefile.toml; then
+            PT=""
+          fi
+          check() {
+            for _ in 1 2 3 4 5 6; do
+              if curl -fsSL "$1" -o "$RUNNER_TEMP/published.jsonl" \
+                  && cmp -s "$RUNNER_TEMP/published.jsonl" "$2"; then
+                echo "confirmed: $1"; return 0
+              fi
+              sleep 10
+            done
+            echo "::error::not publicly readable or not identical: $1"; return 1
+          }
+          check "${PUBLIC%/}/revisions/cameronfreer/infinitary-logic/${PT}tc/$TCDIR/$REVISION.jsonl" \
+            "$STAGING/InfinitaryLogic/outputs.jsonl"
+          if [ -n "$MATHLIB_REV" ]; then
+            check "${PUBLIC%/}/revisions/cameronfreer/mathlib4/$MATHLIB_REV.jsonl" \
+              "$STAGING/mathlib/outputs.jsonl"
+          fi
