@@ -23,9 +23,11 @@ donor cells whose scope contains the new point (`GrowthCarrier.recovers_eq_of_re
 
 So legality of a growth carrier with literal faces is never the obstacle: what the finite carrier
 statements `StageType.HasExactGrowthCarriers` and `StageType.HasStableGrowthCarriers` ask beyond
-this is the **recovery** (`GrowthCarrier.Recovers`), for every lawful section of the carrier's
-rows.  A pinned extension recovers nothing in general; the recovery is the content of the
-construction of the carrier, which remains open.
+this is the **recovery** (`GrowthCarrier.Recovers`), for every lawful section of the carrier's rows.
+A pinned extension recovers nothing in general; the recovery is the content of the construction of
+the carrier: compiled for the margin calibration and for the hollow reference calibration with a
+nonempty root from `StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed), open
+for the other calibrations.
 
 ## References
 

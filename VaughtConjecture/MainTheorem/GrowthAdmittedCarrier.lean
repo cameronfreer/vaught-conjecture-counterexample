@@ -32,20 +32,25 @@ requests read exactly at the labels of `t'` give exact recovery
 root (`StageType.HollowReferenceCalibrationPos`).
 
 The empty root is not needed: (R3) over covers of positive arity gives (R3) over every cover by
-padding (`Realization.HollowReceiving.of_pos`), so exact growth carriers for the calibration with
-a nonempty root give (R3) (`Realization.hollowReceiving_of_hasExactGrowthCarriers_pos`), and the
-main theorem holds with the hypothesis `hexact` restricted to nonempty roots
+padding (`Realization.HollowReceiving.of_pos`), so exact growth carriers for the calibration with a
+nonempty root give (R3) (`Realization.hollowReceiving_of_hasExactGrowthCarriers_pos`), and the main
+theorem holds with the hypothesis `hexact` restricted to nonempty roots
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_growthCarriers_pos`) or replaced by
 admitted growth carriers
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_admittedCarriers`).
-These are implications; the hypotheses stay open.
+These are implications.  The admitted carriers stay open; the hollow reference calibration with a
+nonempty root has exact growth carriers from the contract at the seed position
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed) through the recognizing
+carriers below.
 
-**Recognizing growth carriers** (`StageType.HasRecognizingGrowthCarriers`, open) replace the
-admitted carriers: no good level continues a layer whose cells at the threshold are all admitted
-(`ProfileTower.Lvl.Good.not_forall_admitted`).  The catalogue states are admitted on the exact class
-(`StageType.GrowthRequests.AdmitsOnClass`), and every lawful section, capped at a label above its
-cap value, is recognized as the image of such a state (`GrowthCarrier.Recognizes`); recovery
-follows (`GrowthCarrier.recovers_of_recognizes`), hence exact growth carriers at nonempty roots
+**Recognizing growth carriers** (`StageType.HasRecognizingGrowthCarriers`; compiled from the
+contract at the seed position, `StageType.hasLadderGrowthCarriersStableAtSeed_levels`, through the
+ladder carriers; not yet reviewed) replace the admitted carriers: no good level continues a layer
+whose cells at the threshold are all admitted (`ProfileTower.Lvl.Good.not_forall_admitted`).  The
+catalogue states are admitted on the exact class (`StageType.GrowthRequests.AdmitsOnClass`), and
+every lawful section, capped at a label above its cap value, is recognized as the image of such a
+state (`GrowthCarrier.Recognizes`); recovery follows (`GrowthCarrier.recovers_of_recognizes`), hence
+exact growth carriers at nonempty roots
 (`StageType.HasRecognizingGrowthCarriers.hasExactGrowthCarriers`) and the main theorem
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriers`).
 
@@ -118,13 +123,15 @@ theorem HasAdmittedGrowthCarriers.hasExactGrowthCarriers (h : HasAdmittedGrowthC
   obtain ⟨G, hfull, hadm⟩ := h t' e hα ht' p hte d hd hn Q hex hQ hrel
   exact ⟨G, GrowthRequests.recovers_eq_of_admitted hex hQ G hfull hadm⟩
 
-/-- **Recognizing growth carriers** (open): at every legal context `t'` at a limit stage, with root
-`e`, face `p` and a one-point coface `d` of `p` (`0 < n`), for every requests `Q` read exactly at
-the labels of `t'`, calibrated and with the relative lift on the exact class, some growth carrier
-with the schemes of `t'` and `d` as literal faces recognizes admitted states in its lawful
-sections (`GrowthCarrier.Recognizes`).  This replaces `StageType.HasAdmittedGrowthCarriers`, whose
-"every cell of full scope at the threshold admitted" no good level can continue
-(`ProfileTower.Lvl.Good.not_forall_admitted`). -/
+/-- **Recognizing growth carriers** (compiled from
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels` through
+`StageType.HasLadderGrowthCarriers.hasRecognizingGrowthCarriers`; not yet reviewed): at every legal
+context `t'` at a limit stage, with root `e`, face `p` and a one-point coface `d` of `p` (`0 < n`),
+for every requests `Q` read exactly at the labels of `t'`, calibrated and with the relative lift on
+the exact class, some growth carrier with the schemes of `t'` and `d` as literal faces recognizes
+admitted states in its lawful sections (`GrowthCarrier.Recognizes`).  This replaces
+`StageType.HasAdmittedGrowthCarriers`, whose "every cell of full scope at the threshold admitted" no
+good level can continue (`ProfileTower.Lvl.Good.not_forall_admitted`). -/
 def HasRecognizingGrowthCarriers : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (e : Fin n ↪ Fin k),
     Order.IsSuccLimit α → t'.IsLegal → ∀ (p : StageType.{u} α n)
@@ -165,11 +172,12 @@ theorem HasRecognizingGrowthCarriers.hasExactGrowthCarriers
     (GrowthRequests.hasRelativeLiftOnClass_of_hasRelativeLift hte hd.2 hex hQ hd.1 hn hrel)
   exact ⟨G, GrowthRequests.recovers_eq_of_recognizes hex hQ G hrec⟩
 
-/-- **Ladder growth carriers** (open): as `StageType.HasRecognizingGrowthCarriers`, with the
-recognition replaced by its source in the construction: a carrier with a cell of full scope at the
-threshold, a field ladder of height `H ≥ 1` (rungs of graded index `(univ, 1)` reading the diagonal
-and the preceding rank), and every cell of full scope at the threshold a ladder controller
-(`GrowthCarrier.IsLadderController`). -/
+/-- **Ladder growth carriers** (compiled from `StageType.hasLadderGrowthCarriersStableAtSeed_levels`
+through `StageType.HasLadderGrowthCarriersStableAtSeed.hasLadderGrowthCarriers`; not yet reviewed):
+as `StageType.HasRecognizingGrowthCarriers`, with the recognition replaced by its source in the
+construction: a carrier with a cell of full scope at the threshold, a field ladder of height `H ≥ 1`
+(rungs of graded index `(univ, 1)` reading the diagonal and the preceding rank), and every cell of
+full scope at the threshold a ladder controller (`GrowthCarrier.IsLadderController`). -/
 def HasLadderGrowthCarriers : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (e : Fin n ↪ Fin k),
     Order.IsSuccLimit α → t'.IsLegal → ∀ (p : StageType.{u} α n)
@@ -232,7 +240,8 @@ theorem hollowReceiving_of_hasExactGrowthCarriers_pos
     exact covers_of_eval u hev⟩
 
 /-- The receiving form of (R3) from exact growth carriers for the reference calibration with a
-nonempty root (open). -/
+nonempty root (the hypothesis follows from `StageType.hasLadderGrowthCarriersStableAtSeed_levels`
+through the recognizing carriers; not yet reviewed). -/
 theorem receivingHollowReceiving_of_hasExactGrowthCarriers_pos
     (hcar : HasExactGrowthCarriers.{u} HollowReferenceCalibrationPos) :
     HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
@@ -245,8 +254,9 @@ namespace MainTheorem
 open Ordinal Realization FirstOrder Language Structure baseLanguage Expansion
 
 /-- **The thin `ℵ₁` spectrum from growth carriers with a nonempty root**: as
-`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_growthCarriers`, with `hexact` asked only
-at nonempty roots.  The three hypotheses are open. -/
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_growthCarriers`, with `hexact` asked only at
+nonempty roots.  `hstab` and `hexact` follow from the contract at the seed position
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed); `hres` is (R2). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_growthCarriers_pos
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})
@@ -258,7 +268,8 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_growthCarriers_pos
 
 /-- **The thin `ℵ₁` spectrum from admitted growth carriers**: (R3) from the admitted carriers
 (`StageType.HasAdmittedGrowthCarriers`, open) through the compiled template, relative lift and
-recovery.  The three hypotheses are open. -/
+recovery.  `hadm` is open; `hstab` follows from the contract at the seed position
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed); `hres` is (R2). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_admittedCarriers
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})
@@ -268,8 +279,9 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_admittedCarriers
     hadm.hasExactGrowthCarriers
 
 /-- **The thin `ℵ₁` spectrum from recognizing growth carriers**: (R3) from the recognizing carriers
-(`StageType.HasRecognizingGrowthCarriers`, open) through the compiled template, relative lift on
-the exact class and recovery by recognition.  The three hypotheses are open. -/
+(`StageType.HasRecognizingGrowthCarriers`) through the compiled template, relative lift on the exact
+class and recovery by recognition.  `hstab` and `hrec` follow from the contract at the seed position
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed); `hres` is (R2). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriers
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})
@@ -278,8 +290,10 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriers
   densitySentence_hasThinAlephOneSpectrum_of_growthCarriers_pos hstab hres
     hrec.hasExactGrowthCarriers
 
-/-- **The thin `ℵ₁` spectrum from ladder growth carriers** (`StageType.HasLadderGrowthCarriers`,
-open), through recognition from the field ladder.  The three hypotheses are open. -/
+/-- **The thin `ℵ₁` spectrum from ladder growth carriers** (`StageType.HasLadderGrowthCarriers`),
+through recognition from the field ladder.  `hstab` and `hlad` follow from the contract at the seed
+position (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed); `hres` is
+(R2). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_ladderCarriers
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})

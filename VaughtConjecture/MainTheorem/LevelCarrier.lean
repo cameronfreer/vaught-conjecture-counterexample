@@ -6,25 +6,56 @@ Authors: Cameron Freer
 import VaughtConjecture.MainTheorem.ReplicatedLevelBountifulTop
 import VaughtConjecture.MainTheorem.LevelExtendingLabel
 import VaughtConjecture.MainTheorem.ReplicatedLevelControl
+import VaughtConjecture.MainTheorem.ApexCompletionReading
 import VaughtConjecture.MainTheorem.ReplicatedCompletion
 
 /-!
-# The completion of a replicated level
+# The completion of a replicated level, and its controllers
 
 Roadmap, Layer 3 ((R3) and (R4), the growth carrier of the levels re-rendered per grade).
 
-A good level with its copies at the mixed faces (`Seed.ALvl.Good.rep`) that is legal below the full
-grade (`Scheme.IsLegalBelowFullGrade`), with a lawful labelling `q` extending the labels of the
-attachment (`Seed.ALvl.Good.HasExtendingLabelRep`, `Seed.hasExtendingLabelLevel_rep`), is completed
-as the replicated scheme over the height-set tower is (`Seed.replicatedCompletion`): the labelling
-reduced to the stage, and the apex added (`Seed.lvRepCompletion`, `StageType.addApex`).
+**The completion.**  A good level `N` at the grade `m + 1` with its copies at the mixed faces
+(`Seed.ALvl.Good.rep`) that is legal below the full grade (`Scheme.IsLegalBelowFullGrade`), with a
+lawful labelling `q` extending the labels of the attachment (`Seed.ALvl.Good.HasExtendingLabelRep`,
+`Seed.hasExtendingLabelLevel_rep`), is completed as the replicated scheme over the height-set tower
+is (`Seed.replicatedCompletion`): the labelling reduced to the stage, and the apex added
+(`Seed.lvRepType`, `Seed.lvRepCompletion`, `StageType.addApex`).
 
 * `Seed.isLegal_lvRepCompletion`: it is legal.
 * `Seed.restrictFace_left_lvRepCompletion`, `Seed.restrictFace_donor_lvRepCompletion`: its context
-  face is the first coatom type and its donor face the donor, literally, labels included (along a
-  proper face whose visible cells are cells of the attachment, the completion is the attachment,
-  `Seed.restrictFace_lvRepCompletion`).
+  face is the first coatom type `I.left` and its donor face the donor `d`, literally, labels
+  included (along a proper face whose visible cells are cells of the attachment, the completion is
+  the attachment, `Seed.restrictFace_lvRepCompletion`).
 * `Seed.cellMap_lvRepCompletion`: along such a face, its cells are those of the attachment.
+* `Seed.lvRepCompletion_label_attEmb`: at the cells of the attachment it keeps their actual labels.
+
+**Recognition through the completion.**  The completion reads the cells of the level as the level
+does (`Seed.lvRepCompletion_rowAt_level`).  So the rung readings of the field ladder
+(`Seed.lvRepCompletion_rung_rows`) and the four controller clauses of the cells of full scope at
+the threshold (`Seed.lvLevel_ladderController`: an admitted state on the context and donor cells,
+the top rung at least the cap, the rungs read as a table `F`, every positive stored value below
+the cap a rung) hold in the completion (`Seed.lvRepCompletion_ladderController`); the apex has
+grade `m + 2` and is never at the threshold.
+
+**The carrier** (`Seed.exists_lvRepCarrier`).  Premises, exactly: a stage `α` that is zero or a
+limit (`hα`); `0 < H` and `#(I.attachmentBase g) ≤ H` (only the attachment is bounded, never the
+amalgam); requests `Q` calibrated on the class (`hQ`) with `2 ≤ Q.threshold`; `2 · #cells ≤ B`;
+the level at the grade `m + 1` good (`hNm`) and its replicated scheme legal below the full grade
+(`hL`); a lawful labelling `q` extending the labels of the attachment (`hq`, `hqe`).  Conclusion:
+the completion is a growth carrier with `I.left` and `d` as literal faces, a cell of full scope at
+the threshold, a field ladder of height `H`, and every cell of full scope at the threshold a ladder
+controller.
+
+**The bottom state.**  The cell of the bottom state stores `⊥` on the context and donor cells; its
+clauses hold trivially (the levels above the first read its ladder base as gap values,
+`Seed.lvLevel_σ_embed_bot`, which no clause reads).
+
+**Scope.**  The statements concern the replicated level at the top grade `m + 1`, not the levels at
+lower grades.  At the seed position the parameters are the seed-fixed choice
+`Seed.seedHeightLevel`, `Seed.seedBlockBound'`
+(`VaughtConjecture.MainTheorem.LevelCarrierContract`).
+
+Not yet reviewed.
 
 ## References
 
@@ -110,6 +141,7 @@ theorem restrictFace_lvRepCompletion (hemb : StrictMono N.embed)
       (s := I.attachmentType g) f (hN.strictMono_repEmb hemb) hN.isLowerEmbedding_repEmb
       (fun c ↦ congrArg Prod.fst (hN.gradedIndex_repEmb c)) hN.comap_rows_repEmb hground hfaces
       (fun c ↦ by
+        -- the label of the stage type is the reduction of `q`
         change Label.reduce α (q _) = _
         rw [hqe c]
         exact ((I.attachmentType g).atStage c).reduce_eq) hvis)
@@ -141,7 +173,6 @@ theorem restrictFace_donor_lvRepCompletion (hemb : StrictMono N.embed)
       obtain ⟨y, rfl⟩ := hz (mem_coe.mpr hx)
       exact mem_map_of_mem _ (mem_univ y))).trans (I.restrictFace_donor_attachmentType g hd)
 
-
 /-- **Along a proper face whose visible cells are cells of the attachment, the cells of the
 completion are those of the attachment**, in their order. -/
 theorem cellMap_lvRepCompletion (hemb : StrictMono N.embed) (hL : hN.rep.IsLegalBelowFullGrade)
@@ -158,13 +189,16 @@ theorem cellMap_lvRepCompletion (hemb : StrictMono N.embed) (hL : hN.rep.IsLegal
     (φ := fun c ↦ (hN.repEmb c).castSucc)
     (fun a b hab ↦ Fin.castSucc_lt_castSucc_iff.mpr (hN.strictMono_repEmb hemb hab)) (fun c ↦ ?_)
     (fun z hz ↦ ?_) hij
-  · change (hN.rep.appendFullCellScheme (m + 2)).scope (hN.repEmb c).castSucc = _
+  · -- an old cell of the completion keeps its scope
+    change (hN.rep.appendFullCellScheme (m + 2)).scope (hN.repEmb c).castSucc = _
     rw [Scheme.appendFullCellScheme_scope_castSucc]
     exact congrArg Prod.fst (hN.gradedIndex_repEmb c)
-  · change Fin (hN.rep.card + 1) at z
+  · -- a cell of the completion is an old cell or the apex
+    change Fin (hN.rep.card + 1) at z
     induction z using Fin.lastCases with
     | last =>
       exfalso
+      -- the apex has full scope
       change ((hN.rep.appendFullCellScheme (m + 2)).scope (Fin.last _) :
         Set (Fin (m + 2))) ⊆ Set.range f at hz
       rw [Scheme.appendFullCellScheme_scope_last, coe_univ] at hz
@@ -172,6 +206,7 @@ theorem cellMap_lvRepCompletion (hemb : StrictMono N.embed) (hL : hN.rep.IsLegal
         obtain ⟨y, rfl⟩ := hz (Set.mem_univ x)
         exact mem_map_of_mem _ (mem_univ y))
     | cast z =>
+      -- an old cell of the completion keeps its scope
       change ((hN.rep.appendFullCellScheme (m + 2)).scope z.castSucc :
         Set (Fin (m + 2))) ⊆ Set.range f at hz
       rw [Scheme.appendFullCellScheme_scope_castSucc] at hz
@@ -182,22 +217,21 @@ theorem cellMap_lvRepCompletion (hemb : StrictMono N.embed) (hL : hN.rep.IsLegal
 theorem rowAt_lvRepCompletion_castSucc (hL : hN.rep.IsLegalBelowFullGrade)
     {q : Fin hN.rep.card → Label.{u}} (hq : hN.rep.rows.IsLawful q) (z x : Fin hN.rep.card) :
     (lvRepCompletion hα hN hL hq).toScheme.rowAt z.castSucc x.castSucc = hN.rep.rowAt z x :=
-  Scheme.rowAt_appendFullCell_castSucc (h := hL.not_le) z x
+  StageType.rowAt_addApex_castSucc (t := lvRepType hα hN hL hq) hL _ z x
 
 /-- The cells of the replicated level keep their graded indices in the completion. -/
 theorem gradedIndex_lvRepCompletion_castSucc (hL : hN.rep.IsLegalBelowFullGrade)
     {q : Fin hN.rep.card → Label.{u}} (hq : hN.rep.rows.IsLawful q) (z : Fin hN.rep.card) :
     (lvRepCompletion hα hN hL hq).toCellScheme.gradedIndex z.castSucc =
       hN.rep.toCellScheme.gradedIndex z :=
-  Scheme.appendFullCellScheme_gradedIndex_castSucc _ _ z
+  StageType.gradedIndex_addApex_castSucc (t := lvRepType hα hN hL hq) hL _ z
 
 /-- The apex has the full grade. -/
 theorem gradedIndex_lvRepCompletion_last (hL : hN.rep.IsLegalBelowFullGrade)
     {q : Fin hN.rep.card → Label.{u}} (hq : hN.rep.rows.IsLawful q) :
     (lvRepCompletion hα hN hL hq).toCellScheme.gradedIndex (Fin.last _) =
       ((univ : Finset (Fin (m + 2))), m + 2) :=
-  Scheme.appendFullCellScheme_gradedIndex_last _ _
-
+  StageType.gradedIndex_addApex_last (t := lvRepType hα hN hL hq) hL _
 
 /-- **The completion keeps the actual labels of the attachment**: at the cell of a cell `c` of the
 attachment, the completed stage type carries the label of `c` in the attachment, `⊤` included
@@ -207,6 +241,7 @@ theorem lvRepCompletion_label_attEmb (hL : hN.rep.IsLegalBelowFullGrade)
     (hqe : ∀ c, q (hN.repEmb c) = (I.attachmentType g).label c) (c : Fin (I.attachment g).card) :
     (lvRepCompletion hα hN hL hq).label (hN.repEmb c).castSucc = (I.attachmentType g).label c := by
   refine (StageType.apexLabel_castSucc (t := lvRepType hα hN hL hq) (hN.repEmb c)).trans ?_
+  -- the label of the stage type is the reduction of `q`
   change Label.reduce α (q _) = _
   rw [hqe c]
   exact ((I.attachmentType g).atStage c).reduce_eq
@@ -216,7 +251,7 @@ theorem lvRepCompletion_rowAt_level (hL : hN.rep.IsLegalBelowFullGrade)
     {q : Fin hN.rep.card → Label.{u}} (hq : hN.rep.rows.IsLawful q) (z x : Fin N.S.card) :
     (lvRepCompletion hα hN hL hq).toScheme.rowAt (Fin.castAdd _ z : Fin hN.rep.card).castSucc
       (Fin.castAdd _ x : Fin hN.rep.card).castSucc = N.S.rowAt z x :=
-  (rowAt_lvRepCompletion_castSucc hα hL hq _ _).trans (Scheme.rowAt_mirror_castAdd _ _)
+  rowAt_addApex_of_levelShape (t := lvRepType hα hN hL hq) hL _ hN.rep_rowAt_castAdd z x
 
 /-- **The rung readings in the completion** of the replicated top level: the rungs of a member
 read themselves at the diagonal code and the preceding rung at the code of the preceding rank. -/
@@ -245,12 +280,14 @@ theorem lvRepCompletion_rung_rows (hH : 0 < H)
     exact h.trans (by simp only [Scheme.ladderCeil, Sum.elim_inl]; omega)
   refine ⟨?_, fun hi0 ↦ ?_⟩
   · rw [lvRepCompletion_rowAt_level]
+    -- the rungs are ladder points of the level
     change (I.lvLevel g H B hd Q m).S.rowAt (I.lvLad g H B hd Q m _) (I.lvLad g H B hd Q m _) = _
     rw [lvLevel_rowAt_lad_lad, hceil i hi]
     simp only [Scheme.ladderCeil, Sum.elim_inl]
     congr 1
     omega
   · rw [lvRepCompletion_rowAt_level]
+    -- the rungs are ladder points of the level
     change (I.lvLevel g H B hd Q m).S.rowAt (I.lvLad g H B hd Q m _) (I.lvLad g H B hd Q m _) = _
     rw [lvLevel_rowAt_lad_lad, hceil (i - 1) (by omega)]
     simp only [Scheme.ladderCeil, Sum.elim_inl]
@@ -294,38 +331,49 @@ theorem lvRepCompletion_ladderController (hH : 0 < H) (hcard : (I.attachmentBase
                 Fin hNm.rep.card).castSucc ≠ ⊥ →
             ∃ i < H, (lvRepCompletion hα hNm hL hq).toScheme.rowAt u
               (Fin.castAdd _ ((I.lvLevel g H B hd Q m).attEmb (I.attachCtxCell g x)) :
-                Fin hNm.rep.card).castSucc = F (i + 1) := by
-  classical
-  have hNm1 : Q.threshold ≤ m + 1 := by
-    have h1 := I.left.isWellFormed.isWellFormed.grade_le_card Q.cap
-    have h2 : #(I.left.toCellScheme.scope Q.cap) ≤ m + 1 :=
-      (card_le_univ _).trans (by simp)
-    exact h1.trans h2
-  obtain ⟨z, rfl⟩ : ∃ z : Fin hNm.rep.card, u = Fin.castSucc z := by
-    revert hu
-    refine Fin.lastCases (n := hNm.rep.card) (motive := fun u ↦
-      (lvRepCompletion hα hNm hL hq).toCellScheme.gradedIndex u =
-        ((univ : Finset (Fin (m + 2))), Q.threshold) →
-        ∃ z : Fin hNm.rep.card, u = Fin.castSucc z) ?_ (fun z _ ↦ ⟨z, rfl⟩) u
-    intro hu
-    exfalso
-    have h1 := congrArg Prod.snd (hu.symm.trans (gradedIndex_lvRepCompletion_last hα hL hq))
-    simp only at h1
-    omega
-  have hz : hNm.rep.toCellScheme.gradedIndex z = ((univ : Finset (Fin (m + 2))), Q.threshold) :=
-    (gradedIndex_lvRepCompletion_castSucc hα hL hq z).symm.trans hu
-  obtain ⟨u', rfl, hu'g⟩ := hNm.exists_castAdd_of_scope_univ z (congrArg Prod.fst hz)
-  obtain ⟨a, F, hadm, htop, hrung, hval⟩ :=
-    lvLevel_ladderController hH hcard hQ hB hN2 u' (hu'g.symm.trans hz)
-  refine ⟨u', rfl, a, F, ?_, ?_, fun i hi ↦ ?_, fun x hx hx0 ↦ ?_⟩
-  · simp only [lvRepCompletion_rowAt_level]
-    exact hadm
-  · rw [lvRepCompletion_rowAt_level, lvRepCompletion_rowAt_level]
-    exact htop
-  · rw [lvRepCompletion_rowAt_level]
-    exact hrung i hi
-  · rw [lvRepCompletion_rowAt_level] at hx0 ⊢
-    exact hval x hx hx0
+                Fin hNm.rep.card).castSucc = F (i + 1) :=
+  addApex_ladderController_of_levelShape (t := lvRepType hα hNm hL hq) hH hcard hQ hB hN2 hL
+    (Nat.succ_pos _) (κ := Fin.castAdd _) hNm.rep_rowAt_castAdd hNm.rep_gradedIndex_castAdd
+    hNm.rep_mem_range_castAdd_of_scope_univ u hu
+
+/-- **The context cells of the carrier are the cells of the attachment**: the cell of the
+completion at a context cell `x` is the cell of `x` in the attachment, through the replicated
+level (the cells of the attachment sit increasingly in the level, `Seed.lvLevel_embed_strictMono`,
+and the visible cells of the context face are cells of the attachment,
+`Seed.cellMap_lvRepCompletion`). -/
+theorem contextCell_lvRepCompletion (hemb : StrictMono N.embed)
+    (hL : hN.rep.IsLegalBelowFullGrade) {q : Fin hN.rep.card → Label.{u}}
+    (hq : hN.rep.rows.IsLawful q)
+    (hleftF : restrictFace Fin.castSuccEmb (lvRepCompletion hα hN hL hq) = some I.left)
+    (hdonF : restrictFace (extendByLast (g.trans Fin.castSuccEmb))
+      (lvRepCompletion hα hN hL hq) = some d) (x : Fin I.left.card) :
+    (GrowthCarrier.ofExtension (isLegal_lvRepCompletion hα hL hq) hleftF hdonF).contextCell x =
+      (Fin.castAdd _ (N.attEmb (I.attachCtxCell g x)) : Fin hN.rep.card).castSucc :=
+  cellMap_lvRepCompletion hα hemb hL hq Fin.castSuccEmb Coatom.univ_map_left_ne
+    (fun z hz ↦ hN.mem_range_repEmb z (.inl fun y hy ↦ by
+      obtain ⟨w, rfl⟩ := hz (mem_coe.mpr hy)
+      exact mem_map_of_mem _ (mem_univ w)))
+    (i := Fin.cast (congrArg Scheme.card (I.comap_left_attachment_scheme g)).symm x)
+    (j := Fin.cast (congrArg Scheme.card (GrowthCarrier.ofExtension
+      (isLegal_lvRepCompletion hα hL hq) hleftF hdonF).comap_context).symm x) rfl
+
+/-- **The donor cells of the carrier are the cells of the attachment**, as for the context cells
+(`Seed.contextCell_lvRepCompletion`). -/
+theorem donorCell_lvRepCompletion (hemb : StrictMono N.embed)
+    (hL : hN.rep.IsLegalBelowFullGrade) {q : Fin hN.rep.card → Label.{u}}
+    (hq : hN.rep.rows.IsLawful q)
+    (hleftF : restrictFace Fin.castSuccEmb (lvRepCompletion hα hN hL hq) = some I.left)
+    (hdonF : restrictFace (extendByLast (g.trans Fin.castSuccEmb))
+      (lvRepCompletion hα hN hL hq) = some d) (j : Fin d.card) :
+    (GrowthCarrier.ofExtension (isLegal_lvRepCompletion hα hL hq) hleftF hdonF).donorCell j =
+      (Fin.castAdd _ (N.attEmb (I.attachDonCell g hd j)) : Fin hN.rep.card).castSucc :=
+  cellMap_lvRepCompletion hα hemb hL hq _ (map_extendByLast_ne_univ g)
+    (fun z hz ↦ hN.mem_range_repEmb z (.inr fun y hy ↦ by
+      obtain ⟨w, rfl⟩ := hz (mem_coe.mpr hy)
+      exact mem_map_of_mem _ (mem_univ w)))
+    (i := Fin.cast (congrArg Scheme.card (I.comap_donor_attachment_scheme g hd)).symm j)
+    (j := Fin.cast (congrArg Scheme.card (GrowthCarrier.ofExtension
+      (isLegal_lvRepCompletion hα hL hq) hleftF hdonF).comap_donor).symm j) rfl
 
 include hα in
 /-- **The ladder growth carrier of the replicated top level**: at a stage that is zero or a limit,
@@ -360,112 +408,31 @@ theorem exists_lvRepCarrier (hH : 0 < H) (hcard : (I.attachmentBase g).S.card �
   have hdonF : restrictFace (extendByLast (g.trans Fin.castSuccEmb))
       (lvRepCompletion hα hNm hL hq) = some d :=
     restrictFace_donor_lvRepCompletion hα hemb hground hfaces hL hq hqe
-  let G := GrowthCarrier.ofExtension (isLegal_lvRepCompletion hα hL hq) hleftF hdonF
-  set N := Q.threshold with hNdef
-  have hNm1 : N ≤ m + 1 := by
-    have h1 := I.left.isWellFormed.isWellFormed.grade_le_card Q.cap
-    have h2 : #(I.left.toCellScheme.scope Q.cap) ≤ m + 1 :=
-      (card_le_univ _).trans (by simp)
-    exact h1.trans h2
-  -- the cells of the level in the completion
-  let emb : Fin (I.lvLevel g H B hd Q m).S.card → Fin G.scheme.card :=
-    fun z ↦ (Fin.castAdd _ z : Fin hNm.rep.card).castSucc
-  have hgi (z : Fin (I.lvLevel g H B hd Q m).S.card) : G.scheme.toCellScheme.gradedIndex (emb z) =
-      (I.lvLevel g H B hd Q m).S.toCellScheme.gradedIndex z :=
-    (gradedIndex_lvRepCompletion_castSucc hα hL hq _).trans
-      (Scheme.gradedIndex_mirror_castAdd (hmix := hNm.not_subset_scope) z)
-  have hrow (z x : Fin (I.lvLevel g H B hd Q m).S.card) :
-      G.scheme.rowAt (emb z) (emb x) = (I.lvLevel g H B hd Q m).S.rowAt z x :=
-    (rowAt_lvRepCompletion_castSucc hα hL hq _ _).trans (Scheme.rowAt_mirror_castAdd _ _)
-  -- the context and donor cells are cells of the attachment
-  have hctx (x : Fin I.left.card) :
-      G.contextCell x = emb ((I.lvLevel g H B hd Q m).attEmb (I.attachCtxCell g x)) :=
-    cellMap_lvRepCompletion hα hemb hL hq Fin.castSuccEmb Coatom.univ_map_left_ne
-      (fun z hz ↦ hNm.mem_range_repEmb z (.inl fun y hy ↦ by
-        obtain ⟨w, rfl⟩ := hz (mem_coe.mpr hy)
-        exact mem_map_of_mem _ (mem_univ w)))
-      (i := Fin.cast (congrArg Scheme.card (I.comap_left_attachment_scheme g)).symm x)
-      (j := Fin.cast (congrArg Scheme.card G.comap_context).symm x) rfl
-  have hdon (j : Fin d.card) :
-      G.donorCell j = emb ((I.lvLevel g H B hd Q m).attEmb (I.attachDonCell g hd j)) :=
-    cellMap_lvRepCompletion hα hemb hL hq _ (map_extendByLast_ne_univ g)
-      (fun z hz ↦ hNm.mem_range_repEmb z (.inr fun y hy ↦ by
-        obtain ⟨w, rfl⟩ := hz (mem_coe.mpr hy)
-        exact mem_map_of_mem _ (mem_univ w)))
-      (i := Fin.cast (congrArg Scheme.card (I.comap_donor_attachment_scheme g hd)).symm j)
-      (j := Fin.cast (congrArg Scheme.card G.comap_donor).symm j) rfl
-  -- the ladder
-  let r : Scheme.RankMember (I.attachmentBase g).S H → ℕ → Fin G.scheme.card :=
-    fun a i ↦ emb ((I.lvLevel g H B hd Q m).embed (lvRung hH a i))
-  have hlad (a : Scheme.RankMember (I.attachmentBase g).S H) (i : ℕ) :
-      (I.lvLevel g H B hd Q m).embed (lvRung hH a i) =
-        I.lvLad g H B hd Q m (a, Sum.inl ⟨min i (H - 1), by omega⟩) := rfl
-  have hceil (a : Scheme.RankMember (I.attachmentBase g).S H) (i : ℕ) (hi : i < H) :
-      ladderIndex H (Scheme.rankProf (I.attachmentBase g).S H) Prod.fst
-        (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H)) a
-        ((a, Sum.inl ⟨min i (H - 1), by omega⟩) : Scheme.LadderPt (I.attachmentBase g).S
-          (Scheme.RankMember (I.attachmentBase g).S H) H) = i + 1 := by
-    have h := ladderIndex_parent (H := H) (prof := Scheme.rankProf (I.attachmentBase g).S H)
-      (parent := Prod.fst) (Scheme.ladderCeil_le (Scheme.rankProf_le _ H))
-      ((a, Sum.inl ⟨min i (H - 1), by omega⟩) : Scheme.LadderPt (I.attachmentBase g).S
-        (Scheme.RankMember (I.attachmentBase g).S H) H)
-    exact h.trans (by simp only [Scheme.ladderCeil, Sum.elim_inl]; omega)
-  -- a cell of full scope at the threshold
-  obtain ⟨w, hw⟩ := lvLevel_hexist (I := I) (g := g) (H := H) (B := B) (hd := hd) (Q := Q) m N
-    hN2 hNm1
-  refine ⟨G, ⟨emb w, (hgi w).trans hw⟩, Scheme.RankMember (I.attachmentBase g).S H, H, r, hH,
-    fun a i hi ↦ ?_, fun a i hi ↦ ?_, fun a i hi hi0 ↦ ?_, fun u hu ↦ ?_⟩
-  · exact (hgi _).trans (lvLevel_gradedIndex_lad m _)
-  · refine (hrow _ _).trans ?_
-    rw [hlad, lvLevel_rowAt_lad_lad, hceil a i hi]
-    simp only [Scheme.ladderCeil, Sum.elim_inl]
-    congr 1
-    omega
-  · refine (hrow _ _).trans ?_
-    rw [hlad, hlad, lvLevel_rowAt_lad_lad, hceil a (i - 1) (by omega)]
-    simp only [Scheme.ladderCeil, Sum.elim_inl]
-    congr 1 <;> omega
-  · -- the controllers: the cells of full scope below the apex are cells of the level
-    obtain ⟨z, rfl⟩ : ∃ z : Fin hNm.rep.card, u = Fin.castSucc z := by
-      revert hu
-      refine Fin.lastCases (n := hNm.rep.card) (motive := fun u ↦
-        G.scheme.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), N) →
-          ∃ z : Fin hNm.rep.card, u = Fin.castSucc z) ?_ (fun z _ ↦ ⟨z, rfl⟩) u
-      intro hu
-      exfalso
-      have h1 := congrArg Prod.snd (hu.symm.trans (gradedIndex_lvRepCompletion_last hα hL hq))
-      simp only at h1
-      omega
-    have hz : hNm.rep.toCellScheme.gradedIndex z = ((univ : Finset (Fin (m + 2))), N) :=
-      (gradedIndex_lvRepCompletion_castSucc hα hL hq z).symm.trans hu
-    obtain ⟨u', rfl, hu'g⟩ := hNm.exists_castAdd_of_scope_univ z (congrArg Prod.fst hz)
-    have hu' : (I.lvLevel g H B hd Q m).S.toCellScheme.gradedIndex u' =
-        ((univ : Finset (Fin (m + 2))), N) :=
-      hu'g.symm.trans hz
-    obtain ⟨a, F, hadm, htop, hrung, hval⟩ :=
-      lvLevel_ladderController hH hcard hQ hB hN2 u' hu'
-    have e1 : (fun x ↦ G.scheme.rowAt (emb u') (G.contextCell x)) =
-        fun x ↦ (I.lvLevel g H B hd Q m).S.rowAt u'
-          ((I.lvLevel g H B hd Q m).attEmb (I.attachCtxCell g x)) :=
-      funext fun x ↦ by rw [hctx]; exact hrow _ _
-    have e2 : (fun j ↦ G.scheme.rowAt (emb u') (G.donorCell j)) =
-        fun j ↦ (I.lvLevel g H B hd Q m).S.rowAt u'
-          ((I.lvLevel g H B hd Q m).attEmb (I.attachDonCell g hd j)) :=
-      funext fun j ↦ by rw [hdon]; exact hrow _ _
-    refine ⟨a, F, ?_, ?_, fun i hi ↦ ?_, fun x hx hx0 ↦ ?_⟩
-    · change Q.AdmitsOnClass (fun x ↦ G.scheme.rowAt (emb u') (G.contextCell x))
-        (fun j ↦ G.scheme.rowAt (emb u') (G.donorCell j))
-      rw [e1, e2]
+  have hctx := contextCell_lvRepCompletion hα hemb hL hq hleftF hdonF
+  have hdon := donorCell_lvRepCompletion hα hemb hL hq hleftF hdonF
+  -- a cell of full scope at the threshold: the threshold is at most `m + 1`, the grade of the cap
+  obtain ⟨w, hw⟩ := lvLevel_hexist (I := I) (g := g) (H := H) (B := B) (hd := hd) (Q := Q) m
+    Q.threshold hN2 Q.threshold_le
+  refine ⟨GrowthCarrier.ofExtension (isLegal_lvRepCompletion hα hL hq) hleftF hdonF,
+    ⟨(Fin.castAdd _ w : Fin hNm.rep.card).castSucc,
+      (gradedIndex_lvRepCompletion_castSucc hα hL hq _).trans
+        ((hNm.rep_gradedIndex_castAdd w).trans hw)⟩,
+    Scheme.RankMember (I.attachmentBase g).S H, H,
+    fun a i ↦ (Fin.castAdd _ ((I.lvLevel g H B hd Q m).embed (lvRung hH a i)) :
+      Fin hNm.rep.card).castSucc, hH, fun a i _ ↦ ?_,
+    fun a i hi ↦ (lvRepCompletion_rung_rows hα hH hNm hL hq a i hi).1,
+    fun a i hi hi0 ↦ (lvRepCompletion_rung_rows hα hH hNm hL hq a i hi).2 hi0, fun u hu ↦ ?_⟩
+  · exact (gradedIndex_lvRepCompletion_castSucc hα hL hq _).trans
+      ((hNm.rep_gradedIndex_castAdd _).trans (lvLevel_gradedIndex_lad m _))
+  · -- the controllers, through the context and donor cells of the attachment
+    obtain ⟨u', rfl, a, F, hadm, htop, hrung, hval⟩ :=
+      lvRepCompletion_ladderController hα hH hcard hQ hB hN2 hNm hL hq u hu
+    refine ⟨a, F, ?_, ?_, hrung, fun x hx hx0 ↦ ?_⟩
+    · simp only [hctx, hdon]
       exact hadm
-    · change G.scheme.rowAt (emb u') (G.contextCell Q.cap) ≤ G.scheme.rowAt (emb u') (r a (H - 1))
-      rw [hctx, hrow, hrow]
+    · rw [hctx]
       exact htop
-    · change G.scheme.rowAt (emb u') (r a i) = F (i + 1)
-      rw [hrow]
-      exact hrung i hi
-    · change G.scheme.rowAt (emb u') (G.contextCell x) ≠ ⊥ at hx0
-      change ∃ i < H, G.scheme.rowAt (emb u') (G.contextCell x) = F (i + 1)
-      rw [hctx, hrow] at hx0 ⊢
+    · rw [hctx] at hx0 ⊢
       exact hval x hx hx0
 
 end Seed

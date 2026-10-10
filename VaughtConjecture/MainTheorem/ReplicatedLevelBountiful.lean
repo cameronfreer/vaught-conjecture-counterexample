@@ -29,13 +29,12 @@ For a good level with its copies at the mixed faces (`Seed.ALvl.Good.rep`):
   `1, …, m + 1`.  The context lift is proved; the premises `hQ`, `hpair`, `hrel`, `hdL`, `0 < n` of
   the context lift stay explicit.
 
-What (i) and (ii) ask is not proved here: they are the lifts of `Seed.HasMixedLifts` and
-`Seed.HasMixedCoatomLift` for the replicated level in place of the replicated scheme over the
-height-set tower.  The proofs of those for the replicated scheme (`Seed.cappedLift_mixed_univ`,
-`Seed.cappedLift_mixed_mixed`, through `Seed.min_decode_eq_decode` and the twins of
-`Scheme.LadderBaseData.exists_controller_twin_ladderTower`) are stated for that scheme and do not
-apply to the levels as they stand.  The first step tested on the levels, the twin one grade below,
-holds (`Seed.lvLevel_twin`).
+Both premises are proved for the replicated top level in
+`VaughtConjecture.MainTheorem.ReplicatedLevelBountifulTop` (`Seed.lvRep_isBountiful`): (i) by the
+lift from a mixed face of a mirrored scheme (`Seed.cappedLift_mirror_mixed_face`, as
+`Seed.lvRep_cappedLift_mixed_univ` and `Seed.lvRep_cappedLift_mixed_mixed`), (ii) by the same lift
+or, at an onto root, by the lift from the donor face
+(`Seed.lvLevel_cappedLift_coatom_of_surjective`).
 
 **Copies are never controllers**: a cell of full scope of the replicated level is a cell of the
 level, with its graded index and its readings of the cells of the level
@@ -165,7 +164,6 @@ theorem cappedLift_rep_of_subset (hfaces : N.S.toCellScheme.faces = I.amalgam.to
   exact (hpreA.cappedLift_iff (R := I.amalgam.rows) h le_rfl).mpr
     (I.isBountiful (hgf hX) (hgf hY) h)
 
-
 /-- **A cell of full scope of the replicated level is a cell of the level**, with its graded index;
 it reads the cells of the level as the level does (`Scheme.rowAt_mirror_castAdd`). -/
 theorem exists_castAdd_of_scope_univ (u : Fin hN.rep.card)
@@ -183,7 +181,6 @@ theorem exists_castAdd_of_scope_univ (u : Fin hN.rep.card)
   | left u' => exact ⟨u', rfl, Scheme.gradedIndex_mirror_castAdd (hmix := hN.not_subset_scope) u'⟩
 
 end ALvl.Good
-
 
 /-- **The context lift at every grade of a level**: the level at the grade `j + 1` lifts capped
 from the context coatom into `(univ, k)` for every `1 ≤ k ≤ j + 1`, under the premises of

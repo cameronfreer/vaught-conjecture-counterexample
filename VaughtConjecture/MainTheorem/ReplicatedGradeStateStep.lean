@@ -224,7 +224,6 @@ theorem not_isStripFree_codeGrid {m B B' b : ℕ} (hm : 2 ≤ m) (hb : b ≤ B) 
 
 end Scheme
 
-
 namespace Seed
 
 variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m}

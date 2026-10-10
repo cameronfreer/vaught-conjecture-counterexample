@@ -16,11 +16,13 @@ exactly at the labels of the context.  The construction does not need exactness:
 requests calibrated on the class, the labels of the context and of the donor admitted, and the
 relative lift on the exact class.  Stated so, **one** constructor serves both evaluations.
 
-* `StageType.HasLadderGrowthCarriersStable` (open): at every legal context at a limit stage, for
-  every requests calibrated on the class (`StageType.GrowthRequests.ClassCalibrated`), reading the
-  donor's labels from the context's labels, with the relative lift on the exact class, a ladder
-  carrier: a cell of full scope at the threshold, a field ladder, and every cell of full scope at
-  the threshold a ladder controller.  The body is that of `StageType.HasLadderGrowthCarriers`.
+* `StageType.HasLadderGrowthCarriersStable` (compiled from the contract at the seed position,
+  `StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed): at every legal context
+  at a limit stage, for every requests calibrated on the class
+  (`StageType.GrowthRequests.ClassCalibrated`), reading the donor's labels from the context's
+  labels, with the relative lift on the exact class, a ladder carrier: a cell of full scope at the
+  threshold, a field ladder, and every cell of full scope at the threshold a ladder controller.  The
+  body is that of `StageType.HasLadderGrowthCarriers`.
 * `StageType.HasLadderGrowthCarriersStable.hasLadderGrowthCarriers`: it gives the ladder carriers
   of (R3) (exact requests are admitted by the labels; calibrated requests are calibrated on the
   class).
@@ -36,7 +38,10 @@ relative lift on the exact class.  Stated so, **one** constructor serves both ev
 * `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_stableLadderCarriers`: the thin `ℵ₁`
   spectrum from this one constructor and (R2).
 
-The hypothesis `StageType.HasLadderGrowthCarriersStable` is open; so are (R3) and (R4) through it.
+The hypothesis `StageType.HasLadderGrowthCarriersStable` follows from the contract at the seed
+position (`StageType.HasLadderGrowthCarriersStableAtSeed.hasLadderGrowthCarriersStable`), which is
+compiled with no hypotheses (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet
+reviewed); (R3) and (R4) follow through it.
 Stable modelhood is not used: the cap-to-model theorem gives it afterwards.
 
 ## References
@@ -53,12 +58,14 @@ open Finset StageType
 
 namespace StageType
 
-/-- **Ladder growth carriers for requests calibrated on the class** (open): at every legal context
-`t'` at a limit stage, with root `e`, face `p` and a one-point coface `d` of `p` (`0 < n`), for
-every requests `Q` calibrated on the class, reading the labels of `d` from the labels of `t'`, with
-the relative lift on the exact class, some growth carrier with the schemes of `t'` and `d` as
-literal faces has a cell of full scope at the threshold, a field ladder of height `H ≥ 1`, and
-every cell of full scope at the threshold a ladder controller (`GrowthCarrier.IsLadderController`).
+/-- **Ladder growth carriers for requests calibrated on the class** (compiled from the contract at
+the seed position, `StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed): at
+every legal context `t'` at a limit stage, with root `e`, face `p` and a one-point coface `d` of `p`
+(`0 < n`), for every requests `Q` calibrated on the class, reading the labels of `d` from the labels
+of `t'`, with the relative lift on the exact class, some growth carrier with the schemes of `t'` and
+`d` as literal faces has a cell of full scope at the threshold, a field ladder of height `H ≥ 1`,
+and every cell of full scope at the threshold a ladder controller
+(`GrowthCarrier.IsLadderController`).
 The body is that of `StageType.HasLadderGrowthCarriers`; only the hypotheses on `Q` are weaker. -/
 def HasLadderGrowthCarriersStable : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (e : Fin n ↪ Fin k),
@@ -115,10 +122,12 @@ namespace MainTheorem
 
 open Realization FirstOrder Language Structure baseLanguage Expansion
 
-/-- **The thin `ℵ₁` spectrum from one ladder constructor**: ladder carriers for requests
-calibrated on the class (`StageType.HasLadderGrowthCarriersStable`, open) give both (R4) (the
-stable evaluation) and (R3) (the actual evaluation); with (R2) (`hres`, open) the density sentence
-has a thin `ℵ₁` spectrum.  The two hypotheses are open. -/
+/-- **The thin `ℵ₁` spectrum from one ladder constructor**: ladder carriers for requests calibrated
+on the class (`StageType.HasLadderGrowthCarriersStable`) give both (R4) (the stable evaluation) and
+(R3) (the actual evaluation); with (R2) (`hres`) the density sentence has a thin `ℵ₁` spectrum.  The
+ladder hypothesis is compiled from the contract at the seed position
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed); (R2) is a hypothesis
+here. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_stableLadderCarriers
     (hres : ReceivingResidualReceiving.{0, 0}) (hlad : HasLadderGrowthCarriersStable.{0}) :
     HasThinAlephOneSpectrum densitySentence.{0} :=

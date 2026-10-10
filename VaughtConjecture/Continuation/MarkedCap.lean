@@ -82,8 +82,10 @@ named)).
 
 Acquisition for the marked-cap context is proved
 (`Realization.hollowAcquisition_isMarkedCapContext`, compiled in this repository (theorem named),
-`Continuation/MarkedCarrierAcquisition.lean`).  Determination for the marked-cap context in
-general remains open, and (R3) (`Realization.HollowReceiving`) is not proved.
+`Continuation/MarkedCarrierAcquisition.lean`).  Determination for the marked-cap context in general
+remains open, and (R3) (`Realization.HollowReceiving`) is not proved through it ((R3) follows
+instead from `StageType.hasLadderGrowthCarriersStableAtSeed_levels` through
+`Realization.hollowReceiving_of_hasExactGrowthCarriers_pos`, not yet reviewed).
 
 ## Placement
 

@@ -11,26 +11,62 @@ import VaughtConjecture.MainTheorem.SeedLevelTopFacts
 
 Roadmap, Layer 3 ((R3) and (R4), the growth carrier of the levels re-rendered per grade).
 
-At the seed of `StageType.exists_growthSeed_of_isSuccLimit`, with the seed-fixed choice
-`Seed.seedHeightLevel`, `Seed.seedBlockBound'` (one parameter set; only `#attachment ≤ H` is asked
-of the height, never `#amalgam ≤ H`), the replicated level at the grade `m + 1`:
-
-* is well formed, consistent, bountiful (`Seed.lvRep_isBountiful_seedChoice'`), and of grade below
-  `m + 2` (`Seed.ALvl.Good.rep_grade_lt`);
-* carries a lawful labelling extending the labels of the attachment
-  (`Seed.hasExtendingLabelLevel_rep`, from `VaughtConjecture.MainTheorem.LevelExtendingLabel`);
-* given its codedness and its completeness below the full grade, is legal below the full grade
-  (`Seed.ALvl.Good.rep_isLegalBelowFullGrade`), and its completion is a ladder growth carrier
-  (`Seed.exists_lvRepCarrier`).
-
 **The contract** (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`): the carrier contract
-`StageType.HasLadderGrowthCarriersStableAtSeed` holds, the codedness and the completeness below the
-full grade of the replicated top level at the seed choice being those of
-`VaughtConjecture.MainTheorem.SeedLevelTopFacts`
-(`Seed.lvRep_isLegalBelowFullGrade_seedChoice'`).  The conditional form
-`StageType.hasLadderGrowthCarriersStableAtSeed_of_codedComplete` isolates those two inputs.  Every
-premise used is a binder of the contract (`hpair`, `hrel`, `hQ`, a legal donor coface, `0 < n`, a
-limit stage).
+`StageType.HasLadderGrowthCarriersStableAtSeed` holds, with no hypotheses.  Not yet reviewed.
+
+**The premises**, exactly the binders of the contract: a limit stage (`hα : Order.IsSuccLimit α`);
+a legal context `t'` on `m + 1` points (`ht'`) with its first coatom `p'`
+(`hp' : restrictFace Fin.castSuccEmb t' = some p'`); a root `g : Fin n ↪ Fin m` with root face `p`
+(`hte : restrictFace (g.trans Fin.castSuccEmb) t' = some p`) and `0 < n` (`hn`); a legal one-point
+coface `d` of `p` (`hd : d ∈ p.cofaces`); and requests `Q` with the labels pair correct (`hpair`),
+calibrated on the class (`hQ`) and with the relative lift on the class (`hrel`).  The seed is that
+of `StageType.exists_growthSeed_of_isSuccLimit` (first coatom type `t'`, donor the face of the
+amalgam along the root and the new point).  The threshold satisfies `2 ≤ Q.threshold` by the arity
+(`n + 1 ≤` threshold, `ClassCalibrated.arity`, with `0 < n`) and `Q.threshold ≤ m + 1` by the grade
+of the cap in the context (`StageType.GrowthRequests.threshold_le`, from `grade_le_card`), not by
+the arity.
+
+**The seed-fixed parameters**: one parameter set at each seed, the height `Seed.seedHeightLevel`
+(`#(I.attachmentBase g) + 1`; only `#attachment ≤ H` is asked, never `#amalgam ≤ H`) and the block
+bound `Seed.seedBlockBound'` (`max (2 · #cells + 1) Seed.seedGridBound`; every use of the block
+bound is a lower bound, the strict one `2 · #cells < B` for the twins of the mixed lifts).
+
+**The route.**
+* *Per-level re-rendering* (`Seed.lvLevel`, `Seed.ALvl.next`): the level at the grade `j + 1`
+  renders every state through its own orbit code at `j + 1` and the upper decoder
+  (`Label.upperDecoderAt`); no state is asked to be a member of a lower catalogue.
+* *Per-grade catalogues with recoding* (`Seed.lvCat`): the states in the code grid, canonical for
+  the orbit code at the grade and admitted there; the catalogues of different grades are separate.
+* *Plain-grid heights*: the rows of the new cells are the sections and the agreement heights in the
+  grid `grid (j + 1) B` (`Seed.ALvl.Φ`).
+* *Owner-capped repair and restoration*: the state step (`Seed.exists_stateStep_admitted`,
+  `Seed.exists_stateStep_level`, with no relation between the grade and the threshold) gives the
+  short lifts; `CellScheme.Rows.hasOwnerCappedLifts_of_rows_short` and
+  `CellScheme.Rows.cappedLift_of_ownerCappedLift` give the context lift at every grade
+  (`Seed.lvLevel_cappedLift`), and the donor lift is `Seed.lvLevel_cappedLift_donor`.
+* *Mirror copies* at the mixed faces (`Seed.ALvl.Good.rep`): the lifts from a mixed face
+  (`Seed.cappedLift_mirror_mixed_face`, through `Seed.lvLevel_ladderReading`,
+  `Seed.lvLevel_shadowAgree`, `Seed.lvLevel_twinGen`), and bountifulness
+  (`Seed.lvRep_isBountiful_seedChoice'`).
+* *Legality below the full grade* (`Seed.lvRep_isLegalBelowFullGrade_seedChoice'`): coded, complete
+  below the full grade, of grades below `m + 2` (`Seed.ALvl.Good.rep_grade_lt`).
+* *The labelling* (`Seed.hasExtendingLabelLevel_rep`): lawful, extending the labels of the
+  attachment.
+* *Completion by `StageType.addApex`* and *recognition transport* (`Seed.exists_lvRepCarrier`,
+  `Seed.lvRepCompletion_ladderController`): the completion has `t'` and `d` as literal faces, and
+  every cell of full scope at the threshold is a ladder controller.
+
+**The bottom state.**  At the bottom state the levels above the first read the ladder base as gap
+values (`Seed.lvLevel_σ_embed_bot`); its cell stores `⊥` on the context and donor cells, so its
+controller clauses hold trivially, and the lift at the cap `⊥` is separate
+(`Seed.ALvl.Good.hasOwnerCappedLifts_next_bot`).
+
+**Scope.**  The construction and its facts concern the replicated level at the top grade `m + 1`,
+not the levels at lower grades at unrestricted source grades.
+
+**Consequences** (compiled implications): (R3) and (R4) through
+`StageType.HasLadderGrowthCarriersStableAtSeed.hasLadderGrowthCarriersStable`, and the thin `ℵ₁`
+spectrum from (R2) by `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed`.
 
 ## References
 
@@ -44,90 +80,7 @@ namespace VaughtConjecture
 open Finset Label CellScheme StageType
 open scoped Ordinal
 
-namespace Seed
-
-variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H B : ℕ}
-  {d : StageType.{u} α (n + 1)}
-  {hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d}
-  {Q : GrowthRequests I.left d.toScheme}
-
-namespace ALvl.Good
-
-variable {N : I.ALvl g H (m + 1)} (hN : N.Good B (lvAdm hd Q))
-include hN
-
-/-- **Every cell of the replicated level at the grade `m + 1` has grade below `m + 2`**: a cell of
-full scope has grade at most `m + 1`, a cell of proper scope at most the size of its scope. -/
-theorem rep_grade_lt (z : Fin hN.rep.card) : hN.rep.toCellScheme.grade z < m + 2 := by
-  change N.S.toCellScheme.grade (N.S.mirrorOrig (I.mixedFaces g) z) < m + 2
-  rcases N.inv (N.S.mirrorOrig (I.mixedFaces g) z) with h | h
-  · omega
-  · have h1 := hN.wf.isWellFormed.grade_le_card (N.S.mirrorOrig (I.mixedFaces g) z)
-    have h2 := card_lt_card (ssubset_univ_iff.mpr h)
-    simp only [card_univ, Fintype.card_fin] at h2
-    omega
-
-/-- **The replicated level at the grade `m + 1` is legal below the full grade** given its
-codedness, its bountifulness and its completeness below the full grade. -/
-theorem rep_isLegalBelowFullGrade
-    (hfaces : N.S.toCellScheme.faces = I.amalgam.toCellScheme.faces)
-    (hcoded : hN.rep.IsCoded) (hbount : hN.rep.rows.IsBountiful)
-    (hcomp : ∀ X ∈ hN.rep.toCellScheme.gradedFaces, X.2 < m + 2 →
-      ∃ z, hN.rep.toCellScheme.gradedIndex z = X) :
-    hN.rep.IsLegalBelowFullGrade where
-  isWellFormed := hN.isWellFormed_rep hfaces
-  isCoded := hcoded
-  isConsistent := hN.isConsistent_rep
-  isBountiful := hbount
-  grade_lt := hN.rep_grade_lt
-  exists_gradedIndex_eq := hcomp
-
-end ALvl.Good
-
-/-- The level at the grade `m + 1` at the seed choice is good. -/
-theorem seedTopGood (I : Seed.{u} α m) (g : Fin n ↪ Fin m) {d : StageType.{u} α (n + 1)}
-    (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
-    (Q : GrowthRequests I.left d.toScheme) {p₀ : StageType.{u} α n}
-    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀} (hQ : Q.ClassCalibrated hte) :
-    (I.lvLevel g (I.seedHeightLevel g) (I.seedBlockBound' g) hdA Q m).Good (I.seedBlockBound' g)
-      (lvAdm hdA Q) :=
-  lvLevel_good (seedHeightLevel_pos I g) (card_attachmentBase_le_seedHeightLevel I g) hQ
-    (two_mul_card_le_seedBlockBound' I g) m (by omega)
-
-end Seed
-
 namespace StageType
-
-/-- **The carrier contract from the codedness and the completeness of the replicated top level**
-(see the module docstring): if, at every seed and requests calibrated on the class, the replicated
-level at the grade `m + 1` at the choice `Seed.seedHeightLevel`, `Seed.seedBlockBound'` is coded and
-complete below the full grade, then `StageType.HasLadderGrowthCarriersStableAtSeed` holds. -/
-theorem hasLadderGrowthCarriersStableAtSeed_of_codedComplete
-    (hcc : ∀ {α : Ordinal.{u}} {n m : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m)
-      {d : StageType.{u} α (n + 1)}
-      (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
-      (Q : GrowthRequests I.left d.toScheme) {p₀ : StageType.{u} α n}
-      {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
-      (hQ : Q.ClassCalibrated hte),
-      (Seed.seedTopGood I g hdA Q hQ).rep.IsCoded ∧
-      ∀ X ∈ (Seed.seedTopGood I g hdA Q hQ).rep.toCellScheme.gradedFaces, X.2 < m + 2 →
-        ∃ z, (Seed.seedTopGood I g hdA Q hQ).rep.toCellScheme.gradedIndex z = X) :
-    HasLadderGrowthCarriersStableAtSeed.{u} := by
-  intro α n m t' g p' hα ht' hp' p hte d hd hn Q hpair hQ hrel
-  obtain ⟨I, rfl, hdA⟩ :=
-    exists_growthSeed_of_isSuccLimit hα ht' hp' ((restrictFace_trans t' _ g hp').trans hte) hd
-  have hN := Seed.seedTopGood I g hdA Q hQ
-  obtain ⟨hcoded, hcomp⟩ := hcc I g hdA Q hQ
-  have hL := hN.rep_isLegalBelowFullGrade (Seed.faces_lvLevel m) hcoded
-    (Seed.lvRep_isBountiful_seedChoice' hte hd hn hdA hpair hQ hrel) hcomp
-  obtain ⟨q, hq, hqe⟩ := Seed.hasExtendingLabelLevel_rep (hd := hdA)
-    (Seed.seedHeightLevel_pos I g) (Seed.card_attachmentBase_le_seedHeightLevel I g) hQ hpair
-    (Seed.two_mul_card_le_seedBlockBound' I g) m (by omega)
-  have hN2 : 2 ≤ Q.threshold := by have := hQ.arity; omega
-  exact Seed.exists_lvRepCarrier hα.isSuccPrelimit (Seed.seedHeightLevel_pos I g)
-    (Seed.card_attachmentBase_le_seedHeightLevel I g) hQ (Seed.two_mul_card_le_seedBlockBound' I g)
-    hN2 hN hL hq hqe
-
 
 /-- **The carrier contract at the seed position** (`StageType.HasLadderGrowthCarriersStableAtSeed`):
 at the seed of `StageType.exists_growthSeed_of_isSuccLimit` and the seed-fixed choice

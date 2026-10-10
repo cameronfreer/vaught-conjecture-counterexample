@@ -73,7 +73,6 @@ theorem le_upperDecoderAt_gridPoint {ι : Type*} [Fintype ι] {k K B' : ℕ}
 
 end Label
 
-
 namespace Seed
 
 variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H B : ℕ}

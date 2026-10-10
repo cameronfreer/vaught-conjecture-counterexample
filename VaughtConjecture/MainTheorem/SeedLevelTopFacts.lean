@@ -62,6 +62,7 @@ theorem lvLevel_isCoded (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
   | 0, _ => (I.attachmentBase g).isCoded_ladderBase H
   | j + 1, hj => by
     have hN := lvLevel_good (B := B) (hd := hd) hH hcard hQ hB j (by omega)
+    -- the next level appends the cells of the catalogue
     change ((I.lvLevel g H B hd Q j).nS B (I.lvCat g B hd Q (j + 2))).IsCoded
     refine Scheme.isCoded_appendFullCells (lvLevel_isCoded hH hcard hQ hB j (by omega))
       fun i z ↦ ?_
@@ -91,6 +92,7 @@ theorem lvLevel1_exists_gradedIndex_one (hH : 0 < H) :
     ∃ z, (I.lvLevel1 g H).S.toCellScheme.gradedIndex z = ((univ : Finset (Fin (m + 2))), 1) := by
   obtain ⟨a⟩ := (inferInstance : Nonempty (Scheme.RankMember (I.attachmentBase g).S H))
   refine ⟨Fin.natAdd _ (Scheme.ladderEquiv _ _ H (a, Sum.inl ⟨0, hH⟩)), ?_⟩
+  -- the first level appends the ladder points to the attachment
   change ((I.attachmentBase g).S.appendFullCellsScheme 1 _).gradedIndex (Fin.natAdd _ _) = _
   rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd]
 
@@ -153,6 +155,7 @@ theorem lvRep_exists_gradedIndex_attached {J : ℕ}
     exact h
   refine ⟨Fin.castAdd _ ((I.lvLevel g H B hd Q J).attEmb e),
     (Scheme.gradedIndex_mirror_castAdd _).trans ((hN.gradedIndex_attEmb e).trans ?_)⟩
+  -- the cell of the attachment is the lower embedding of the cell of the amalgam
   change I.amalgam.toCellScheme.gradedIndex (I.amalgam.toScheme.lowerEmb _ e) = X
   rw [he, hc]
 
@@ -186,18 +189,24 @@ theorem lvRep_exists_gradedIndex (hH : 0 < H)
     have hU : X.1 ∈ I.mixedFaces g := (I.mem_mixedFaces g).mpr ⟨hXF, hXu, hXc.1, hXc.2⟩
     exact lvRep_exists_gradedIndex_mixed hH hN hU hX.2.1 hX.2.2
 
-/-- **Every cell of the replicated top level has grade below `m + 2`**: a cell of the level has
-grade at most `m + 1` or proper scope, and a copy has the grade of its original. -/
-theorem lvRep_grade_lt (hN : (I.lvLevel g H B hd Q m).Good B (lvAdm hd Q))
+/-- **Every cell of the replicated level at the grade `m + 1` has grade below `m + 2`**: a cell of
+full scope has grade at most `m + 1`, a cell of proper scope at most the size of its scope, and a
+copy has the grade of its original. -/
+theorem ALvl.Good.rep_grade_lt {N : I.ALvl g H (m + 1)} (hN : N.Good B (lvAdm hd Q))
     (z : Fin hN.rep.card) : hN.rep.toCellScheme.grade z < m + 2 := by
-  change (I.lvLevel g H B hd Q m).S.toCellScheme.grade
-    ((I.lvLevel g H B hd Q m).S.mirrorOrig (I.mixedFaces g) z) < m + 2
-  set y := (I.lvLevel g H B hd Q m).S.mirrorOrig (I.mixedFaces g) z
-  rcases (I.lvLevel g H B hd Q m).inv y with h | h
+  -- a cell of the replicated level has the grade of its original
+  change N.S.toCellScheme.grade (N.S.mirrorOrig (I.mixedFaces g) z) < m + 2
+  rcases N.inv (N.S.mirrorOrig (I.mixedFaces g) z) with h | h
   · omega
-  · have hlt : #((I.lvLevel g H B hd Q m).S.toCellScheme.scope y) < m + 2 := by
+  · have hlt : #(N.S.toCellScheme.scope (N.S.mirrorOrig (I.mixedFaces g) z)) < m + 2 := by
       simpa using card_lt_card (ssubset_univ_iff.mpr h)
-    exact (hN.wf.isWellFormed.grade_le_card y).trans_lt hlt
+    exact (hN.wf.isWellFormed.grade_le_card _).trans_lt hlt
+
+/-- **Every cell of the replicated top level has grade below `m + 2`**
+(`Seed.ALvl.Good.rep_grade_lt` at the level `m`). -/
+theorem lvRep_grade_lt (hN : (I.lvLevel g H B hd Q m).Good B (lvAdm hd Q))
+    (z : Fin hN.rep.card) : hN.rep.toCellScheme.grade z < m + 2 :=
+  hN.rep_grade_lt z
 
 /-! ### At the seed choice -/
 

@@ -146,7 +146,6 @@ theorem lvLevel_hexist : ∀ (J k : ℕ), 2 ≤ k → k ≤ J + 1 →
       exact ⟨Fin.natAdd _ ((I.lvCat g B hd Q (J + 2)).equivFin ⟨_, hbot⟩),
         Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ _⟩
 
-
 /-- The grade of a cell of the attachment in a level. -/
 theorem lvLevel_grade_attEmb (J : ℕ) (e : Fin (I.attachment g).card) :
     (I.lvLevel g H B hd Q J).S.toCellScheme.grade ((I.lvLevel g H B hd Q J).attEmb e) =
@@ -383,7 +382,6 @@ theorem lvLevel_htwin (hcard : (I.attachmentBase g).S.card ≤ H)
         rw [hre, lvLevel_rowAt_new_new J i i, ← hRdef,
           agreementHeight_self (gridPoint_mem_grid le_rfl) (fun _ hx ↦ le_gridPoint_of_mem_grid hx)]
         exact le_gridPoint_of_mem_codeGrid (hRB e)
-
 
 /-- **The lift from a mixed face into the full face of a replicated level** (with
 `2 · #cells < B`): for a good level at the grade `J + 1`, a mixed face `U` and

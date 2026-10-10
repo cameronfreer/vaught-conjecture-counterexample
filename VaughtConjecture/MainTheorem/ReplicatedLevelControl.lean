@@ -125,7 +125,6 @@ theorem grade_lvRung (hH : 0 < H) (a : Scheme.RankMember (I.attachmentBase g).S 
     (I.lvBase g H).toCellScheme.grade (lvRung hH a i) = 1 :=
   Scheme.appendFullCellsScheme_grade_natAdd _ _ _ _
 
-
 /-- **A controller reads the attachment as the truncation of its state**: for a good level at the
 grade `k + 1` and a state `R` lawful below `(univ, 1)`, the reading of a cell of the attachment is
 `R` truncated at `k + 2`. -/

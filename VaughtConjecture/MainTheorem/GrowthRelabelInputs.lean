@@ -34,7 +34,8 @@ growth carriers at the seed position
 (`StageType.HasLadderGrowthCarriersAtSeed.hasRecognizingGrowthCarriers`): the root is not onto
 (`StageType.GrowthRequests.Calibrated.not_surjective`), lies in the first coatom after a relabelling
 (`Realization.exists_perm_root_eq`), and the recognizing carrier there is relabelled back with its
-recognition (`GrowthCarrier.Recognizes.relabel`).  These are implications; the contracts stay open.
+recognition (`GrowthCarrier.Recognizes.relabel`).  These are implications; the recognizing carriers
+also follow from `StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed).
 
 ## References
 

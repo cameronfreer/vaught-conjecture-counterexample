@@ -175,7 +175,6 @@ theorem lvLevel_ladderReading (hcard : (I.attachmentBase g).S.card ≤ H) :
         _ = _ := congrArg (fun a ↦ upperDecoderAt (k + 2) (k + 3) B P
             (Φ' (Scheme.rankProf (I.attachmentBase g).S H a e))) hmem
 
-
 /-- **Every level reads the cells of the attachment literally** at a state lawful below
 `(univ, 1)`. -/
 theorem lvLevel_σ_attEmb (hcard : (I.attachmentBase g).S.card ≤ H) :
@@ -355,7 +354,6 @@ theorem lvLevel_shadowAgree (hH : 0 < H) (hcard : (I.attachmentBase g).S.card �
           min (P e) ((I.lvLevel g H B hd Q (k + 1)).σ P (Fin.natAdd _ i))
         rw [hσold, hσu, ← hW.monotone.map_min, hcap, hshadow, ← hspec.2 e, hW.monotone.map_min,
           upperDecoderAt_orbitCode]
-
 
 /-- **Twins of a section at every grade** (with `2 · #cells < B`): at a state `P` lawful below
 `(univ, k + 1)`, admitted at `k + 1`, with values self-visible at `1`, at every grade

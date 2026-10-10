@@ -15,8 +15,10 @@ Roadmap, Layer 3 ((R3) and (R4), the assembly of the recognizing growth carrier)
 The **inputs of the ladder tower** at a seed for requests `Q` (`Seed.LadderTowerInputs`): a
 height, a finite set of values containing `⊥` and a grid bound, the capped lifts of the tower from
 the two coatoms into the full faces of the grades `2, …, m + 1`, and a lawful labelling of the tower
-extending the glued labels of the amalgam.  These are the open cores of the construction; from them
-the ladder carrier exists (`Seed.exists_ladderCarrier_of_inputs`: the tower is bountiful by
+extending the glued labels of the amalgam.  These inputs stay open; the contract itself has a
+direct proof by the levels re-rendered per grade
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`, not yet reviewed).  From the inputs the
+ladder carrier exists (`Seed.exists_ladderCarrier_of_inputs`: the tower is bountiful by
 `Seed.isBountiful_ladderTower_of_coatomLifts`, and `Seed.exists_ladderCarrier` assembles the
 completion).
 

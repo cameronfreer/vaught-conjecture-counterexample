@@ -59,7 +59,9 @@ construction of Layer 3, 3.4, builds its scheme from the donor by design.
 **What this does not show.**  `StageType.HasStableRecoverySchemes ξ
 (StageType.GradedCapCalibration ξ)` asks for a stable recovery scheme at every legal `T⁺`,
 embedding, coface `D` and `γ` with the calibration; it is proved at these two inputs only, and
-stays open, and (R4) with it.  The inputs are still special:
+stays open (so this route to (R4) is not complete; (R4) follows instead from
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels`, not yet reviewed).
+The inputs are still special:
 
 * no label of the donors is `⊤`, so the clause on `γ` of `StageType.IsStableRecoveryScheme` and
   the branch at `⊤` of `StageType.ReadsThroughCap` are not used;

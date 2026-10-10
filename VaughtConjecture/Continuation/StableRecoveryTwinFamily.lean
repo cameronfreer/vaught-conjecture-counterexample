@@ -50,11 +50,12 @@ at the reading cell.  Two cases:
   at `2`.
 
 **What this does not show.**  `StageType.HasStableRecoverySchemes ξ
-(StageType.GradedCapCalibration ξ)` stays open at other inputs, and (R4) with it.  The inputs
-here keep the shape of the twin donors: no label of the donor is the formal top (the clause on `γ`
-and the branch at `⊤` of `StageType.ReadsThroughCap` are unused); `(univ, 3)` is the only graded
-face of grade `N = 3` containing the cap and the new cells; and the reference cell is the root
-itself, so all labels of the donor lie in one block.
+(StageType.GradedCapCalibration ξ)` stays open at other inputs (so this route to (R4) is not
+complete; (R4) follows instead from `StageType.hasLadderGrowthCarriersStableAtSeed_levels`, not
+yet reviewed).  The inputs here keep the shape of the twin donors: no label of the donor is the
+formal top (the clause on `γ` and the branch at `⊤` of `StageType.ReadsThroughCap` are unused);
+`(univ, 3)` is the only graded face of grade `N = 3` containing the cap and the new cells; and the
+reference cell is the root itself, so all labels of the donor lie in one block.
 
 ## Placement
 
