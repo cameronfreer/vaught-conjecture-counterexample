@@ -13,7 +13,7 @@ Roadmap, Layer 3 ((R3) and (R4), testing the mixed lifts of the replicated schem
 The lifts into the mixed faces of the replicated scheme over the height-set tower dominate the
 readings of the cells of the attachment by a controller through its **twin**: a cell of full scope
 at every lower grade read by the controller at the top of the height set
-(`Scheme.LadderBaseData.exists_controller_twin_ladderTower`, used by `Seed.min_decode_eq_decode`).
+(`Scheme.LadderBaseData.exists_controller_twin_ladderTower`, used by `Seed.attachTower_twin`).
 In the re-rendered levels the catalogues are not nested, so the twin is the cell of the orbit code
 of the controller's state one grade below, and the controller reads it through the upper decoder.
 
@@ -27,7 +27,7 @@ of the controller's state one grade below, and the controller reads it through t
   attachment.  So the domination step of the twin holds at the next lower grade.
 
 Not proved here: the twins at the grades further below (the controller reads them through two or
-more decoders), and the remaining steps of `Seed.min_decode_eq_decode` and
+more decoders), and the remaining steps of `Seed.min_decode_eq_decode_m` and
 `Seed.cappedLift_mixed_face` for the levels.
 
 **Scope.**  Instances and test inputs of the levels re-rendered per grade; not used by the main
