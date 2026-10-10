@@ -514,13 +514,8 @@ omit hN in
 /-- Capped lifts below a pair not above `(univ, g + 1)` are those of the level. -/
 theorem SLvl.cappedLift_sS_iff {X Y : Finset (Fin (m + 2)) × ℕ} (hXY : X ≤ Y)
     (hY : ¬ ((univ : Finset (Fin (m + 2))), g + 1) ≤ Y) :
-    (N.sS C).rows.CappedLift hXY ↔ N.S.rows.CappedLift hXY := by
-  have h : N.S.toCellScheme.IsSourcePrefix (N.sS C).toCellScheme (Fin.castAdd _) Y :=
-    ⟨Scheme.isLowerEmbedding_castAdd (S := N.S) (g + 1) C.card
-      (fun i ↦ N.Φs C (C.equivFin.symm i).1) N.not_le,
-      Scheme.appendFullCellsScheme_scope_castAdd N.S (g + 1) _,
-      fun d hd ↦ ⟨⟨d, Scheme.lt_card_of_mem_below hY hd⟩, rfl⟩⟩
-  rw [← h.cappedLift_iff hXY le_rfl, Scheme.comap_rows_castAdd]
+    (N.sS C).rows.CappedLift hXY ↔ N.S.rows.CappedLift hXY :=
+  Scheme.cappedLift_appendFullCells_iff hXY hY
 
 end Next
 

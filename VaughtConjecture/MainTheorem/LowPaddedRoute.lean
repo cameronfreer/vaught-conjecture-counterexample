@@ -38,7 +38,9 @@ and (R2) for receiving models (`Realization.receivingResidualReceiving_of_padded
 
 **The main theorem with (R2) from the padded tower**
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_padded`, compiled in this repository):
-conditional on (R4) for receiving models and (R3) for receiving models, which are not proved here.
+conditional on (R4) for receiving models and (R3) for receiving models.  Both are proved in
+`VaughtConjecture.MainTheorem.GrowthLevelRoute` (`Expansion.receivingStableCappedReceiving_levels`
+and `Realization.hollowReceiving_levels`).
 
 ## References
 
@@ -126,7 +128,8 @@ open FirstOrder Language baseLanguage Realization StageType Expansion
 
 /-- **The thin `ℵ₁` spectrum with (R2) from the padded tower**
 (`StageType.hasLowDisplays_of_padded`): conditional on (R4) for receiving models (`hR4`) and (R3)
-for receiving models (`hhol`); neither is proved here. -/
+for receiving models (`hhol`), both proved in `VaughtConjecture.MainTheorem.GrowthLevelRoute`
+(`Expansion.receivingStableCappedReceiving_levels`, `Realization.hollowReceiving_levels`). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_padded
     (hR4 : ReceivingStableCappedReceiving.{0})
     (hhol : HollowReceiving.{0, 0} IsReceivingCoverHollowAtBlock) :

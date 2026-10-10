@@ -49,13 +49,8 @@ variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m
 theorem ALvl.cappedLift_nS_iff {j : ℕ} (N : I.ALvl g H j)
     (C : Finset (Fin (I.attachment g).card → Label.{u})) {X Y : Finset (Fin (m + 2)) × ℕ}
     (hXY : X ≤ Y) (hY : ¬ ((univ : Finset (Fin (m + 2))), j + 1) ≤ Y) :
-    (N.nS B C).rows.CappedLift hXY ↔ N.S.rows.CappedLift hXY := by
-  have h : N.S.toCellScheme.IsSourcePrefix (N.nS B C).toCellScheme (Fin.castAdd _) Y :=
-    ⟨Scheme.isLowerEmbedding_castAdd (S := N.S) (j + 1) C.card
-      (fun i ↦ N.Φ B C (C.equivFin.symm i).1) N.not_le,
-      Scheme.appendFullCellsScheme_scope_castAdd N.S (j + 1) _,
-      fun d hd ↦ ⟨⟨d, Scheme.lt_card_of_mem_below hY hd⟩, rfl⟩⟩
-  rw [← h.cappedLift_iff hXY le_rfl, Scheme.comap_rows_castAdd]
+    (N.nS B C).rows.CappedLift hXY ↔ N.S.rows.CappedLift hXY :=
+  Scheme.cappedLift_appendFullCells_iff hXY hY
 
 /-- **The first level lifts from the context coatom at the grade one.** -/
 theorem lvLevel1_cappedLift_one (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
