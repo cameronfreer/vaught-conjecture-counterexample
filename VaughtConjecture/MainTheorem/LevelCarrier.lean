@@ -9,22 +9,52 @@ import VaughtConjecture.MainTheorem.ReplicatedLevelControl
 import VaughtConjecture.MainTheorem.ReplicatedCompletion
 
 /-!
-# The completion of a replicated level
+# The completion of a replicated level, and its controllers
 
 Roadmap, Layer 3 ((R3) and (R4), the growth carrier of the levels re-rendered per grade).
 
-A good level with its copies at the mixed faces (`Seed.ALvl.Good.rep`) that is legal below the full
-grade (`Scheme.IsLegalBelowFullGrade`), with a lawful labelling `q` extending the labels of the
-attachment (`Seed.ALvl.Good.HasExtendingLabelRep`, `Seed.hasExtendingLabelLevel_rep`), is completed
-as the replicated scheme over the height-set tower is (`Seed.replicatedCompletion`): the labelling
-reduced to the stage, and the apex added (`Seed.lvRepCompletion`, `StageType.addApex`).
+**The completion.**  A good level `N` at the grade `m + 1` with its copies at the mixed faces
+(`Seed.ALvl.Good.rep`) that is legal below the full grade (`Scheme.IsLegalBelowFullGrade`), with a
+lawful labelling `q` extending the labels of the attachment (`Seed.ALvl.Good.HasExtendingLabelRep`,
+`Seed.hasExtendingLabelLevel_rep`), is completed as the replicated scheme over the height-set tower
+is (`Seed.replicatedCompletion`): the labelling reduced to the stage, and the apex added
+(`Seed.lvRepType`, `Seed.lvRepCompletion`, `StageType.addApex`).
 
 * `Seed.isLegal_lvRepCompletion`: it is legal.
 * `Seed.restrictFace_left_lvRepCompletion`, `Seed.restrictFace_donor_lvRepCompletion`: its context
-  face is the first coatom type and its donor face the donor, literally, labels included (along a
-  proper face whose visible cells are cells of the attachment, the completion is the attachment,
-  `Seed.restrictFace_lvRepCompletion`).
+  face is the first coatom type `I.left` and its donor face the donor `d`, literally, labels
+  included (along a proper face whose visible cells are cells of the attachment, the completion is
+  the attachment, `Seed.restrictFace_lvRepCompletion`).
 * `Seed.cellMap_lvRepCompletion`: along such a face, its cells are those of the attachment.
+* `Seed.lvRepCompletion_label_attEmb`: at the cells of the attachment it keeps their actual labels.
+
+**Recognition through the completion.**  The completion reads the cells of the level as the level
+does (`Seed.lvRepCompletion_rowAt_level`).  So the rung readings of the field ladder
+(`Seed.lvRepCompletion_rung_rows`) and the four controller clauses of the cells of full scope at
+the threshold (`Seed.lvLevel_ladderController`: an admitted state on the context and donor cells,
+the top rung at least the cap, the rungs read as a table `F`, every positive stored value below
+the cap a rung) hold in the completion (`Seed.lvRepCompletion_ladderController`); the apex has
+grade `m + 2` and is never at the threshold.
+
+**The carrier** (`Seed.exists_lvRepCarrier`).  Premises, exactly: a stage `α` that is zero or a
+limit (`hα`); `0 < H` and `#(I.attachmentBase g) ≤ H` (only the attachment is bounded, never the
+amalgam); requests `Q` calibrated on the class (`hQ`) with `2 ≤ Q.threshold`; `2 · #cells ≤ B`;
+the level at the grade `m + 1` good (`hNm`) and its replicated scheme legal below the full grade
+(`hL`); a lawful labelling `q` extending the labels of the attachment (`hq`, `hqe`).  Conclusion:
+the completion is a growth carrier with `I.left` and `d` as literal faces, a cell of full scope at
+the threshold, a field ladder of height `H`, and every cell of full scope at the threshold a ladder
+controller.
+
+**The bottom state.**  The cell of the bottom state stores `⊥` on the context and donor cells; its
+clauses hold trivially (the levels above the first read its ladder base as gap values,
+`Seed.lvLevel_σ_embed_bot`, which no clause reads).
+
+**Scope.**  The statements concern the replicated level at the top grade `m + 1`, not the levels at
+lower grades.  At the seed position the parameters are the seed-fixed choice
+`Seed.seedHeightLevel`, `Seed.seedBlockBound'`
+(`VaughtConjecture.MainTheorem.LevelCarrierContract`).
+
+Not yet reviewed.
 
 ## References
 

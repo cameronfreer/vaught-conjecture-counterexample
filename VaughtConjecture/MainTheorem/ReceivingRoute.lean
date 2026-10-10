@@ -76,13 +76,17 @@ losses, from the coface instances, (R4), (R2) and (R3) for receiving models, are
 **The three-hypothesis form**
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'`; on all countable
 carriers, `MainTheorem.vaughtCounterexample_allCarriers_of_receivingModels'`): the four-hypothesis
-form with `hext` given by its proof (`StageType.hasApexCoatomExtensions_blockStage`), conditional
-on exactly (R4), (R2) and (R3) for receiving models.  These three hypotheses are open.  Building
-receiving into the class does not prove (R1): (R1) asks that every model at a countable limit
-stage receive, and the receiving shown here is that of particular models (the realizations of
+form with `hext` given by its proof (`StageType.hasApexCoatomExtensions_blockStage`), conditional on
+exactly (R4), (R2) and (R3) for receiving models.  (R4) and (R3) for receiving models follow from
+the carrier contract at the seed position (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`;
+not yet reviewed) through
+`Expansion.ReceivingStableCappedReceiving.of_hasStableGrowthCarriers_gradedCapMargin` and
+`Realization.receivingHollowReceiving_of_hasExactGrowthCarriers_pos`; (R2) is a hypothesis here.
+Building receiving into the class does not prove (R1): (R1) asks that every model at a countable
+limit stage receive, and the receiving shown here is that of particular models (the realizations of
 models of the density sentence, the top-free witnesses, glued limits of receiving models, and
-stable candidates of receiving models under (R4)), never that of an arbitrary model.  The theorem
-reduces the counterexample to (R2), (R3) and (R4) in their receiving forms.
+stable candidates of receiving models under (R4)), never that of an arbitrary model.
+The theorem reduces the counterexample to (R2), (R3) and (R4) in their receiving forms.
 
 **Comparison with the route through all models.**  (R4), (R2) and (R3) give their receiving forms
 (`Expansion.StableCappedReceiving.receivingStableCappedReceiving`,
@@ -302,11 +306,12 @@ The coatom extension property with apex at every countable block stage is not as
 `StageType.hasApexCoatomExtensions_blockStage`.  The other statements are derived as in the
 four-hypothesis form.
 
-These three hypotheses are open.  Building receiving into the class does not prove (R1)
-(`Expansion.FiniteCutReceiving`, that every model at a countable limit stage receives): the
-receiving shown here is that of particular models, never that of an arbitrary model, and (R1) is
-not used.  The theorem is a reduction of the counterexample to
-(R2), (R3) and (R4) in their receiving forms. -/
+(R4) and (R3) follow from the carrier contract at the seed position
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed); (R2) is a hypothesis
+here.  Building receiving into the class does not prove (R1) (`Expansion.FiniteCutReceiving`, that
+every model at a countable limit stage receives): the receiving shown here is that of particular
+models, never that of an arbitrary model, and (R1) is not used.  The theorem is a reduction of the
+counterexample to (R2), (R3) and (R4) in their receiving forms. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_receivingModels'
     (hR4 : ReceivingStableCappedReceiving.{0}) (hres : ReceivingResidualReceiving.{0, 0})
     (hhol : HollowReceiving.{0, 0} IsReceivingCoverHollowAtBlock) :
@@ -314,13 +319,14 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_receivingModels'
   densitySentence_hasThinAlephOneSpectrum_of_receivingModels
     (fun η _ ↦ StageType.hasApexCoatomExtensions_blockStage η) hR4 hres hhol
 
-/-- **A thin uncountable infinitary class on all countable carriers, through receiving models**:
-the conclusion of `vaughtCounterexample_allCarriers_of_expansionDomains` for the receiving
-expansion domains, conditional on exactly the three hypotheses of
+/-- **A thin uncountable infinitary class on all countable carriers, through receiving models**: the
+conclusion of `vaughtCounterexample_allCarriers_of_expansionDomains` for the receiving expansion
+domains, conditional on exactly the three hypotheses of
 `densitySentence_hasThinAlephOneSpectrum_of_receivingModels'` ((R4), (R2) and (R3) for receiving
-models), which are open.  The cap-to-model theorem on the carriers of the universe `w`, for the
-reduction to `ℕ`, is `MainTheorem.capToModel`; the other statements are derived as for the
-spectrum.  (R1) is not a hypothesis and is not proved. -/
+models; (R4) and (R3) follow from `StageType.hasLadderGrowthCarriersStableAtSeed_levels`, not yet
+reviewed).  The cap-to-model theorem on the carriers of the universe `w`, for the reduction to `ℕ`,
+is `MainTheorem.capToModel`; the other statements are derived as for the spectrum.  (R1) is not a
+hypothesis and is not proved. -/
 theorem vaughtCounterexample_allCarriers_of_receivingModels'
     (hR4 : ReceivingStableCappedReceiving.{0}) (hres : ReceivingResidualReceiving.{0, 0})
     (hhol : HollowReceiving.{0, 0} IsReceivingCoverHollowAtBlock) :

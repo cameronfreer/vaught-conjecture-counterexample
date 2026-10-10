@@ -55,6 +55,10 @@ least `2`, from `ClassCalibrated.arity` (`n + 1 ≤` the threshold) together wit
 of the root (`0 < n`).  Every other hypothesis is handed to the inputs at the seed.  No exactness,
 no root cleanness, no bound on the donor's top grade.
 
+The inputs of the replicated scheme over the height-set tower stay open; the contract itself is
+proved by the levels re-rendered per grade (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`,
+not yet reviewed).
+
 ## References
 
 The growth construction is that of [Kni26, §4].

@@ -24,7 +24,8 @@ most that of the context.  At this position the growth seed exists for every inp
 ## Main definitions
 
 * `StageType.HasExactGrowthCarriersAtSeed C`, `StageType.HasRecognizingGrowthCarriersAtSeed`,
-  `StageType.HasLadderGrowthCarriersAtSeed`: the contracts at the seed position only (open).
+  `StageType.HasLadderGrowthCarriersAtSeed`: the contracts at the seed position only (see the
+  definitions for their status).
 
 ## Main statements
 
@@ -51,7 +52,12 @@ seed position give `StageType.HasRecognizingGrowthCarriers` at every context
 `VaughtConjecture.MainTheorem.GrowthRelabelInputs`), the requests being relabelled with the context
 and the top-grade clause of the seed position being automatic for exact calibrated requests.
 
-These are implications; the contracts at the seed position stay open.
+These are implications.  The everywhere forms `StageType.HasLadderGrowthCarriers`,
+`StageType.HasRecognizingGrowthCarriers` and `StageType.HasExactGrowthCarriers` for
+`StageType.HollowReferenceCalibrationPos` follow from the stable contract at the seed position
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed), and so do the
+seed-position forms with a compiled restriction (`StageType.HasRecognizingGrowthCarriers.atSeed`,
+`StageType.HasExactGrowthCarriers.atSeed`).
 
 ## References
 
@@ -152,10 +158,12 @@ theorem HasExactGrowthCarriersAtSeed.hasExactGrowthCarriers_pos
   hseed.hasExactGrowthCarriers (fun _ _ _ _ _ _ hC ↦ hC.1.not_surjective)
     (fun _ _ _ _ _ _ σ hC ↦ hC.reindex σ) (fun _ _ _ _ _ _ hC ↦ hC.1.topGrade_le)
 
-/-- **Recognizing growth carriers at the seed position** (open):
-`StageType.HasRecognizingGrowthCarriers` asked only at contexts on `m + 1` points whose first
-coatom is a closed face `p'`, along roots `g.trans Fin.castSuccEmb`, for donors of top grade at
-most that of the context. -/
+/-- **Recognizing growth carriers at the seed position** (from
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels` through
+`StageType.HasRecognizingGrowthCarriers.atSeed`; not yet reviewed):
+`StageType.HasRecognizingGrowthCarriers` asked only at contexts on `m + 1` points whose first coatom
+is a closed face `p'`, along roots `g.trans Fin.castSuccEmb`, for donors of top grade at most that
+of the context. -/
 def HasRecognizingGrowthCarriersAtSeed : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n m : ℕ⦄ (t' : StageType.{u} α (m + 1)) (g : Fin n ↪ Fin m)
     (p' : StageType.{u} α m), Order.IsSuccLimit α → t'.IsLegal →
@@ -173,8 +181,10 @@ theorem HasRecognizingGrowthCarriers.atSeed (h : HasRecognizingGrowthCarriers.{u
   fun _ _ _ t' _ _ hα ht' _ p hte d hd _ hn Q hex hQ hrel ↦
     h t' _ hα ht' p hte d hd hn Q hex hQ hrel
 
-/-- **Ladder growth carriers at the seed position** (open): `StageType.HasLadderGrowthCarriers`
-asked only at the seed position, as in `StageType.HasRecognizingGrowthCarriersAtSeed`. -/
+/-- **Ladder growth carriers at the seed position**: `StageType.HasLadderGrowthCarriers` asked only
+at the seed position, as in `StageType.HasRecognizingGrowthCarriersAtSeed`.  No restriction from the
+everywhere form is compiled; the everywhere form follows from
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed). -/
 def HasLadderGrowthCarriersAtSeed : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n m : ℕ⦄ (t' : StageType.{u} α (m + 1)) (g : Fin n ↪ Fin m)
     (p' : StageType.{u} α m), Order.IsSuccLimit α → t'.IsLegal →
@@ -253,7 +263,8 @@ open Ordinal Realization FirstOrder Language Structure baseLanguage Expansion
 
 /-- **The thin `ℵ₁` spectrum from recognizing growth carriers at the seed position**: as
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriers`, with the carriers
-asked only at the seed position.  The three hypotheses are open. -/
+asked only at the seed position.  `hstab` and `hrec` follow from
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed); `hres` is (R2). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriersAtSeed
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})
@@ -264,7 +275,8 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriersAtSeed
 
 /-- **The thin `ℵ₁` spectrum from ladder growth carriers at the seed position**: as
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_ladderCarriers`, with the carriers asked
-only at the seed position.  The three hypotheses are open. -/
+only at the seed position.  `hstab` follows from
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed); `hres` is (R2). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_ladderCarriersAtSeed
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})

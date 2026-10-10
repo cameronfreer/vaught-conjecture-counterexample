@@ -186,18 +186,23 @@ theorem lvRep_exists_gradedIndex (hH : 0 < H)
     have hU : X.1 ∈ I.mixedFaces g := (I.mem_mixedFaces g).mpr ⟨hXF, hXu, hXc.1, hXc.2⟩
     exact lvRep_exists_gradedIndex_mixed hH hN hU hX.2.1 hX.2.2
 
-/-- **Every cell of the replicated top level has grade below `m + 2`**: a cell of the level has
-grade at most `m + 1` or proper scope, and a copy has the grade of its original. -/
-theorem lvRep_grade_lt (hN : (I.lvLevel g H B hd Q m).Good B (lvAdm hd Q))
+/-- **Every cell of the replicated level at the grade `m + 1` has grade below `m + 2`**: a cell of
+full scope has grade at most `m + 1`, a cell of proper scope at most the size of its scope, and a
+copy has the grade of its original. -/
+theorem ALvl.Good.rep_grade_lt {N : I.ALvl g H (m + 1)} (hN : N.Good B (lvAdm hd Q))
     (z : Fin hN.rep.card) : hN.rep.toCellScheme.grade z < m + 2 := by
-  change (I.lvLevel g H B hd Q m).S.toCellScheme.grade
-    ((I.lvLevel g H B hd Q m).S.mirrorOrig (I.mixedFaces g) z) < m + 2
-  set y := (I.lvLevel g H B hd Q m).S.mirrorOrig (I.mixedFaces g) z
-  rcases (I.lvLevel g H B hd Q m).inv y with h | h
+  change N.S.toCellScheme.grade (N.S.mirrorOrig (I.mixedFaces g) z) < m + 2
+  rcases N.inv (N.S.mirrorOrig (I.mixedFaces g) z) with h | h
   · omega
-  · have hlt : #((I.lvLevel g H B hd Q m).S.toCellScheme.scope y) < m + 2 := by
+  · have hlt : #(N.S.toCellScheme.scope (N.S.mirrorOrig (I.mixedFaces g) z)) < m + 2 := by
       simpa using card_lt_card (ssubset_univ_iff.mpr h)
-    exact (hN.wf.isWellFormed.grade_le_card y).trans_lt hlt
+    exact (hN.wf.isWellFormed.grade_le_card _).trans_lt hlt
+
+/-- **Every cell of the replicated top level has grade below `m + 2`**
+(`Seed.ALvl.Good.rep_grade_lt` at the level `m`). -/
+theorem lvRep_grade_lt (hN : (I.lvLevel g H B hd Q m).Good B (lvAdm hd Q))
+    (z : Fin hN.rep.card) : hN.rep.toCellScheme.grade z < m + 2 :=
+  hN.rep_grade_lt z
 
 /-! ### At the seed choice -/
 
