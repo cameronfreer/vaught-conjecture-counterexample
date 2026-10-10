@@ -19,10 +19,11 @@ condition on the root of the donor faces (`H2.RootBelowTops` is not used), under
 condition `H2.TopsAtLeastGrade` on the designated tops; at `k = 1` with no condition
 (`H2.ownerLoweringBelowAt_one`).
 
-**The lowered face at a cap `c > ⊥`** (`H2.exists_lowered_at`), self-visible at `K`, at least `h`
-and at least every root cell not labelled `⊤`.  Let `W₁` be the capped lift at `h` from the root of
-the donor face (bountifulness).  If its frontier is at most `c` it serves.  Otherwise the owner is
-above `c`; with `c'` the next label self-visible at `K` above `c`
+**The lowered face at a cap `c > ⊥`** (`H2.exists_lowered_at_succ`, at every grade, the full grade
+`K = k + 1` included; below the full grade `H2.exists_lowered_at`), self-visible at `K`, at least
+`h` and at least every root cell not labelled `⊤`.  Let `W₁` be the capped lift at `h` from the
+root of the donor face (bountifulness).  If its frontier is at most `c` it serves.  Otherwise the
+owner is above `c`; with `c'` the next label self-visible at `K` above `c`
 (`H2.exists_next_isSelfVisible`, nothing strictly between), `W₁` capped at `c'` has its largest
 label at the owner.  Cap it at `c` at the cells read by the owner at most the **threshold**
 `visibilityReplace K K (rowAt o r)` (`H2.capBelowAt`): a grade-`K` face
@@ -342,20 +343,27 @@ end Cap
 
 variable {α : Ordinal.{u}}
 
-/-- **The lowered face at a cap `c > ⊥`**, at a legal source-gap context of grade `K ≤ k` on `k + 1`
-points with the lost point last, for a legal donor with the same root face: for every cap `h ≤ c`
-self-visible at `K`, every context face `L` and donor face `g` agreeing on the root capped at `h`,
-with the root cells not labelled `⊤` at most `c` in `g`, there is a grade-`K` face with the root of
-`g`, agreeing with `L` capped at `h`, with frontier at most `c`.  The capped lift `W₁` at `h` serves
-if its frontier is at most `c`; otherwise the owner is above `c` in `W₁`, and with `c'` the next
-label self-visible at `K` above `c`, `W₁` capped at `c'` has its largest label at the owner; its
-capping below the threshold at `c` (`H2.lawfulAt_capBelowAt_of_max`) is a grade-`K` face `L₁` with
-frontier at most `c`, agreeing with the root of `g` capped at `c'` (the root tops are read above the
-threshold, by the strict source gaps, so not capped); the capped lift at `c'` from the root of `g`
-with ambient `L₁` keeps the frontier of `L₁`. -/
-theorem exists_lowered_at {k K n : ℕ} {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
+/-- **The lowered face at a cap `c > ⊥`**, at a legal source-gap context of grade `K` on `k + 1`
+points with the lost point last, at every grade (the full grade `K = k + 1` included), for a legal
+donor with the same root face: for every cap `h ≤ c` self-visible at `K`, every context face `L`
+and donor face `g` agreeing on the root capped at `h`, with the root cells not labelled `⊤` at most
+`c` in `g`, there is a grade-`K` face with the root of `g`, agreeing with `L` capped at `h`, with
+frontier at most `c`.  The capped lift `W₁` at `h` serves if its frontier is at most `c`; otherwise
+the owner is above `c` in `W₁`, and with `c'` the next label self-visible at `K` above `c`, `W₁`
+capped at `c'` has its largest label at the owner; its capping below the threshold at `c`
+(`H2.lawfulAt_capBelowAt_of_max`) is a grade-`K` face `L₁` with frontier at most `c`, agreeing
+with the root of `g` capped at `c'` (the root tops are read above the threshold, by the strict
+source gaps, so not capped); the capped lift at `c'` from the root of `g` with ambient `L₁` keeps
+the frontier of `L₁`.
+
+No bound on the grade is assumed: the capped lift from the root into the grade-`K` faces
+(`H2.hasCappedLifts_lawfulAt'`) holds for `K ≤ k + 1`, which holds at every context since the
+owner is a cell of `t'`.  At the full grade `K = k + 1` the owner is the apex of `t'` (the cell of
+full scope and full grade) and the construction runs unchanged; neither the arity `n` of the root
+embedding nor `k` is bounded below (at `k = 0` the full grade `K = 1` is the only grade). -/
+theorem exists_lowered_at_succ {k K n : ℕ} {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
     {g₀ : Fin n ↪ Fin k} {o r : Fin t'.card}
-    (hs : t'.IsSourceGapContextAt K (g₀.trans Fin.castSuccEmb) (Fin.last k) o r) (hKk : K ≤ k)
+    (hs : t'.IsSourceGapContextAt K (g₀.trans Fin.castSuccEmb) (Fin.last k) o r)
     {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p)
     {tb : StageType.{u} α (k + 1)} (htbleg : tb.IsLegal)
     (htbp : restrictFace Fin.castSuccEmb tb = some p) {h : Label.{u}} (hh : IsSelfVisible K h)
@@ -369,8 +377,9 @@ theorem exists_lowered_at {k K n : ℕ} {t' : StageType.{u} α (k + 1)} (hleg : 
       (∀ d, min (W d) h = min (L d) h) ∧ frontierAt o r K W ≤ c := by
   classical
   have hK0 : 0 < K := hs.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
+  have hKk : K ≤ k + 1 := hs.grade_owner ▸ t'.grade_le o
   have hCL : HasCappedLifts (StageType.faceCell htbp) (StageType.faceCell hp) K (LawfulAt tb K)
-      (LawfulAt t' K) := hasCappedLifts_lawfulAt' hK0 (by omega) htbleg htbp hleg hp
+      (LawfulAt t' K) := hasCappedLifts_lawfulAt' hK0 hKk htbleg htbp hleg hp
   obtain ⟨W1, hW1, hW1r, hW1L⟩ := hCL hh hL hg hagr
   by_cases hF : frontierAt o r K W1 ≤ c
   · exact ⟨W1, hW1, hW1r, hW1L, hF⟩
@@ -424,6 +433,25 @@ theorem exists_lowered_at {k K n : ℕ} {t' : StageType.{u} α (k + 1)} (hleg : 
     _ = min (L1 d) h := by rw [min_assoc, min_eq_right hhc']
     _ = min (W1 d) h := hL1h d
     _ = min (L d) h := hW1L d
+
+/-- **The lowered face at a cap `c > ⊥` below the full grade** (`K ≤ k`): the lowered face at every
+grade (`H2.exists_lowered_at_succ`), whose construction does not use the bound. -/
+theorem exists_lowered_at {k K n : ℕ} {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
+    {g₀ : Fin n ↪ Fin k} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt K (g₀.trans Fin.castSuccEmb) (Fin.last k) o r) (hKk : K ≤ k)
+    {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p)
+    {tb : StageType.{u} α (k + 1)} (htbleg : tb.IsLegal)
+    (htbp : restrictFace Fin.castSuccEmb tb = some p) {h : Label.{u}} (hh : IsSelfVisible K h)
+    {L : Fin t'.card → Label.{u}} {g : Fin tb.card → Label.{u}} (hL : LawfulAt t' K L)
+    (hg : LawfulAt tb K g)
+    (hagr : ∀ x, min (g (StageType.faceCell htbp x)) h = min (L (StageType.faceCell hp x)) h)
+    {c : Label.{u}} (hc : IsSelfVisible K c) (hc0 : ⊥ < c) (hhc : h ≤ c)
+    (hlow : ∀ x : Fin p.card, p.label x ≠ ⊤ → g (StageType.faceCell htbp x) ≤ c) :
+    ∃ W : Fin t'.card → Label.{u}, LawfulAt t' K W ∧
+      (∀ x, W (StageType.faceCell hp x) = g (StageType.faceCell htbp x)) ∧
+      (∀ d, min (W d) h = min (L d) h) ∧ frontierAt o r K W ≤ c :=
+  have _ := hKk
+  exists_lowered_at_succ hleg hs hp htbleg htbp hh hL hg hagr hc hc0 hhc hlow
 
 /-! ### Owner lowering below the designated tops -/
 
