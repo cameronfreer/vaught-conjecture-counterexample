@@ -24,10 +24,10 @@ threshold (`StageType.GrowthRequests.AdmitsOnClass.map`).  The bottom profile is
 being `⊥`.
 
 Hence **the admitted catalogue layer over a level good on the admitted profiles is again good on
-the admitted profiles** (`ProfileTower.Lvl.GoodOn.admittedNext`), given its lifts from the two
+the admitted profiles** (`ProfileTower.Lvl.GoodAt.admittedNext`), given its lifts from the two
 coatoms: the levels at and above the threshold are admitted catalogue layers, and the only
 hypothesis left at each grade is the lift from the two coatoms (the catalogue steps).  A good level
-is good on the admitted profiles (`ProfileTower.Lvl.Good.goodOn`), so the first admitted layer may
+is good on the admitted profiles (`ProfileTower.Lvl.Good.goodAt`), so the first admitted layer may
 sit on the canonical levels below the threshold.
 
 **Limits of these levels for recognition.**  The levels built here cannot carry the field ladder of
@@ -38,7 +38,7 @@ ladder installed in the base cannot carry the values at the cells of grade `N`; 
 controllers' rows at the ladder cells with the member's table conflicts with locality at the old
 cells of full scope of grades `2, …, N - 1`, which read the ladder (argued); (3) copies of cells of
 full scope at the mixed faces are cells of proper scope that are not amalgam cells, against the
-invariant `ProfileTower.Lvl.GoodOn.mem_range` (argued).  The recognizing carrier is therefore built
+invariant `ProfileTower.Lvl.GoodAt.mem_range` (argued).  The recognizing carrier is therefore built
 as its own construction (`VaughtConjecture.Extension.LadderBase` for its first layer).
 
 ## References
@@ -139,9 +139,9 @@ theorem GrowthAdmitsOnClass.code {W : Prof I} (h : GrowthAdmitsOnClass hleft hdo
 
 /-- **The admitted catalogue layer over a level good on the admitted profiles is good on the
 admitted profiles**, at a grade `g + 1 ≤ m` at least the threshold, given its lifts from the two
-coatoms (`ProfileTower.Lvl.GoodOn.catNext`). -/
-theorem Lvl.GoodOn.admittedNext {g : ℕ} {L : Lvl I g}
-    (hL : L.GoodOn (GrowthAdmitsOnClass hleft hdon Q)) (hgm : g + 1 ≤ m)
+coatoms (`ProfileTower.Lvl.GoodAt.catNext`). -/
+theorem Lvl.GoodAt.admittedNext {g : ℕ} {L : Lvl I g}
+    (hL : L.GoodAt (GrowthAdmitsOnClass hleft hdon Q)) (hgm : g + 1 ≤ m)
     (hN : Q.threshold ≤ g + 1) (hdN : ∀ j, d.toCellScheme.grade j ≤ Q.threshold)
     (href : ∀ j ∈ Q.exacts,
       Q.ref j ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap) ∧
@@ -152,7 +152,7 @@ theorem Lvl.GoodOn.admittedNext {g : ℕ} {L : Lvl I g}
       (L.catS (predCat I (g + 1) (AdmittedCat hleft hdon Q))).rows.CappedLift
         (X := (univ.erase x, g + 1)) (Y := ((univ : Finset (Fin (m + 2))), g + 1))
         ⟨erase_subset _ _, le_rfl⟩) :
-    (L.catNext (AdmittedCat hleft hdon Q)).GoodOn (GrowthAdmitsOnClass hleft hdon Q) :=
+    (L.catNext (AdmittedCat hleft hdon Q)).GoodAt (GrowthAdmitsOnClass hleft hdon Q) :=
   hL.catNext hgm (fun _ h ↦ h) (fun _ hP _ ↦ hP.code hN hdN href hmk) admittedCat_bot hlift
 
 /-- **The admitted profiles are closed under the orbit code** at a grade at least the
@@ -187,9 +187,9 @@ theorem growthAdmitsOnClass_label (hex : ∀ j ℓ, Q.CorrectAt t'.label j ℓ �
 
 /-- **The admitted levels above a level good on the admitted profiles**, at grades at least the
 threshold, are good on the admitted profiles up to the grade `m`, given the lifts of every layer
-from the two coatoms (`ProfileTower.Lvl.GoodOn.catIter`). -/
-theorem Lvl.GoodOn.admittedIter {g' : ℕ} {N : Lvl I g'}
-    (hN : N.GoodOn (GrowthAdmitsOnClass hleft hdon Q)) (hthr : Q.threshold ≤ g' + 1)
+from the two coatoms (`ProfileTower.Lvl.GoodAt.catIter`). -/
+theorem Lvl.GoodAt.admittedIter {g' : ℕ} {N : Lvl I g'}
+    (hN : N.GoodAt (GrowthAdmitsOnClass hleft hdon Q)) (hthr : Q.threshold ≤ g' + 1)
     (hdN : ∀ j, d.toCellScheme.grade j ≤ Q.threshold)
     (href : ∀ j ∈ Q.exacts,
       Q.ref j ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap) ∧
@@ -202,7 +202,7 @@ theorem Lvl.GoodOn.admittedIter {g' : ℕ} {N : Lvl I g'}
         (X := (univ.erase x, g' + j + 1)) (Y := ((univ : Finset (Fin (m + 2))), g' + j + 1))
         ⟨erase_subset _ _, le_rfl⟩) :
     ∀ j, g' + j ≤ m →
-      (N.catIter (AdmittedCat hleft hdon Q) j).GoodOn (GrowthAdmitsOnClass hleft hdon Q) :=
+      (N.catIter (AdmittedCat hleft hdon Q) j).GoodAt (GrowthAdmitsOnClass hleft hdon Q) :=
   hN.catIter (fun _ h ↦ h) (fun _ hk _ hP _ ↦ hP.code (by omega) hdN href hmk) admittedCat_bot
     hlift
 
@@ -210,10 +210,10 @@ theorem Lvl.GoodOn.admittedIter {g' : ℕ} {N : Lvl I g'}
 the admitted profiles at a grade `g'` with the threshold at most `g' + 1`, the admitted levels up to
 the grade `m = g' + j` (`j ≥ 1`) and the top layer, given the lifts of every layer from the two
 coatoms and the bottom step at the top (`ProfileTower.Lvl.TopBotStep`); the last level extends at
-`⊥` on the admitted profiles (`ProfileTower.Lvl.GoodOn.hasBotExtensionOn_catNext`), and the glued
+`⊥` on the admitted profiles (`ProfileTower.Lvl.GoodAt.hasBotExtensionOn_catNext`), and the glued
 labels of the amalgam are admitted (`ProfileTower.growthAdmitsOnClass_label`). -/
-theorem Lvl.GoodOn.nonempty_admittedCompletion {g' : ℕ} {N : Lvl I g'}
-    (hN : N.GoodOn (GrowthAdmitsOnClass hleft hdon Q)) (hthr : Q.threshold ≤ g' + 1)
+theorem Lvl.GoodAt.nonempty_admittedCompletion {g' : ℕ} {N : Lvl I g'}
+    (hN : N.GoodAt (GrowthAdmitsOnClass hleft hdon Q)) (hthr : Q.threshold ≤ g' + 1)
     (hex : ∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j)
     (hdN : ∀ j, d.toCellScheme.grade j ≤ Q.threshold)
     (href : ∀ j ∈ Q.exacts,
@@ -227,7 +227,7 @@ theorem Lvl.GoodOn.nonempty_admittedCompletion {g' : ℕ} {N : Lvl I g'}
         (predCat I (g' + i + 1) (AdmittedCat hleft hdon Q))).rows.CappedLift
         (X := (univ.erase x, g' + i + 1)) (Y := ((univ : Finset (Fin (m + 2))), g' + i + 1))
         ⟨erase_subset _ _, le_rfl⟩)
-    (hstep : ∀ M : Lvl I m, M.GoodOn (GrowthAdmitsOnClass hleft hdon Q) →
+    (hstep : ∀ M : Lvl I m, M.GoodAt (GrowthAdmitsOnClass hleft hdon Q) →
       M.TopBotStep (GrowthAdmitsOnClass hleft hdon Q)) :
     Nonempty (CompletionBelowFullGrade I) := by
   have hgood := hN.admittedIter hthr hdN href hmk hlift

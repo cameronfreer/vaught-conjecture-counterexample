@@ -15,11 +15,11 @@ The catalogue layer of a predicate `A` over a level at the grade `g` is a level 
 cells of grade at most `g + 1`, the row of the code of the profile with the cutoff `⊥` through the
 upper decoder of its splice, and the section of the level above.
 
-**Goodness on a set of profiles** (`ProfileTower.Lvl.GoodOn.catNext`).  Over a level good on `S`,
+**Goodness on a set of profiles** (`ProfileTower.Lvl.GoodAt.catNext`).  Over a level good on `S`,
 whose catalogue at `g + 1` lies in `S`, the catalogue layer is good on every set `S'` of profiles
 whose codes with the cutoff `⊥` satisfy `A`, provided `A` holds at the bottom profile and the layer
 lifts from the two coatoms at the grade `g + 1`.  The section of a profile of `S'` is lawful because
-the row of its code is (`ProfileTower.Lvl.GoodOn.isLawfulBelow_Φcat`); every other field of
+the row of its code is (`ProfileTower.Lvl.GoodAt.isLawfulBelow_Φcat`); every other field of
 `ProfileTower.Lvl.Good` is a property of the formula of the section, for every profile.  For `A`
 true at every cutoff `⊥` and `S = S'` everything, this is the good catalogue level of the LOW
 construction; for the admission of the growth requests on the exact class, `S'` is the admitted
@@ -83,7 +83,7 @@ theorem Lvl.catσ_eq_of_hat_eq {P P' : Prof I} (hPP : hat I (g + 1) P = hat I (g
     L.catσ A P z = L.catσ A P' z := by
   rw [L.catσ_of_le hz, L.catσ_of_le hz, hPP, code, code, hPP]
 
-theorem Lvl.GoodOn.exists_old_of_lt_cat (hL : L.GoodOn S) {z : Fin (L.S.card + (𝒞).card)}
+theorem Lvl.GoodAt.exists_old_of_lt_cat (hL : L.GoodAt S) {z : Fin (L.S.card + (𝒞).card)}
     (hz : ¬ (L.S.appendFullCellsScheme (g + 1) (𝒞).card).grade z ≤ g + 1) :
     ∃ d, z = Fin.castAdd _ (L.embed d) := by
   induction z using Fin.addCases with
@@ -93,7 +93,7 @@ theorem Lvl.GoodOn.exists_old_of_lt_cat (hL : L.GoodOn S) {z : Fin (L.S.card + (
     obtain ⟨d, rfl⟩ := hL.mem_range_of_lt (by omega : g < L.S.toCellScheme.grade e)
     exact ⟨d, rfl⟩
 
-theorem Lvl.GoodOn.catσ_old_of_lt (hL : L.GoodOn S) {P : Prof I} {d : Fin I.amalgam.card}
+theorem Lvl.GoodAt.catσ_old_of_lt (hL : L.GoodAt S) {P : Prof I} {d : Fin I.amalgam.card}
     (hd : ¬ (L.S.appendFullCellsScheme (g + 1) (𝒞).card).grade
       (Fin.castAdd _ (L.embed d)) ≤ g + 1) :
     L.catσ A P (Fin.castAdd _ (L.embed d)) = P d := by
@@ -109,13 +109,13 @@ theorem withCut_code_mem_codeGrid (P : Prof I) (f : Fin I.amalgam.card ⊕ Unit)
 /-- **The catalogue layer over a level good on `S` is good on `S'`**, when the catalogue lies in
 `S`, the codes of the profiles of `S'` with the cutoff `⊥` satisfy `A`, the bottom profile satisfies
 `A`, and the layer lifts from the two coatoms at the grade `g + 1`. -/
-theorem Lvl.GoodOn.catNext (hL : L.GoodOn S) (hgm : g + 1 ≤ m) (hAS : ∀ P, A P → S (camal P))
+theorem Lvl.GoodAt.catNext (hL : L.GoodAt S) (hgm : g + 1 ≤ m) (hAS : ∀ P, A P → S (camal P))
     (hcode : ∀ P, S' P → IsCutLawful I (g + 1) P → A (withCut (code (g + 1) P) ⊥))
     (hA0 : A fun _ ↦ ⊥)
     (hlift : ∀ x ∈ (Pts : Finset (Fin (m + 2))),
       (L.catS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
         (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩) :
-    (L.catNext A).GoodOn S' := by
+    (L.catNext A).GoodAt S' := by
   have hCsub : ∀ P ∈ 𝒞, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧
       IsCutLawful I (g + 1) (camal P) := fun P hP ↦ ⟨(mem_predCat.mp hP).1, (mem_predCat.mp hP).2.1⟩
   have hCS : ∀ P ∈ 𝒞, S (camal P) := fun P hP ↦ hAS P (mem_predCat.mp hP).2.2.2
@@ -238,8 +238,8 @@ theorem Lvl.GoodOn.catNext (hL : L.GoodOn S) (hgm : g + 1 ≤ m) (hAS : ∀ P, A
 /-- **The catalogue level extends at `⊥` on `S'`**: a labelling lawful below both coatoms at the
 grade `g + 1` whose amalgam profile `W` lies in `S'` is extended below the full face through the
 row of the orbit code of `W` with the cutoff `⊥`
-(`ProfileTower.Lvl.GoodOn.exists_extension_cat_bot`), which lies in the catalogue. -/
-theorem Lvl.GoodOn.hasBotExtensionOn_catNext (hL : L.GoodOn S) (hAS : ∀ P, A P → S (camal P))
+(`ProfileTower.Lvl.GoodAt.exists_extension_cat_bot`), which lies in the catalogue. -/
+theorem Lvl.GoodAt.hasBotExtensionOn_catNext (hL : L.GoodAt S) (hAS : ∀ P, A P → S (camal P))
     (hcode : ∀ W, S' W → IsCutLawful I (g + 1) W → A (withCut (orbitCode (g + 1) W) ⊥)) :
     (L.catNext A).HasBotExtensionOn S' := by
   intro w hwC hwD hwS
@@ -284,7 +284,7 @@ noncomputable def Lvl.catIter {g' : ℕ} (N : Lvl I g') : (j : ℕ) → Lvl I (g
 /-- **The catalogue levels above a level good on `S` are good on `S`**, up to the grade `m`, when
 the catalogues lie in `S`, the codes of the profiles of `S` with the cutoff `⊥` satisfy `A` at every
 grade above, `A` holds at the bottom profile, and every layer lifts from the two coatoms. -/
-theorem Lvl.GoodOn.catIter {g' : ℕ} {N : Lvl I g'} (hN : N.GoodOn S)
+theorem Lvl.GoodAt.catIter {g' : ℕ} {N : Lvl I g'} (hN : N.GoodAt S)
     (hAS : ∀ P, A P → S (camal P))
     (hcode : ∀ k, g' < k → ∀ P, S P → IsCutLawful I k P → A (withCut (code k P) ⊥))
     (hA0 : A fun _ ↦ ⊥)
@@ -292,7 +292,7 @@ theorem Lvl.GoodOn.catIter {g' : ℕ} {N : Lvl I g'} (hN : N.GoodOn S)
       ((N.catIter A j).catS (predCat I (g' + j + 1) A)).rows.CappedLift
         (X := (univ.erase x, g' + j + 1)) (Y := ((univ : Finset (Fin (m + 2))), g' + j + 1))
         ⟨erase_subset _ _, le_rfl⟩) :
-    ∀ j, g' + j ≤ m → (N.catIter A j).GoodOn S
+    ∀ j, g' + j ≤ m → (N.catIter A j).GoodAt S
   | 0, _ => hN
   | j + 1, h => (hN.catIter hAS hcode hA0 hlift j (by omega)).catNext (by omega) hAS
       (fun P hP hPc ↦ hcode _ (by omega) P hP hPc) hA0 (hlift j (by omega))

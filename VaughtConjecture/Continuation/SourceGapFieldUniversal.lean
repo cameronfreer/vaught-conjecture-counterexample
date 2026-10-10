@@ -1,0 +1,707 @@
+/-
+Copyright (c) 2026 Cameron Freer. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Cameron Freer
+-/
+import VaughtConjecture.Continuation.SourceGapAdmittedEngine
+import VaughtConjecture.Continuation.SourceGapFieldAdmission
+
+/-!
+# The LOW clause with a separate field: the provisions for arbitrary faces
+
+Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3); the state-level test of
+`VaughtConjecture.Continuation.SourceGapFieldAdmission`, for arbitrary inputs.
+
+**Faces in general.**  A state is a context face `L : ιC → Label`, a donor face `R : ιD → Label`
+and a field `b`, the faces agreeing on a root `ιR` (through `rc : ιR → ιC`, `rd : ιR → ιD`).  The
+clause (`FieldAdmission.LowAtG`) is that of `FieldAdmission.LowAt` with the owner `o`, the lost top
+`r`, the grade `K`, the designated cells `Lo` below the top and the designated tops `Tops`, and the
+frontier `min (L o) (visibilityReplace K K (L r))` (`FieldAdmission.frontierAt`).  The provisions
+(`FieldAdmission.IsFieldAdmissionG`) are those of `FieldAdmission.IsFieldAdmission`, with the root
+in place of the cell `y`.
+
+**The frontier is at most the retained tops** (`StageType.IsSourceGapContextAt.frontier_le`), in
+every lawful labelling of every source-gap context, with no further hypothesis: the witness at the
+owner reads the lost top through the gap below every top cell `a` avoiding the lost point; either
+`a` is at least the owner, or it is the shifted row value at `a`, which bounds the shifted row value
+at `r` and, below the suppressor at `K`, its replacement at `K`.
+
+**The universal provisions** (`FieldAdmission.isFieldAdmissionG_of`): the clause is a field
+admission for the context lawfulness `C` and the donor lawfulness `D` as soon as
+* the owner is self-visible at `K` in every lawful context face (the order law at the owner);
+* **the frontier is at most the root** at a set `A` of root cells (for a source-gap context, the
+  root cells labelled `⊤`: `StageType.IsSourceGapContextAt.frontier_le`);
+* **donor raising** (`FieldAdmission.DonorRaising`): a lawful donor face, a lawful context face
+  agreeing with it on the root capped at `h`, and a label `c` self-visible at `K` at most the
+  context face at `A`, give a lawful donor face with the root of the context face, agreeing with
+  the donor face capped at `h`, and at least `c` at every designated top at least `h`;
+* **owner lowering** (`FieldAdmission.OwnerLowering`): a lawful context face and a lawful donor
+  face agreeing with it on the root capped at `h` give a lawful context face with the root of the
+  donor face, agreeing with the context face capped at `h`, with frontier at most `h`.
+
+The served faces are those of these conditions, with the field capped at `h`.
+
+**Instances** (`FieldAdmission.isFieldAdmissionG_T`, `FieldAdmission.isFieldAdmissionG_t2`): at
+`SeparationObstruction.T` and at `OwnerPartner.t2` (context), with the donor on the scheme of `T`,
+for every designation with the designated tops among `z'`, `o'`, `r'`: the frontier bound from the
+source-gap clauses of the two inputs, donor raising on the scheme of `T`
+(`FieldAdmission.donorRaising_S`), owner lowering on both schemes
+(`FieldAdmission.ownerLowering_S`, `FieldAdmission.ownerLowering_S2`).
+
+**A field bounded below by the root fails** (`FieldAdmission.not_exists_field_ge_root`,
+`FieldAdmission.not_fieldAboveRoot`): with the root at `ω + 1` (self-visible at `1`, not at `2`)
+and the cap `⊥`, no lawful donor face with that root and a field at least it satisfies the clause
+(`o' < y'`, and `r'` cannot carry the low maximum).  So a field cell whose lawful values are forced
+at least the root cannot carry the field; a free field, or one at most the root, is not refuted.
+
+**Owner lowering from legality** (`FieldAdmission.ownerLowering_of_isLegal`): at a legal
+context whose top grade `K` exceeds the dimension `n > 0` of the root and bounds every grade, the
+capped lift from the root face (bountifulness) capped at `h` at the cells of grade `K`
+(`CellScheme.Rows.IsLawful.capTopGrade`) serves.  So at a legal source-gap context the clause is a
+field admission up to donor raising (`FieldAdmission.isFieldAdmissionG_of_donorRaising`); on two
+points with a one-point root and `K = 2`, `FieldAdmission.isFieldAdmissionG_two`.
+
+**Status.**  Donor raising is the one remaining hypothesis (named, not derived from legality: the
+capped lift controls the donor face only up to the cap, and raising the tops above it needs a
+construction that capping does not give); it holds at `T` and `t2`.  No input violating it is
+compiled.  The case `K = 1` on two points (owner at the grade of the root) is not covered by owner
+lowering from legality.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
+-/
+
+universe u
+
+namespace VaughtConjecture
+
+open Finset Label SeparationObstruction
+
+/-! ### The frontier at a source-gap context -/
+
+namespace StageType.IsSourceGapContextAt
+
+variable {α : Ordinal.{u}} {n k K : ℕ} {t' : StageType.{u} α k} {g₀ : Fin n ↪ Fin k}
+  {l : Fin k} {o r : Fin t'.card}
+
+/-- **The frontier is at most every retained top** in every lawful labelling of a source-gap
+context: `min (f o) (visibilityReplace K K (f r)) ≤ f a` for every cell `a` labelled `⊤` whose scope
+avoids the lost point. -/
+theorem frontier_le (hs : t'.IsSourceGapContextAt K g₀ l o r) {f : Fin t'.card → Label.{u}}
+    (hf : t'.rows.IsLawful f) {a : Fin t'.card} (ha : t'.label a = ⊤)
+    (hla : l ∉ t'.toCellScheme.scope a) :
+    min (f o) (visibilityReplace K K (f r)) ≤ f a := by
+  have hga : t'.toCellScheme.grade a ≤ K := hs.topGrade_eq ▸ grade_le_topGrade ha
+  have hgr : t'.toCellScheme.grade r ≤ K := hs.topGrade_eq ▸ grade_le_topGrade hs.label_lost
+  have hbelow (d : Fin t'.card) (hd : t'.toCellScheme.grade d ≤ K) :
+      d ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex o) :=
+    (CellScheme.mem_below _).mpr ⟨show t'.toCellScheme.scope d ⊆ t'.toCellScheme.scope o by
+      rw [hs.scope_owner]; exact subset_univ _,
+      show t'.toCellScheme.grade d ≤ t'.toCellScheme.grade o by rw [hs.grade_owner]; exact hd⟩
+  have hgap := hs.gap_retained a ha hla
+  rw [Scheme.rowAt_of_mem (hbelow r hgr), Scheme.rowAt_of_mem (hbelow a hga)] at hgap
+  set x := t'.rows.row o ⟨r, hbelow r hgr⟩
+  set y := t'.rows.row o ⟨a, hbelow a hga⟩
+  obtain ⟨g, σ, hw, he⟩ := hf.locality o
+  have eo := he ⟨o, hbelow o hs.grade_owner.le⟩
+  have er := he ⟨r, hbelow r hgr⟩
+  have ea := he ⟨a, hbelow a hga⟩
+  change min (f o) (f o) = min (σ (t'.rows.row o ⟨o, _⟩)) (g (t'.toCellScheme.grade o)) at eo
+  change min (f r) (f o) = min (σ x) (g (t'.toCellScheme.grade r)) at er
+  change min (f a) (f o) = min (σ y) (g (t'.toCellScheme.grade a)) at ea
+  rw [min_self] at eo
+  have hfo : f o ≤ g K :=
+    (eo.le.trans (min_le_right _ _)).trans (hw.antitone hs.grade_owner.ge)
+  have hσxy : σ x ≤ σ y := hw.monotone ((le_visibilityReplace (by omega) x).trans hgap.le)
+  by_cases hao : f o ≤ f a
+  · exact (min_le_left _ _).trans hao
+  have hao' : f a < f o := not_le.mp hao
+  have hga' : f o ≤ g (t'.toCellScheme.grade a) := hfo.trans (hw.antitone hga)
+  have hfa : f a = σ y := by
+    rw [min_eq_left hao'.le] at ea
+    rcases le_total (σ y) (g (t'.toCellScheme.grade a)) with h1 | h1
+    · rw [min_eq_left h1] at ea; exact ea
+    · rw [min_eq_right h1] at ea; exact absurd (ea ▸ hga') (not_le.mpr hao')
+  by_cases hro : f o ≤ f r
+  · rw [min_eq_right hro] at er
+    exact absurd ((er ▸ min_le_left _ _ : f o ≤ σ x).trans (hσxy.trans hfa.ge)) (not_le.mpr hao')
+  have hro' : f r < f o := not_le.mp hro
+  rw [min_eq_left hro'.le] at er
+  by_cases hσx : σ x ≤ g K
+  · have hc := hw.visibilityReplace_comm x K hσx K le_rfl
+    refine (min_le_right _ _).trans ?_
+    calc visibilityReplace K K (f r) ≤ visibilityReplace K K (σ x) :=
+          monotone_visibilityReplace le_rfl (er ▸ min_le_left _ _)
+      _ = σ (visibilityReplace K K x) := hc.symm
+      _ ≤ σ y := hw.monotone hgap.le
+      _ = f a := hfa.symm
+  · have hlt : f r < σ x := hro'.trans_le (hfo.trans (not_le.mp hσx).le)
+    have hfr : f r = g (t'.toCellScheme.grade r) := by
+      rcases le_total (σ x) (g (t'.toCellScheme.grade r)) with h1 | h1
+      · rw [min_eq_left h1] at er; exact absurd er hlt.ne
+      · rw [min_eq_right h1] at er; exact er
+    have : g K ≤ g (t'.toCellScheme.grade r) := hw.antitone hgr
+    exact absurd (hfr ▸ this) (not_le.mpr (hro'.trans_le hfo))
+
+end StageType.IsSourceGapContextAt
+
+namespace FieldAdmission
+
+/-! ### The clause and the provisions for arbitrary faces -/
+
+section General
+
+variable {ιC ιD ιR : Type*} (rc : ιR → ιC) (rd : ιR → ιD) (o r : ιC) (K : ℕ)
+
+/-- The **frontier** of a context face at the grade `K`. -/
+noncomputable def frontierAt (L : ιC → Label.{u}) : Label.{u} :=
+  min (L o) (visibilityReplace K K (L r))
+
+/-- **The LOW clause at the field `b`** for arbitrary faces. -/
+def LowAtG (Lo Tops : Finset ιD) (L : ιC → Label.{u}) (R : ιD → Label.{u}) (b : Label.{u}) :
+    Prop :=
+  Lo.sup R < b → ∀ t ∈ Tops, max b (frontierAt o r K L) ≤ R t
+
+/-- **A field admission of states** for arbitrary faces sharing a root. -/
+structure IsFieldAdmissionG (C : (ιC → Label.{u}) → Prop) (D : (ιD → Label.{u}) → Prop)
+    (Adm : (ιC → Label.{u}) → (ιD → Label.{u}) → Label.{u} → Prop) : Prop where
+  bot : Adm (fun _ ↦ ⊥) (fun _ ↦ ⊥) ⊥
+  comp {σ : Label.{u} → Label.{u}} (hσ : Monotone σ) (hσ0 : σ ⊥ = ⊥)
+    (hsv : ∀ x, IsSelfVisible K (σ x)) {L : ιC → Label.{u}} {R : ιD → Label.{u}}
+    {b : Label.{u}} (h : Adm L R b) : Adm (fun z ↦ σ (L z)) (fun z ↦ σ (R z)) (σ b)
+  context {h b : Label.{u}} (hh : IsSelfVisible K h) (hb : IsSelfVisible K b)
+    {L f : ιC → Label.{u}} {R : ιD → Label.{u}} (hL : C L) (hR : D R)
+    (hy : ∀ x, L (rc x) = R (rd x)) (hadm : Adm L R b) (hf : C f)
+    (hfL : ∀ d, min (f d) h = min (L d) h) :
+    ∃ W : ιD → Label.{u}, ∃ b' : Label.{u}, D W ∧ (∀ x, W (rd x) = f (rc x)) ∧
+      (∀ d, min (W d) h = min (R d) h) ∧ IsSelfVisible K b' ∧ min b' h = min b h ∧ Adm f W b'
+  donor {h b : Label.{u}} (hh : IsSelfVisible K h) (hb : IsSelfVisible K b)
+    {L : ιC → Label.{u}} {R f : ιD → Label.{u}} (hL : C L) (hR : D R)
+    (hy : ∀ x, L (rc x) = R (rd x)) (hadm : Adm L R b) (hf : D f)
+    (hfR : ∀ d, min (f d) h = min (R d) h) :
+    ∃ W : ιC → Label.{u}, ∃ b' : Label.{u}, C W ∧ (∀ x, W (rc x) = f (rd x)) ∧
+      (∀ d, min (W d) h = min (L d) h) ∧ IsSelfVisible K b' ∧ min b' h = min b h ∧ Adm W f b'
+
+/-- **Donor raising** at the designated tops `Tops`, up to labels at most the context face at the
+root cells `A`. -/
+def DonorRaising (C : (ιC → Label.{u}) → Prop) (D : (ιD → Label.{u}) → Prop) (A : Set ιR)
+    (Tops : Finset ιD) : Prop :=
+  ∀ {h c : Label.{u}}, IsSelfVisible K h → IsSelfVisible K c → ∀ {R : ιD → Label.{u}}
+    {f : ιC → Label.{u}}, D R → C f → (∀ x, min (f (rc x)) h = min (R (rd x)) h) →
+    (∀ a ∈ A, c ≤ f (rc a)) →
+    ∃ W : ιD → Label.{u}, D W ∧ (∀ x, W (rd x) = f (rc x)) ∧ (∀ d, min (W d) h = min (R d) h) ∧
+      ∀ t ∈ Tops, h ≤ R t → c ≤ W t
+
+/-- **Owner lowering**: the frontier lowered to the cap with the root of a donor face. -/
+def OwnerLowering (C : (ιC → Label.{u}) → Prop) (D : (ιD → Label.{u}) → Prop) : Prop :=
+  ∀ {h : Label.{u}}, IsSelfVisible K h → ∀ {L : ιC → Label.{u}} {g : ιD → Label.{u}}, C L → D g →
+    (∀ x, min (g (rd x)) h = min (L (rc x)) h) →
+    ∃ W : ιC → Label.{u}, C W ∧ (∀ x, W (rc x) = g (rd x)) ∧ (∀ d, min (W d) h = min (L d) h) ∧
+      frontierAt o r K W ≤ h
+
+variable {rc rd o r K}
+
+theorem isSelfVisible_frontierAt {L : ιC → Label.{u}} (ho : IsSelfVisible K (L o)) :
+    IsSelfVisible K (frontierAt o r K L) :=
+  ho.min (visibilityReplace_self_visibilityReplace le_rfl (L r))
+
+/-- The frontier capped at a self-visible `h` depends only on the face capped at `h`. -/
+theorem frontierAt_cap {h : Label.{u}} (hh : IsSelfVisible K h) {L f : ιC → Label.{u}}
+    (hfL : ∀ d, min (f d) h = min (L d) h) :
+    min (frontierAt o r K f) h = min (frontierAt o r K L) h := by
+  unfold frontierAt
+  calc min (min (f o) (visibilityReplace K K (f r))) h
+      = min (min (f o) h) (min (visibilityReplace K K (f r)) h) := min_min_cap _ _ _
+    _ = min (min (f o) h) (visibilityReplace K K (min (f r) h)) := by
+        rw [visibilityReplace_min_of_isSelfVisible le_rfl hh]
+    _ = min (min (L o) h) (visibilityReplace K K (min (L r) h)) := by rw [hfL o, hfL r]
+    _ = min (min (L o) (visibilityReplace K K (L r))) h := by
+        rw [visibilityReplace_min_of_isSelfVisible le_rfl hh, ← min_min_cap]
+
+private theorem sup_lt_of_agreeG {Lo : Finset ιD} {W R : ιD → Label.{u}} {b h : Label.{u}}
+    (hWR : ∀ d, min (W d) h = min (R d) h) (hlt : Lo.sup W < min b h) : Lo.sup R < b := by
+  have hb0 : ⊥ < min b h := bot_le.trans_lt hlt
+  have hbb : (⊥ : Label.{u}) < b := hb0.trans_le (min_le_left _ _)
+  refine (Finset.sup_lt_iff hbb).mpr fun d hd ↦ ?_
+  have hWd : W d < min b h := (Finset.sup_lt_iff hb0).mp hlt d hd
+  have hRd : R d = W d := Label.eq_of_min_eq_of_lt (hWR d) (hWd.trans_le (min_le_right _ _))
+  rw [hRd]
+  exact hWd.trans_le (min_le_left _ _)
+
+/-- Images of the clause under a monotone map fixing `⊥` with values self-visible at `K`. -/
+theorem lowAtG_comp {Lo Tops : Finset ιD} {σ : Label.{u} → Label.{u}} (hσ : Monotone σ)
+    (hσ0 : σ ⊥ = ⊥) (hsv : ∀ x, IsSelfVisible K (σ x)) {L : ιC → Label.{u}}
+    {R : ιD → Label.{u}} {b : Label.{u}} (h : LowAtG o r K Lo Tops L R b) :
+    LowAtG o r K Lo Tops (fun z ↦ σ (L z)) (fun z ↦ σ (R z)) (σ b) := by
+  intro hlt t ht
+  have hlt' : Lo.sup R < b := by
+    by_contra hc
+    refine hlt.not_ge ?_
+    have hc' : b ≤ Lo.sup R := not_lt.mp hc
+    rcases Lo.eq_empty_or_nonempty with he | hne
+    · subst he
+      rw [Finset.sup_empty, le_bot_iff] at hc'
+      rw [hc', hσ0]
+      exact bot_le
+    · obtain ⟨d, hd, hdeq⟩ := Finset.exists_mem_eq_sup Lo hne R
+      exact (hσ (hc'.trans hdeq.le)).trans (Finset.le_sup (f := fun z ↦ σ (R z)) hd)
+  refine le_trans ?_ (hσ (h hlt' t ht))
+  rw [hσ.map_max]
+  refine max_le_max le_rfl ?_
+  rw [frontierAt, frontierAt, (hsv (L r)).visibilityReplace_eq, hσ.map_min]
+  exact min_le_min le_rfl (hσ (le_visibilityReplace (by omega) _))
+
+/-- **The universal provisions**: under the order law at the owner, the frontier bound at the root
+cells `A`, donor raising and owner lowering, the LOW clause with a separate field is a field
+admission, for every designation. -/
+theorem isFieldAdmissionG_of {C : (ιC → Label.{u}) → Prop} {D : (ιD → Label.{u}) → Prop}
+    {Lo Tops : Finset ιD} (A : Set ιR) (hCo : ∀ f, C f → IsSelfVisible K (f o))
+    (hCF : ∀ f, C f → ∀ a ∈ A, frontierAt o r K f ≤ f (rc a))
+    (hDR : DonorRaising rc rd K C D A Tops) (hOL : OwnerLowering rc rd o r K C D) :
+    IsFieldAdmissionG rc rd K C D (LowAtG o r K Lo Tops) where
+  bot := fun h ↦ absurd h (not_lt.mpr bot_le)
+  comp hσ hσ0 hsv _ _ _ h := lowAtG_comp hσ hσ0 hsv h
+  context := fun {h b} hh hb {L f R} hL hR hy hadm hf hfL ↦ by
+    have hroot (x : ιR) : min (f (rc x)) h = min (R (rd x)) h := by rw [hfL, hy]
+    obtain ⟨W, hW, hWr, hWR, hWt⟩ := hDR hh (isSelfVisible_frontierAt (hCo f hf)) hR hf hroot
+      (hCF f hf)
+    refine ⟨W, min b h, hW, hWr, hWR, hb.min hh, by rw [min_assoc, min_self],
+      fun hlt t ht ↦ ?_⟩
+    have horig := hadm (sup_lt_of_agreeG hWR hlt) t ht
+    by_cases hRt : R t < h
+    · rw [Label.eq_of_min_eq_of_lt (hWR t).symm hRt]
+      have hfr : frontierAt o r K L < h := ((le_max_right _ _).trans horig).trans_lt hRt
+      have hFF : frontierAt o r K f = frontierAt o r K L :=
+        Label.eq_of_min_eq_of_lt (frontierAt_cap hh hfL).symm hfr
+      rw [hFF]
+      exact max_le ((min_le_left _ _).trans ((le_max_left _ _).trans horig))
+        ((le_max_right _ _).trans horig)
+    · have hRt' := not_lt.mp hRt
+      exact max_le ((min_le_right _ _).trans (le_of_min_eq_of_le (hWR t) hRt'))
+        (hWt t ht hRt')
+  donor := fun {h b} hh hb {L R f} hL hR hy hadm hf hfR ↦ by
+    have hroot (x : ιR) : min (f (rd x)) h = min (L (rc x)) h := by rw [hfR, hy]
+    obtain ⟨W, hW, hWr, hWL, hWF⟩ := hOL hh hL hf hroot
+    refine ⟨W, min b h, hW, hWr, hWL, hb.min hh, by rw [min_assoc, min_self],
+      fun hlt t ht ↦ ?_⟩
+    have horig := hadm (sup_lt_of_agreeG hfR hlt) t ht
+    have hFW : frontierAt o r K W ≤ min (frontierAt o r K L) h := by
+      rw [← frontierAt_cap hh hWL]
+      exact le_min le_rfl hWF
+    by_cases hRt : R t < h
+    · rw [Label.eq_of_min_eq_of_lt (hfR t).symm hRt]
+      exact max_le ((min_le_left _ _).trans ((le_max_left _ _).trans horig))
+        (hFW.trans ((min_le_left _ _).trans ((le_max_right _ _).trans horig)))
+    · have hft : h ≤ f t := le_of_min_eq_of_le (hfR t) (not_lt.mp hRt)
+      exact max_le ((min_le_right _ _).trans hft) (hFW.trans ((min_le_right _ _).trans hft))
+
+end General
+
+/-! ### The two conditions at the inputs `T` and `t2` -/
+
+/-- The root of the faces on five cells: the cell `y`. -/
+abbrev root5 : Fin 1 → Fin 5 := fun _ ↦ 0
+
+/-- **Donor raising on the scheme of `T`**, at the designated tops among `z'`, `o'`, `r'`, for
+every context whose lawful faces have the root self-visible at `1`: the donor face
+`(f y, ⊥, f y, o', r')` with `o'`, `r'` of the given donor face below `h`, and `max h c`,
+`max h o'` at or above it. -/
+theorem donorRaising_S {C : (Fin 5 → Label.{u}) → Prop} {Tops : Finset (Fin 5)}
+    (hTops : ∀ t ∈ Tops, t = 2 ∨ t = 3 ∨ t = 4) (hC0 : ∀ f, C f → IsSelfVisible 1 (f 0)) :
+    DonorRaising root5 root5 2 C S.{u}.rows.IsLawful Set.univ Tops := by
+  intro h c hh hc R f hR hf hroot hcf
+  have hc0 : c ≤ f 0 := hcf 0 (Set.mem_univ _)
+  obtain ⟨hRe, hw'a, has'⟩ := eq_lab_of_isLawful hR
+  set a := R 0
+  set w' := R 3
+  set s' := R 4
+  have ha : min (f 0) h = min a h := hroot 0
+  have hfa_lt (hah : a < h) : f 0 = a := Label.eq_of_min_eq_of_lt ha.symm hah
+  have hfa_ge (hah : h ≤ a) : h ≤ f 0 := le_of_min_eq_of_le ha hah
+  have hR1 : R 1 = ⊥ := by rw [hRe]; rfl
+  have hR2 : R 2 = a := by rw [hRe]; rfl
+  set w2 := if w' < h then w' else max h c with hw2def
+  set s2 := if s' < h then s' else max h w2 with hs2def
+  have hw2a : w2 ≤ f 0 := by
+    by_cases hw : w' < h
+    · rw [hw2def, ite_eq_left hw]
+      by_cases hah : a < h
+      · rw [hfa_lt hah]; exact hw'a
+      · exact hw.le.trans (hfa_ge (not_lt.mp hah))
+    · rw [hw2def, ite_eq_right hw]
+      exact max_le (hfa_ge ((not_lt.mp hw).trans hw'a)) hc0
+  have hw2sv : IsSelfVisible 2 w2 := by
+    rw [hw2def]; split_ifs
+    exacts [hR.orderly 3, hh.max hc]
+  have hs2sv : IsSelfVisible 2 s2 := by
+    rw [hs2def]; split_ifs
+    exacts [hR.orderly 4, hh.max hw2sv]
+  have hroot' (hs : h ≤ s') (hw : w' < h) : a = w' := by
+    have e : min a s' = w' := by rw [has', min_eq_left (hw.le.trans hs)]
+    by_contra hne
+    rcases le_total a s' with has | has
+    · rw [min_eq_left has] at e; exact hne e
+    · rw [min_eq_right has] at e; exact absurd (e ▸ hs) (not_le.mpr hw)
+  have hlaw : min (f 0) s2 = min w2 s2 := by
+    by_cases hs : s' < h
+    · rw [hs2def, ite_eq_left hs]
+      by_cases hw : w' < h
+      · rw [hw2def, ite_eq_left hw]
+        by_cases hah : a < h
+        · rw [hfa_lt hah]; exact has'
+        · have hfa := hfa_ge (not_lt.mp hah)
+          rw [min_eq_right (hs.le.trans hfa)]
+          rw [min_eq_right (hs.le.trans (not_lt.mp hah))] at has'
+          exact has'
+      · rw [hw2def, ite_eq_right hw, min_eq_right (hs.le.trans (le_max_left _ _)),
+          min_eq_right (hs.le.trans (hfa_ge ((not_lt.mp hw).trans hw'a)))]
+    · have hs' := not_lt.mp hs
+      rw [hs2def, ite_eq_right hs]
+      by_cases hw2h : h ≤ w2
+      · rw [max_eq_right hw2h, min_eq_right hw2a, min_self]
+      · have hw : w' < h := by
+          by_contra hw
+          rw [hw2def, ite_eq_right hw] at hw2h
+          exact hw2h (le_max_left _ _)
+        have haw := hroot' hs' hw
+        have hw2 : w2 = w' := by rw [hw2def, ite_eq_left hw]
+        rw [max_eq_left (not_le.mp hw2h).le, hw2, hfa_lt (haw ▸ hw), haw]
+  have hagree (d : Fin 5) : min (lab (f 0) w2 s2 d) h = min (R d) h := by
+    fin_cases d
+    · exact ha
+    · change min ⊥ h = min (R 1) h; rw [hR1]
+    · change min (f 0) h = min (R 2) h; rw [hR2]; exact ha
+    · change min w2 h = min w' h
+      by_cases hw : w' < h
+      · rw [hw2def, ite_eq_left hw]
+      · rw [hw2def, ite_eq_right hw, min_eq_right (le_max_left _ _), min_eq_right (not_lt.mp hw)]
+    · change min s2 h = min s' h
+      by_cases hs : s' < h
+      · rw [hs2def, ite_eq_left hs]
+      · rw [hs2def, ite_eq_right hs, min_eq_right (le_max_left _ _), min_eq_right (not_lt.mp hs)]
+  refine ⟨lab (f 0) w2 s2, isLawful_lab (hC0 f hf) hw2sv hs2sv hw2a hlaw, fun _ ↦ rfl, hagree,
+    fun t ht hRt ↦ ?_⟩
+  rcases hTops t ht with rfl | rfl | rfl
+  · exact hc0
+  · change c ≤ w2
+    rw [hw2def, ite_eq_right (not_lt.mpr hRt)]
+    exact le_max_right _ _
+  · change c ≤ s2
+    rw [hs2def, ite_eq_right (not_lt.mpr hRt)]
+    by_cases hw : w' < h
+    · have haw := hroot' hRt hw
+      exact hc0.trans ((hfa_lt (haw ▸ hw)).le.trans ((haw ▸ hw).le.trans (le_max_left _ _)))
+    · rw [hw2def, ite_eq_right hw]
+      exact (le_max_right _ _).trans (le_max_right _ _)
+
+/-- The frontier of the context face capped at `h` at `o` and `r` is at most `h`. -/
+theorem frontierAt_lab_le (f0 w s h : Label.{u}) :
+    frontierAt (3 : Fin 5) 4 2 (lab f0 (min w h) (min s h)) ≤ h := by
+  rw [frontierAt]
+  exact (min_le_left _ _).trans (min_le_right _ _)
+
+/-- **Owner lowering on the scheme of `T`**: the context face capped at `h` at `o` and `r`, with
+the root of the donor face. -/
+theorem ownerLowering_S :
+    OwnerLowering root5 root5 (3 : Fin 5) 4 2 S.{u}.rows.IsLawful S.{u}.rows.IsLawful := by
+  intro h hh L g hL hg hroot
+  obtain ⟨hLe, hwa, has⟩ := eq_lab_of_isLawful hL
+  have ha : min (g 0) h = min (L 0) h := hroot 0
+  have hagree (d : Fin 5) : min (lab (g 0) (min (L 3) h) (min (L 4) h) d) h = min (L d) h := by
+    fin_cases d
+    · exact ha
+    · change min ⊥ h = min (L 1) h; rw [hLe]; rfl
+    · change min (g 0) h = min (L 2) h; rw [hLe]; exact ha
+    · change min (min (L 3) h) h = min (L 3) h; rw [min_assoc, min_self]
+    · change min (min (L 4) h) h = min (L 4) h; rw [min_assoc, min_self]
+  refine ⟨_, isLawful_lab (hg.orderly 0) ((hL.orderly 3).min hh) ((hL.orderly 4).min hh) ?_ ?_,
+    fun _ ↦ rfl, hagree, frontierAt_lab_le _ _ _ _⟩
+  · by_cases hah : L 0 < h
+    · rw [Label.eq_of_min_eq_of_lt ha.symm hah]
+      exact (min_le_left _ _).trans hwa
+    · exact (min_le_right _ _).trans (le_of_min_eq_of_le ha (not_lt.mp hah))
+  · by_cases hah : L 0 < h
+    · rw [Label.eq_of_min_eq_of_lt ha.symm hah, ← min_assoc, has, min_min_cap]
+    · have hf0 := le_of_min_eq_of_le ha (not_lt.mp hah)
+      rw [min_eq_right ((min_le_right _ _).trans hf0), ← min_min_cap,
+        ← has, min_comm (L 0), min_assoc, min_eq_right (not_lt.mp hah)]
+
+/-- **Owner lowering on the scheme of `t2`**, as on that of `T`. -/
+theorem ownerLowering_S2 :
+    OwnerLowering root5 root5 (3 : Fin 5) 4 2 OwnerPartner.S2.{u}.rows.IsLawful
+      S.{u}.rows.IsLawful := by
+  intro h hh L g hL hg hroot
+  obtain ⟨hLe, hsw, has, hsv⟩ := OwnerPartner.eq_lab2_of_isLawful hL
+  have ha : min (g 0) h = min (L 0) h := hroot 0
+  have hagree (d : Fin 5) : min (lab (g 0) (min (L 3) h) (min (L 4) h) d) h = min (L d) h := by
+    fin_cases d
+    · exact ha
+    · change min ⊥ h = min (L 1) h; rw [hLe]; rfl
+    · change min (g 0) h = min (L 2) h; rw [hLe]; exact ha
+    · change min (min (L 3) h) h = min (L 3) h; rw [min_assoc, min_self]
+    · change min (min (L 4) h) h = min (L 4) h; rw [min_assoc, min_self]
+  refine ⟨_, OwnerPartner.isLawful_lab2 (hg.orderly 0) ((hL.orderly 3).min hh)
+    ((hL.orderly 4).min hh) ?_ ?_ ?_, fun _ ↦ rfl, hagree, frontierAt_lab_le _ _ _ _⟩
+  · by_cases hah : L 0 < h
+    · rw [Label.eq_of_min_eq_of_lt ha.symm hah, ← min_assoc]
+      exact hsv.min hh
+    · rw [min_eq_right ((min_le_right _ _).trans (le_of_min_eq_of_le ha (not_lt.mp hah)))]
+      exact (hL.orderly 3).min hh
+  · by_cases hah : L 0 < h
+    · rw [Label.eq_of_min_eq_of_lt ha.symm hah, ← min_min_cap, ← min_assoc]
+      exact min_le_min_right _ hsw
+    · rw [min_eq_right ((min_le_right _ _).trans (le_of_min_eq_of_le ha (not_lt.mp hah)))]
+      exact min_le_right _ _
+  · by_cases hah : L 0 < h
+    · rw [Label.eq_of_min_eq_of_lt ha.symm hah, ← min_assoc, has, min_min_cap]
+    · have hf0 := le_of_min_eq_of_le ha (not_lt.mp hah)
+      rw [min_eq_right ((min_le_right _ _).trans hf0), ← min_min_cap,
+        ← has, min_comm (L 0), min_assoc, min_eq_right (not_lt.mp hah)]
+
+/-! ### `T` and `t2` as instances -/
+
+/-- The frontier bound at the input `T`, from its source-gap clauses. -/
+theorem frontierAt_le_T {f : Fin 5 → Label.{u}} (hf : S.{u}.rows.IsLawful f) :
+    frontierAt (3 : Fin 5) 4 2 f ≤ f 0 :=
+  (isSourceGapContextAt_T 0).frontier_le (f := f) hf rfl (by decide)
+
+/-- The frontier bound at the input `t2`, from its source-gap clauses. -/
+theorem frontierAt_le_t2 {f : Fin 5 → Label.{u}} (hf : OwnerPartner.S2.{u}.rows.IsLawful f) :
+    frontierAt (3 : Fin 5) 4 2 f ≤ f 0 :=
+  (OwnerPartner.isSourceGapContextAt_t2 0).frontier_le (f := f) hf rfl (by decide)
+
+/-- **`T` is an instance** of the universal provisions, for every designation with the designated
+tops among `z'`, `o'`, `r'` (so for both of its donors). -/
+theorem isFieldAdmissionG_T {Lo Tops : Finset (Fin 5)} (hTops : ∀ t ∈ Tops, t = 2 ∨ t = 3 ∨ t = 4) :
+    IsFieldAdmissionG root5 root5 2 S.{u}.rows.IsLawful S.{u}.rows.IsLawful
+      (LowAtG (3 : Fin 5) 4 2 Lo Tops) :=
+  isFieldAdmissionG_of Set.univ (fun _ hf ↦ hf.orderly 3)
+    (fun _ hf _ _ ↦ frontierAt_le_T hf) (donorRaising_S hTops fun _ hf ↦ hf.orderly 0)
+    ownerLowering_S
+
+/-- **`t2` is an instance** of the universal provisions (context on the scheme of `t2`, donor on
+that of `T`). -/
+theorem isFieldAdmissionG_t2 {Lo Tops : Finset (Fin 5)}
+    (hTops : ∀ t ∈ Tops, t = 2 ∨ t = 3 ∨ t = 4) :
+    IsFieldAdmissionG root5 root5 2 OwnerPartner.S2.{u}.rows.IsLawful S.{u}.rows.IsLawful
+      (LowAtG (3 : Fin 5) 4 2 Lo Tops) :=
+  isFieldAdmissionG_of Set.univ (fun _ hf ↦ hf.orderly 3)
+    (fun _ hf _ _ ↦ frontierAt_le_t2 hf) (donorRaising_S hTops fun _ hf ↦ hf.orderly 0)
+    ownerLowering_S2
+
+/-! ### A field bounded below by the root fails -/
+
+/-- **A field at least the root is not served from the context coatom**: for a root value `a`
+self-visible at `1` but not at `2`, every lawful donor face with root `a` has `o' < a`, so with a
+field `b' ≥ a` the clause asks `o' ≥ b'` unless the low maximum reaches `b'`, which `r'` cannot
+(`min a r' = min o' r'`); for every designation with `o'` a top, the designated cells below the top
+among `e'`, `r'`. -/
+theorem not_exists_field_ge_root {a : Label.{u}} (ha : IsSelfVisible 1 a)
+    (ha2 : ¬ IsSelfVisible 2 a) {Lo Tops : Finset (Fin 5)}
+    (hLo : ∀ d ∈ Lo, d = 1 ∨ d = 4) (h3 : (3 : Fin 5) ∈ Tops) :
+    S.{u}.rows.IsLawful (lab a ⊥ ⊥) ∧
+      ¬ ∃ W : Fin 5 → Label.{u}, ∃ b' : Label.{u}, S.{u}.rows.IsLawful W ∧ W 0 = a ∧ a ≤ b' ∧
+        LowAt Lo Tops (lab a ⊥ ⊥) W b' := by
+  refine ⟨isLawful_lab ha (isSelfVisible_bot 2) (isSelfVisible_bot 2) bot_le (by simp), ?_⟩
+  rintro ⟨W, b', hW, hW0, hab, hlow⟩
+  obtain ⟨hWe, hwa, has⟩ := eq_lab_of_isLawful hW
+  rw [hW0] at hwa has
+  have hwlt : W 3 < a := lt_of_le_of_ne hwa fun he ↦ ha2 (he ▸ hW.orderly 3)
+  have ha0 : ⊥ < a := by
+    by_contra h0
+    rw [not_lt, le_bot_iff] at h0
+    exact ha2 (h0 ▸ isSelfVisible_bot 2)
+  have hW1 : W 1 = ⊥ := by rw [hWe]; rfl
+  by_cases hlt : Lo.sup W < b'
+  · exact absurd (((le_max_left _ _).trans (hlow hlt 3 h3)).trans_lt (hwlt.trans_le hab))
+      (lt_irrefl _)
+  · obtain ⟨d, hd, hdb⟩ : ∃ d ∈ Lo, b' ≤ W d := by
+      by_contra hne
+      simp only [not_exists, not_and, not_le] at hne
+      exact hlt ((Finset.sup_lt_iff (ha0.trans_le hab)).mpr hne)
+    rcases hLo d hd with rfl | rfl
+    · rw [hW1] at hdb
+      exact absurd (ha0.trans_le (hab.trans hdb)) (lt_irrefl _)
+    · have has' : min a (W 4) = a := min_eq_left (hab.trans hdb)
+      rw [has'] at has
+      exact absurd (has.le.trans (min_le_left _ _)) (not_le.mpr hwlt)
+
+/-- The label `ω + 1`, self-visible at `1` and not at `2`. -/
+noncomputable abbrev omegaAddOne : Label.{u} :=
+  (((Ordinal.omega0 : Ordinal.{u}) + (1 : ℕ) : Ordinal.{u}) : Label.{u})
+
+/-- **The instance**: at the cap `⊥`, the state of `⊥` labels (field `⊥`, at least the root) is
+admitted, the context face `(ω + 1, ⊥, ω + 1, ⊥, ⊥)` is lawful and agrees with it, and no donor
+face with a field at least its root serves it, for the twisted and the self designations. -/
+theorem not_fieldAboveRoot :
+    LowAt loU topsU (fun _ ↦ (⊥ : Label.{u})) (fun _ ↦ ⊥) ⊥ ∧
+      S.{u}.rows.IsLawful (lab omegaAddOne ⊥ ⊥) ∧
+      (¬ ∃ W : Fin 5 → Label.{u}, ∃ b' : Label.{u}, S.{u}.rows.IsLawful W ∧
+        W 0 = omegaAddOne ∧ omegaAddOne ≤ b' ∧ LowAt loU topsU (lab omegaAddOne ⊥ ⊥) W b') ∧
+      ¬ ∃ W : Fin 5 → Label.{u}, ∃ b' : Label.{u}, S.{u}.rows.IsLawful W ∧
+        W 0 = omegaAddOne ∧ omegaAddOne ≤ b' ∧
+        LowAt loSelf topsSelf (lab omegaAddOne ⊥ ⊥) W b' := by
+  have hω := Ordinal.isSuccLimit_omega0.isSuccPrelimit
+  have h1 : IsSelfVisible 1 omegaAddOne.{u} := isSelfVisible_coe_add hω (le_refl 1)
+  have h2 : ¬ IsSelfVisible 2 omegaAddOne.{u} :=
+    not_isSelfVisible_coe_add_natCast hω (show 1 < 2 by omega)
+  exact ⟨fun h ↦ absurd h (not_lt.mpr bot_le),
+    (not_exists_field_ge_root h1 h2 (Lo := loU) (Tops := topsU) (by decide) (by decide)).1,
+    (not_exists_field_ge_root h1 h2 (by decide) (by decide)).2,
+    (not_exists_field_ge_root h1 h2 (by decide) (by decide)).2⟩
+
+/-! ### Every source-gap context with a donor over its root -/
+
+/-- **The universal provisions at a source-gap context**: for a source-gap context `t'` along `g`
+with root face `s`, and a donor `tb` with the same root face along `gb`, the LOW clause with a
+separate field is a field admission (faces the lawful labellings of `t'` and of `tb`, root the
+cells of `s`), for every designation, as soon as donor raising (up to the root cells labelled `⊤`)
+and owner lowering hold.  The order law at the owner and the frontier bound
+(`StageType.IsSourceGapContextAt.frontier_le`) come from the context. -/
+theorem isFieldAdmissionG_of_isSourceGapContextAt {α : Ordinal.{u}} {k n p K : ℕ}
+    {t' : StageType.{u} α k} {g : Fin n ↪ Fin k} {l : Fin k} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt K g l o r) {s : StageType.{u} α n}
+    (ht : StageType.restrictFace g t' = some s) {tb : StageType.{u} α p} {gb : Fin n ↪ Fin p}
+    (htb : StageType.restrictFace gb tb = some s) {Lo Tops : Finset (Fin tb.card)}
+    (hDR : DonorRaising (StageType.faceCell ht) (StageType.faceCell htb) K t'.rows.IsLawful
+      tb.rows.IsLawful {x | s.label x = ⊤} Tops)
+    (hOL : OwnerLowering (StageType.faceCell ht) (StageType.faceCell htb) o r K
+      t'.rows.IsLawful tb.rows.IsLawful) :
+    IsFieldAdmissionG (StageType.faceCell ht) (StageType.faceCell htb) K t'.rows.IsLawful
+      tb.rows.IsLawful (LowAtG o r K Lo Tops) := by
+  refine isFieldAdmissionG_of {x | s.label x = ⊤} (fun f hf ↦ ?_) (fun f hf x hx ↦ ?_) hDR hOL
+  · have := hf.orderly o
+    rwa [hs.grade_owner] at this
+  · refine hs.frontier_le hf ((StageType.label_faceCell ht x).trans hx) fun hl ↦ ?_
+    rw [StageType.scope_faceCell ht x] at hl
+    obtain ⟨i, -, hi⟩ := mem_map.mp hl
+    exact hs.notMem_range ⟨i, hi⟩
+
+/-! ### Owner lowering from legality -/
+
+/-- **Owner lowering holds at every legal context of top grade `K` above the dimension of its root
+whose cells have grade at most `K`** (on two points with a one-point root: `K = 2`).  The capped
+lift of the context from the root face, with the root of the donor face and the context face as
+ambient at the cap `h` (bountifulness), capped at `h` at the cells of grade `K`
+(`CellScheme.Rows.IsLawful.capTopGrade`): the root has grade at most its dimension, below `K`, so it
+is kept; the owner has grade `K`, so it is at most `h`. -/
+theorem ownerLowering_of_isLegal {α : Ordinal.{u}} {k n p K : ℕ} {t' : StageType.{u} α k}
+    (hleg : t'.IsLegal) {g : Fin n ↪ Fin k} {s : StageType.{u} α n}
+    (ht : StageType.restrictFace g t' = some s) {tb : StageType.{u} α p} {gb : Fin n ↪ Fin p}
+    (htb : StageType.restrictFace gb tb = some s) {o r : Fin t'.card}
+    (ho : t'.toCellScheme.grade o = K) (hn : 0 < n) (hnK : n < K)
+    (hK : ∀ d, t'.toCellScheme.grade d ≤ K) :
+    OwnerLowering (StageType.faceCell ht) (StageType.faceCell htb) o r K t'.rows.IsLawful
+      tb.rows.IsLawful := by
+  classical
+  intro h hh L gd hL hg hroot
+  obtain ⟨hf, -⟩ := (StageType.restrictFace_eq_some_iff (t := t') (f := g)).mp ht
+  have he := StageType.comap_toScheme_of_restrictFace ht
+  have hinj : Function.Injective (StageType.faceCell ht) := by
+    intro i j hij
+    have := (t'.toScheme.cellMap g).injective hij
+    exact Fin.cast_injective _ this
+  -- the root of the donor face, on the cells of the context
+  set x : Fin t'.card → Label.{u} :=
+    Function.extend (StageType.faceCell ht) (fun i ↦ gd (StageType.faceCell htb i)) (fun _ ↦ ⊥)
+  have hx (i : Fin s.card) : x (StageType.faceCell ht i) = gd (StageType.faceCell htb i) :=
+    hinj.extend_apply _ _ i
+  have hgs : s.rows.IsLawful fun i ↦ gd (StageType.faceCell htb i) :=
+    StageType.isLawful_comp_faceCell htb hg
+  have hpX : t'.rows.IsLawfulBelow (Prod.map (Finset.map g) id ((univ : Finset (Fin n)), n))
+      (fun d ↦ x d) := by
+    refine (Scheme.isLawfulBelow_faceCell_iff he _ x).mp ?_
+    convert hgs.isLawfulBelow ((univ : Finset (Fin n)), n) using 2 with i
+    exact hx i.1
+  have hKk : K ≤ k := ho ▸ t'.grade_le o
+  have hXY : Prod.map (Finset.map g) id ((univ : Finset (Fin n)), n) ≤
+      ((univ : Finset (Fin k)), K) := ⟨subset_univ _, hnK.le⟩
+  have hX : Prod.map (Finset.map g) id ((univ : Finset (Fin n)), n) ∈
+      t'.toCellScheme.gradedFaces := ⟨hf, hn, by simp⟩
+  have hY : ((univ : Finset (Fin k)), K) ∈ t'.toCellScheme.gradedFaces :=
+    ⟨t'.univ_mem_faces, hn.trans hnK, by simpa using hKk⟩
+  have hlift := (CellScheme.Rows.cappedLift_iff_forall_exists hXY).mp
+    (hleg.isBountiful hX hY hXY) h hh (fun d ↦ x d) (fun d ↦ L d) hpX
+    (hL.isLawfulBelow _) (fun d ↦ ?_)
+  rotate_left
+  · -- the prescription agrees with the context face capped at `h` on the root
+    have hvis : d.1 ∈ t'.toScheme.visibleCells g := by
+      refine Scheme.mem_visibleCells.mpr fun y hy ↦ ?_
+      have hy' : y ∈ (univ : Finset (Fin n)).map g := d.2.1 (mem_coe.mp hy)
+      obtain ⟨i, -, hi⟩ := mem_map.mp hy'
+      exact ⟨i, hi⟩
+    obtain ⟨i, hi⟩ := Scheme.exists_faceCell_eq he hvis
+    change min (L d.1) h = min (x d.1) h
+    rw [← hi]
+    change min (L (StageType.faceCell ht i)) h = min (x (StageType.faceCell ht i)) h
+    rw [hx]
+    exact (hroot i).symm
+  obtain ⟨q', hq', hq'L, hq'p⟩ := hlift
+  have hmem (d : Fin t'.card) : d ∈ t'.toCellScheme.below ((univ : Finset (Fin k)), K) :=
+    ⟨subset_univ _, hK d⟩
+  set W1 : Fin t'.card → Label.{u} := fun d ↦ q' ⟨d, hmem d⟩
+  have hW1 : t'.rows.IsLawful W1 := hq'.isLawful fun d ↦ hmem d
+  refine ⟨fun d ↦ if t'.toCellScheme.grade d = K then min (W1 d) h else W1 d,
+    hW1.capTopGrade hK hh, fun i ↦ ?_, fun d ↦ ?_, ?_⟩
+  · have hgi : t'.toCellScheme.grade (StageType.faceCell ht i) ≠ K := by
+      rw [StageType.grade_faceCell]
+      exact (lt_of_le_of_lt (s.grade_le i) hnK).ne
+    change (if t'.toCellScheme.grade (StageType.faceCell ht i) = K then
+      min (W1 (StageType.faceCell ht i)) h else W1 (StageType.faceCell ht i)) = _
+    rw [ite_eq_right hgi]
+    have hvX : StageType.faceCell ht i ∈ t'.toCellScheme.below
+        (Prod.map (Finset.map g) id ((univ : Finset (Fin n)), n)) :=
+      (CellScheme.mem_below _).mpr
+        ⟨show t'.toCellScheme.scope (StageType.faceCell ht i) ⊆ (univ : Finset (Fin n)).map g by
+          rw [StageType.scope_faceCell]; exact map_subset_map.mpr (subset_univ _),
+        show t'.toCellScheme.grade (StageType.faceCell ht i) ≤ n by
+          rw [StageType.grade_faceCell]; exact s.grade_le i⟩
+    have := hq'p ⟨_, hvX⟩
+    change q' ⟨StageType.faceCell ht i, _⟩ = x (StageType.faceCell ht i) at this
+    exact this.trans (hx i)
+  · have e := hq'L ⟨d, hmem d⟩
+    change min (W1 d) h = min (L d) h at e
+    change min (if t'.toCellScheme.grade d = K then min (W1 d) h else W1 d) h = min (L d) h
+    split_ifs
+    · rw [min_assoc, min_self, e]
+    · exact e
+  · refine (min_le_left _ _).trans ?_
+    simp only [ho, ite_true]
+    exact min_le_right _ _
+
+/-- **The universal provisions at a legal source-gap context, up to donor raising**: at a legal
+source-gap context of top grade `K` above the dimension `n > 0` of its root, with every cell of
+grade at most `K`, and a donor with the same root face, the LOW clause with a separate field is a
+field admission for every designation as soon as donor raising holds; owner lowering is
+`FieldAdmission.ownerLowering_of_isLegal`. -/
+theorem isFieldAdmissionG_of_donorRaising {α : Ordinal.{u}} {k n p K : ℕ}
+    {t' : StageType.{u} α k} (hleg : t'.IsLegal) {g : Fin n ↪ Fin k} {l : Fin k}
+    {o r : Fin t'.card} (hs : t'.IsSourceGapContextAt K g l o r) {s : StageType.{u} α n}
+    (ht : StageType.restrictFace g t' = some s) {tb : StageType.{u} α p} {gb : Fin n ↪ Fin p}
+    (htb : StageType.restrictFace gb tb = some s) (hn : 0 < n) (hnK : n < K)
+    (hK : ∀ d, t'.toCellScheme.grade d ≤ K) {Lo Tops : Finset (Fin tb.card)}
+    (hDR : DonorRaising (StageType.faceCell ht) (StageType.faceCell htb) K t'.rows.IsLawful
+      tb.rows.IsLawful {x | s.label x = ⊤} Tops) :
+    IsFieldAdmissionG (StageType.faceCell ht) (StageType.faceCell htb) K t'.rows.IsLawful
+      tb.rows.IsLawful (LowAtG o r K Lo Tops) :=
+  isFieldAdmissionG_of_isSourceGapContextAt hs ht htb hDR
+    (ownerLowering_of_isLegal hleg ht htb hs.grade_owner hn hnK hK)
+
+/-- **On two points**: at every legal source-gap context of top grade `2` on two points with a
+one-point root, and every donor with the same root face, the clause is a field admission for every
+designation as soon as donor raising holds. -/
+theorem isFieldAdmissionG_two {α : Ordinal.{u}} {p : ℕ} {t' : StageType.{u} α 2}
+    (hleg : t'.IsLegal) {g : Fin 1 ↪ Fin 2} {l : Fin 2} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt 2 g l o r) {s : StageType.{u} α 1}
+    (ht : StageType.restrictFace g t' = some s) {tb : StageType.{u} α p} {gb : Fin 1 ↪ Fin p}
+    (htb : StageType.restrictFace gb tb = some s) {Lo Tops : Finset (Fin tb.card)}
+    (hDR : DonorRaising (StageType.faceCell ht) (StageType.faceCell htb) 2 t'.rows.IsLawful
+      tb.rows.IsLawful {x | s.label x = ⊤} Tops) :
+    IsFieldAdmissionG (StageType.faceCell ht) (StageType.faceCell htb) 2 t'.rows.IsLawful
+      tb.rows.IsLawful (LowAtG o r 2 Lo Tops) :=
+  isFieldAdmissionG_of_donorRaising hleg hs ht htb Nat.one_pos (by omega) t'.grade_le hDR
+
+end FieldAdmission
+
+end VaughtConjecture

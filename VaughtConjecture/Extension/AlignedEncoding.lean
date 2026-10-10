@@ -217,16 +217,6 @@ theorem coe_le_highCode (hy : δ < y) : (μ : Label.{u}) ≤ highCode μ V m δ 
   rw [highCode_of_lt hy]
   exact coe_le_tailEncode (ne_bot_of_gt hy)
 
-/-- A label above a bound self-visible at `k` stays above it after visibility replacement at `k`
-with any value `i ≤ k`. -/
-theorem lt_visibilityReplace_of_lt (hi : i ≤ k) (hδ : IsSelfVisible k δ) (hy : δ < y) :
-    δ < visibilityReplace k i y := by
-  by_contra hle
-  rw [not_lt] at hle
-  have h := visibilityReplace_le_of_le le_rfl hδ hle
-  rw [visibilityReplace_self_visibilityReplace hi] at h
-  exact hy.not_ge ((le_visibilityReplace (by omega) y).trans h)
-
 /-- Every label other than bottom is at least ordinal zero. -/
 private theorem coe_zero_le (hx : x ≠ ⊥) : ((0 : Ordinal.{u}) : Label.{u}) ≤ x := by
   induction x using recBotCoeTop with

@@ -71,6 +71,17 @@ noncomputable def attachDonCell (j : Fin d.card) : Fin (I.attachment g).card :=
   (I.attachment g).faceCell (extendByLast (g.trans Fin.castSuccEmb))
     (I.comap_donor_attachment_scheme g hd) j
 
+/-- The cell of the attachment at a cell of the context is its face cell. -/
+theorem attachCtxCell_eq (x : Fin I.left.card) :
+    I.attachCtxCell g x = (I.attachmentType g).faceCell (I.restrictFace_left_attachmentType g) x :=
+  rfl
+
+/-- The cell of the attachment at a cell of the donor is its face cell. -/
+theorem attachDonCell_eq (j : Fin d.card) :
+    I.attachDonCell g hd j =
+      (I.attachmentType g).faceCell (I.restrictFace_donor_attachmentType g hd) j :=
+  rfl
+
 /-- The **truncation at the grade `N`** of a state of the attachment: its values at the cells of
 grade at most `N`, `⊥` above. -/
 noncomputable def attachHatAt (N : ℕ) (R : Fin (I.attachment g).card → Label.{u})

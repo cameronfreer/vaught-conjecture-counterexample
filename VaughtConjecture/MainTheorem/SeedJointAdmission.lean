@@ -56,7 +56,7 @@ def HasAdmittedCompletions (Q : GrowthRequests I.left d.toScheme) : Prop :=
   ∀ u' : Fin I.left.card → Label.{u}, I.left.rows.IsLawful u' →
     ∃ R : Fin I.amalgam.card → Label.{u}, I.amalgam.rows.IsLawful R ∧
       (∀ x, R (I.ctxCell x) = u' x) ∧
-      Q.AdmitsOnClass (fun x ↦ R (I.ctxCell x)) (fun j ↦ R (I.donCell hd j))
+      Q.AdmitsOnClass (fun x ↦ R (I.ctxCell x)) (fun j ↦ R (I.donorFaceCell hd j))
 
 /-- **The joint extension through the amalgam**: lawful sections of the context and of the donor
 agreeing on the root extend jointly to a lawful section of the amalgam. -/
@@ -64,7 +64,7 @@ def HasJointExtension : Prop :=
   ∀ (u : Fin I.left.card → Label.{u}) (w : Fin d.card → Label.{u}), I.left.rows.IsLawful u →
     d.rows.IsLawful w → (∀ i, w (d.faceCell hdp i) = u (I.left.faceCell hte i)) →
     ∃ R : Fin I.amalgam.card → Label.{u}, I.amalgam.rows.IsLawful R ∧
-      (∀ x, R (I.ctxCell x) = u x) ∧ ∀ j, R (I.donCell hd j) = w j
+      (∀ x, R (I.ctxCell x) = u x) ∧ ∀ j, R (I.donorFaceCell hd j) = w j
 
 variable {I}
 
@@ -85,7 +85,7 @@ theorem hasAdmittedCompletions_of_jointExtension {Q : GrowthRequests I.left d.to
   obtain ⟨R, hR, hRc, hRd⟩ := hJ u' v' hu' hv' hroot
   refine ⟨R, hR, hRc, ?_⟩
   have e1 : (fun x ↦ R (I.ctxCell x)) = u' := funext hRc
-  have e2 : (fun j ↦ R (I.donCell hd j)) = v' := funext hRd
+  have e2 : (fun j ↦ R (I.donorFaceCell hd j)) = v' := funext hRd
   rw [e1, e2]
   exact hadm
 
@@ -98,7 +98,7 @@ theorem hasAdmittedCompletions_of_recognizes {Q : GrowthRequests I.left d.toSche
     (hφ : I.amalgam.toCellScheme.IsLowerEmbedding G.scheme.toCellScheme φ)
     (hrows : G.scheme.rows.comap hφ = I.amalgam.rows)
     (hctx : ∀ x, G.contextCell x = φ (I.ctxCell x))
-    (hdon : ∀ j, G.donorCell j = φ (I.donCell hd j)) (hrec : G.Recognizes Q)
+    (hdon : ∀ j, G.donorCell j = φ (I.donorFaceCell hd j)) (hrec : G.Recognizes Q)
     (href : ∀ j ∈ Q.exacts,
       Q.ref j ∈ I.left.toCellScheme.below (I.left.toCellScheme.gradedIndex Q.cap) ∧
         Q.offset j ≤ Q.threshold)
@@ -120,7 +120,7 @@ theorem hasAdmittedCompletions_of_recognizes {Q : GrowthRequests I.left d.toSche
     exact hrc x
   · have e1 : (fun x ↦ (r ∘ φ) (I.ctxCell x)) = fun x ↦ r (G.contextCell x) :=
       funext fun x ↦ by simp only [Function.comp_apply]; rw [hctx]
-    have e2 : (fun j ↦ (r ∘ φ) (I.donCell hd j)) = fun j ↦ r (G.donorCell j) :=
+    have e2 : (fun j ↦ (r ∘ φ) (I.donorFaceCell hd j)) = fun j ↦ r (G.donorCell j) :=
       funext fun j ↦ by simp only [Function.comp_apply]; rw [hdon]
     rw [e1, e2]
     exact hadm

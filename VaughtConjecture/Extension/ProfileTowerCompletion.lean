@@ -80,7 +80,7 @@ below `(D, m + 1)` there are only old cells, where the boundary labelling is lif
 the grade `m` (`Seed.exists_lift_union_of_le`: the common face carries no cell of the grade
 `m + 1`), and the three pieces are glued (`CellScheme.Rows.IsLawfulBelow.glue₃`,
 `Lvl.Good.mem_below_cover`). -/
-theorem Lvl.GoodOn.exists_isLawfulBelow_top (hN : N.GoodOn S) {x y : Fin (m + 2)}
+theorem Lvl.GoodAt.exists_isLawfulBelow_top (hN : N.GoodAt S) {x y : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hy : y ∈ (Pts : Finset (Fin (m + 2))))
     (hxy : x ≠ y) {w : Fin N.S.card → Label.{u}}
     (hwU : N.S.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ w d)
@@ -162,7 +162,7 @@ theorem Lvl.GoodOn.exists_isLawfulBelow_top (hN : N.GoodOn S) {x y : Fin (m + 2)
 every cell of the top layer: the boundary labelling is completed on the level
 (`Lvl.Good.exists_isLawfulBelow_top`) and extended through the new cells
 (`Scheme.extendsFromBoundary_fieldLayer_of_fill`). -/
-theorem Lvl.GoodOn.extendsFromBoundary_top (hN : N.GoodOn S) {x y : Fin (m + 2)}
+theorem Lvl.GoodAt.extendsFromBoundary_top (hN : N.GoodAt S) {x y : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hy : y ∈ (Pts : Finset (Fin (m + 2))))
     (hxy : x ≠ y) {u : Fin N.top.card}
     (hu : N.top.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), m + 1))
@@ -179,7 +179,7 @@ theorem Lvl.GoodOn.extendsFromBoundary_top (hN : N.GoodOn S) {x y : Fin (m + 2)}
 the restriction to the level is extended below `(univ, m)` (`Lvl.HasBotExtension`), glued with the
 old cells of the grade `m + 1`, and extended through the top layer
 (`Scheme.exists_isLawfulBelow_fieldLayer`). -/
-theorem Lvl.GoodOn.extendsFromBoundary_bot_top (hN : N.GoodOn S) (hB : N.HasBotExtension)
+theorem Lvl.GoodAt.extendsFromBoundary_bot_top (hN : N.GoodAt S) (hB : N.HasBotExtension)
     {x y : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
     (hy : y ∈ (Pts : Finset (Fin (m + 2)))) (hxy : x ≠ y) :
     N.top.rows.ExtendsFromBoundary (univ.erase x, m + 1) (univ.erase y, m + 1) (univ, m + 1) ⊥
@@ -253,14 +253,14 @@ theorem Lvl.cappedLift_top_iff {X Y : Finset (Fin (m + 2)) × ℕ} (hXY : X ≤ 
   rw [← h.cappedLift_iff hXY le_rfl, Scheme.comap_rows_fieldLayer]
 
 /-- **Lifts between graded faces off the ground set** are lifts of the amalgam. -/
-theorem Lvl.GoodOn.cappedLift_top_old (hN : N.GoodOn S) {X Y : Finset (Fin (m + 2)) × ℕ}
+theorem Lvl.GoodAt.cappedLift_top_old (hN : N.GoodAt S) {X Y : Finset (Fin (m + 2)) × ℕ}
     (hX : X ∈ I.amalgam.toCellScheme.gradedFaces) (hY : Y ∈ I.amalgam.toCellScheme.gradedFaces)
     (h : X ≤ Y) (hY1 : Y.1 ≠ univ) : N.top.rows.CappedLift h :=
   (Lvl.cappedLift_top_iff h fun h' ↦ hY1 (univ_subset_iff.mp h'.1)).mpr
     (hN.cappedLift_old hX hY hY1 h)
 
 /-- **The lifts at the grades `j ≤ m`**, from either coatom into `(univ, j)` (`Lvl.Good.lift`). -/
-theorem Lvl.GoodOn.cappedLift_top_le (hN : N.GoodOn S) {x : Fin (m + 2)}
+theorem Lvl.GoodAt.cappedLift_top_le (hN : N.GoodAt S) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {j : ℕ} (hj : j ≤ m) :
     N.top.rows.CappedLift (X := (univ.erase x, j)) (Y := ((univ : Finset (Fin (m + 2))), j))
       ⟨erase_subset _ _, le_rfl⟩ :=
@@ -271,7 +271,7 @@ lift with the boundary triples of the top step of the tower: at `⊥`, the two c
 common face (`Lvl.Good.extendsFromBoundary_bot_top`); at the positive caps, `U = (C, m + 1)`,
 `V = (univ, m)`, `O = (C, m)`, with the lift at the grade `m` (`Lvl.Good.cappedLift_top_le`) and the
 extension that lifts within the other coatom (`Lvl.Good.extendsFromBoundary_top`). -/
-theorem Lvl.GoodOn.cappedLift_top_succ (hN : N.GoodOn S) (hB : N.HasBotExtension) (hm : 1 ≤ m)
+theorem Lvl.GoodAt.cappedLift_top_succ (hN : N.GoodAt S) (hB : N.HasBotExtension) (hm : 1 ≤ m)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
     N.top.rows.CappedLift (X := (univ.erase x, m + 1))
       (Y := ((univ : Finset (Fin (m + 2))), m + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
@@ -320,7 +320,7 @@ theorem Lvl.GoodOn.cappedLift_top_succ (hN : N.GoodOn S) (hB : N.HasBotExtension
 -/
 
 /-- **The top layer is bountiful** (`CellScheme.Rows.isBountiful_of_coatoms`). -/
-theorem Lvl.GoodOn.isBountiful_top (hN : N.GoodOn S) (hB : N.HasBotExtension) (hm : 1 ≤ m) :
+theorem Lvl.GoodAt.isBountiful_top (hN : N.GoodAt S) (hB : N.HasBotExtension) (hm : 1 ≤ m) :
     N.top.rows.IsBountiful := by
   have hfull {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
       (j : ℕ) (hj : j ≤ #(univ.erase x)) :
@@ -343,7 +343,7 @@ theorem Lvl.GoodOn.isBountiful_top (hN : N.GoodOn S) (hB : N.HasBotExtension) (h
     (hfull (by simp)) (hfull (by simp))
 
 /-- Every cell of a good level has grade below `m + 2`. -/
-theorem Lvl.GoodOn.grade_lt (hN : N.GoodOn S) (z : Fin N.S.card) :
+theorem Lvl.GoodAt.grade_lt (hN : N.GoodAt S) (z : Fin N.S.card) :
     N.S.toCellScheme.grade z < m + 2 := by
   rcases N.inv z with h | h
   · omega
@@ -352,7 +352,7 @@ theorem Lvl.GoodOn.grade_lt (hN : N.GoodOn S) (z : Fin N.S.card) :
     exact I.grade_lt d
 
 /-- Every cell of the top layer has grade below `m + 2`. -/
-theorem Lvl.GoodOn.grade_top_lt (hN : N.GoodOn S) (z : Fin N.top.card) :
+theorem Lvl.GoodAt.grade_top_lt (hN : N.GoodAt S) (z : Fin N.top.card) :
     N.top.toCellScheme.grade z < m + 2 := by
   induction z using Fin.addCases with
   | right i => rw [Scheme.appendFullCellsScheme_grade_natAdd]; omega
@@ -361,7 +361,7 @@ theorem Lvl.GoodOn.grade_top_lt (hN : N.GoodOn S) (z : Fin N.top.card) :
 /-- **Completeness below the full grade**: every graded face of grade below `m + 2` carries a cell:
 an old cell off the ground set, at `(univ, j)` for `j ≤ m` a cell of the level
 (`Lvl.Good.complete`), and at `(univ, m + 1)` a cell of the top layer. -/
-theorem Lvl.GoodOn.exists_gradedIndex_eq_top (hN : N.GoodOn S) (X : Finset (Fin (m + 2)) × ℕ)
+theorem Lvl.GoodAt.exists_gradedIndex_eq_top (hN : N.GoodAt S) (X : Finset (Fin (m + 2)) × ℕ)
     (hX : X ∈ N.top.toCellScheme.gradedFaces) (hX2 : X.2 < m + 2) :
     ∃ d, N.top.toCellScheme.gradedIndex d = X := by
   obtain ⟨B, j⟩ := X
@@ -385,7 +385,7 @@ theorem Lvl.GoodOn.exists_gradedIndex_eq_top (hN : N.GoodOn S) (X : Finset (Fin 
     exact ⟨Fin.castAdd _ (N.embed d), (hgi _).trans ((hN.gradedIndex_embed d).trans hd)⟩
 
 /-- **The top layer is legal below the full grade.** -/
-theorem Lvl.GoodOn.isLegalBelowFullGrade_top (hN : N.GoodOn S) (hB : N.HasBotExtension)
+theorem Lvl.GoodAt.isLegalBelowFullGrade_top (hN : N.GoodAt S) (hB : N.HasBotExtension)
     (hm : 1 ≤ m) :
     N.top.IsLegalBelowFullGrade where
   isWellFormed := Scheme.isWellFormed_fieldLayer hN.wf (by omega) (by omega)
@@ -406,12 +406,12 @@ noncomputable def Lvl.topEmbed (N : Lvl I m) : Fin I.amalgam.card ↪o Fin N.top
     N.topEmbed d = Fin.castAdd _ (N.embed d) := rfl
 
 /-- The old cells of the top layer form a lower embedding of the amalgam. -/
-theorem Lvl.GoodOn.isLowerEmbedding_top (hN : N.GoodOn S) :
+theorem Lvl.GoodAt.isLowerEmbedding_top (hN : N.GoodAt S) :
     I.amalgam.toCellScheme.IsLowerEmbedding N.top.toCellScheme N.topEmbed :=
   (Scheme.isLowerEmbedding_fieldLayer N.S (m + 1) N.not_le).comp hN.lowerEmb
 
 /-- The rows of the top layer pull back to those of the amalgam. -/
-theorem Lvl.GoodOn.comap_rows_top (hN : N.GoodOn S) :
+theorem Lvl.GoodAt.comap_rows_top (hN : N.GoodAt S) :
     N.top.rows.comap hN.isLowerEmbedding_top = I.amalgam.rows := by
   have h := Rows.comap_comap N.top.rows
     (Scheme.isLowerEmbedding_fieldLayer N.S (m + 1) N.not_le) hN.lowerEmb
@@ -419,12 +419,12 @@ theorem Lvl.GoodOn.comap_rows_top (hN : N.GoodOn S) :
   exact h.symm
 
 /-- The old cells of the top layer keep their graded indices. -/
-theorem Lvl.GoodOn.gradedIndex_topEmbed (hN : N.GoodOn S) (d : Fin I.amalgam.card) :
+theorem Lvl.GoodAt.gradedIndex_topEmbed (hN : N.GoodAt S) (d : Fin I.amalgam.card) :
     N.top.toCellScheme.gradedIndex (N.topEmbed d) = I.amalgam.toCellScheme.gradedIndex d :=
   (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ _).trans (hN.gradedIndex_embed d)
 
 /-- Every cell of the top layer of scope other than the ground set is old. -/
-theorem Lvl.GoodOn.mem_range_topEmbed (hN : N.GoodOn S) (z : Fin N.top.card)
+theorem Lvl.GoodAt.mem_range_topEmbed (hN : N.GoodAt S) (z : Fin N.top.card)
     (hz : N.top.toCellScheme.scope z ≠ univ) : z ∈ Set.range N.topEmbed := by
   induction z using Fin.addCases with
   | right i => exact absurd (Scheme.appendFullCellsScheme_scope_natAdd _ _ _ i) hz
@@ -437,7 +437,7 @@ theorem Lvl.GoodOn.mem_range_topEmbed (hN : N.GoodOn S) (z : Fin N.top.card)
 cells: the extension at `⊥` from the two coatoms at the grade `m + 1`
 (`Lvl.Good.extendsFromBoundary_bot_top`) of the glued labelling, every cell lying below
 `(univ, m + 1)`. -/
-theorem Lvl.GoodOn.exists_isLawful_top (hN : N.GoodOn S) (hB : N.HasBotExtension) :
+theorem Lvl.GoodAt.exists_isLawful_top (hN : N.GoodAt S) (hB : N.HasBotExtension) :
     ∃ q : Fin N.top.card → Label.{u}, N.top.rows.IsLawful q ∧
       ∀ d, q (N.topEmbed d) = I.amalgam.label d := by
   classical
@@ -480,7 +480,7 @@ theorem Lvl.GoodOn.exists_isLawful_top (hN : N.GoodOn S) (hB : N.HasBotExtension
 /-- **The completion below the full grade over a good level at the grade `m`** that extends at `⊥`:
 the level and the canonical field layer at the grade `m + 1`, with the glued labelling extended
 (`Lvl.Good.exists_isLawful_top`). -/
-noncomputable def Lvl.GoodOn.completion (hN : N.GoodOn S) (hB : N.HasBotExtension) (hm : 1 ≤ m) :
+noncomputable def Lvl.GoodAt.completion (hN : N.GoodAt S) (hB : N.HasBotExtension) (hm : 1 ≤ m) :
     CompletionBelowFullGrade I where
   scheme := N.top
   embed := N.topEmbed
@@ -502,10 +502,10 @@ coatoms, admitted or not.  It is asked here only for the labellings whose amalga
 `S` (`ProfileTower.Lvl.HasBotExtensionOn`), and the lift at the cap `⊥` from a coatom is reduced
 to a **bottom step at the top**: a labelling lawful below the coatom is completed below the other
 coatom with its amalgam profile in `S`
-(`ProfileTower.Lvl.GoodOn.extendsFromBoundary_bot_top_of_step`).
+(`ProfileTower.Lvl.GoodAt.extendsFromBoundary_bot_top_of_step`).
 -/
 
-theorem Lvl.GoodOn.exists_isLawfulBelow_top_of_coatoms (hN : N.GoodOn S)
+theorem Lvl.GoodAt.exists_isLawfulBelow_top_of_coatoms (hN : N.GoodAt S)
     (hB : N.HasBotExtensionOn S) {x y : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
     (hy : y ∈ (Pts : Finset (Fin (m + 2)))) (hxy : x ≠ y) (w : Fin N.top.card → Label.{u})
     (hwx : N.top.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ w d)
@@ -576,8 +576,8 @@ theorem Lvl.GoodOn.exists_isLawfulBelow_top_of_coatoms (hN : N.GoodOn S)
 /-- **The extension at `⊥` from a coatom at the grade `m + 1`, from a bottom step**: if every
 labelling lawful below the coatom `univ.erase x` at the grade `m + 1` agrees there with one lawful
 below both coatoms whose amalgam profile lies in `S`, the top layer extends from that coatom at the
-cap `⊥` (`ProfileTower.Lvl.GoodOn.exists_isLawfulBelow_top_of_coatoms`). -/
-theorem Lvl.GoodOn.extendsFromBoundary_bot_top_of_step (hN : N.GoodOn S)
+cap `⊥` (`ProfileTower.Lvl.GoodAt.exists_isLawfulBelow_top_of_coatoms`). -/
+theorem Lvl.GoodAt.extendsFromBoundary_bot_top_of_step (hN : N.GoodAt S)
     (hB : N.HasBotExtensionOn S) {x y : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
     (hy : y ∈ (Pts : Finset (Fin (m + 2)))) (hxy : x ≠ y)
     (hstep : ∀ w : Fin N.top.card → Label.{u},
@@ -599,8 +599,8 @@ theorem Lvl.GoodOn.extendsFromBoundary_bot_top_of_step (hN : N.GoodOn S)
 
 /-- **The lift at the grade `m + 1` from a coatom, with the bottom step at the cap `⊥`**: the
 one-grade lift with the degenerate triple of the coatom at `⊥` and the triple of the top step at the
-positive caps (`ProfileTower.Lvl.GoodOn.extendsFromBoundary_top`). -/
-theorem Lvl.GoodOn.cappedLift_top_succ_of_bot (hN : N.GoodOn S) (hm : 1 ≤ m)
+positive caps (`ProfileTower.Lvl.GoodAt.extendsFromBoundary_top`). -/
+theorem Lvl.GoodAt.cappedLift_top_succ_of_bot (hN : N.GoodAt S) (hm : 1 ≤ m)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
     (hbot : N.top.rows.ExtendsFromBoundary (univ.erase x, m + 1) (univ.erase x, m + 1)
       (univ, m + 1) ⊥ fun _ ↦ ⊥) :
@@ -647,7 +647,7 @@ def Lvl.TopBotStep (N : Lvl I m) : Prop :=
         S fun d ↦ w' (Fin.castAdd _ (N.embed d))
 
 /-- **The lift at the grade `m + 1` from a coatom from the bottom step.** -/
-theorem Lvl.GoodOn.cappedLift_top_succ_of_step (hN : N.GoodOn S) (hB : N.HasBotExtensionOn S)
+theorem Lvl.GoodAt.cappedLift_top_succ_of_step (hN : N.GoodAt S) (hB : N.HasBotExtensionOn S)
     (hstep : N.TopBotStep S) (hm : 1 ≤ m) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
     N.top.rows.CappedLift (X := (univ.erase x, m + 1))
@@ -658,7 +658,7 @@ theorem Lvl.GoodOn.cappedLift_top_succ_of_step (hN : N.GoodOn S) (hB : N.HasBotE
 
 /-- **The top layer over a level good on `S` is bountiful**, from the extension at `⊥` on `S` and
 the bottom step at the top. -/
-theorem Lvl.GoodOn.isBountiful_top_of_step (hN : N.GoodOn S) (hB : N.HasBotExtensionOn S)
+theorem Lvl.GoodAt.isBountiful_top_of_step (hN : N.GoodAt S) (hB : N.HasBotExtensionOn S)
     (hstep : N.TopBotStep S) (hm : 1 ≤ m) :
     N.top.rows.IsBountiful := by
   have hfull {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
@@ -682,7 +682,7 @@ theorem Lvl.GoodOn.isBountiful_top_of_step (hN : N.GoodOn S) (hB : N.HasBotExten
     (hfull (by simp)) (hfull (by simp))
 
 /-- **The top layer over a level good on `S` is legal below the full grade.** -/
-theorem Lvl.GoodOn.isLegalBelowFullGrade_top_of_step (hN : N.GoodOn S)
+theorem Lvl.GoodAt.isLegalBelowFullGrade_top_of_step (hN : N.GoodAt S)
     (hB : N.HasBotExtensionOn S) (hstep : N.TopBotStep S) (hm : 1 ≤ m) :
     N.top.IsLegalBelowFullGrade where
   isWellFormed := Scheme.isWellFormed_fieldLayer hN.wf (by omega) (by omega)
@@ -694,7 +694,7 @@ theorem Lvl.GoodOn.isLegalBelowFullGrade_top_of_step (hN : N.GoodOn S)
 
 /-- **The glued labelling extends to a lawful section of the top layer**, when its amalgam profile
 lies in `S`. -/
-theorem Lvl.GoodOn.exists_isLawful_top_on (hN : N.GoodOn S) (hB : N.HasBotExtensionOn S)
+theorem Lvl.GoodAt.exists_isLawful_top_on (hN : N.GoodAt S) (hB : N.HasBotExtensionOn S)
     (hlab : S I.amalgam.label) :
     ∃ q : Fin N.top.card → Label.{u}, N.top.rows.IsLawful q ∧
       ∀ d, q (N.topEmbed d) = I.amalgam.label d := by
@@ -737,7 +737,7 @@ theorem Lvl.GoodOn.exists_isLawful_top_on (hN : N.GoodOn S) (hB : N.HasBotExtens
 
 /-- **The completion below the full grade over a level good on `S`** at the grade `m`, from the
 extension at `⊥` on `S`, the bottom step at the top, and the glued labelling in `S`. -/
-noncomputable def Lvl.GoodOn.completion_of_step (hN : N.GoodOn S) (hB : N.HasBotExtensionOn S)
+noncomputable def Lvl.GoodAt.completion_of_step (hN : N.GoodAt S) (hB : N.HasBotExtensionOn S)
     (hstep : N.TopBotStep S) (hlab : S I.amalgam.label) (hm : 1 ≤ m) :
     CompletionBelowFullGrade I where
   scheme := N.top
@@ -754,7 +754,7 @@ noncomputable def Lvl.GoodOn.completion_of_step (hN : N.GoodOn S) (hB : N.HasBot
 
 /-! ### The same over good levels -/
 
-/-- `ProfileTower.Lvl.GoodOn.exists_isLawfulBelow_top` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.exists_isLawfulBelow_top` over a good level. -/
 theorem Lvl.Good.exists_isLawfulBelow_top (hN : N.Good) {x y : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hy : y ∈ (Pts : Finset (Fin (m + 2))))
     (hxy : x ≠ y) {w : Fin N.S.card → Label.{u}}
@@ -769,9 +769,9 @@ theorem Lvl.Good.exists_isLawfulBelow_top (hN : N.Good) {x y : Fin (m + 2)}
       (∀ e, e ∈ N.S.toCellScheme.below (univ.erase x, m + 1) ∨
         e ∈ N.S.toCellScheme.below (univ, m) → g e = w e) ∧
       ∀ e ∈ N.S.toCellScheme.below (univ, m + 1), min (g e) h = min (a e) h :=
-  (hN.goodOn fun _ ↦ True).exists_isLawfulBelow_top hx hy hxy hwU hwV ha hh hag
+  (hN.goodAt fun _ ↦ True).exists_isLawfulBelow_top hx hy hxy hwU hwV ha hh hag
 
-/-- `ProfileTower.Lvl.GoodOn.extendsFromBoundary_top` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.extendsFromBoundary_top` over a good level. -/
 theorem Lvl.Good.extendsFromBoundary_top (hN : N.Good) {x y : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hy : y ∈ (Pts : Finset (Fin (m + 2))))
     (hxy : x ≠ y) {u : Fin N.top.card}
@@ -779,91 +779,91 @@ theorem Lvl.Good.extendsFromBoundary_top (hN : N.Good) {x y : Fin (m + 2)}
     {h : Label.{u}} (hh : IsSelfVisible (m + 1) h) (hs : IsShort (m + 1) h) (hbot : ⊥ < h) :
     N.top.rows.ExtendsFromBoundary (univ.erase x, m + 1) (univ, m) (univ, m + 1) h
       (N.top.rows.rowBelow u hu) :=
-  (hN.goodOn fun _ ↦ True).extendsFromBoundary_top hx hy hxy hu hh hs hbot
+  (hN.goodAt fun _ ↦ True).extendsFromBoundary_top hx hy hxy hu hh hs hbot
 
-/-- `ProfileTower.Lvl.GoodOn.extendsFromBoundary_bot_top` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.extendsFromBoundary_bot_top` over a good level. -/
 theorem Lvl.Good.extendsFromBoundary_bot_top (hN : N.Good) (hB : N.HasBotExtension)
     {x y : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
     (hy : y ∈ (Pts : Finset (Fin (m + 2)))) (hxy : x ≠ y) :
     N.top.rows.ExtendsFromBoundary (univ.erase x, m + 1) (univ.erase y, m + 1) (univ, m + 1) ⊥
       fun _ ↦ ⊥ :=
-  (hN.goodOn fun _ ↦ True).extendsFromBoundary_bot_top hB hx hy hxy
+  (hN.goodAt fun _ ↦ True).extendsFromBoundary_bot_top hB hx hy hxy
 
-/-- `ProfileTower.Lvl.GoodOn.cappedLift_top_old` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.cappedLift_top_old` over a good level. -/
 theorem Lvl.Good.cappedLift_top_old (hN : N.Good) {X Y : Finset (Fin (m + 2)) × ℕ}
     (hX : X ∈ I.amalgam.toCellScheme.gradedFaces) (hY : Y ∈ I.amalgam.toCellScheme.gradedFaces)
     (h : X ≤ Y) (hY1 : Y.1 ≠ univ) : N.top.rows.CappedLift h :=
-  (hN.goodOn fun _ ↦ True).cappedLift_top_old hX hY h hY1
+  (hN.goodAt fun _ ↦ True).cappedLift_top_old hX hY h hY1
 
-/-- `ProfileTower.Lvl.GoodOn.cappedLift_top_le` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.cappedLift_top_le` over a good level. -/
 theorem Lvl.Good.cappedLift_top_le (hN : N.Good) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {j : ℕ} (hj : j ≤ m) :
     N.top.rows.CappedLift (X := (univ.erase x, j)) (Y := ((univ : Finset (Fin (m + 2))), j))
       ⟨erase_subset _ _, le_rfl⟩ :=
-  (hN.goodOn fun _ ↦ True).cappedLift_top_le hx hj
+  (hN.goodAt fun _ ↦ True).cappedLift_top_le hx hj
 
-/-- `ProfileTower.Lvl.GoodOn.cappedLift_top_succ` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.cappedLift_top_succ` over a good level. -/
 theorem Lvl.Good.cappedLift_top_succ (hN : N.Good) (hB : N.HasBotExtension) (hm : 1 ≤ m)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
     N.top.rows.CappedLift (X := (univ.erase x, m + 1))
       (Y := ((univ : Finset (Fin (m + 2))), m + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  (hN.goodOn fun _ ↦ True).cappedLift_top_succ hB hm hx
+  (hN.goodAt fun _ ↦ True).cappedLift_top_succ hB hm hx
 
-/-- `ProfileTower.Lvl.GoodOn.isBountiful_top` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.isBountiful_top` over a good level. -/
 theorem Lvl.Good.isBountiful_top (hN : N.Good) (hB : N.HasBotExtension) (hm : 1 ≤ m) :
     N.top.rows.IsBountiful :=
-  (hN.goodOn fun _ ↦ True).isBountiful_top hB hm
+  (hN.goodAt fun _ ↦ True).isBountiful_top hB hm
 
-/-- `ProfileTower.Lvl.GoodOn.grade_lt` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.grade_lt` over a good level. -/
 theorem Lvl.Good.grade_lt (hN : N.Good) (z : Fin N.S.card) : N.S.toCellScheme.grade z < m + 2 :=
-  (hN.goodOn fun _ ↦ True).grade_lt z
+  (hN.goodAt fun _ ↦ True).grade_lt z
 
-/-- `ProfileTower.Lvl.GoodOn.grade_top_lt` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.grade_top_lt` over a good level. -/
 theorem Lvl.Good.grade_top_lt (hN : N.Good) (z : Fin N.top.card) :
     N.top.toCellScheme.grade z < m + 2 :=
-  (hN.goodOn fun _ ↦ True).grade_top_lt z
+  (hN.goodAt fun _ ↦ True).grade_top_lt z
 
-/-- `ProfileTower.Lvl.GoodOn.exists_gradedIndex_eq_top` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.exists_gradedIndex_eq_top` over a good level. -/
 theorem Lvl.Good.exists_gradedIndex_eq_top (hN : N.Good) (X : Finset (Fin (m + 2)) × ℕ)
     (hX : X ∈ N.top.toCellScheme.gradedFaces) (hX2 : X.2 < m + 2) :
     ∃ d, N.top.toCellScheme.gradedIndex d = X :=
-  (hN.goodOn fun _ ↦ True).exists_gradedIndex_eq_top X hX hX2
+  (hN.goodAt fun _ ↦ True).exists_gradedIndex_eq_top X hX hX2
 
-/-- `ProfileTower.Lvl.GoodOn.isLegalBelowFullGrade_top` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.isLegalBelowFullGrade_top` over a good level. -/
 theorem Lvl.Good.isLegalBelowFullGrade_top (hN : N.Good) (hB : N.HasBotExtension) (hm : 1 ≤ m) :
     N.top.IsLegalBelowFullGrade :=
-  (hN.goodOn fun _ ↦ True).isLegalBelowFullGrade_top hB hm
+  (hN.goodAt fun _ ↦ True).isLegalBelowFullGrade_top hB hm
 
-/-- `ProfileTower.Lvl.GoodOn.isLowerEmbedding_top` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.isLowerEmbedding_top` over a good level. -/
 theorem Lvl.Good.isLowerEmbedding_top (hN : N.Good) :
     I.amalgam.toCellScheme.IsLowerEmbedding N.top.toCellScheme N.topEmbed :=
-  (hN.goodOn fun _ ↦ True).isLowerEmbedding_top
+  (hN.goodAt fun _ ↦ True).isLowerEmbedding_top
 
-/-- `ProfileTower.Lvl.GoodOn.comap_rows_top` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.comap_rows_top` over a good level. -/
 theorem Lvl.Good.comap_rows_top (hN : N.Good) :
     N.top.rows.comap hN.isLowerEmbedding_top = I.amalgam.rows :=
-  (hN.goodOn fun _ ↦ True).comap_rows_top
+  (hN.goodAt fun _ ↦ True).comap_rows_top
 
-/-- `ProfileTower.Lvl.GoodOn.gradedIndex_topEmbed` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.gradedIndex_topEmbed` over a good level. -/
 theorem Lvl.Good.gradedIndex_topEmbed (hN : N.Good) (d : Fin I.amalgam.card) :
     N.top.toCellScheme.gradedIndex (N.topEmbed d) = I.amalgam.toCellScheme.gradedIndex d :=
-  (hN.goodOn fun _ ↦ True).gradedIndex_topEmbed d
+  (hN.goodAt fun _ ↦ True).gradedIndex_topEmbed d
 
-/-- `ProfileTower.Lvl.GoodOn.mem_range_topEmbed` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.mem_range_topEmbed` over a good level. -/
 theorem Lvl.Good.mem_range_topEmbed (hN : N.Good) (z : Fin N.top.card)
     (hz : N.top.toCellScheme.scope z ≠ univ) : z ∈ Set.range N.topEmbed :=
-  (hN.goodOn fun _ ↦ True).mem_range_topEmbed z hz
+  (hN.goodAt fun _ ↦ True).mem_range_topEmbed z hz
 
-/-- `ProfileTower.Lvl.GoodOn.exists_isLawful_top` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.exists_isLawful_top` over a good level. -/
 theorem Lvl.Good.exists_isLawful_top (hN : N.Good) (hB : N.HasBotExtension) :
     ∃ q : Fin N.top.card → Label.{u}, N.top.rows.IsLawful q ∧
       ∀ d, q (N.topEmbed d) = I.amalgam.label d :=
-  (hN.goodOn fun _ ↦ True).exists_isLawful_top hB
+  (hN.goodAt fun _ ↦ True).exists_isLawful_top hB
 
-/-- `ProfileTower.Lvl.GoodOn.completion` over a good level. -/
+/-- `ProfileTower.Lvl.GoodAt.completion` over a good level. -/
 noncomputable def Lvl.Good.completion (hN : N.Good) (hB : N.HasBotExtension) (hm : 1 ≤ m) :
     CompletionBelowFullGrade I :=
-  (hN.goodOn fun _ ↦ True).completion hB hm
+  (hN.goodAt fun _ ↦ True).completion hB hm
 
 end Top
 

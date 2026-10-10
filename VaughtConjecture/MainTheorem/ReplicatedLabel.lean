@@ -125,17 +125,6 @@ theorem compressedLabel_le_gridPoint (hB : blockCount (I.attachLabels g) + 1 ≤
 variable {d : StageType.{u} α (n + 1)}
   (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
 
-/-- The cell of the attachment at a cell of the context is its face cell. -/
-theorem attachCtxCell_eq (x : Fin I.left.card) :
-    I.attachCtxCell g x = (I.attachmentType g).faceCell (I.restrictFace_left_attachmentType g) x :=
-  rfl
-
-/-- The cell of the attachment at a cell of the donor is its face cell. -/
-theorem attachDonCell_eq (j : Fin d.card) :
-    I.attachDonCell g hd j =
-      (I.attachmentType g).faceCell (I.restrictFace_donor_attachmentType g hd) j :=
-  rfl
-
 /-- **The compressed labelling is admitted** by requests calibrated on the class with the labels
 pair admitted, at every grade. -/
 theorem attachAdmits_compressedLabel {p : StageType.{u} α n}
