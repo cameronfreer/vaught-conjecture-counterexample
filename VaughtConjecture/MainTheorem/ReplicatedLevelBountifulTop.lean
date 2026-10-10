@@ -30,6 +30,9 @@ two inputs of `Seed.lvRep_isBountiful_of_lifts`:
   (`Seed.mem_mixedFaces_coatom`, `Seed.lvRep_cappedLift_mixed_univ`), the donor face when it is
   (`Seed.lvLevel_cappedLift_coatom_of_surjective`).
 
+At the seed position (`Seed.lvRep_isBountiful_seedChoice'`) the height and the block bound are the
+seed-fixed choice `Seed.seedHeightLevel`, `Seed.seedBlockBound'`.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; the growth construction is that of [Kni26, §4].
@@ -146,6 +149,20 @@ theorem lvRep_isBountiful (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ 
     · have hU := mem_mixedFaces_coatom (I := I) hg
       exact lvRep_cappedLift_mixed_univ hH hcard hQ hB' (by omega) hN hU hk1
         (by rw [card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin]; omega) hkm
+
+
+/-- **The replicated top level is bountiful at the strict block bound**, at every seed with the
+data of the seed position (`Seed.seedHeightLevel`, `Seed.seedBlockBound'`). -/
+theorem lvRep_isBountiful_seedChoice' {p : StageType.{u} α n}
+    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p) (hd' : d ∈ p.cofaces)
+    (hn : 0 < n)
+    (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+    {Q : GrowthRequests I.left d.toScheme} (hpair : ∀ j, Q.CorrectAt I.left.label j (d.label j))
+    (hQ : Q.ClassCalibrated hte) (hrel : Q.HasRelativeLiftOnClass hte hd'.2) :
+    (lvLevel_good (seedHeightLevel_pos I g) (card_attachmentBase_le_seedHeightLevel I g) hQ
+      (two_mul_card_le_seedBlockBound' I g) (hd := hdA) m (by omega)).rep.rows.IsBountiful :=
+  lvRep_isBountiful (seedHeightLevel_pos I g) (card_attachmentBase_le_seedHeightLevel I g) hd'.2
+    hd'.1 hn hQ hpair hrel (two_mul_card_lt_seedBlockBound' I g) _
 
 end Seed
 
