@@ -30,6 +30,9 @@ two inputs of `Seed.lvRep_isBountiful_of_lifts`:
   (`Seed.mem_mixedFaces_coatom`, `Seed.lvRep_cappedLift_mixed_univ`), the donor face when it is
   (`Seed.lvLevel_cappedLift_coatom_of_surjective`).
 
+The statement concerns the replicated level at the top grade `m + 1`, not the levels at lower
+grades (whose lifts at grades above their own are not asked).
+
 At the seed position (`Seed.lvRep_isBountiful_seedChoice'`) the height and the block bound are the
 seed-fixed choice `Seed.seedHeightLevel`, `Seed.seedBlockBound'`.
 
