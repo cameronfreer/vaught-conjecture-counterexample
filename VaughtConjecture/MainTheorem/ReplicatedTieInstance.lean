@@ -44,9 +44,9 @@ scheme (`Seed.replicated`, default `Scheme.heightSet Γ B'`); the height sets of
 grid alone (`Scheme.heightSet_empty`).  With them, at every seed of the input, the admitted
 completion of `sep ω` has, for every code of it shifted by one block, no lift below `(univ, 2)`
 keeping the tie ambient at the cap `3` (`Seed.not_exists_lift_of_tie_of_pin`: `3` is not a height
-of the grid at `2`, so the tied cell `o` is pinned).  At commit `86a30a0` (branch
-`research/port-growth-pos-test`) the same mechanism refuted the context lift at the seed position
-for the choice of the assembly (`StageType.not_hasContextLiftAtSeed_seedChoice`).
+of the grid at `2`, so the tied cell `o` is pinned).  The same mechanism refutes the context lift
+at the seed position for the choice of the assembly over the grid alone (a refutation compiled
+outside this library).
 
 **The old counterexample mechanism is eliminated** (`TieInstance.not_pin_cellR`, from
 `Seed.not_pin_of_grade`): the tied value is a value of a state of the catalogue at a cell of grade

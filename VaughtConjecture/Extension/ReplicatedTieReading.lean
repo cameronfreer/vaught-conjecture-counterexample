@@ -30,7 +30,7 @@ tower at a positive cap fails at such an ambient and a state reversing the pin.
 **Where a pin can sit** (`Seed.not_pin_of_isSelfVisible`, `Seed.not_pin_of_grade`,
 `Seed.cap_not_mem_heightSet_of_pin`): the pinned value is not a height, so the pinned cell has
 grade below `k`; in particular a tie of two cells of the grade `k` at a value of the catalogue
-(the obstruction of the grid alone, refuted at commit `86a30a0` for the seed choice, see
+(the obstruction of the grid alone, which refutes the seed choice over the grid alone, see
 `VaughtConjecture.MainTheorem.ReplicatedTieInstance`) is broken by the height set.  For the ambient
 read literally, the cap of a pin is not a height: a pin exploits a cap with no coded
 representative in the height set.  The cells that may serve above the cap are selected by the

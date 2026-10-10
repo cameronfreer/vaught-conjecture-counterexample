@@ -11,8 +11,8 @@ import VaughtConjecture.Extension.HeightSetTie
 
 Roadmap, Layer 3 ((R3) and (R4), the context lift of the replicated scheme with the height sets).
 
-**The tie input** (the input of the refutation over the grid alone, research/port-growth-pos-test
-`86a30a0`): a complete lawful admitted state `P₀` of the attachment, the cap `m + 2`
+**The tie input** (the input of the refutation over the grid alone, compiled outside this
+library): a complete lawful admitted state `P₀` of the attachment, the cap `m + 2`
 (`Seed.tieValue`, in the code set and self-visible at `m + 2`), the ambient the writing of the
 positive constant `m + 2` on the support of `P₀` (`Label.posConst`), and the prescription below the
 context coatom the decoded writing of a code of `P₀` shifted by one block (`Label.omegaShift`).
@@ -436,7 +436,7 @@ theorem min_replicatedWriting_eq_of_capAgree
   exact Scheme.LadderBaseData.min_v_eq_of_capAgree hcard hyΓ hy0 hR hR' hag m hyv _
 
 /-- **The lift at the tie input** (the input of the refutation over the grid alone,
-`Seed.not_cappedLift_context_of_pair` at commit `86a30a0`): for a complete lawful admitted state
+compiled outside this library): for a complete lawful admitted state
 `P₀`, the cap `m + 2` (`Seed.tieValue`), the ambient the writing of the positive constant `m + 2`
 on the support of `P₀`, and the prescription below the context coatom the decoded writing of any
 code `(RP, σ)` of `P₀` shifted by one block, the replicated scheme with agreement heights in the

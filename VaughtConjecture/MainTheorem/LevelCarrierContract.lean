@@ -28,8 +28,13 @@ the arity.
 
 **The seed-fixed parameters**: one parameter set at each seed, the height `Seed.seedHeightLevel`
 (`#(I.attachmentBase g) + 1`; only `#attachment ≤ H` is asked, never `#amalgam ≤ H`) and the block
-bound `Seed.seedBlockBound'` (`max (2 · #cells + 1) Seed.seedGridBound`; every use of the block
-bound is a lower bound, the strict one `2 · #cells < B` for the twins of the mixed lifts).
+bound `B = Seed.seedBlockBound' I g` (`max (2 · #cells + 1) Seed.seedGridBound`).  This one `B`
+is used throughout: the level `I.lvLevel g (I.seedHeightLevel g) (I.seedBlockBound' g) hdA Q m`,
+its bountifulness, its mixed lifts and twins, its legality, its labelling and its completion.  Every
+use of `B` is a lower bound.  The strict bound `2 · #cells < B` is
+`Seed.two_mul_card_lt_seedBlockBound'`, discharged in `Seed.lvRep_isBountiful_seedChoice'` (the
+twins of the lifts from the mixed faces, `Seed.lvLevel_twinGen`); the other uses take
+`Seed.two_mul_card_le_seedBlockBound'`.
 
 **The route.**
 * *Per-level re-rendering* (`Seed.lvLevel`, `Seed.ALvl.next`): the level at the grade `j + 1`
