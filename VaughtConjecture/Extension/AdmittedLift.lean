@@ -154,13 +154,8 @@ theorem Lvl.GoodOn.isLawfulBelow_embedOn_iff (hL : L.GoodOn D) {X : Finset (Fin 
 /-- **Lifts below a pair not above `(univ, g + 1)`** in the layer on `C` are those of the level. -/
 theorem Lvl.cappedLift_nextSOn_iff {X Y : Finset (Fin (m + 2)) × ℕ} (hXY : X ≤ Y)
     (hY : ¬ ((univ : Finset (Fin (m + 2))), g + 1) ≤ Y) :
-    (L.nextSOn C).rows.CappedLift hXY ↔ L.S.rows.CappedLift hXY := by
-  have h : L.S.toCellScheme.IsSourcePrefix (L.nextSOn C).toCellScheme (Fin.castAdd _) Y :=
-    ⟨Scheme.isLowerEmbedding_castAdd (S := L.S) (g + 1) C.card
-      (fun i ↦ L.ΦOn C (entryOn C i)) L.not_le,
-      Scheme.appendFullCellsScheme_scope_castAdd L.S (g + 1) _,
-      fun d hd ↦ ⟨⟨d, Scheme.lt_card_of_mem_below hY hd⟩, rfl⟩⟩
-  rw [← h.cappedLift_iff hXY le_rfl, Scheme.comap_rows_castAdd]
+    (L.nextSOn C).rows.CappedLift hXY ↔ L.S.rows.CappedLift hXY :=
+  Scheme.cappedLift_appendFullCells_iff hXY hY
 
 /-- An old cell of grade at most `g + 1` lies below `(univ, g + 1)` in the layer on `C`. -/
 theorem Lvl.GoodOn.embedOn_mem_below (hL : L.GoodOn D) {d : Fin I.amalgam.card}
