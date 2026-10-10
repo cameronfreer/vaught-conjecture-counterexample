@@ -233,8 +233,10 @@ end Top
 The fill of the other coatom and the two steps on the amalgam at the grade `1`, on a seed of `2`
 points: no positivity premise on `m`. -/
 
-example {I : Seed.{u} α 0} {x : Fin 2} (hx : x ∈ (Pts : Finset (Fin 2))) {h : Label.{u}}
-    (hh : IsSelfVisible 1 h) {P : Prof I} (hP : IsCutLawful I 1 P) {f : Prof I}
+/-- The fill of the other coatom at the grade `1`, on a seed of `2` points. -/
+theorem exists_isCutLawful_of_coatom_succ_zero {I : Seed.{u} α 0} {x : Fin 2}
+    (hx : x ∈ (Pts : Finset (Fin 2))) {h : Label.{u}} (hh : IsSelfVisible 1 h)
+    {P : Prof I} (hP : IsCutLawful I 1 P) {f : Prof I}
     (hf : I.amalgam.rows.IsLawfulBelow (univ.erase x, 1) fun d ↦ f d)
     (hfP : ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, 1), min (f d) h = min (P d) h) :
     ∃ W : Prof I, IsCutLawful I 1 W ∧
@@ -242,7 +244,9 @@ example {I : Seed.{u} α 0} {x : Fin 2} (hx : x ∈ (Pts : Finset (Fin 2))) {h :
       ∀ d, min (W d) h = min (P d) h :=
   exists_isCutLawful_of_coatom_succ hx hh hP hf hfP
 
-example {I : Seed.{u} α 0} {L : Lvl I 0} {C : Finset (CProf I)} (hL : L.Good) {x : Fin 2}
+/-- The step on the amalgam with the cap ball of a profile at the grade `1`, for `m = 0`. -/
+theorem Lvl.Good.exists_cutLawful_of_coatom_cap_top_zero {I : Seed.{u} α 0} {L : Lvl I 0}
+    {C : Finset (CProf I)} (hL : L.Good) {x : Fin 2}
     (hx : x ∈ (Pts : Finset (Fin 2))) {P : Prof I} (hP : IsCutLawful I 1 P) {h : Label.{u}}
     (hh : IsSelfVisible 1 h) {w : Fin (L.catS C).card → Label.{u}}
     (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, 1) (fun z ↦ w z))
@@ -254,7 +258,9 @@ example {I : Seed.{u} α 0} {L : Lvl I 0} {C : Finset (CProf I)} (hL : L.Good) {
       ∀ d, min (W d) h = min (P d) h :=
   hL.exists_cutLawful_of_coatom_cap_top hx hP hh hw hwP
 
-example {I : Seed.{u} α 0} {L : Lvl I 0} {C : Finset (CProf I)} (hL : L.Good) {x : Fin 2}
+/-- The step on the amalgam at the cap `⊥` at the grade `1`, for `m = 0`. -/
+theorem Lvl.Good.exists_cutLawful_of_coatom_top_zero {I : Seed.{u} α 0} {L : Lvl I 0}
+    {C : Finset (CProf I)} (hL : L.Good) {x : Fin 2}
     (hx : x ∈ (Pts : Finset (Fin 2))) {w : Fin (L.catS C).card → Label.{u}}
     (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, 1) (fun z ↦ w z)) :
     ∃ W : Prof I, IsCutLawful I 1 W ∧
