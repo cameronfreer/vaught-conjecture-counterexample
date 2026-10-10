@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.LowDisplayTower
 import VaughtConjecture.Continuation.LowLayer
+import VaughtConjecture.Continuation.LowStepTie
 
 /-!
 # The LOW layer of the completed display
@@ -48,6 +49,10 @@ old cells the section is literal, so the entry reads `P` there
 * the separator: two controllers whose profiles are a profile `P` of the catalogue and its partner
   over all proper donor cells (`ProfileTower.lowNAll`), with the cutoff cut in the grid and below
   the cutoff (`ProfileTower.cutoffCut_lowFields`).
+
+**The LOW layer as a level** (`ProfileTower.Lvl.Good.lowNext`): over a good level, the LOW
+layer is a good level (`ProfileTower.Lvl.Good.catNext` with the capped lift
+`ProfileTower.Lvl.Good.cappedLift_lowS_seed`).
 
 The labels of `D` do not enter `IsLowLayer`; the separator labels asked by
 `StageType.HasLowLayers` are a statement about the labelling of `D` (see
@@ -363,6 +368,23 @@ theorem isLowLayer_of_isGradePrefix (hL : L.Good) {ψ : Fin (L.catS 𝒞).card �
       simp only [lowFields, Sum.elim_inr, Function.update_self]
 
 end Layer
+
+/-! ### The LOW layer as a level -/
+
+/-- **The LOW layer over a good level is a good level**, for the LOW designations of the seed, when
+the private context is a source-gap context of grade `g + 1` with the lost point last and the donor
+has top grade `g + 1`, attained, with `g + 1 ≤ m`: the LOW predicate holds with the cutoff `⊥`, and
+the lift from the two coatoms is `ProfileTower.Lvl.Good.cappedLift_lowS_seed`.  So the canonical
+layers above and the completion below the full grade apply to it. -/
+theorem Lvl.Good.lowNext {I : Seed.{u} α m} {g : ℕ} {L : Lvl I g} (hL : L.Good) (hgm : g + 1 ≤ m)
+    {o' r' : Fin I.left.card}
+    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
+    (htb : I.right.topGrade ≤ g + 1) {z : Fin I.right.card} (hz : I.right.label z = ⊤)
+    (hzK : I.right.toCellScheme.grade z = g + 1) :
+    (L.catNext (lowPred (g + 1) (lowN I (g + 1)) (lowT I)
+      (StageType.faceCell I.restrictFace_left o')
+      (StageType.faceCell I.restrictFace_left r'))).Good :=
+  hL.catNext hgm lowPred_withCut_bot fun _ hx ↦ hL.cappedLift_lowS_seed hgm hs htb hz hzK hx
 
 end VaughtConjecture.ProfileTower
 
