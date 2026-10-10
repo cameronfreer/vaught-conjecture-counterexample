@@ -5,7 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.LowTower
 import VaughtConjecture.Continuation.LowExtension
-import VaughtConjecture.Continuation.LowDonorRaising
+import VaughtConjecture.Continuation.LowGapRaise
 import VaughtConjecture.Continuation.LowLowering
 
 /-!
@@ -65,10 +65,11 @@ the tie case at every LOW family, `StageType.IsLowFamily.lowStepTie`, in
   and the coded cutoff give the step.
 * `StageType.LowStepTie` (from the private coatom): a donor face reading every donor top off the
   root at least at the prescribed private frontier `c > h`, at the tie `h = R_K M` or when a donor
-  top is determined by the root.  Otherwise donor raising (`StageType.IsLowFamily.exists_raised`),
-  the root tops (at least `c` by the strict source gaps), the gluing and the coded cutoff give the
-  step; when `c ≤ h` the capped agreement with the serving profile suffices.  The tie case itself
-  follows from donor domination, a capped lift dominated at a top cell of the donor
+  top is determined by the root.  The donor face (`StageType.IsLowFamily.exists_raised`, the raise
+  of the donor tops below a gap, which uses no tie premise), the root tops (at least `c` by the
+  strict source gaps), the gluing and the coded cutoff give the step; when `c ≤ h` the capped
+  agreement with the serving profile suffices.  The tie case itself follows from donor
+  domination, a capped lift dominated at a top cell of the donor
   (`StageType.lowStepTie_of_donorDomination`, in `VaughtConjecture.Continuation.LowStepTie`).
 
 From the private coatom the private face, the owner and the lost top included, is prescribed,
@@ -77,9 +78,9 @@ lowering of the private frontier nor a choice of anchor avoiding the tie is avai
 fixing the donor maximum `M` fixes `R_K M`, so no witness image of a capped lift raises a top at
 the tie.  A raising has to read the tops through a row separating them from the proper donor cells:
 the row of a top cell `Z` of the donor reads every top below `Z` above the replaced readings of the
-proper cells (`StageType.visibilityReplace_rowAt_lt_of_top`, compiled in this repository); a
-raising through it, literal on the root and agreeing with the ambient capped at the cap, is not
-constructed here.
+proper cells (`StageType.visibilityReplace_rowAt_lt_of_top`); the raising through it, literal on
+the root and agreeing with the ambient capped at the cap, is
+`StageType.IsLowFamily.exists_raised_of_gap`, in `VaughtConjecture.Continuation.LowGapRaise`.
 
 Both cases are statements about one face: the unserved case about the private context
 alone, the tie case about the donor alone given the prescribed private frontier.  The gluing of
@@ -517,18 +518,16 @@ def LowStepTie : Prop :=
 
 variable {K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {o r : Fin t'.card}
 
-/-- **The donor face from the private coatom, except in the tie case.**  At a LOW family, for a
-private face `f` and a donor face `R` lawful at `K` agreeing on the root capped at `h`, with the
-frontier `c` of `f` above `h` and every donor top off the root read by `R` at least at `h`, some
-donor face lawful at `K`, literal on the root and agreeing with `R` capped at `h`, reads every donor
-top off the root at least at `c`: by donor raising with the gap (`IsLowFamily.donorRaisingGap`)
-off the tie, where the second outcome would put a top at most the replaced low maximum, below
-the cap; and by `LowStepTie` at the tie or at a donor top determined by the root.  The same
-conclusion with neither `LowStepTie` nor donor raising is
-`StageType.IsLowFamily.exists_raised_of_gap`, in `VaughtConjecture.Continuation.LowStepLow`. -/
+/-- **The donor face from the private coatom.**  At a LOW family, for a private face `f` and a
+donor face `R` lawful at `K` agreeing on the root capped at `h`, with the frontier `c` of `f` above
+`h`, every donor top off the root read by `R` at least at `h` and every proper donor cell of grade
+at most `K` read below `h`, some donor face lawful at `K`, literal on the root and agreeing with `R`
+capped at `h`, reads every donor top off the root at least at `c`:
+`StageType.IsLowFamily.exists_raised_of_gap`, which uses neither the tie case `hT` nor the
+self-visibility of the cap. -/
 theorem IsLowFamily.exists_raised (hF : IsLowFamily K t' tb p o r)
-    (hT : LowStepTie K t' tb hF.face_private hF.face_donor o r) {h c : Label.{u}}
-    (hh : IsSelfVisible K h) (hb : ⊥ < h) (hhc : h < c) {R : Fin tb.card → Label.{u}}
+    (_hT : LowStepTie K t' tb hF.face_private hF.face_donor o r) {h c : Label.{u}}
+    (_hh : IsSelfVisible K h) (hb : ⊥ < h) (hhc : h < c) {R : Fin tb.card → Label.{u}}
     {f : Fin t'.card → Label.{u}} (hR : LawfulAt tb K R) (hf : LawfulAt t' K f)
     (hag : ∀ x, min (f (faceCell hF.face_private x)) h = min (R (faceCell hF.face_donor x)) h)
     (hlow : ∀ x, tb.label x ≠ ⊤ → tb.toCellScheme.grade x ≤ K → R x < h)
@@ -539,53 +538,8 @@ theorem IsLowFamily.exists_raised (hF : IsLowFamily K t' tb p o r)
       (∀ x, W (faceCell hF.face_donor x) = f (faceCell hF.face_private x)) ∧
       (∀ d, min (W d) h = min (R d) h) ∧
       ∀ t, tb.label t = ⊤ → tb.toCellScheme.grade t ≤ K →
-        t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → c ≤ W t := by
-  classical
-  set Lo := (univ.filter fun x ↦ tb.label x ≠ ⊤).filter fun x ↦ tb.toCellScheme.grade x ≤ K
-    with hLo
-  by_cases hres : h = visibilityReplace K K (Lo.sup R) ∨ ∃ t, tb.label t = ⊤ ∧
-      tb.toCellScheme.grade t ≤ K ∧ t ∉ tb.toScheme.visibleCells Fin.castSuccEmb ∧ RootDetAt tb K t
-  · exact hT hh hb hhc hR hf hag hc htop hlow hres
-  obtain ⟨hnt, hnrd⟩ := not_or.mp hres
-  push Not at hnrd
-  set Tops : Finset (Fin tb.card) := univ.filter fun x ↦ tb.label x = ⊤ ∧
-    tb.toCellScheme.grade x ≤ K ∧ x ∉ tb.toScheme.visibleCells Fin.castSuccEmb ∧
-      ¬ RootDetAt tb K x with hTops
-  have hdes : ∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ K →
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDetAt tb K x → x ∈ Tops :=
-    fun x h1 h2 h3 h4 ↦ mem_filter.mpr ⟨mem_univ _, h1, h2, h3, h4⟩
-  -- the frontier `c` is self-visible, and the root tops of `f` are at least `c`
-  have hfo := (frontier_le_lawfulAt hF.isLegal_private hF.isSourceGapContextAt hf)
-  have hcv : IsSelfVisible K c := by
-    rw [hc]
-    rcases min_choice (f o) (visibilityReplace K K (f r)) with h1 | h1 <;> rw [h1]
-    · exact hfo.1
-    · exact visibilityReplace_self_visibilityReplace le_rfl _
-  obtain ⟨W, hW, hWr, hWR, hWt⟩ := hF.donorRaisingGap hdes hh hcv hR hf hag (fun a ha ↦ by
-      rw [hc]
-      have := hfo.2 (faceCell hF.face_private a) (by rw [label_faceCell]; exact ha.1) ha.2
-      exact this)
-    fun t ht _ ↦ by
-      obtain ⟨-, h1, h2, h3, -⟩ := mem_filter.mp ht
-      exact (min_le_right _ _).trans (htop t h1 h2 h3)
-  refine ⟨W, hW, hWr, hWR, fun t h1 h2 h3 ↦ ?_⟩
-  have hRt := htop t h1 h2 h3
-  have hWh : h ≤ W t := by
-    have := hWR t
-    rw [min_eq_right hRt] at this
-    exact min_eq_right_iff.mp this
-  -- the low maximum of `W` is that of `R`, below the cap, and off the tie its replacement is too
-  have hLoR : Lo.sup R < h := (Finset.sup_lt_iff hb).mpr fun x hx ↦ by
-    obtain ⟨h1, h2⟩ := mem_filter.mp hx
-    exact hlow x (mem_filter.mp h1).2 h2
-  have hLoW : Lo.sup W = Lo.sup R := Finset.sup_congr rfl fun x hx ↦
-    (eq_of_min_eq_of_lt (hWR x).symm ((Finset.le_sup (f := R) hx).trans_lt hLoR))
-  have hRK : visibilityReplace K K (Lo.sup R) < h :=
-    lt_of_le_of_ne (visibilityReplace_le_of_le le_rfl hh hLoR.le) (Ne.symm hnt)
-  rcases hWt t (mem_filter.mpr ⟨mem_univ _, h1, h2, h3, hnrd t h1 h2 h3⟩) hRt with h4 | h4
-  · exact h4
-  · rw [hLoW] at h4
-    exact absurd (hWh.trans h4) (not_le.mpr hRK)
+        t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → c ≤ W t :=
+  hF.exists_raised_of_gap hb hhc hR hf hag hlow hc htop
 
 end VaughtConjecture.StageType
 
@@ -883,50 +837,3 @@ theorem Lvl.Good.cappedLift_lowS_of_unserved_tie (hL : L.Good) (hgm : g + 1 ≤ 
     exact hL.lowStep_donor hgm hs hU ho hr hNQ hTQ hNroot
 
 end VaughtConjecture.ProfileTower
-
-/-! ### The donor-side source gap -/
-
-namespace VaughtConjecture.StageType
-
-open Finset Label
-
-variable {α : Ordinal.{u}} {n : ℕ}
-
-/-- **The source gap at a top cell**: in a stage type `t`, the row of a cell `Z` labelled `⊤`
-reads every cell `x` below `Z` labelled `⊤` strictly above the replacement, at the grade of `Z`,
-of its reading of every cell `y` below `Z` with a proper label.  The labels below `Z` are the
-images of the row of `Z` under the witness of the locality of the labels at `Z`, which commutes
-with the replacement; a proper label has a proper replacement.  At a top cell of the donor of
-graded index `(univ, K)` this is the source gap through which a raising of the donor tops at the
-tie can read them apart from the proper donor cells. -/
-theorem visibilityReplace_rowAt_lt_of_top {t : StageType.{u} α n} {Z : Fin t.card}
-    (hZ : t.label Z = ⊤) {x y : Fin t.card}
-    (hx : x ∈ t.toCellScheme.below (t.toCellScheme.gradedIndex Z))
-    (hy : y ∈ t.toCellScheme.below (t.toCellScheme.gradedIndex Z)) (hxt : t.label x = ⊤)
-    (hyt : t.label y ≠ ⊤) :
-    visibilityReplace (t.toCellScheme.grade Z) (t.toCellScheme.grade Z) (t.rowAt Z y) <
-      t.rowAt Z x := by
-  obtain ⟨g, σ, hσ, heq⟩ := t.isLawful.locality Z
-  have hread (d : Fin t.card) (hd : d ∈ t.toCellScheme.below (t.toCellScheme.gradedIndex Z)) :
-      min (t.label d) (t.label Z) = min (σ (t.rowAt Z d)) (g (t.toCellScheme.grade d)) := by
-    rw [Scheme.rowAt_of_mem hd]
-    exact heq ⟨d, hd⟩
-  have hgZ : g (t.toCellScheme.grade Z) = ⊤ := by
-    have h := (hread Z (t.toCellScheme.mem_below_gradedIndex Z)).symm
-    rw [hZ, min_self] at h
-    exact (_root_.min_eq_top.mp h).2
-  have hlab (d : Fin t.card) (hd : d ∈ t.toCellScheme.below (t.toCellScheme.gradedIndex Z)) :
-      t.label d = σ (t.rowAt Z d) := by
-    have h := hread d hd
-    have hgd : g (t.toCellScheme.grade d) = ⊤ :=
-      top_le_iff.mp (hgZ ▸ hσ.antitone (show t.toCellScheme.grade d ≤ t.toCellScheme.grade Z
-        from hd.2))
-    rwa [hZ, min_top_right, hgd, min_top_right] at h
-  refine lt_of_not_ge fun hle ↦ hyt ?_
-  have h1 : σ (t.rowAt Z x) ≤ σ (visibilityReplace (t.toCellScheme.grade Z)
-      (t.toCellScheme.grade Z) (t.rowAt Z y)) := hσ.monotone hle
-  rw [← hlab x hx, hxt, hσ.visibilityReplace_comm _ _ (by rw [hgZ]; exact le_top) _ le_rfl,
-    ← hlab y hy, top_le_iff, visibilityReplace_eq_top_iff] at h1
-  exact h1
-
-end VaughtConjecture.StageType
