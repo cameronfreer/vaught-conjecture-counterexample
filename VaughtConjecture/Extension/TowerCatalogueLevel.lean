@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.TowerCatalogueLayer
+import VaughtConjecture.Continuation.LowTowerLevel
 
 /-!
 # The catalogue layer as a level good on a set of profiles
@@ -13,7 +13,8 @@ Roadmap, Layer 3 (the controllers of the growth and LOW constructions, and the l
 The catalogue layer of a predicate `A` over a level at the grade `g` is a level at the grade
 `g + 1` (`ProfileTower.Lvl.catNext`) whose section operator (`ProfileTower.Lvl.catσ`) reads, at the
 cells of grade at most `g + 1`, the row of the code of the profile with the cutoff `⊥` through the
-upper decoder of its splice, and the section of the level above.
+upper decoder of its splice, and the section of the level above (both defined in
+`VaughtConjecture.Continuation.LowTowerLevel`).
 
 **Goodness on a set of profiles** (`ProfileTower.Lvl.GoodAt.catNext`).  Over a level good on `S`,
 whose catalogue at `g + 1` lies in `S`, the catalogue layer is good on every set `S'` of profiles
@@ -42,36 +43,6 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} {g : ℕ} {L : Lvl I g
 
 local notation "𝒞" => predCat I (g + 1) A
 
-variable (A) in
-/-- The **section operator of the catalogue layer**: at the cells of grade at most `g + 1`, the row
-labelling of the code of the profile with the cutoff `⊥`, read by the upper decoder of its splice;
-above, the section of the level. -/
-noncomputable def Lvl.catσ (L : Lvl I g) (P : Prof I) :
-    Fin (L.S.card + (predCat I (g + 1) A).card) → Label.{u} := fun z ↦
-  if (L.S.appendFullCellsScheme (g + 1) (predCat I (g + 1) A).card).grade z ≤ g + 1 then
-    upperDecoderAt (g + 1) (g + 2) (bound I) (hat I (g + 1) P)
-      (L.Φcat (predCat I (g + 1) A) (withCut (code (g + 1) P) ⊥) z)
-  else Fin.append (L.σ P) (fun _ ↦ ⊥) z
-
-variable (A) in
-/-- **The catalogue layer as a level** at the grade `g + 1`. -/
-noncomputable def Lvl.catNext (L : Lvl I g) : Lvl I (g + 1) where
-  S := L.catS (predCat I (g + 1) A)
-  σ := L.catσ A
-  embed := L.embed.trans (Fin.castAddOrderEmb _)
-  inv d := by
-    induction d using Fin.addCases with
-    | left d =>
-      rw [Scheme.appendFullCellsScheme_grade_castAdd, Scheme.appendFullCellsScheme_scope_castAdd]
-      exact (L.inv d).imp_left fun h ↦ h.trans (Nat.le_succ g)
-    | right i => exact .inl (Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i).le
-
-theorem Lvl.catσ_of_le {P : Prof I} {z : Fin (L.S.card + (𝒞).card)}
-    (hz : (L.S.appendFullCellsScheme (g + 1) (𝒞).card).grade z ≤ g + 1) :
-    L.catσ A P z = upperDecoderAt (g + 1) (g + 2) (bound I) (hat I (g + 1) P)
-      (L.Φcat 𝒞 (withCut (code (g + 1) P) ⊥) z) := by
-  unfold Lvl.catσ; exact ite_eq_left hz
-
 /-- **The section of a catalogue level at its low cells sees the profile only up to its grade**:
 two profiles agreeing at the cells of grade at most `g + 1` have the same section at every cell of
 grade at most `g + 1` (the code and the upper decoder read the splice `hat I (g + 1) P` only).  So a
@@ -99,12 +70,6 @@ theorem Lvl.GoodAt.catσ_old_of_lt (hL : L.GoodAt S) {P : Prof I} {d : Fin I.ama
     L.catσ A P (Fin.castAdd _ (L.embed d)) = P d := by
   unfold Lvl.catσ
   rw [ite_eq_right hd, Fin.append_left, hL.literal]
-
-theorem withCut_code_mem_codeGrid (P : Prof I) (f : Fin I.amalgam.card ⊕ Unit) :
-    withCut (code (g + 1) P) ⊥ f ∈ codeGrid (g + 1) (bound I) := by
-  rcases f with d | z
-  · exact code_mem_codeGrid _ _ _
-  · exact Finset.mem_insert_self _ _
 
 /-- **The catalogue layer over a level good on `S` is good on `S'`**, when the catalogue lies in
 `S`, the codes of the profiles of `S'` with the cutoff `⊥` satisfy `A`, the bottom profile satisfies
