@@ -31,6 +31,10 @@ catalogue cut out by an arbitrary **predicate** `A` on profiles with a cutoff
   full face at the grade `g + 1`, given **the catalogue step** (`ProfileTower.Lvl.CatStep A`):
   closure of the catalogue under capped agreement from the coatom.  This is the one open
   hypothesis; the cap `⊥` is `ProfileTower.Lvl.Good.exists_cutLawful_of_coatom`.
+* **The fill of the other coatom at the grade `m + 1`**
+  (`ProfileTower.exists_isCutLawful_of_coatom_succ`, for every `m`): on the amalgam, with the cap
+  ball of a profile, through the lift from the common face `(C ∩ D, m)`
+  (`ProfileTower.cappedLift_inter_succ`).
 
 **Levels good on a set of profiles** (`ProfileTower.Lvl.GoodAt S`): every field of
 `ProfileTower.Lvl.Good`, with lawful sections asked only for the cut-lawful profiles of `S`.  Every
@@ -633,6 +637,80 @@ theorem IsCutLawful.isLawfulBelow_erase {k : ℕ} {P : Prof I} (hP : IsCutLawful
     {y : Fin (m + 2)} (hy : y ∈ (Pts : Finset (Fin (m + 2)))) :
     I.amalgam.rows.IsLawfulBelow (univ.erase y, k) fun d ↦ P d :=
   hP.erase hy
+
+/-- **The lift from the common face of the two coatoms into a coatom at the grade `m + 1`**: the
+common face has `m` points, so its graded face of grade `m` lies below the coatom at `m + 1`; for
+`1 ≤ m` the lift is bountifulness of the amalgam, and for `m = 0` no cell lies below it. -/
+theorem cappedLift_inter_succ {B C : Finset (Fin (m + 2))} (hB : B ∈ I.amalgam.toCellScheme.faces)
+    (hBc : #B = m) (hC : C ∈ I.amalgam.toCellScheme.faces) (hCc : #C = m + 1)
+    (h : ((B, m) : Finset (Fin (m + 2)) × ℕ) ≤ (C, m + 1)) : I.amalgam.rows.CappedLift h := by
+  by_cases hm : 1 ≤ m
+  · exact I.isBountiful
+      (show ((B, m) : Finset (Fin (m + 2)) × ℕ) ∈ I.amalgam.toCellScheme.gradedFaces from
+        ⟨hB, hm, hBc.ge⟩)
+      (show ((C, m + 1) : Finset (Fin (m + 2)) × ℕ) ∈ I.amalgam.toCellScheme.gradedFaces from
+        ⟨hC, by omega, hCc.ge⟩) h
+  · refine (Rows.cappedLift_iff_forall_exists h).mpr fun _ _ _ q _ hq _ ↦
+      ⟨q, hq, fun _ ↦ rfl, fun d ↦ ?_⟩
+    exfalso
+    have h1 : I.amalgam.toCellScheme.grade d.1 ≤ m := d.2.2
+    have h2 := I.amalgam.isWellFormed.isWellFormed.grade_pos d.1
+    omega
+
+/-- **The lift within the other coatom from the common face at the grade `m + 1`**, for every `m`
+(including `m = 0`): a profile `f` lawful below a coatom `(C, m + 1)`, agreeing below it with a
+profile `P` lawful on the cut capped at `h` (self-visible at `m + 1`), agrees below `(C, m + 1)`
+with a profile lawful on the cut that agrees with `P` capped at `h` everywhere.  The common face
+`C ∩ D` has `m` points, so every cell below both coatoms lies below `(C ∩ D, m)`; the other coatom
+`D` is filled by the capped lift of the amalgam from `(C ∩ D, m)` to `(D, m + 1)` at the ambient
+`P` (`ProfileTower.cappedLift_inter_succ`), and the cells below neither coatom keep `P`. -/
+theorem exists_isCutLawful_of_coatom_succ {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {h : Label.{u}} (hh : IsSelfVisible (m + 1) h)
+    {P : Prof I} (hP : IsCutLawful I (m + 1) P) {f : Prof I}
+    (hf : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ f d)
+    (hfP : ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1), min (f d) h = min (P d) h) :
+    ∃ W : Prof I, IsCutLawful I (m + 1) W ∧
+      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1), W d = f d) ∧
+      ∀ d, min (W d) h = min (P d) h := by
+  classical
+  obtain ⟨y, hy, hxy⟩ := Seed.exists_other hx
+  obtain ⟨hOf, hOcard⟩ := inter_props (I := I) hx hy hxy
+  have hXY : ((univ.erase x ∩ univ.erase y, m) : Finset (Fin (m + 2)) × ℕ) ≤
+      (univ.erase y, m + 1) := ⟨inter_subset_right, Nat.le_succ m⟩
+  have hXC : ((univ.erase x ∩ univ.erase y, m) : Finset (Fin (m + 2)) × ℕ) ≤
+      (univ.erase x, m + 1) := ⟨inter_subset_left, Nat.le_succ m⟩
+  obtain ⟨v, hv, hvP, hvf⟩ := (Rows.cappedLift_iff_forall_exists hXY).mp
+    (cappedLift_inter_succ hOf hOcard (I.erase_mem_faces hy) (Seed.card_erase _) hXY) h hh
+    (fun d ↦ f d) (fun d ↦ P d) (hf.mono hXC) (hP.erase hy)
+    fun d ↦ (hfP d.1 (CellScheme.below_mono _ hXC d.2)).symm
+  set W : Prof I := fun d ↦
+    if d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1) then f d
+    else if hD : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1) then v ⟨d, hD⟩ else P d
+    with hW
+  have hWC (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)) : W d = f d :=
+    ite_eq_left hd
+  have hWD (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1)) :
+      W d = v ⟨d, hd⟩ := by
+    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)
+    · rw [hWC d hdC]
+      have hdO : d ∈ I.amalgam.toCellScheme.below (univ.erase x ∩ univ.erase y, m) :=
+        ⟨subset_inter hdC.1 hd.1, (I.amalgam.isWellFormed.isWellFormed.grade_le_card d).trans
+          ((card_le_card (subset_inter hdC.1 hd.1)).trans hOcard.le)⟩
+      exact (hvf ⟨d, hdO⟩).symm
+    · rw [hW]
+      simp only [hdC, hd, ite_false, dite_true]
+  have hlC : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ W d :=
+    (Rows.isLawfulBelow_congr fun d hd ↦ (hWC d hd).symm).mp hf
+  have hlD : I.amalgam.rows.IsLawfulBelow (univ.erase y, m + 1) fun d ↦ W d := by
+    convert hv using 1
+    exact funext fun d ↦ hWD d d.2
+  refine ⟨W, lawful_pair hx hy hxy hlC hlD, hWC, fun d ↦ ?_⟩
+  by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)
+  · rw [hWC d hdC]; exact hfP d hdC
+  by_cases hdD : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1)
+  · rw [hWD d hdD]; exact hvP ⟨d, hdD⟩
+  · rw [hW]
+    simp only [hdC, hdD, ite_false, dite_false]
 
 /-- **The step on the amalgam at a positive cap, with the cap ball of a profile**: for a profile
 `P` lawful on the grade-`(g + 1)` cut and a cap `h` self-visible at `g + 1`, every labelling lawful

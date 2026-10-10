@@ -81,7 +81,10 @@ Under `VaughtConjecture/`: finite structures (`Stage/Basic.lean`, and the coatom
 in `Extension/ProfileTowerCompletion.lean`); the sentence and its models (`Language/Density.lean`,
 `Realization/Model.lean`); the receiving constructions (`MainTheorem/LowPaddedRoute.lean`,
 `MainTheorem/GrowthLevelRoute.lean`); expansion and classification
-(`MainTheorem/ReceivingRoute.lean`); the count (`MainTheorem/Spectrum.lean`).  The full map is
+(`MainTheorem/ReceivingRoute.lean`); the count (`MainTheorem/Spectrum.lean`).  The statement on
+countable models on arbitrary carriers is `MainTheorem.vaughtCounterexample_allCarriers`, and
+`MainTheorem.vaughtCounterexample_allCarriers_densitySentence` for `baseLanguage.densitySentence`
+by name (both in `MainTheorem/GrowthLevelRoute.lean`).  The full map is
 [`roadmap/README.md`](roadmap/README.md); compiled refutations of candidate statements are in the
 `*Counterexample*.lean` modules, indexed in [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md).
 

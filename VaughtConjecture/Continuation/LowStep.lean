@@ -53,7 +53,7 @@ the private context, donor tops the copies of the tops of the donor, proper dono
 copies of the proper cells of the donor of grade at most `K`, all below the donor coatom), the
 LOW step from either coatom, hence the capped lift into the LOW layer at the grade `K`, follows
 from exactly two named cases, open in this file and proved later (the unserved case with the lost
-point last, `StageType.lowStepUnserved`, in `VaughtConjecture.Continuation.LowFullGradeUnserved`;
+point last, `StageType.lowStepUnserved`, in `VaughtConjecture.Continuation.LowStepTie`;
 the tie case at every LOW family, `StageType.IsLowFamily.lowStepTie`, in
 `VaughtConjecture.Continuation.LowStepLow`):
 
