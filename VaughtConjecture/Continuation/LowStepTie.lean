@@ -367,8 +367,9 @@ theorem lowStepUnserved {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
 /-- **The unserved case holds below the full grade** (`K ≤ k`): `StageType.lowStepUnserved`. -/
 theorem lowStepUnserved_of_le {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
     {o r : Fin t'.card} (hs : t'.IsSourceGapContextAt K Fin.castSuccEmb (Fin.last k) o r)
-    (_hKk : K ≤ k) {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p) :
+    (hKk : K ≤ k) {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p) :
     LowStepUnserved K t' (Fin.last k) o r :=
+  have _ := hKk
   lowStepUnserved hleg hs hp
 
 end VaughtConjecture.StageType
