@@ -62,6 +62,7 @@ theorem lvLevel_isCoded (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
   | 0, _ => (I.attachmentBase g).isCoded_ladderBase H
   | j + 1, hj => by
     have hN := lvLevel_good (B := B) (hd := hd) hH hcard hQ hB j (by omega)
+    -- the next level appends the cells of the catalogue
     change ((I.lvLevel g H B hd Q j).nS B (I.lvCat g B hd Q (j + 2))).IsCoded
     refine Scheme.isCoded_appendFullCells (lvLevel_isCoded hH hcard hQ hB j (by omega))
       fun i z ↦ ?_
@@ -91,6 +92,7 @@ theorem lvLevel1_exists_gradedIndex_one (hH : 0 < H) :
     ∃ z, (I.lvLevel1 g H).S.toCellScheme.gradedIndex z = ((univ : Finset (Fin (m + 2))), 1) := by
   obtain ⟨a⟩ := (inferInstance : Nonempty (Scheme.RankMember (I.attachmentBase g).S H))
   refine ⟨Fin.natAdd _ (Scheme.ladderEquiv _ _ H (a, Sum.inl ⟨0, hH⟩)), ?_⟩
+  -- the first level appends the ladder points to the attachment
   change ((I.attachmentBase g).S.appendFullCellsScheme 1 _).gradedIndex (Fin.natAdd _ _) = _
   rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd]
 
@@ -153,6 +155,7 @@ theorem lvRep_exists_gradedIndex_attached {J : ℕ}
     exact h
   refine ⟨Fin.castAdd _ ((I.lvLevel g H B hd Q J).attEmb e),
     (Scheme.gradedIndex_mirror_castAdd _).trans ((hN.gradedIndex_attEmb e).trans ?_)⟩
+  -- the cell of the attachment is the lower embedding of the cell of the amalgam
   change I.amalgam.toCellScheme.gradedIndex (I.amalgam.toScheme.lowerEmb _ e) = X
   rw [he, hc]
 
@@ -191,6 +194,7 @@ full scope has grade at most `m + 1`, a cell of proper scope at most the size of
 copy has the grade of its original. -/
 theorem ALvl.Good.rep_grade_lt {N : I.ALvl g H (m + 1)} (hN : N.Good B (lvAdm hd Q))
     (z : Fin hN.rep.card) : hN.rep.toCellScheme.grade z < m + 2 := by
+  -- a cell of the replicated level has the grade of its original
   change N.S.toCellScheme.grade (N.S.mirrorOrig (I.mixedFaces g) z) < m + 2
   rcases N.inv (N.S.mirrorOrig (I.mixedFaces g) z) with h | h
   · omega

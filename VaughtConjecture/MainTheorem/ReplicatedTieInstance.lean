@@ -124,7 +124,6 @@ theorem hasRelativeLiftOnClass_of_bottoms {Q : GrowthRequests t' d.toScheme}
 
 end StageType.GrowthRequests
 
-
 namespace StageType
 
 /-- **The context lift at the seed position read at one seed position**, with the first coatom
@@ -286,7 +285,6 @@ theorem isLawful_sep : (ctx α).rows.IsLawful (sep α) :=
     (isSelfVisible_coe_add Order.isSuccPrelimit_bot (by omega)) le_rfl rfl
 
 end TieInstance
-
 
 namespace TieInstance
 

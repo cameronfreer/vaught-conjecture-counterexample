@@ -23,8 +23,9 @@ decodes the ladder base of the code of the state as the ladder base of the state
 **The bottom-state exception** (`Seed.lvLevel_σ_embed_bot`, `Label.upperDecoderAt_const_bot`): at
 the bottom state the levels above the first read the ladder base as `⊥` where the first level does
 and as the gap value `ω * B + (j + 3)` elsewhere, so the recovery asks a value other than `⊥`.  The
-lift treats the cap `⊥` separately (`Seed.ALvl.Good.hasOwnerCappedLifts_next_bot`); recognition and
-the assembly must treat the bottom state separately as well.
+lift treats the cap `⊥` separately (`Seed.ALvl.Good.hasOwnerCappedLifts_next_bot`).  Recognition
+needs no separate treatment: the cell of the bottom state stores `⊥` on the cells of the attachment,
+and its controller clauses hold (`Seed.lvLevel_ladderController`).
 
 ## References
 
@@ -93,7 +94,6 @@ theorem lvLevel_σ_embed (hcard : (I.attachmentBase g).S.card ≤ H) :
     exact Scheme.LadderBaseData.upperDecoderAt_stateExtOf_orbitCode_ofLawfulBelowOne hcard
       (by omega) hP1 hC1 hv hpos t
 
-
 /-- **The upper decoder at the bottom state**: no cell has a positive code, so a label other than
 `⊥` is read as the gap value `ω * B + K` (for `k ≤ K`). -/
 theorem _root_.VaughtConjecture.Label.upperDecoderAt_const_bot {ι : Type*} [Fintype ι]
@@ -130,8 +130,9 @@ theorem _root_.VaughtConjecture.Label.upperDecoderAt_const_bot {ι : Type*} [Fin
 the level at the grade `j + 2` is read as `⊥` where the first level reads `⊥`, and as the gap value
 `ω * B + (j + 3)` elsewhere, not as the first level reads it.  So `Seed.lvLevel_σ_embed` asks a
 value other than `⊥`; the lift treats the cap `⊥` separately
-(`Seed.ALvl.Good.hasOwnerCappedLifts_next_bot`), and recognition and the assembly must treat the
-bottom state separately. -/
+(`Seed.ALvl.Good.hasOwnerCappedLifts_next_bot`).  Recognition needs no separate treatment: the cell
+of the bottom state stores `⊥` on the cells of the attachment, so its controller clauses hold
+(`Seed.lvLevel_ladderController`). -/
 theorem lvLevel_σ_embed_bot : ∀ (j : ℕ) (t : Fin (I.lvBase g H).card),
     (I.lvLevel g H B hd Q (j + 1)).σ (fun _ ↦ ⊥) ((I.lvLevel g H B hd Q (j + 1)).embed t) =
       if I.lvBaseSec g H (fun _ ↦ ⊥) t = ⊥ then ⊥ else gridPoint (j + 3) B

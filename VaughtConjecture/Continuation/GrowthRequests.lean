@@ -184,7 +184,6 @@ theorem HollowReferenceCalibration'.exists_requests {t' : StageType.{u} α k}
     have ht : (o : Label.{u}) ≠ ⊤ := by simp
     simp [Q, hd, hr, hb, ht]
 
-
 /-! ### The stable evaluation: capped recovery -/
 
 /-- **The capped relation from the requests**: if the cap's value of a section `s` exceeds `γ`,

@@ -71,10 +71,12 @@ theorem lvRep_isBountiful (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ 
   have hcardD : #(univ.map (extendByLast (g.trans Fin.castSuccEmb))) = n + 1 := by
     rw [card_map, card_univ, Fintype.card_fin]
   have hCF : univ.erase (Fin.last (m + 1)) ∈ hN.rep.toCellScheme.faces := by
+    -- the replicated level has the faces of the level
     change _ ∈ (I.lvLevel g H B hd Q m).S.toCellScheme.faces
     rw [hfaces, ← Coatom.univ_map_left]
     exact ((StageType.restrictFace_eq_some_iff _ _).mp I.restrictFace_left).1
   have hDF : univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ hN.rep.toCellScheme.faces := by
+    -- the replicated level has the faces of the level
     change _ ∈ (I.lvLevel g H B hd Q m).S.toCellScheme.faces
     rw [hfaces]
     exact donor_mem_faces hd
@@ -152,7 +154,6 @@ theorem lvRep_isBountiful (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ 
     · have hU := mem_mixedFaces_coatom (I := I) hg
       exact lvRep_cappedLift_mixed_univ hH hcard hQ hB' (by omega) hN hU hk1
         (by rw [card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin]; omega) hkm
-
 
 /-- **The replicated top level is bountiful at the strict block bound**, at every seed with the
 data of the seed position (`Seed.seedHeightLevel`, `Seed.seedBlockBound'`). -/

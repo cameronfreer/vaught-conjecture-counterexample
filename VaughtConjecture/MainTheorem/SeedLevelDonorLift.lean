@@ -15,8 +15,8 @@ The levels (`Seed.lvLevel`) lift capped from the donor face into the full face a
 legal donor with a nonempty root.  At an onto root the donor face is the second coatom
 (`Seed.donorFace_eq_coatom_of_surjective`), so the levels lift from the second coatom at every
 grade `j + 1 ≤ m + 1` (`Seed.lvLevel_cappedLift_coatom_of_surjective`; at the seed position,
-`StageType.lvLevel_cappedLift_coatoms_atSeed`), and so do the levels with their copies at the mixed
-faces (`Seed.lvRep_cappedLift_coatom_seedChoice`).
+`StageType.lvLevel_cappedLift_coatoms_atSeed'`), and so do the levels with their copies at the
+mixed faces (`Seed.lvRep_cappedLift_coatom_seedChoice'`).
 
 * **The donor state step** (`Seed.exists_donorStateStep`): from an anchor `R₀` of the catalogue
   at the grade `k ≤ n + 1` and a prescription below the donor face at `k` agreeing with it capped
@@ -497,78 +497,6 @@ theorem lvLevel_cappedLift_coatom_of_surjective {H B : ℕ} (hH : 0 < H)
     exact hl
   exact key _ _ (donorFace_eq_coatom_of_surjective g hg).symm
 
-/-- **The second coatom at an onto root, at the choice**: at every seed with the data of the seed
-position and an onto root, the levels at `Seed.seedHeightLevel`, `Seed.seedBlockBound` lift
-capped from the second coatom into `(univ, j + 1)` for every `j + 1 ≤ m + 1`.  The threshold is
-then `n + 1 = m + 1` (`StageType.GrowthRequests.ClassCalibrated.threshold_eq_of_surjective`). -/
-theorem lvLevel_cappedLift_coatom_seedChoice {p : StageType.{u} α n}
-    {d : StageType.{u} α (n + 1)}
-    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p) (hd : d ∈ p.cofaces)
-    (hn : 0 < n)
-    (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
-    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
-    (hg : Function.Surjective g) :
-    ∀ j, j + 1 ≤ m + 1 →
-      (I.lvLevel g (I.seedHeightLevel g) (I.seedBlockBound g) hdA Q j).S.rows.CappedLift
-        (X := (univ.erase (Fin.castSucc (Fin.last m)), j + 1))
-        (Y := ((univ : Finset (Fin (m + 2))), j + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  lvLevel_cappedLift_coatom_of_surjective (seedHeightLevel_pos I g)
-    (card_attachmentBase_le_seedHeightLevel I g) hte hd.1 hn hdA hQ
-    (two_mul_card_le_seedBlockBound I g) hg
-
-/-- **The replicated levels lift from the second coatom at an onto root, at the choice**: the
-level at the grade `J + 1 ≤ m + 2` with its copies at the mixed faces, at every grade
-`j + 1 ≤ min (J + 1) (m + 1)` (`Seed.lvLevel_cappedLift_iff_of_le`,
-`Seed.ALvl.Good.cappedLift_rep_donor`). -/
-theorem lvRep_cappedLift_coatom_seedChoice {p : StageType.{u} α n}
-    {d : StageType.{u} α (n + 1)}
-    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p) (hd : d ∈ p.cofaces)
-    (hn : 0 < n)
-    (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
-    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
-    (hg : Function.Surjective g) (J : ℕ) (hJ : J + 1 ≤ m + 2) (j : ℕ) (hjJ : j ≤ J)
-    (hjm : j + 1 ≤ m + 1) :
-    (lvLevel_good (seedHeightLevel_pos I g) (card_attachmentBase_le_seedHeightLevel I g) hQ
-      (two_mul_card_le_seedBlockBound I g) (hd := hdA) J hJ).rep.rows.CappedLift
-        (X := (univ.erase (Fin.castSucc (Fin.last m)), j + 1))
-        (Y := ((univ : Finset (Fin (m + 2))), j + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  ALvl.Good.cappedLift_rep_donor _ _ rfl (donorFace_eq_coatom_of_surjective g hg).symm.subset
-    ((lvLevel_cappedLift_iff_of_le le_rfl _ J hjJ).mpr
-      (lvLevel_cappedLift_coatom_seedChoice hte hd hn hdA hQ hg j hjm))
-
 end Seed
-
-namespace StageType
-
-/-- **The two coatom lifts of the levels at the seed position**, with exactly the binders of
-`StageType.HasLadderGrowthCarriersStableAtSeed`: at the seed of
-`StageType.exists_growthSeed_of_isSuccLimit` and the choice `Seed.seedHeightLevel`,
-`Seed.seedBlockBound`, the levels lift capped from the context coatom into `(univ, j + 1)` for
-every `j + 1 ≤ m + 1` (`Seed.lvLevel_cappedLift_seedChoice`), and, at an onto root, from the
-second coatom as well (`Seed.lvLevel_cappedLift_coatom_seedChoice`). -/
-theorem lvLevel_cappedLift_coatoms_atSeed {α : Ordinal.{u}} {n m : ℕ}
-    (t' : StageType.{u} α (m + 1)) (g : Fin n ↪ Fin m) (p' : StageType.{u} α m)
-    (hα : Order.IsSuccLimit α) (ht' : t'.IsLegal)
-    (hp' : restrictFace Fin.castSuccEmb t' = some p') (p : StageType.{u} α n)
-    (hte : restrictFace (g.trans Fin.castSuccEmb) t' = some p) (d : StageType.{u} α (n + 1))
-    (hd : d ∈ p.cofaces) (hn : 0 < n) (Q : GrowthRequests t' d.toScheme)
-    (hpair : ∀ j, Q.CorrectAt t'.label j (d.label j)) (hQ : Q.ClassCalibrated hte)
-    (hrel : Q.HasRelativeLiftOnClass hte hd.2) :
-    ∃ (I : Seed.{u} α m) (hI : I.left = t')
-      (hdA : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d),
-      (∀ j, j + 1 ≤ m + 1 →
-        (I.lvLevel g (I.seedHeightLevel g) (I.seedBlockBound g) hdA (hI ▸ Q) j).S.rows.CappedLift
-          (X := (univ.erase (Fin.last (m + 1)), j + 1))
-          (Y := ((univ : Finset (Fin (m + 2))), j + 1)) ⟨erase_subset _ _, le_rfl⟩) ∧
-      (Function.Surjective g → ∀ j, j + 1 ≤ m + 1 →
-        (I.lvLevel g (I.seedHeightLevel g) (I.seedBlockBound g) hdA (hI ▸ Q) j).S.rows.CappedLift
-          (X := (univ.erase (Fin.castSucc (Fin.last m)), j + 1))
-          (Y := ((univ : Finset (Fin (m + 2))), j + 1)) ⟨erase_subset _ _, le_rfl⟩) := by
-  obtain ⟨I, rfl, hdA⟩ :=
-    exists_growthSeed_of_isSuccLimit hα ht' hp' ((restrictFace_trans t' _ g hp').trans hte) hd
-  exact ⟨I, rfl, hdA, Seed.lvLevel_cappedLift_seedChoice hte hd hn hdA hpair hQ hrel,
-    Seed.lvLevel_cappedLift_coatom_seedChoice hte hd hn hdA hQ⟩
-
-end StageType
 
 end VaughtConjecture

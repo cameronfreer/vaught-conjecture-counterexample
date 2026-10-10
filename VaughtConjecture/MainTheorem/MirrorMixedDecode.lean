@@ -115,7 +115,6 @@ theorem exists_mshadow
     congr 1
     exact (ladderIndex_parent (Scheme.ladderCeil_le (Scheme.rankProf_le _ H)) (b, Sum.inr e)).symm
 
-
 /-- **The grade-one reading of a cell of the attachment, capped at a cell of full scope, is that
 cell's reading**, through capped decoders at the copies at `U`, when the grade-one reading is
 through the top rung of a member whose copy dominates the copied ladder. -/

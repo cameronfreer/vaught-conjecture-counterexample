@@ -119,7 +119,6 @@ theorem mirror_cell_cases_att
   · obtain ⟨e, rfl⟩ := hcells x hx
     exact .inr ⟨e, rfl⟩
 
-
 set_option quotPrecheck false in
 /-- The mirrored scheme. -/
 local notation "𝔼" => Scheme.mirror hmix
@@ -609,7 +608,6 @@ theorem cappedLift_mirror_mixed_face (hH : 0 < H)
       rw [he, hr_att e k rfl (he ▸ hdY), ← hrow, hθc k hk1 hkj _ hmem]
       exact min_eq_left (le_max_mCopy hU hP hkj (hkj.trans hjU) (hu k hk1 hkj).1
         (hmaxc k hk1 hkj) (he ▸ d.2) (congrArg Prod.snd (hgiA e)))
-
 
 /-- **The lift from a mixed face into the full face** of a mirrored scheme over the attachment
 (the cells of full scope read at themselves). -/

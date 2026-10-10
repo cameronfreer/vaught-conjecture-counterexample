@@ -10,11 +10,10 @@ import VaughtConjecture.MainTheorem.SeedLevelDonorLift
 
 Roadmap, Layer 3 ((R3) and (R4), the levels of the replicated carrier re-rendered per grade).
 
-The levels built at the block bound `Seed.seedBlockBound' I g = max (2 * #attachment + 1)
-(Seed.seedGridBound I g)` (exceeding twice the number of cells strictly,
-`Seed.two_mul_card_lt_seedBlockBound'`) are other schemes than those built at
-`Seed.seedBlockBound`; their lifts are stated here again, at that bound, from the lemmas that hold
-at every block bound `B ≥ 2 * #attachment` (`Seed.lvLevel_cappedLift'`,
+The lifts of the levels at the seed choice `Seed.seedHeightLevel`, `Seed.seedBlockBound' I g =
+max (2 * #attachment + 1) (Seed.seedGridBound I g)` (exceeding twice the number of cells strictly,
+`Seed.two_mul_card_lt_seedBlockBound'`), from the lemmas that hold at every block bound
+`B ≥ 2 * #attachment` (`Seed.lvLevel_cappedLift'`,
 `Seed.lvLevel_cappedLift_iff_of_le`, `Seed.lvLevel_cappedLift_coatom_of_surjective`,
 `Seed.ALvl.Good.cappedLift_rep`, `Seed.ALvl.Good.cappedLift_rep_donor`):
 * the context lift at every seed (`Seed.lvLevel_cappedLift_seedChoice'`) and with the copies
