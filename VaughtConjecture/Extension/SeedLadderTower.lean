@@ -32,6 +32,11 @@ of its rank member), and agreement heights on the earlier layers.
   construction**: the rungs of the rank member of `R` are read as the table, the top rung dominates
   every value of `R`, and every positive value of `R` is a value of the table.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Agreement heights and field rows are those of the coatom extension construction [Kni26, §4.4].

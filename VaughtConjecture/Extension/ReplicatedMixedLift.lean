@@ -31,6 +31,11 @@ below that cell the row is the row of `u k` in the tower at the original of `d`.
   (`Seed.decode_controller_dichotomy`, `Seed.decode_one_dichotomy`).
 * It keeps the ambient at the cap (`Label.min_min_eq_of_reader`).
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; witnesses are [Kni26, Definition 2.3.9].

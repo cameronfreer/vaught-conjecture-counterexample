@@ -33,6 +33,11 @@ pin refuting it must have its three cells `a`, `a₁`, `a₃` in the context.  T
 
 So the pin technique cannot refute the context lift; this is not a proof of the context lift.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Witnesses and visibility replacement are [Kni26, Definitions 2.2.3 and 2.3.9]; lawful sections

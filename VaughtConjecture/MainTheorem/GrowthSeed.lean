@@ -26,6 +26,9 @@ convex geometry of the plan of `t'` it lies in a coatom `univ.erase x` with `x` 
 (`Geometry.IsConvexGeometry.exists_coatom`); relabelling `x` last puts the context in the position
 above.
 
+**Scope.**  Not used by the main theorem through the levels
+(`VaughtConjecture.MainTheorem.GrowthLevelRoute`); kept as reusable mathematics.
+
 ## References
 
 Coatom amalgams and pinned extensions are [Kni26, Lemma 4.3.2 and Corollary 4.3.22].

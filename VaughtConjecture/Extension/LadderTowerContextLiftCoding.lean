@@ -29,6 +29,11 @@ an ambient exists at a legal context is not decided here.  This is the shape of 
 single-writing form: the ladder values of a lift must be allowed to come from the ambient's own
 member, not only from the coded state's writing.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 The growth construction is that of [Kni26, §4].

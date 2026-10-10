@@ -19,6 +19,11 @@ member (`Seed.copyLadder_exists_shape`): the copied rungs of the rank member of 
 or all `⊥`.  So `θ` either sends every reading of a cell of the attachment to `⊥`, or sends exactly
 the readings `⊥` to `⊥`.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; witnesses are [Kni26, Definition 2.3.9].

@@ -18,6 +18,9 @@ grades and rows (`StageType.rowAt_reindex`, `StageType.mem_below_reindex_iff`), 
 cap contexts (`TiedRootCapRelabel.MarkedCapContextBelow'.reindex`).  So a chosen point of the
 context, such as an extreme point off the root, may be put last.
 
+**Scope.**  Not used by the main theorem through the levels
+(`VaughtConjecture.MainTheorem.GrowthLevelRoute`); kept as reusable mathematics.
+
 ## References
 
 Reindexing of stage types is [Kni26, Definition 3.1.2].

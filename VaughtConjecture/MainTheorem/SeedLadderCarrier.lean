@@ -18,6 +18,11 @@ scheme keep their rows and graded indices (`CompletionBelowFullGrade.rowAt_compl
 and along every proper face the cells of the completion are the old cells of the amalgam, in their
 order (`CompletionBelowFullGrade.cellMap_completion`).
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 The completion of [Kni26, Definition 4.3.14]; the controllers of the growth step are those of

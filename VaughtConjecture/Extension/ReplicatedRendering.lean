@@ -47,6 +47,11 @@ So the rendering keeps capped agreement exactly through a common cut: a coded re
 the cap among the heights, with the decoders compared on every label below it, not only on the
 values of the states.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Agreement heights and field rows are those of the coatom extension construction [Kni26, §4.4];

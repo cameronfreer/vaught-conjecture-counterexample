@@ -29,6 +29,11 @@ by `f` (`Scheme.LadderBaseData.exists_controller_agree_ladderTower`), `u` reads 
 the twin of `f` at the grade `k`, whose copy is at most the maximum
 (`Scheme.LadderBaseData.exists_controller_twin_ladderTower`).
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Agreement heights and catalogue layers are those of the coatom extension construction

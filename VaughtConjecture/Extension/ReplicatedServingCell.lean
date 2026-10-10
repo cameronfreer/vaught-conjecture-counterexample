@@ -44,6 +44,11 @@ as the ambient capped at `c`.  **The serving state** (`Seed.ServingStateAt`, ope
 catalogue at `k` and such a witness, on the writing of the state.  The serving state gives the
 serving cell (`Seed.servingCellAt_of_servingStateAt`).
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 The growth construction is that of [Kni26, §4].

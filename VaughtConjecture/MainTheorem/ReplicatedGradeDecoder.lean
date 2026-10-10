@@ -52,6 +52,11 @@ grade at most `m + 1` (it lies in the context face or the donor face); so at the
 at a cell of grade above `k` where the state is not `⊥`, the orbit code is short at `k`, never the
 formal top and not `⊥`, so not self-visible at that grade.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Witnesses and visibility replacement are [Kni26, Definitions 2.2.3 and 2.3.9]; lawful sections are

@@ -41,6 +41,9 @@ grade (`QuadInstance.lvLevel_cappedLift_grade_three`).
 with the cap at `(univ, 2)` (`ApexInstance.req`, threshold `2`) at every grade `j + 1 ≤ 3`
 (`ApexInstance.lvLevel_cappedLift_req`).
 
+**Scope.**  Instances and test inputs of the levels re-rendered per grade; not used by the main
+theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`).
+
 ## References
 
 Lawful sections and bountifulness are [Kni26, Definitions 2.5.4 and 2.5.14]; the growth

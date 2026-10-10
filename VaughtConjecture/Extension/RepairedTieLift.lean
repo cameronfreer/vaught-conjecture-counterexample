@@ -44,6 +44,11 @@ This is the lift at one input.  The context lift at every input of a seed positi
 prescription and ambient) is the extension over the tower at a positive cap
 (`Seed.TowerExtensionPos`), not proved here.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Lawful sections and bountifulness are [Kni26, Definitions 2.5.4 and 2.5.14]; agreement heights

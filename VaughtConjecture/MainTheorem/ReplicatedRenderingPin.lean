@@ -40,6 +40,11 @@ catalogue; the identity and the collapse at `2` agree on the values of the presc
 parts at most `2`), but at the layer cell of the truncation the prescription is written as the
 height `ω + 3`, kept by the identity and lowered to `ω + 2` by the collapse.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Lawful sections are [Kni26, Definition 2.5.4]; agreement heights are those of the coatom

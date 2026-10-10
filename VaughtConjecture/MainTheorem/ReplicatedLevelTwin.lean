@@ -30,6 +30,9 @@ Not proved here: the twins at the grades further below (the controller reads the
 more decoders), and the remaining steps of `Seed.min_decode_eq_decode` and
 `Seed.cappedLift_mixed_face` for the levels.
 
+**Scope.**  Instances and test inputs of the levels re-rendered per grade; not used by the main
+theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`).
+
 ## References
 
 The controllers of the growth step are those of [Kni26, §4].

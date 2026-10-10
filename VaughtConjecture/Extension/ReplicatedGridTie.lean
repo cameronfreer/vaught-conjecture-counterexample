@@ -29,6 +29,11 @@ of `Seed.exists_lift_of_tie`, as an executable statement beside the repaired lif
 * With heights in `Scheme.heightSet Γ B'` and `Γ` containing the code set the tie value is a height,
   the pin fails, and the lift exists (`Seed.exists_lift_of_tie`).
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Lawful sections and bountifulness are [Kni26, Definitions 2.5.4 and 2.5.14]; agreement heights

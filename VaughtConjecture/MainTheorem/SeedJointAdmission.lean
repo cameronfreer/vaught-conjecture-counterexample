@@ -32,6 +32,11 @@ So the lift from the context coatom asks, at the amalgam, exactly for admitted c
 follow from the relative lift on the exact class and a joint extension through the second coatom
 type.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 The growth construction is that of [Kni26, §4].

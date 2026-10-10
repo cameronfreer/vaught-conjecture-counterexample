@@ -49,6 +49,11 @@ and reading the fresh codes as the prescription above it.  A witness bounded by 
 (`visibilityReplace k k` sends the strip below `h` to `h`); this is the alignment of the aligned
 encoding, not proved here.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Witnesses and visibility replacement are [Kni26, Definitions 2.2.3 and 2.3.9]; agreement heights

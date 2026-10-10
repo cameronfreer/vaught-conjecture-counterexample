@@ -37,6 +37,11 @@ anchor takes the value of the cut at a cell; the decoder of `Label.singleDecoder
 that code as the prescription there, so the capped agreement at `1` holds only if the prescription
 at that cell is read by `τ` at the cut.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Witnesses and visibility replacement are [Kni26, Definitions 2.2.3 and 2.3.9]; lawful sections are

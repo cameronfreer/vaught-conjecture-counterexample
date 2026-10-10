@@ -23,6 +23,11 @@ So the extension is asked only at a positive cap where the state exceeds the cap
 `Seed.towerExtension_of_le`), and the context lift follows from that case at the grades
 `2, …, m + 1` (`Seed.hasContextLift_attachAdmits_pos`).
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14].

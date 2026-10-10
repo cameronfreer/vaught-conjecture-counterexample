@@ -36,6 +36,11 @@ be allowed to send positive labels to `⊥` where some lawful section is `⊥`
 that asks a decoder without positive-to-`⊥` collapse to match the ambient at the cap below a full
 face.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Lawful sections, consistency and bountifulness are [Kni26, Definitions 2.5.4, 2.5.12 and 2.5.14].

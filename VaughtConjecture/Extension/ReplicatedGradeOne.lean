@@ -28,6 +28,11 @@ read as the shadow of `a` at that cell), and the ambient reads alike two cells a
 up to its value at the original top rung.  In particular the context cells outside `U` receive the
 values of the copied shadows of `a`.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; witnesses are [Kni26, Definition 2.3.9].

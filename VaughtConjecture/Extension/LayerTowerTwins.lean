@@ -21,6 +21,9 @@ catalogue at `k + 2`, whose row reads `R` at the cells of the base of grade at m
 `Scheme.exists_layerTower_controller`) and reads, at every lower grade `k' + 2` at which `R` is in
 the catalogue, some cell of full scope (the twin) at the top of the grid at `k' + 2`.
 
+**Scope.**  Not used by the main theorem through the levels
+(`VaughtConjecture.MainTheorem.GrowthLevelRoute`); kept as reusable mathematics.
+
 ## References
 
 Agreement heights and catalogue layers are those of the coatom extension construction

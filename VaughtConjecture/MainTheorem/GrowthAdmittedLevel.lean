@@ -40,6 +40,9 @@ full scope at the mixed faces are cells of proper scope that are not amalgam cel
 invariant `ProfileTower.Lvl.GoodAt.mem_range` (argued).  The recognizing carrier is therefore built
 as its own construction (`VaughtConjecture.Extension.LadderBase` for its first layer).
 
+**Scope.**  Not used by the main theorem through the levels
+(`VaughtConjecture.MainTheorem.GrowthLevelRoute`); kept as reusable mathematics.
+
 ## References
 
 The controllers of the growth step are those of [Kni26, §4].

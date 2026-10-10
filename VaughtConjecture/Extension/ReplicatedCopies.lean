@@ -28,6 +28,11 @@ predecessor steps), so `σ` sends no positive value of `R` to `⊥`.  What remai
 mixed face (not compiled here) is to extend the recognized state to the context cells outside `U`,
 render it on the cells of full scope, and keep the observation of the ambient at the cap.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 The controllers and the growth step are those of [Kni26, §4].

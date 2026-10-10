@@ -42,6 +42,11 @@ above `j` (`Label.not_isSelfVisible_finCollapse`).  A complete instance (a seed,
 member with two cells of one rank across the grade, and an admitted prescription) is not compiled
 here.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Lawful sections are [Kni26, Definition 2.5.4]; visibility replacement is

@@ -35,6 +35,11 @@ set `Γ` containing the code set `Label.codeSet |cells| (m + 2)` (fixed by the s
 grade up to `m + 2`, reads `R` as `P` at every cell (`Seed.exists_stateCode`).  The capped form
 reads `R` as `P` capped at a label self-visible at `j` (`Seed.exists_stateCode_capped`).
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Witnesses are [Kni26, Definition 2.3.9]; visibility replacement is [Kni26, Definition 2.2.3]; the

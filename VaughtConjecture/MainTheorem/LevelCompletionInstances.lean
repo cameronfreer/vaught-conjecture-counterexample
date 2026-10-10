@@ -26,6 +26,9 @@ the context (`Seed.lvRepCompletion_label_attachCtxCell`).
 the apex is not at the threshold (`2`, `3`, `4`), every cell at the threshold is a cell of the
 level, and the completion carries `⊤` at the cell of a context cell labelled `⊤`.
 
+**Scope.**  Instances and test inputs of the levels re-rendered per grade; not used by the main
+theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`).
+
 ## References
 
 The completion of [Kni26, Definition 4.3.14]; the controllers of the growth step are those of

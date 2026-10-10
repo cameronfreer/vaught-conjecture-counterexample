@@ -38,6 +38,11 @@ top rung applied to the row of that rung, as in the lift at the grade one,
 The extension over the tower, the context lift and a lawful labelling extending the labels of the
 attachment (`Seed.HasExtendingLabel`) stay separate statements; nothing here gives the labelling.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; the growth construction is that of [Kni26, §4].

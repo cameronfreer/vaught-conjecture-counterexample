@@ -27,6 +27,11 @@ the extension is asked only above the cap (`Seed.TowerExtensionAbove`,
 `Seed.towerExtension_of_above`): where the state exceeds the cap, some cell of full scope at each
 grade must carry the new values, and its row must read them.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14].

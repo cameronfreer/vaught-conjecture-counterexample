@@ -46,6 +46,11 @@ its grade (`Label.isSelfVisible_of_witness_eq`), so `R₀ a` is a height.  For c
 prescriptions over a context with a cell at `(ctxCoatom 1, 2)` above `a₃` (availability in a legal
 context) the gap does not occur.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Lawful sections are [Kni26, Definition 2.5.4]; agreement heights are those of the coatom extension

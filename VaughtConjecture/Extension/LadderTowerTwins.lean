@@ -18,6 +18,9 @@ whose row reads `R` on the cells of the base, its positive table on the ladder
 of full scope at the top `gridPoint (k' + 2) B'` of the grid (its twin,
 `Scheme.LadderBaseData.exists_controller_twin_ladderTower`).
 
+**Scope.**  Not used by the main theorem through the levels
+(`VaughtConjecture.MainTheorem.GrowthLevelRoute`); kept as reusable mathematics.
+
 ## References
 
 Agreement heights and field rows are those of the coatom extension construction [Kni26, §4.4].

@@ -23,6 +23,11 @@ the tower is a completion below the full grade (`Seed.ladderCompletion`,
 `CompletionBelowFullGrade`), whose completion at a stage that is zero or a limit is a legal stage
 type with the two coatom types of the seed as literal faces.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 The completion of [Kni26, Definition 4.3.14]; the coatom extension is [Kni26, Corollary 4.3.22].

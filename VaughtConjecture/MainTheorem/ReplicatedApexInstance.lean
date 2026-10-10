@@ -37,6 +37,9 @@ lift on the exact class holds (`hasRelativeLiftOnClass_req`, by
 The donor `pairFace α` itself carries `⊤` at its cell `({0, 1}, 2)`, which a bottom request under
 the cap `⊤` excludes.
 
+**Scope.**  Instances and test inputs of the levels re-rendered per grade; not used by the main
+theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`).
+
 ## References
 
 Lawful sections are [Kni26, Definition 2.5.4]; the growth construction is that of [Kni26, §4].

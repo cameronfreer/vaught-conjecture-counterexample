@@ -30,6 +30,9 @@ No new block is created other than those of the grid points at the top grade: a 
 grid in a block `b ≥ 1` other than a grid point of the top grade lies in the block of a value of
 the state.
 
+**Scope.**  Instances and test inputs of the levels re-rendered per grade; not used by the main
+theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`).
+
 ## References
 
 The growth construction is that of [Kni26, §4].

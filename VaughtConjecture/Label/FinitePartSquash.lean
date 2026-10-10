@@ -28,6 +28,9 @@ renumbered.
   `C` labels takes its values on `V` in the code set (`Label.blockCompress_squash_mem_codeSet`):
   one finite set for all sets of at most `C` labels.
 
+**Scope.**  Not used by the main theorem through the levels
+(`VaughtConjecture.MainTheorem.GrowthLevelRoute`); kept as reusable mathematics.
+
 ## References
 
 Visibility replacement is [Kni26, Definition 2.2.3]; witnesses are [Kni26, Definition 2.3.9].

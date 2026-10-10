@@ -33,6 +33,11 @@ least `2`, from `ClassCalibrated.arity` (`n + 1 ≤` the threshold) together wit
 of the root (`0 < n`).  Every other hypothesis is handed to the inputs at the seed.  No exactness,
 no root cleanness, no bound on the donor's top grade.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 The growth construction is that of [Kni26, §4].

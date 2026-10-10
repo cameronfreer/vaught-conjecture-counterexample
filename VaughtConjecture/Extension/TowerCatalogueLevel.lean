@@ -27,6 +27,9 @@ construction; for the admission of the growth requests on the exact class, `S'` 
 profiles, and goodness on every profile fails above the layer
 (`ProfileTower.Lvl.Good.not_forall_admitted`).
 
+**Scope.**  Not used by the main theorem through the levels
+(`VaughtConjecture.MainTheorem.GrowthLevelRoute`); kept as reusable mathematics.
+
 ## References
 
 Agreement heights and field rows are those of the coatom extension construction [Kni26, §4.4].

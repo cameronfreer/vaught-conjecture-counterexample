@@ -59,6 +59,9 @@ These are implications.  The everywhere forms `StageType.HasLadderGrowthCarriers
 seed-position forms with a compiled restriction (`StageType.HasRecognizingGrowthCarriers.atSeed`,
 `StageType.HasExactGrowthCarriers.atSeed`).
 
+**Scope.**  Not used by the main theorem through the levels
+(`VaughtConjecture.MainTheorem.GrowthLevelRoute`); kept as reusable mathematics.
+
 ## References
 
 Reindexing of stage types is [Kni26, Definition 3.1.2]; coatom amalgams and pinned extensions are

@@ -48,6 +48,11 @@ its own (`Seed.exists_orig_mem_below_univ`); in every lawful section the two car
 (`Scheme.eq_of_mirrorOrig_eq`), and the writing reads the copy at its original.  So the capped
 agreement is asked only at the cells of the tower.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; the growth construction is that of [Kni26, §4].

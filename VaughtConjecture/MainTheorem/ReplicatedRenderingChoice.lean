@@ -26,6 +26,11 @@ left as hypotheses:
   of finite part above `j` below it, and a state of the catalogue at `k + 2` agreeing with it
   capped there and separated below it.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Agreement heights are those of the coatom extension construction [Kni26, §4.4].

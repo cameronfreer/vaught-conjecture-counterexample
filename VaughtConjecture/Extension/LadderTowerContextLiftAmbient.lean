@@ -33,6 +33,11 @@ the top rung (`Seed.exists_copiedTopRung_ne_bot`) at the original cells.
 With it, the context lift needs only the extension over the tower
 (`Seed.hasContextLift_attachAdmits_tower`).
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 The controllers of the growth step are those of [Kni26, §4].

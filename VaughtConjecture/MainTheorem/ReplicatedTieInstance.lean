@@ -73,6 +73,11 @@ assembly, for every cap, prescription and ambient.  The extension over the tower
 context lift prescribes only the context, and no pin lies inside the context
 (`Seed.not_context_pin`).  Not proved here.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; the growth construction is that of [Kni26, §4].

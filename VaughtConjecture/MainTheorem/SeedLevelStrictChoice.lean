@@ -25,6 +25,9 @@ max (2 * #attachment + 1) (Seed.seedGridBound I g)` (exceeding twice the number 
 * at the seed position, with the binders of `StageType.HasLadderGrowthCarriersStableAtSeed`
   (`StageType.lvLevel_cappedLift_coatoms_atSeed'`).
 
+**Scope.**  Instances and test inputs of the levels re-rendered per grade; not used by the main
+theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`).
+
 ## References
 
 The growth construction is that of [Kni26, §4].

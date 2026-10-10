@@ -47,6 +47,11 @@ with the key of `x` (the natural strip is the case of the block `0`,
 coded at the cut whose value is not an orbit key.  Whether every cut of a lift that carries a
 height of a strip pair below it is of the first kind is not settled here.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 The growth construction is that of [Kni26, §4].

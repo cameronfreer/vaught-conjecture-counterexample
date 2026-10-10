@@ -22,6 +22,9 @@ Roadmap, Layer 3 ((R3) and (R4), the levels of the replicated carrier re-rendere
   `req ω` (threshold `2 = n + 1 = m + 1`, the equality boundary), the level at the grade `2` lifts
   capped from the context coatom into `(univ, 2)`.
 
+**Scope.**  Instances and test inputs of the levels re-rendered per grade; not used by the main
+theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`).
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; the growth construction is that of [Kni26, §4].

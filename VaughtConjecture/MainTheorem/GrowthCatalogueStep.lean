@@ -37,6 +37,9 @@ on the context and differing from `d` on the donor rules such a level out
 (`ProfileTower.Lvl.Good.not_forall_admitted`): the levels above the admitted layer need an invariant
 quantified over the admitted profiles only.
 
+**Scope.**  Not used by the main theorem through the levels
+(`VaughtConjecture.MainTheorem.GrowthLevelRoute`); kept as reusable mathematics.
+
 ## References
 
 The controllers of the growth step are those of [Kni26, §4].

@@ -20,6 +20,11 @@ the root, vanishing above `K`, with the observation of `v` at `γ` at every cell
 `K`.  At `K = n + 1` it is `StageType.IsLegal.exists_rootLift` with a cap self-visible at the
 arity; here the cap need only be self-visible at `K`.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14].

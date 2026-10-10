@@ -55,6 +55,11 @@ not made here. The single decoder of the gate (agreement with the ambient's deco
 the codes read above it, the capped agreement at every class of cells) is not attempted, the fresh
 codes failing first.
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 Witnesses and visibility replacement are [Kni26, Definitions 2.2.3 and 2.3.9]; agreement heights are

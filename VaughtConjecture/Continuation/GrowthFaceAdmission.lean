@@ -29,6 +29,11 @@ section.  Where the enlarged donor has a lawful section positive at a bottom req
 cap and the bottom class are forced by availability, this fails: the second coatom must carry the
 recognition data itself (the replication of the full-scope cells into it).
 
+**Scope.**  An obstruction to the earlier constructions (the replicated scheme over the height-set
+tower, or carriers with admitted controllers), or a step of one; not used by the main theorem
+through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept as the compiled
+reason that construction was replaced.
+
 ## References
 
 The controllers and the growth step are those of [Kni26, §4].

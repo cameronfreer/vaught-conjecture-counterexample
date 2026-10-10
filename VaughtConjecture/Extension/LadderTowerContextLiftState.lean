@@ -35,6 +35,11 @@ The ambient's admission from the threshold on (`Seed.AmbientAdmitted`) is the re
 sections of the replicated scheme below `(univ, j)` (the controllers at `(univ, N)` are available
 above the cap and read admitted states); it is a hypothesis here, not proved.
 
+**Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
+ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used
+by the main theorem through the levels (`VaughtConjecture.MainTheorem.GrowthLevelRoute`), and kept
+as reusable constructions.
+
 ## References
 
 The growth construction is that of [Kni26, §4].
