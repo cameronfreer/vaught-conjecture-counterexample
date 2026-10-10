@@ -5,6 +5,19 @@ theorem and the open mathematics.  [`README.md`](README.md) (the status paragrap
 and [`IMPLEMENTATION.md`](IMPLEMENTATION.md) (the status of its checkpoints) are the sources and
 prevail where this page differs from them.
 
+The current status of the main theorem is stated once, in [the repository README,
+"Status"](../README.md#status); where this page differs from it, that section is current.  The
+main theorem, `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`, is compiled with no
+hypothesis (#183): the receiving-model route with (R2) for receiving models
+(`Realization.receivingResidualReceiving_of_padded`, `MainTheorem/LowPaddedRoute`, #178) and (R3)
+and (R4) for receiving models (`Realization.hollowReceiving_levels`,
+`Expansion.receivingStableCappedReceiving_levels`, `MainTheorem/GrowthLevelRoute`, #183, both from
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels`).  Not used by it, and open: (R1)
+(`Expansion.FiniteCutReceiving`), (R2) for every model (`Realization.ResidualReceiving`), and the
+bounded coatom form for all source-gap contexts (`StageType.IsSourceGapContext`; proved when the
+lost point is last, `Realization.boundedCoatomCutoffDetermination_sourceGapLast`).  The entries
+below that list (R3) and (R4) for receiving models as open predate #183.
+
 **Rules.**  Every entry either names a theorem compiled in this repository on `main` (marked
 *compiled*, with the hypotheses that it takes) or carries one of the markers of `README.md`,
 Layer 0, and of the status paragraphs: *still to be proved* (a statement of the roadmap with no

@@ -1,5 +1,7 @@
 # Labelled finite convex geometries and a thin uncountable infinitary class
 
+The current status of the main theorem is stated once, in [the repository README, "Status"](../README.md#status).
+
 ## Objective and completion criterion
 
 Develop a reusable library of finite closed diagrams, extension of bounded observations, countable realization, stable refinement, and infinitary comparison. Its principal application is the **specified construction**: a countable relational language \(L\) and a sentence \(\Phi\in L_{\omega_1,\omega}\) whose countable isomorphism classes number exactly \(\aleph_1\), with no perfect isomorphism antichain.
