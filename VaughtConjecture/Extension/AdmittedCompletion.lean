@@ -62,7 +62,7 @@ below a coatom `(C, m + 1)`, agreeing below it with a profile `P` lawful on the 
 (self-visible at `m + 1`), agrees below `(C, m + 1)` with a profile lawful on the cut that agrees
 with `P` capped at `h` everywhere (`ProfileTower.exists_isCutLawful_of_coatom_succ`, which holds
 for every `m`). -/
-theorem exists_isCutLawful_of_coatom_top (_hm : 0 < m) {x : Fin (m + 2)}
+theorem exists_isCutLawful_of_coatom_top (hm : 0 < m) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {h : Label.{u}} (hh : IsSelfVisible (m + 1) h)
     {P : Prof I} (hP : IsCutLawful I (m + 1) P) {f : Prof I}
     (hf : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ f d)
@@ -70,6 +70,7 @@ theorem exists_isCutLawful_of_coatom_top (_hm : 0 < m) {x : Fin (m + 2)}
     ∃ W : Prof I, IsCutLawful I (m + 1) W ∧
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1), W d = f d) ∧
       ∀ d, min (W d) h = min (P d) h :=
+  have _ := hm
   exists_isCutLawful_of_coatom_succ hx hh hP hf hfP
 
 /-! ### The admitted top over the level at the grade `m` -/
