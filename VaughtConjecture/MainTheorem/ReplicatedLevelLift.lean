@@ -34,7 +34,8 @@ the catalogue at `j + 2` (`Seed.ALvl.next`, `Seed.lvCat`) lifts capped from the 
   gives a lawful admitted state `W`, literal on the context and agreeing with `R` capped at the cut;
   its orbit code `P` is a state of the catalogue agreeing with `R` capped at the cut
   (`Label.min_orbitCode_eq`, `R` canonical); the lift is the orbit decoder of `W` at the cut
-  applied to the row labelling of `P`.  Its capped agreement with the row of `R`: at the cells of
+  applied to the row labelling of `P` (`Seed.ALvl.Good.exists_decodedRow_next`, shared with the
+  lift from the donor face).  Its capped agreement with the row of `R`: at the cells of
   the level by readability (`Seed.ALvl.Good.readable`,
   `Label.min_orbitDecoder_eq_of_isReadableAt`: the key equality is derived from the capped
   agreement of the code, not assumed) and the capped agreement of the section
@@ -300,6 +301,60 @@ theorem isLawfulBelow_ctx_iff (C : Finset (Fin (I.attachment g).card → Label.{
   exact hN.isLawfulBelow_old_iff (X := (ctxCoatom m, k)) (ne_univ_erase _)
     (w := fun e ↦ w (Fin.castAdd _ e))
 
+/-- **The decoded row of a state of the next level** at the grade `j + 2`: for a state `W` lawful
+below `(univ, j + 2)`, admitted at `j + 2`, with values self-visible at `1`, and a positive cut `h`
+self-visible at `j + 2` at which the orbit code `P` of `W` agrees with `W`, the code is a state of
+the catalogue, and the orbit decoder of `W` at `h` applied to the row labelling of `P` is lawful
+below `(univ, j + 2)`, reads every cell of the attachment as `W`, and, for `h` short, agrees capped
+at `h` with the row labelling of every state of the catalogue agreeing with `W` capped at `h`: at
+the cells of the level by readability (`Label.min_orbitDecoder_eq_of_isReadableAt`) and the capped
+agreement of the section (`Seed.ALvl.Good.capAgree`), at the new cells by the capped agreement of
+the agreement heights (`Label.min_agreementHeight_eq_of_isShort`). -/
+theorem exists_decodedRow_next (hQ : Q.ClassCalibrated hte) (hB : 2 * (I.attachment g).card ≤ B)
+    {W : Fin (I.attachment g).card → Label.{u}}
+    (hWl : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j + 2) fun a ↦ W a)
+    (hWA : I.attachAdmits g hd Q (j + 2) W) (hWv : ∀ e, IsSelfVisible 1 (W e)) {h : Label.{u}}
+    (hh : IsSelfVisible (j + 2) h) (hb : h ≠ ⊥)
+    (hPW : ∀ a, min (orbitCode (j + 2) W a) h = min (W a) h) :
+    ∃ r : (N.nS B (I.lvCat g B hd Q (j + 2))).toCellScheme.below
+        ((univ : Finset (Fin (m + 2))), j + 2) → Label.{u},
+      (N.nS B (I.lvCat g B hd Q (j + 2))).rows.IsLawfulBelow
+        ((univ : Finset (Fin (m + 2))), j + 2) r ∧
+      (∀ z a, z.1 = Fin.castAdd _ (N.attEmb a) → r z = W a) ∧
+      ∀ R ∈ I.lvCat g B hd Q (j + 2), IsShort (j + 2) h → (∀ a, min (W a) h = min (R a) h) →
+        ∀ z, min (r z) h = min (N.Φ B (I.lvCat g B hd Q (j + 2)) R z.1) h := by
+  classical
+  set C := I.lvCat g B hd Q (j + 2) with hC
+  have hcB : 2 * Fintype.card (Fin (I.attachment g).card) ≤ B := by simpa using hB
+  set P := orbitCode (j + 2) W with hPdef
+  have hPC : P ∈ C := mem_lvCat.mpr ⟨fun e ↦ orbitMap_mem_codeGrid hcB _,
+    hWl.orbitCode fun e ↦ e.2.2, fun e ↦ isSelfVisible_one_orbitCode (by omega) (hWv e),
+    orbitCode_orbitCode, attachAdmits_orbitCode hQ hWA⟩
+  obtain ⟨hPB, hPl, -, hPc, -⟩ := mem_lvCat.mp hPC
+  have hP1 : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), 1)
+      (fun e ↦ P e) := hPl.mono (X := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_rfl, by omega⟩
+  refine ⟨fun z ↦ orbitDecoder (j + 2) W h (N.Φ B C P z.1),
+    (hN.isLawfulBelow_Φ hPC).map_of_apply_eq_bot (fun z ↦ z.2.2)
+      (isWitness_orbitDecoder hh hb) (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot hb),
+    fun z a he ↦ ?_, fun R hR hs hWR z ↦ ?_⟩
+  · change orbitDecoder (j + 2) W h (N.Φ B C P z.1) = W a
+    rw [he, ALvl.Φ_castAdd, hN.literal P hP1, orbitDecoder_orbitCode hPW]
+  obtain ⟨hRB, hRl, -, hRc, -⟩ := mem_lvCat.mp hR
+  have hR1 : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), 1)
+      (fun e ↦ R e) := hRl.mono (X := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_rfl, by omega⟩
+  have hPR : ∀ a, min (P a) h = min (R a) h := min_orbitCode_eq hh hs hRc hWR
+  obtain ⟨z, -⟩ := z
+  dsimp only
+  induction z using Fin.addCases with
+  | left e =>
+    rw [ALvl.Φ_castAdd, ALvl.Φ_castAdd,
+      min_orbitDecoder_eq_of_isReadableAt hh hPW (hN.readable P hPc hPB hP1 e)]
+    exact hN.capAgree P R hP1 hR1 hPB h hh hs hPR e
+  | right i' =>
+    rw [ALvl.Φ_natAdd, ALvl.Φ_natAdd, min_orbitDecoder_eq
+      (isSelfVisible_of_mem_grid (agreementHeight_spec (bot_mem_grid _ _) _ _).1)]
+    exact min_agreementHeight_eq_of_isShort hh hs (fun e ↦ ⟨hPB e, hRB e⟩) hPR _
+
 /-- **The short lift at a serving row of the next level** at the top grade `j + 2` (see the module
 docstring). -/
 theorem cappedLiftAtShort_next
@@ -316,10 +371,9 @@ theorem cappedLiftAtShort_next
   intro h hh hs hb f hf _ hfS
   obtain ⟨i, rfl⟩ := exists_natAdd_of_gradedIndex C hu
   set R := (C.equivFin.symm i).1 with hRdef
-  obtain ⟨hRB, hRl, hRv, hRc, hRA⟩ := mem_lvCat.mp (C.equivFin.symm i).2
+  obtain ⟨-, hRl, hRv, hRc, hRA⟩ := mem_lvCat.mp (C.equivFin.symm i).2
   have hR1 : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), 1)
       (fun e ↦ R e) := hRl.mono (X := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_rfl, by omega⟩
-  have hcB : 2 * Fintype.card (Fin (I.attachment g).card) ≤ B := by simpa using hB
   have hS (e : (N.nS B C).toCellScheme.below ((univ : Finset (Fin (m + 2))), j + 2)) :
       (N.nS B C).rows.rowBelow (Fin.natAdd _ i) hu e = N.Φ B C R e.1 :=
     Scheme.appendFullCells_row_natAdd i _
@@ -350,44 +404,18 @@ theorem cappedLiftAtShort_next
     rw [hwx x hx, hfS, hS]
     change min (N.Φ B C R (Fin.castAdd _ (N.attEmb (I.attachCtxCell g x)))) h = _
     rw [ALvl.Φ_castAdd, hN.literal R hR1]
-  -- the state step at the grade `j + 2`
+  -- the state step at the grade `j + 2`, and the decoded row of its orbit code
   obtain ⟨W, hWctx, hWl, hWA, hWR, hWv⟩ := exists_stateStep_level hte hdp hdL hn hd hQ hpair
     hrel (by omega) hRl hRv hRA hh (hwl.isLawfulBelow _) hwR
-  set P := orbitCode (j + 2) W with hPdef
-  have hPC : P ∈ C := mem_lvCat.mpr ⟨fun e ↦ orbitMap_mem_codeGrid hcB _,
-    hWl.orbitCode fun e ↦ e.2.2, fun e ↦ isSelfVisible_one_orbitCode (by omega) (hWv e),
-    orbitCode_orbitCode, attachAdmits_orbitCode hQ hWA⟩
-  obtain ⟨hPB, hPl, -, hPc, -⟩ := mem_lvCat.mp hPC
-  have hP1 : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), 1)
-      (fun e ↦ P e) := hPl.mono (X := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_rfl, by omega⟩
-  have hPR : ∀ a, min (P a) h = min (R a) h := min_orbitCode_eq hh hs hRc hWR
-  have hPW : ∀ a, min (orbitCode (j + 2) W a) h = min (W a) h :=
-    fun a ↦ (hPR a).trans (hWR a).symm
-  refine ⟨fun z ↦ orbitDecoder (j + 2) W h (N.Φ B C P z.1),
-    (hN.isLawfulBelow_Φ hPC).map_of_apply_eq_bot (fun z ↦ z.2.2)
-      (isWitness_orbitDecoder hh hb.ne') (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot hb.ne'),
-    fun e ↦ ?_, fun z ↦ ?_⟩
-  · -- the prescription on the context coatom
-    obtain ⟨a, he, ha⟩ := hN.exists_attEmb_of_mem_ctx C e.2
-    obtain ⟨x, rfl, hx⟩ := exists_attachCtxCell_eq_of_mem ha
-    have hfe : f e = w x := by
-      rw [hwx x hx]; congr 1; exact Subtype.ext he
-    change orbitDecoder (j + 2) W h (N.Φ B C P e.1) = f e
-    rw [hfe, he, ALvl.Φ_castAdd, hN.literal P hP1, orbitDecoder_orbitCode hPW]
-    exact hWctx x hx
-  · -- the capped agreement with the row of `R`
-    rw [hS z]
-    obtain ⟨z, -⟩ := z
-    dsimp only
-    induction z using Fin.addCases with
-    | left e =>
-      rw [ALvl.Φ_castAdd, ALvl.Φ_castAdd,
-        min_orbitDecoder_eq_of_isReadableAt hh hPW (hN.readable P hPc hPB hP1 e)]
-      exact hN.capAgree P R hP1 hR1 hPB h hh hs hPR e
-    | right i' =>
-      rw [ALvl.Φ_natAdd, ALvl.Φ_natAdd, min_orbitDecoder_eq
-        (isSelfVisible_of_mem_grid (agreementHeight_spec (bot_mem_grid _ _) _ _).1)]
-      exact min_agreementHeight_eq_of_isShort hh hs (fun e ↦ ⟨hPB e, hRB e⟩) hPR _
+  obtain ⟨r, hrl, hrW, hrR⟩ := hN.exists_decodedRow_next hQ hB hWl hWA hWv hh hb.ne'
+    fun a ↦ (min_orbitCode_eq hh hs hRc hWR a).trans (hWR a).symm
+  refine ⟨r, hrl, fun e ↦ ?_, fun z ↦ by rw [hS z]; exact hrR R (C.equivFin.symm i).2 hs hWR z⟩
+  -- the prescription on the context coatom
+  obtain ⟨a, he, ha⟩ := hN.exists_attEmb_of_mem_ctx C e.2
+  obtain ⟨x, rfl, hx⟩ := exists_attachCtxCell_eq_of_mem ha
+  rw [hrW _ _ he, hWctx x hx, hwx x hx]
+  congr 1
+  exact Subtype.ext he.symm
 
 /-- **The owner-capped lift at the cap `⊥` of the next level** at the top grade `j + 2`: the
 prescription capped at its owner label, its context section, the state step at the cut `⊥` from
@@ -402,7 +430,6 @@ theorem hasOwnerCappedLifts_next_bot (hdp : restrictFace Fin.castSuccEmb d = som
   classical
   set C := I.lvCat g B hd Q (j + 2) with hC
   intro p q hp _ _ o ho _ _
-  have hcB : 2 * Fintype.card (Fin (I.attachment g).card) ≤ B := by simpa using hB
   have hM : IsSelfVisible (j + 1 + 1) (p o) := hp.isSelfVisible_of_gradedIndex_eq ho
   have hp' := hp.min_const_of_isSelfVisible hM
   set pT := Rows.extendBot (univ.erase (Fin.last (m + 1)), j + 1 + 1)
@@ -420,25 +447,12 @@ theorem hasOwnerCappedLifts_next_bot (hdp : restrictFace Fin.castSuccEmb d = som
     (fun _ ↦ isSelfVisible_bot 1)
     (I.attachAdmits_bot g hd Q _) (isSelfVisible_bot _) (hwl.isLawfulBelow _)
     fun _ _ ↦ by rw [min_bot_right, min_bot_right]
-  set P := orbitCode (j + 2) W with hPdef
-  have hPC : P ∈ C := mem_lvCat.mpr ⟨fun e ↦ orbitMap_mem_codeGrid hcB _,
-    hWl.orbitCode fun e ↦ e.2.2, fun e ↦ isSelfVisible_one_orbitCode (by omega) (hWv e),
-    orbitCode_orbitCode, attachAdmits_orbitCode hQ hWA⟩
-  obtain ⟨-, hPl, -, -, -⟩ := mem_lvCat.mp hPC
-  have hP1 : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), 1)
-      (fun e ↦ P e) := hPl.mono (X := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_rfl, by omega⟩
-  have hPW (a : Fin (I.attachment g).card) :
-      min (orbitCode (j + 2) W a) (gridPoint (j + 2) 0) = min (W a) (gridPoint (j + 2) 0) :=
-    min_orbitCode_gridPoint_zero a
-  refine ⟨fun z ↦ orbitDecoder (j + 2) W (gridPoint (j + 2) 0) (N.Φ B C P z.1),
-    (hN.isLawfulBelow_Φ hPC).map_of_apply_eq_bot (fun z ↦ z.2.2)
-      (isWitness_orbitDecoder (isSelfVisible_gridPoint _ 0) (gridPoint_ne_bot _ 0))
-      (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot (gridPoint_ne_bot _ 0)), fun e ↦ ?_,
-    fun _ ↦ by rw [min_bot_right, min_bot_right]⟩
+  obtain ⟨r, hrl, hrW, -⟩ := hN.exists_decodedRow_next hQ hB hWl hWA hWv
+    (isSelfVisible_gridPoint _ 0) (gridPoint_ne_bot _ 0) min_orbitCode_gridPoint_zero
+  refine ⟨r, hrl, fun e ↦ ?_, fun _ ↦ by rw [min_bot_right, min_bot_right]⟩
   obtain ⟨a, he, ha⟩ := hN.exists_attEmb_of_mem_ctx C e.2
   obtain ⟨x, rfl, hx⟩ := exists_attachCtxCell_eq_of_mem ha
-  change orbitDecoder (j + 2) W (gridPoint (j + 2) 0) (N.Φ B C P e.1) = min (p e) (p o)
-  rw [he, ALvl.Φ_castAdd, hN.literal P hP1, orbitDecoder_orbitCode hPW, hWctx x hx, hw]
+  rw [hrW _ _ he, hWctx x hx, hw]
   dsimp only
   rw [ite_eq_left ((grade_attachCtxCell x).trans_le hx), ← he]
   exact Rows.extendBot_of_mem _ e.2

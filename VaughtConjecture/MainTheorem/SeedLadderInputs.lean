@@ -16,7 +16,7 @@ height, a finite set of values containing `⊥` and a grid bound, the capped lif
 the two coatoms into the full faces of the grades `2, …, m + 1`, and a lawful labelling of the tower
 extending the glued labels of the amalgam.  These inputs stay open; the contract itself has a
 direct proof by the levels re-rendered per grade
-(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`, not yet reviewed).  From the inputs the
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`).  From the inputs the
 ladder carrier exists (`Seed.exists_ladderCarrier_of_inputs`: the tower is bountiful by
 `Seed.isBountiful_ladderTower_of_coatomLifts`, and `Seed.exists_ladderCarrier` assembles the
 completion).

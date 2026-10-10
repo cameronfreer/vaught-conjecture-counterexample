@@ -291,6 +291,17 @@ theorem isLawfulBelow_appendFullCells_iff {X : Finset (Fin n) × ℕ}
   rw [comap_rows_castAdd] at this
   exact this.symm
 
+/-- **Capped lifts below a pair that is not above `(univ, k)`** are those of `S`: `S` is a source
+prefix at such a pair, the cells below it being old. -/
+theorem cappedLift_appendFullCells_iff {X Y : Finset (Fin n) × ℕ} (hXY : X ≤ Y)
+    (hY : ¬ ((univ : Finset (Fin n)), k) ≤ Y) :
+    (S.appendFullCells k M r h).rows.CappedLift hXY ↔ S.rows.CappedLift hXY := by
+  have hP : S.toCellScheme.IsSourcePrefix (S.appendFullCells k M r h).toCellScheme
+      (Fin.castAdd _) Y :=
+    ⟨isLowerEmbedding_castAdd k M r h, appendFullCellsScheme_scope_castAdd S k _,
+      fun d hd ↦ ⟨⟨d, lt_card_of_mem_below hY hd⟩, rfl⟩⟩
+  rw [← hP.cappedLift_iff hXY le_rfl, comap_rows_castAdd]
+
 /-- **Lawful labellings after appending cells.**  A labelling `v` is lawful when it is lawful on
 the old cells, its values at the new cells are self-visible at `k`, the row of every new cell
 transforms to `v` capped at its value, and every cell of grade `k` has a value at most that of
