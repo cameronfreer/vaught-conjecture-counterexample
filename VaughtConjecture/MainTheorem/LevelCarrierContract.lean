@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.LevelCarrier
+import VaughtConjecture.MainTheorem.SeedLevelTopFacts
 
 /-!
 # The carrier contract at the seed position from the replicated top level
@@ -22,11 +23,14 @@ of the height, never `#amalgam ≤ H`), the replicated level at the grade `m + 1
   (`Seed.ALvl.Good.rep_isLegalBelowFullGrade`), and its completion is a ladder growth carrier
   (`Seed.exists_lvRepCarrier`).
 
-**The contract** (`StageType.hasLadderGrowthCarriersStableAtSeed_of_codedComplete`): the carrier
-contract `StageType.HasLadderGrowthCarriersStableAtSeed` follows from the codedness and the
-completeness below the full grade of the replicated top level at the seed choice — the two inputs
-not proved here.  Every other premise is a binder of the contract (`hpair`, `hrel`, `hQ`, a legal
-donor coface, `0 < n`, a limit stage).
+**The contract** (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`): the carrier contract
+`StageType.HasLadderGrowthCarriersStableAtSeed` holds, the codedness and the completeness below the
+full grade of the replicated top level at the seed choice being those of
+`VaughtConjecture.MainTheorem.SeedLevelTopFacts`
+(`Seed.lvRep_isLegalBelowFullGrade_seedChoice'`).  The conditional form
+`StageType.hasLadderGrowthCarriersStableAtSeed_of_codedComplete` isolates those two inputs.  Every
+premise used is a binder of the contract (`hpair`, `hrel`, `hQ`, a legal donor coface, `0 < n`, a
+limit stage).
 
 ## References
 
@@ -123,6 +127,27 @@ theorem hasLadderGrowthCarriersStableAtSeed_of_codedComplete
   exact Seed.exists_lvRepCarrier hα.isSuccPrelimit (Seed.seedHeightLevel_pos I g)
     (Seed.card_attachmentBase_le_seedHeightLevel I g) hQ (Seed.two_mul_card_le_seedBlockBound' I g)
     hN2 hN hL hq hqe
+
+
+/-- **The carrier contract at the seed position** (`StageType.HasLadderGrowthCarriersStableAtSeed`):
+at the seed of `StageType.exists_growthSeed_of_isSuccLimit` and the seed-fixed choice
+`Seed.seedHeightLevel`, `Seed.seedBlockBound'`, the completion of the replicated level at the grade
+`m + 1` (legal below the full grade, `Seed.lvRep_isLegalBelowFullGrade_seedChoice'`; with the
+lawful labelling extending the actual labels of the attachment, `Seed.hasExtendingLabelLevel_rep`)
+is a ladder growth carrier whose cells of full scope at the threshold are ladder controllers
+(`Seed.exists_lvRepCarrier`).  Every premise is a binder of the contract. -/
+theorem hasLadderGrowthCarriersStableAtSeed_levels : HasLadderGrowthCarriersStableAtSeed.{u} := by
+  intro α n m t' g p' hα ht' hp' p hte d hd hn Q hpair hQ hrel
+  obtain ⟨I, rfl, hdA⟩ :=
+    exists_growthSeed_of_isSuccLimit hα ht' hp' ((restrictFace_trans t' _ g hp').trans hte) hd
+  have hL := Seed.lvRep_isLegalBelowFullGrade_seedChoice' hte hd hn hdA hpair hQ hrel
+  obtain ⟨q, hq, hqe⟩ := Seed.hasExtendingLabelLevel_rep (hd := hdA)
+    (Seed.seedHeightLevel_pos I g) (Seed.card_attachmentBase_le_seedHeightLevel I g) hQ hpair
+    (Seed.two_mul_card_le_seedBlockBound' I g) m (by omega)
+  have hN2 : 2 ≤ Q.threshold := by have := hQ.arity; omega
+  exact Seed.exists_lvRepCarrier hα.isSuccPrelimit (Seed.seedHeightLevel_pos I g)
+    (Seed.card_attachmentBase_le_seedHeightLevel I g) hQ (Seed.two_mul_card_le_seedBlockBound' I g)
+    hN2 _ hL hq hqe
 
 end StageType
 

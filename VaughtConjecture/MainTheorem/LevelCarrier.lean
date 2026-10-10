@@ -199,6 +199,134 @@ theorem gradedIndex_lvRepCompletion_last (hL : hN.rep.IsLegalBelowFullGrade)
   Scheme.appendFullCellScheme_gradedIndex_last _ _
 
 
+/-- **The completion keeps the actual labels of the attachment**: at the cell of a cell `c` of the
+attachment, the completed stage type carries the label of `c` in the attachment, `⊤` included
+(the labelling extends the labels, and the reduction to the stage fixes a label at the stage). -/
+theorem lvRepCompletion_label_attEmb (hL : hN.rep.IsLegalBelowFullGrade)
+    {q : Fin hN.rep.card → Label.{u}} (hq : hN.rep.rows.IsLawful q)
+    (hqe : ∀ c, q (hN.repEmb c) = (I.attachmentType g).label c) (c : Fin (I.attachment g).card) :
+    (lvRepCompletion hα hN hL hq).label (hN.repEmb c).castSucc = (I.attachmentType g).label c := by
+  refine (StageType.apexLabel_castSucc (t := lvRepType hα hN hL hq) (hN.repEmb c)).trans ?_
+  change Label.reduce α (q _) = _
+  rw [hqe c]
+  exact ((I.attachmentType g).atStage c).reduce_eq
+
+/-- **The completion reads the cells of the level as the level does.** -/
+theorem lvRepCompletion_rowAt_level (hL : hN.rep.IsLegalBelowFullGrade)
+    {q : Fin hN.rep.card → Label.{u}} (hq : hN.rep.rows.IsLawful q) (z x : Fin N.S.card) :
+    (lvRepCompletion hα hN hL hq).toScheme.rowAt (Fin.castAdd _ z : Fin hN.rep.card).castSucc
+      (Fin.castAdd _ x : Fin hN.rep.card).castSucc = N.S.rowAt z x :=
+  (rowAt_lvRepCompletion_castSucc hα hL hq _ _).trans (Scheme.rowAt_mirror_castAdd _ _)
+
+/-- **The rung readings in the completion** of the replicated top level: the rungs of a member
+read themselves at the diagonal code and the preceding rung at the code of the preceding rank. -/
+theorem lvRepCompletion_rung_rows (hH : 0 < H)
+    (hNm : (I.lvLevel g H B hd Q m).Good B (lvAdm hd Q)) (hL : hNm.rep.IsLegalBelowFullGrade)
+    {q : Fin hNm.rep.card → Label.{u}} (hq : hNm.rep.rows.IsLawful q)
+    (a : Scheme.RankMember (I.attachmentBase g).S H) (i : ℕ) (hi : i < H) :
+    (lvRepCompletion hα hNm hL hq).toScheme.rowAt
+        (Fin.castAdd _ ((I.lvLevel g H B hd Q m).embed (lvRung hH a i)) :
+          Fin hNm.rep.card).castSucc
+        (Fin.castAdd _ ((I.lvLevel g H B hd Q m).embed (lvRung hH a i)) :
+          Fin hNm.rep.card).castSucc = Label.ladderSource (i + 1) (i + 1) ∧
+      (0 < i → (lvRepCompletion hα hNm hL hq).toScheme.rowAt
+        (Fin.castAdd _ ((I.lvLevel g H B hd Q m).embed (lvRung hH a i)) :
+          Fin hNm.rep.card).castSucc
+        (Fin.castAdd _ ((I.lvLevel g H B hd Q m).embed (lvRung hH a (i - 1))) :
+          Fin hNm.rep.card).castSucc = Label.ladderSource (i + 1) i) := by
+  have hceil (i' : ℕ) (hi' : i' < H) : ladderIndex H (Scheme.rankProf (I.attachmentBase g).S H)
+      Prod.fst (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H)) a
+      ((a, Sum.inl ⟨min i' (H - 1), by omega⟩) : Scheme.LadderPt (I.attachmentBase g).S
+        (Scheme.RankMember (I.attachmentBase g).S H) H) = i' + 1 := by
+    have h := ladderIndex_parent (H := H) (prof := Scheme.rankProf (I.attachmentBase g).S H)
+      (parent := Prod.fst) (Scheme.ladderCeil_le (Scheme.rankProf_le _ H))
+      ((a, Sum.inl ⟨min i' (H - 1), by omega⟩) : Scheme.LadderPt (I.attachmentBase g).S
+        (Scheme.RankMember (I.attachmentBase g).S H) H)
+    exact h.trans (by simp only [Scheme.ladderCeil, Sum.elim_inl]; omega)
+  refine ⟨?_, fun hi0 ↦ ?_⟩
+  · rw [lvRepCompletion_rowAt_level]
+    change (I.lvLevel g H B hd Q m).S.rowAt (I.lvLad g H B hd Q m _) (I.lvLad g H B hd Q m _) = _
+    rw [lvLevel_rowAt_lad_lad, hceil i hi]
+    simp only [Scheme.ladderCeil, Sum.elim_inl]
+    congr 1
+    omega
+  · rw [lvRepCompletion_rowAt_level]
+    change (I.lvLevel g H B hd Q m).S.rowAt (I.lvLad g H B hd Q m _) (I.lvLad g H B hd Q m _) = _
+    rw [lvLevel_rowAt_lad_lad, hceil (i - 1) (by omega)]
+    simp only [Scheme.ladderCeil, Sum.elim_inl]
+    congr 1 <;> omega
+
+/-- **The controller clauses in the completion** of the replicated top level: a cell of full scope
+at the threshold `≥ 2` is the cell of a cell `u'` of the level, and for some member `a` and table
+`F` it stores on the context and donor cells (the cells of the attachment) an admitted state, reads
+the top rung at least as high as the cap, the rungs as `F`, and every positive stored value below
+the cap as a rung (the four clauses of `Seed.lvLevel_ladderController`, read through the
+completion).  The bottom state is covered: it stores `⊥`. -/
+theorem lvRepCompletion_ladderController (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    {p₀ : StageType.{u} α n} {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
+    (hQ : Q.ClassCalibrated hte) (hB : 2 * (I.attachment g).card ≤ B) (hN2 : 2 ≤ Q.threshold)
+    (hNm : (I.lvLevel g H B hd Q m).Good B (lvAdm hd Q)) (hL : hNm.rep.IsLegalBelowFullGrade)
+    {q : Fin hNm.rep.card → Label.{u}} (hq : hNm.rep.rows.IsLawful q)
+    (u : Fin (lvRepCompletion hα hNm hL hq).card)
+    (hu : (lvRepCompletion hα hNm hL hq).toCellScheme.gradedIndex u =
+      ((univ : Finset (Fin (m + 2))), Q.threshold)) :
+    ∃ u' : Fin (I.lvLevel g H B hd Q m).S.card, u = (Fin.castAdd _ u' : Fin hNm.rep.card).castSucc ∧
+      ∃ (a : Scheme.RankMember (I.attachmentBase g).S H) (F : ℕ → Label.{u}),
+        Q.AdmitsOnClass
+          (fun x ↦ (lvRepCompletion hα hNm hL hq).toScheme.rowAt u
+            (Fin.castAdd _ ((I.lvLevel g H B hd Q m).attEmb (I.attachCtxCell g x)) :
+              Fin hNm.rep.card).castSucc)
+          (fun y ↦ (lvRepCompletion hα hNm hL hq).toScheme.rowAt u
+            (Fin.castAdd _ ((I.lvLevel g H B hd Q m).attEmb (I.attachDonCell g hd y)) :
+              Fin hNm.rep.card).castSucc) ∧
+        (lvRepCompletion hα hNm hL hq).toScheme.rowAt u
+            (Fin.castAdd _ ((I.lvLevel g H B hd Q m).attEmb (I.attachCtxCell g Q.cap)) :
+              Fin hNm.rep.card).castSucc ≤
+          (lvRepCompletion hα hNm hL hq).toScheme.rowAt u
+            (Fin.castAdd _ ((I.lvLevel g H B hd Q m).embed (lvRung hH a (H - 1))) :
+              Fin hNm.rep.card).castSucc ∧
+        (∀ i < H, (lvRepCompletion hα hNm hL hq).toScheme.rowAt u
+            (Fin.castAdd _ ((I.lvLevel g H B hd Q m).embed (lvRung hH a i)) :
+              Fin hNm.rep.card).castSucc = F (i + 1)) ∧
+        ∀ x ∈ I.left.toCellScheme.below (I.left.toCellScheme.gradedIndex Q.cap),
+          (lvRepCompletion hα hNm hL hq).toScheme.rowAt u
+              (Fin.castAdd _ ((I.lvLevel g H B hd Q m).attEmb (I.attachCtxCell g x)) :
+                Fin hNm.rep.card).castSucc ≠ ⊥ →
+            ∃ i < H, (lvRepCompletion hα hNm hL hq).toScheme.rowAt u
+              (Fin.castAdd _ ((I.lvLevel g H B hd Q m).attEmb (I.attachCtxCell g x)) :
+                Fin hNm.rep.card).castSucc = F (i + 1) := by
+  classical
+  have hNm1 : Q.threshold ≤ m + 1 := by
+    have h1 := I.left.isWellFormed.isWellFormed.grade_le_card Q.cap
+    have h2 : #(I.left.toCellScheme.scope Q.cap) ≤ m + 1 :=
+      (card_le_univ _).trans (by simp)
+    exact h1.trans h2
+  obtain ⟨z, rfl⟩ : ∃ z : Fin hNm.rep.card, u = Fin.castSucc z := by
+    revert hu
+    refine Fin.lastCases (n := hNm.rep.card) (motive := fun u ↦
+      (lvRepCompletion hα hNm hL hq).toCellScheme.gradedIndex u =
+        ((univ : Finset (Fin (m + 2))), Q.threshold) →
+        ∃ z : Fin hNm.rep.card, u = Fin.castSucc z) ?_ (fun z _ ↦ ⟨z, rfl⟩) u
+    intro hu
+    exfalso
+    have h1 := congrArg Prod.snd (hu.symm.trans (gradedIndex_lvRepCompletion_last hα hL hq))
+    simp only at h1
+    omega
+  have hz : hNm.rep.toCellScheme.gradedIndex z = ((univ : Finset (Fin (m + 2))), Q.threshold) :=
+    (gradedIndex_lvRepCompletion_castSucc hα hL hq z).symm.trans hu
+  obtain ⟨u', rfl, hu'g⟩ := hNm.exists_castAdd_of_scope_univ z (congrArg Prod.fst hz)
+  obtain ⟨a, F, hadm, htop, hrung, hval⟩ :=
+    lvLevel_ladderController hH hcard hQ hB hN2 u' (hu'g.symm.trans hz)
+  refine ⟨u', rfl, a, F, ?_, ?_, fun i hi ↦ ?_, fun x hx hx0 ↦ ?_⟩
+  · simp only [lvRepCompletion_rowAt_level]
+    exact hadm
+  · rw [lvRepCompletion_rowAt_level, lvRepCompletion_rowAt_level]
+    exact htop
+  · rw [lvRepCompletion_rowAt_level]
+    exact hrung i hi
+  · rw [lvRepCompletion_rowAt_level] at hx0 ⊢
+    exact hval x hx hx0
+
 include hα in
 /-- **The ladder growth carrier of the replicated top level**: at a stage that is zero or a limit,
 for requests calibrated on the class with threshold at least `2`, a height `H > 0` bounding the
