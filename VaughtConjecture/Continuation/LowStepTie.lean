@@ -53,8 +53,9 @@ donor whose tops off the root all have grades below `K` is the one left here (no
 index `(univ, K)` to read through), proved in `VaughtConjecture.Continuation.LowStepLow`
 (`StageType.IsLowFamily.lowStepTieLow`).
 
-**The unserved case below the full grade** (`StageType.lowStepUnserved_of_le`, compiled in this
-repository): owner lowering at the cap (`H2.exists_lowered_at`: the face capped at the next label
+**The unserved case at every grade** (`StageType.lowStepUnserved`, the full grade included, and
+below the full grade `StageType.lowStepUnserved_of_le`, compiled in this repository): owner
+lowering at the cap (`H2.exists_lowered_at_succ`: the face capped at the next label
 self-visible at `K` above the cap carries its largest label at the owner, is capped below the
 threshold, and the root is restored by a capped lift), with the context as its own donor.  With it
 the capped lift into the LOW layer needs only the tie case
@@ -321,7 +322,7 @@ theorem lowStepTie_of_donorDomination (hF : IsLowFamily K t' tb p o r)
 
 end VaughtConjecture.StageType
 
-/-! ### The unserved case below the full grade -/
+/-! ### The unserved case at every grade -/
 
 namespace VaughtConjecture.StageType
 
@@ -329,15 +330,15 @@ open Finset Label H2 FieldAdmission
 
 variable {α : Ordinal.{u}} {k K : ℕ}
 
-/-- **The unserved case holds below the full grade.**  At a legal source-gap context `t'` of grade
-`K ≤ k` on `k + 1` points with the lost point last, with face `p` along the first points, the
-unserved case of the private frontier (`StageType.LowStepUnserved`) holds: the lowered face at the
-cap (`H2.exists_lowered_at`, with the context as its own donor), where the face is first capped
-at the next label self-visible at `K` above the cap so that the owner carries its largest label,
-then capped below the threshold, and the root restored by a capped lift. -/
-theorem lowStepUnserved_of_le {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
+/-- **The unserved case holds at every grade**: at a legal source-gap context `t'` of grade `K` on
+`k + 1` points with the lost point last, with face `p` along the first points, the unserved case of
+the private frontier (`StageType.LowStepUnserved`) holds, the full grade `K = k + 1` included: the
+lowered face at the cap (`H2.exists_lowered_at_succ`, with the context as its own donor), where the
+face is first capped at the next label self-visible at `K` above the cap so that the owner carries
+its largest label, then capped below the threshold, and the root restored by a capped lift. -/
+theorem lowStepUnserved {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
     {o r : Fin t'.card} (hs : t'.IsSourceGapContextAt K Fin.castSuccEmb (Fin.last k) o r)
-    (hKk : K ≤ k) {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p) :
+    {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p) :
     LowStepUnserved K t' (Fin.last k) o r := by
   intro u hu c hc hc0 hroot _ _ _
   have hs' : t'.IsSourceGapContextAt K ((Function.Embedding.refl (Fin k)).trans Fin.castSuccEmb)
@@ -357,11 +358,19 @@ theorem lowStepUnserved_of_le {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal
     · rw [hLle _ hd]
       exact hroot _ hd (last_notMem_scope_faceCell hp x) (by rwa [label_faceCell])
     · rw [hL_def, CellScheme.splice_of_lt (not_le.mp hd)]; exact bot_le
-  obtain ⟨W, hW, hWr, hWL, hWf⟩ := exists_lowered_at hleg hs' hKk hp hleg hp hc hL hL
+  obtain ⟨W, hW, hWr, hWL, hWf⟩ := exists_lowered_at_succ hleg hs' hp hleg hp hc hL hL
     (fun _ ↦ rfl) hc hc0 le_rfl hlow
   refine ⟨W, hW.1, fun d hd ↦ by rw [hWL d, hLle d hd], fun d hd hl ↦ ?_, hWf⟩
   obtain ⟨x, rfl⟩ := exists_faceCell_eq_of_last_notMem hp hl
   rw [hWr x, hLle _ hd]
+
+/-- **The unserved case holds below the full grade** (`K ≤ k`): `StageType.lowStepUnserved`. -/
+theorem lowStepUnserved_of_le {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
+    {o r : Fin t'.card} (hs : t'.IsSourceGapContextAt K Fin.castSuccEmb (Fin.last k) o r)
+    (hKk : K ≤ k) {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p) :
+    LowStepUnserved K t' (Fin.last k) o r :=
+  have _ := hKk
+  lowStepUnserved hleg hs hp
 
 end VaughtConjecture.StageType
 
