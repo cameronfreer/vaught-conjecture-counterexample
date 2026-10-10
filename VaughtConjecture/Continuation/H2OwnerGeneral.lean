@@ -438,7 +438,7 @@ theorem exists_lowered_at_succ {k K n : ℕ} {t' : StageType.{u} α (k + 1)} (hl
 grade (`H2.exists_lowered_at_succ`), whose construction does not use the bound. -/
 theorem exists_lowered_at {k K n : ℕ} {t' : StageType.{u} α (k + 1)} (hleg : t'.IsLegal)
     {g₀ : Fin n ↪ Fin k} {o r : Fin t'.card}
-    (hs : t'.IsSourceGapContextAt K (g₀.trans Fin.castSuccEmb) (Fin.last k) o r) (_hKk : K ≤ k)
+    (hs : t'.IsSourceGapContextAt K (g₀.trans Fin.castSuccEmb) (Fin.last k) o r) (hKk : K ≤ k)
     {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p)
     {tb : StageType.{u} α (k + 1)} (htbleg : tb.IsLegal)
     (htbp : restrictFace Fin.castSuccEmb tb = some p) {h : Label.{u}} (hh : IsSelfVisible K h)
@@ -450,6 +450,7 @@ theorem exists_lowered_at {k K n : ℕ} {t' : StageType.{u} α (k + 1)} (hleg : 
     ∃ W : Fin t'.card → Label.{u}, LawfulAt t' K W ∧
       (∀ x, W (StageType.faceCell hp x) = g (StageType.faceCell htbp x)) ∧
       (∀ d, min (W d) h = min (L d) h) ∧ frontierAt o r K W ≤ c :=
+  have _ := hKk
   exists_lowered_at_succ hleg hs hp htbleg htbp hh hL hg hagr hc hc0 hhc hlow
 
 /-! ### Owner lowering below the designated tops -/
