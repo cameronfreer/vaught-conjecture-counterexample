@@ -72,6 +72,66 @@ open Finset Label StageType
 
 namespace Seed
 
+open Finset Label CellScheme StageType
+
+variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
+  {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
+  {U V : Finset (Fin (m + 2))}
+
+set_option quotPrecheck false in
+/-- The replicated scheme. -/
+local notation "𝔼" => Seed.replicated I g H Γ A B'
+
+/-- **The lift from a face of the attachment into a mixed face at the grade one.**  For a face `V`
+inside the context face or the donor face and a mixed face `U ⊇ V`, the replicated scheme lifts
+capped from `(V, 1)` to `(U, 1)` when the attachment lifts capped from `(V, 1)` into the full face
+of grade one: the replicated scheme then lifts from `(V, 1)` to `(univ, 1)`
+(`Seed.cappedLift_attachTower_one`, `Seed.cappedLift_replicated_of_tower`), and from `(U, 1)` to
+`(univ, 1)` (`Seed.cappedLift_mixed_univ_one`), which extends every section lawful below `(U, 1)`
+(`CellScheme.Rows.cappedLift_of_extend`). -/
+theorem cappedLift_attached_mixed_one (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hU : U ∈ I.mixedFaces g) (hVU : V ⊆ U)
+    (hV : V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∨
+      V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb)))
+    (hold : (I.attachmentBase g).S.rows.CappedLift
+      (X := (V, 1)) (Y := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_univ _, le_rfl⟩) :
+    (𝔼).rows.CappedLift (X := (V, 1)) (Y := (U, 1)) ⟨hVU, le_rfl⟩ := by
+  have hVu : ¬ ((univ : Finset (Fin (m + 2))), 1) ≤ ((V, 1) : Finset (Fin (m + 2)) × ℕ) :=
+    fun hle ↦ hV.elim
+      (fun h ↦ map_castSuccEmb_ne_univ (univ_subset_iff.mp (hle.1.trans h)))
+      fun h ↦ map_extendByLast_ne_univ g (univ_subset_iff.mp (hle.1.trans h))
+  have hT := cappedLift_attachTower_one (Γ := Γ) (A := A) (B' := B') hH hcard
+    (⟨subset_univ _, le_rfl⟩ : ((V, 1) : Finset (Fin (m + 2)) × ℕ) ≤ (univ, 1)) hVu hold
+  exact CellScheme.Rows.cappedLift_of_extend (X := (V, 1)) (Y := (U, 1))
+    (Z := ((univ : Finset (Fin (m + 2))), 1))
+    ⟨hVU, le_rfl⟩ ⟨subset_univ _, le_rfl⟩ rfl
+    (cappedLift_replicated_of_tower _ rfl hV hT) (cappedLift_mixed_univ_one hH hcard hΓ hA hU)
+
+
+/-- **The lift from a face of the attachment into a mixed face at the grade one**, when the donor
+face and the root are faces of the amalgam, the root nonempty
+(`Seed.cappedLift_attachment_univ_one`). -/
+theorem cappedLift_attached_mixed_one_of_faces (hH : 0 < H)
+    (hcard : (I.attachmentBase g).S.card ≤ H) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
+    (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hdF : univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
+    (hrF : univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+      univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
+    (hr1 : 1 ≤ #(univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
+      univ.map (extendByLast (g.trans Fin.castSuccEmb))))
+    (hU : U ∈ I.mixedFaces g) (hVF : V ∈ I.amalgam.toCellScheme.faces) (hV1 : 1 ≤ #V)
+    (hVU : V ⊆ U)
+    (hV : V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∨
+      V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb))) :
+    (𝔼).rows.CappedLift (X := (V, 1)) (Y := (U, 1)) ⟨hVU, le_rfl⟩ :=
+  cappedLift_attached_mixed_one hH hcard hΓ hA hU hVU hV
+    (cappedLift_attachment_univ_one hdF hrF hr1 hVF hV1 hV)
+
+end Seed
+
+namespace Seed
+
 variable {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m) (H : ℕ)
   (Γ : Finset Label.{u}) (A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop) (B' : ℕ)
 

@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.GrowthRelabelRequests
-import VaughtConjecture.MainTheorem.GrowthRelabelSeed
 
 /-!
 # Recognizing growth carriers from the seed position
@@ -186,43 +185,6 @@ theorem GrowthRequests.topGrade_le_of_exact {t' : StageType.{u} α k} {e : Fin n
   have h3 := hQ.arity
   unfold GrowthRequests.threshold at h3
   omega
-
-/-- **Recognizing growth carriers from the seed position**: recognizing growth carriers at the
-seed position give them at every context.  The root of calibrated requests is not onto
-(`StageType.GrowthRequests.Calibrated.not_surjective`); after a relabelling `σ` it lies in the
-first coatom, a closed face (`Realization.exists_perm_root_eq`); the requests, their exactness,
-calibration and relative lift are carried to `t'.reindex σ`, where the top-grade clause holds
-(`StageType.GrowthRequests.topGrade_le_of_exact`); the recognizing carrier there is relabelled back
-(`GrowthCarrier.Recognizes.relabel`). -/
-theorem HasRecognizingGrowthCarriersAtSeed.hasRecognizingGrowthCarriers
-    (h : HasRecognizingGrowthCarriersAtSeed.{u}) : HasRecognizingGrowthCarriers.{u} := by
-  intro α n k t' e hα ht' p hte d hd hn Q hex hQ hrel
-  have hs := hQ.not_surjective
-  obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := by
-    obtain ⟨x, -⟩ : ∃ x, x ∉ Set.range e := by
-      by_contra! hall
-      exact hs hall
-    exact ⟨k - 1, by have := x.2; omega⟩
-  obtain ⟨σ, g, p', rfl, hp'⟩ := Realization.exists_perm_root_eq hte hs
-  have hte'' : restrictFace (g.trans Fin.castSuccEmb) (t'.reindex σ) = some p := by
-    rw [restrictFace_reindex]
-    exact hte
-  have hex'' (i : Fin d.card) (ℓ : Label.{u}) :
-      (Q.reindex σ).CorrectAt (t'.reindex σ).label i ℓ ↔ ℓ = d.label i :=
-    (GrowthRequests.correctAt_reindex_iff σ Q t'.label i ℓ).trans (hex i ℓ)
-  have hdK : d.topGrade ≤ (t'.reindex σ).topGrade := by
-    rw [topGrade_reindex]
-    exact GrowthRequests.topGrade_le_of_exact hex hQ
-  obtain ⟨G, hrec⟩ := h (t'.reindex σ) g p' hα (ht'.reindex σ) hp' p hte'' d hd hdK hn
-    (Q.reindex σ) hex'' (hQ.reindex σ hte'' hte) (hrel.reindex σ hte'' hte hd.2)
-  exact ⟨GrowthCarrier.relabel (C := t'.toScheme) σ G, GrowthCarrier.Recognizes.relabel σ G hrec⟩
-
-/-- **Recognizing growth carriers from ladder carriers at the seed position**
-(`StageType.HasLadderGrowthCarriersAtSeed.hasRecognizingGrowthCarriersAtSeed`, then the
-relabelling). -/
-theorem HasLadderGrowthCarriersAtSeed.hasRecognizingGrowthCarriers
-    (h : HasLadderGrowthCarriersAtSeed.{u}) : HasRecognizingGrowthCarriers.{u} :=
-  h.hasRecognizingGrowthCarriersAtSeed.hasRecognizingGrowthCarriers
 
 end StageType
 

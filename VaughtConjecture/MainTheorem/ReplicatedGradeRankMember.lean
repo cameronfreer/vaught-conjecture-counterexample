@@ -276,26 +276,4 @@ theorem isLawfulBelow_stateExtOf (hH : 0 < H) (hcard : B.S.card ≤ H) {k : ℕ}
 
 end Scheme.LadderBaseData
 
-namespace ApexInstance
-
-/-- The root of the input. -/
-local notation "𝕘" => (Fin.castSuccEmb : Fin 1 ↪ Fin 2)
-
-/-- **At the three-point seed with an apex, the orbit code at the grade `2` of the lawful
-compressed labelling has a rank member**, though it is not lawful
-(`ApexInstance.not_isLawful_orbitCode_two`): it is lawful below `(univ, 2)`, hence below
-`(univ, 1)`. -/
-theorem exists_rankMember_orbitCode_two {α : Ordinal.{u}} (I : Seed.{u} α 2) :
-    ∃ a : Scheme.RankMember (I.attachmentBase 𝕘).S (I.seedHeight 𝕘),
-      ∀ d, (a.1 d : ℕ) = rankVector (orbitCode 2 (I.compressedLabel 𝕘)) d := by
-  have h2 : (I.attachment 𝕘).rows.IsLawfulBelow ((univ : Finset (Fin 4)), 2)
-      fun d ↦ orbitCode 2 (I.compressedLabel 𝕘) d :=
-    (Seed.isLawful_compressedLabel (I := I) (g := 𝕘)).isLawfulBelow _ |>.orbitCode fun d ↦ d.2.2
-  have h1 := h2.mono (show ((univ : Finset (Fin 4)), 1) ≤ ((univ : Finset (Fin 4)), 2) from
-    ⟨subset_rfl, by omega⟩)
-  exact ⟨Scheme.RankMember.ofLawfulBelowOne (I.attachmentBase 𝕘).wf (I.card_le_seedHeight 𝕘) h1,
-    fun _ ↦ rfl⟩
-
-end ApexInstance
-
 end VaughtConjecture

@@ -57,6 +57,166 @@ open Finset Label CellScheme StageType
 
 namespace Seed
 
+open Finset Label
+variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
+  {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
+  {U V : Finset (Fin (m + 2))}
+
+set_option quotPrecheck false in
+/-- The replicated scheme. -/
+local notation "𝔼" => Seed.replicated I g H Γ A B'
+
+/-- **Lifts into a mixed face through the full face**: for a mixed face `U ⊇ V` and a grade
+`1 ≤ k ≤ m + 1` with `k ≤ |U|`, a capped lift of the replicated scheme from `(V, k)` into
+`(univ, k)` gives one into `(U, k)`, since the lift from `(U, k)` into `(univ, k)`
+(`Seed.cappedLift_mixed_univ`) extends every section lawful below `(U, k)`. -/
+theorem cappedLift_attached_mixed_of_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    (hA0 : ∀ k, A k fun _ ↦ ⊥) (hU : U ∈ I.mixedFaces g) (hVU : V ⊆ U) {k : ℕ} (hk1 : 1 ≤ k)
+    (hkm : k ≤ m + 1) (hkU : k ≤ #U)
+    (hl : (𝔼).rows.CappedLift (X := (V, k)) (Y := ((univ : Finset (Fin (m + 2))), k))
+      ⟨subset_univ _, le_rfl⟩) :
+    (𝔼).rows.CappedLift (X := (V, k)) (Y := (U, k)) ⟨hVU, le_rfl⟩ :=
+  CellScheme.Rows.cappedLift_of_extend (X := (V, k)) (Y := (U, k))
+    (Z := ((univ : Finset (Fin (m + 2))), k)) ⟨hVU, le_rfl⟩ ⟨subset_univ _, le_rfl⟩ rfl hl
+    (cappedLift_mixed_univ hH hcard hΓ0 hΓ hA hA0 hU hk1 hkm hkU)
+
+end Seed
+
+namespace Seed
+
+open Finset Label StageType
+variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
+  {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
+
+set_option quotPrecheck false in
+/-- The replicated scheme. -/
+local notation "𝔼" => Seed.replicated I g H Γ A B'
+
+/-- **A lawful labelling extending the labels of the attachment from a state of the catalogue**:
+if a witness `ν` bounded by the grade `m + 1` and sending only `⊥` to `⊥` reads a state `R` of the
+catalogue at the grade `m + 2` as the labels of the attachment, then `ν` applied to the writing of
+`R` in the replicated scheme is a lawful labelling extending the labels of the attachment. -/
+theorem hasExtendingLabel_of_expansion (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
+    {R : Fin (I.attachment g).card → Label.{u}}
+    (hR : R ∈ (I.attachmentBase g).towerCat Γ A (m + 2)) {ν : Label.{u} → Label.{u}}
+    (hν : IsWitness (stepSuppressor (m + 1)) ν) (hbot : ∀ x, ν x = ⊥ → x = ⊥)
+    (hRν : ∀ c, ν (R c) = (I.attachmentType g).label c) :
+    I.HasExtendingLabel g H Γ A B' :=
+  ⟨fun z ↦ ν (I.replicatedWriting g H Γ A B' R z),
+    (isLawful_replicatedWriting hH hcard hΓ hA hR).map_of_apply_eq_bot
+      (fun d ↦ Nat.lt_succ_iff.mp (grade_lt_replicated d)) hν fun _ h ↦ hbot _ h,
+    fun c ↦ by
+      change ν (I.replicatedWriting g H Γ A B' R (I.attachEmb g H Γ A B' c)) = _
+      rw [replicatedWriting_attachEmb hcard
+        (Scheme.LadderBaseData.mem_towerCat.mp hR).2.1 c]
+      exact hRν c⟩
+
+end Seed
+
+namespace Seed
+
+open Finset Label StageType
+variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
+  {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
+
+set_option quotPrecheck false in
+/-- The replicated scheme. -/
+local notation "𝔼" => Seed.replicated I g H Γ A B'
+variable {d : StageType.{u} α (n + 1)}
+  (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+
+/-- **The replicated scheme has a lawful labelling extending the labels of the attachment**, for
+the admission predicate of requests calibrated on the class with the labels pair admitted, every
+height `H > 0` bounding the cells of the attachment, and every finite set `Γ` of values at most
+the grid point `ω * B' + 2` containing the compressed labelling: the expansion of the writing of
+the compressed labelling. -/
+theorem hasExtendingLabel_attachAdmits {p : StageType.{u} α n}
+    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p}
+    {Q : GrowthRequests I.left d.toScheme} (hpair : ∀ j, Q.CorrectAt I.left.label j (d.label j))
+    (hQ : Q.ClassCalibrated hte) (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hsub : ∀ c, I.compressedLabel g c ∈ Γ) :
+    I.HasExtendingLabel g H Γ (I.attachAdmits g hd Q) B' :=
+  hasExtendingLabel_of_expansion hH hcard hΓ (I.attachAdmits_succ g hd Q)
+    (Scheme.LadderBaseData.mem_towerCat.mpr
+      ⟨hsub, isLawful_compressedLabel, attachAdmits_compressedLabel hd hpair hQ _⟩)
+    (isWitness_blockExpand (m + 1)) (fun _ h ↦ blockExpand_eq_bot_iff.mp h)
+    blockExpand_compressedLabel
+
+end Seed
+
+namespace Seed
+
+open Finset Label StageType
+variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
+  {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
+
+set_option quotPrecheck false in
+/-- The replicated scheme. -/
+local notation "𝔼" => Seed.replicated I g H Γ A B'
+variable {d : StageType.{u} α (n + 1)}
+  (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+
+/-- **The values to add**: a finite set `Γ₀` of values below `ω ^ 2` and at most a grid point
+`ω * B₀ + 2` such that the replicated scheme has a lawful labelling extending the labels of the
+attachment for every finite set `Γ ⊇ Γ₀` of values at most a grid point `ω * B' + 2`. -/
+theorem exists_hasExtendingLabel_attachAdmits {p : StageType.{u} α n}
+    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p}
+    {Q : GrowthRequests I.left d.toScheme} (hpair : ∀ j, Q.CorrectAt I.left.label j (d.label j))
+    (hQ : Q.ClassCalibrated hte) :
+    ∃ (Γ₀ : Finset Label.{u}) (B₀ : ℕ),
+      (∀ x ∈ Γ₀, x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u})) ∧
+      (∀ x ∈ Γ₀, x ≤ gridPoint 2 B₀) ∧
+      ∀ (H : ℕ) (Γ : Finset Label.{u}) (B' : ℕ), 0 < H → (I.attachmentBase g).S.card ≤ H →
+        Γ₀ ⊆ Γ → (∀ x ∈ Γ, x ≤ gridPoint 2 B') →
+          I.HasExtendingLabel g H Γ (I.attachAdmits g hd Q) B' := by
+  classical
+  refine ⟨univ.image (I.compressedLabel g), blockCount (I.attachLabels g) + 1,
+    fun x hx ↦ ?_, fun x hx ↦ ?_, fun H Γ B' hH hcard hsub hΓ ↦
+      hasExtendingLabel_attachAdmits hd hpair hQ hH hcard hΓ fun c ↦
+        hsub (mem_image_of_mem _ (mem_univ c))⟩
+  · obtain ⟨c, -, rfl⟩ := mem_image.mp hx
+    exact compressedLabel_lt_omega0_sq c
+  · obtain ⟨c, -, rfl⟩ := mem_image.mp hx
+    exact compressedLabel_le_gridPoint le_rfl c
+
+end Seed
+
+namespace Seed
+
+open Finset Label StageType
+variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
+  {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
+
+set_option quotPrecheck false in
+/-- The replicated scheme. -/
+local notation "𝔼" => Seed.replicated I g H Γ A B'
+variable {d : StageType.{u} α (n + 1)}
+  (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+
+/-- **The inputs of the replicated scheme from the lifts**: for requests calibrated on the class
+with the labels pair admitted, a height, a finite set `Γ` of values containing `⊥` and the
+compressed labelling, and a grid bound, the three lift inputs give the inputs of the replicated
+scheme; the lawful labelling extending the labels is `Seed.hasExtendingLabel_attachAdmits`. -/
+theorem replicatedInputs_of_lifts {p : StageType.{u} α n}
+    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p}
+    {Q : GrowthRequests I.left d.toScheme} (hpair : ∀ j, Q.CorrectAt I.left.label j (d.label j))
+    (hQ : Q.ClassCalibrated hte) (hH : 0 < H) (hcard : (I.attachment g).card ≤ H) (hΓ0 : ⊥ ∈ Γ)
+    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
+    (hΓω : ∀ x ∈ Γ, x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}))
+    (hsub : ∀ c, I.compressedLabel g c ∈ Γ)
+    (hmixed : I.HasMixedLifts g H Γ (I.attachAdmits g hd Q) B')
+    (hctx : I.HasContextLift g H Γ (I.attachAdmits g hd Q) B')
+    (hmc : I.HasMixedCoatomLift g H Γ (I.attachAdmits g hd Q) B') :
+    I.ReplicatedInputs g hd Q :=
+  ⟨H, Γ, B', hH, hcard, hΓ0, hΓ, hΓω, hmixed, hctx, hmc,
+    hasExtendingLabel_attachAdmits hd hpair hQ hH hcard hΓ hsub⟩
+
+end Seed
+
+namespace Seed
+
 variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
   {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
 

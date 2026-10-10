@@ -258,27 +258,6 @@ theorem recovers_of_recognizes (hrec : G.Recognizes Q)
       (by simp only [Function.comp_apply]; rw [hs _ hmk.1, hvσ])
   exact h2.of_min hHc hHv (fun hf ↦ (href j hf).2) hmk.2
 
-/-- **Every face of a recognizing carrier has completions admitted on the exact class in every
-capped ball**: legality of the carrier (`Scheme.IsLegal.exists_isLawful_extend`) and recovery by
-recognition.  At the second coatom (`GrowthCarrier.exists_donorCoatom`) this is the donor-side
-lift that a recognizing carrier provides. -/
-theorem exists_admitsOnClass_extend (hrec : G.Recognizes Q)
-    (href : ∀ j ∈ Q.exacts, Q.ref j ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap) ∧
-      Q.offset j ≤ Q.threshold)
-    (hmk : Q.marker ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap) ∧
-      Q.markerOffset ≤ Q.threshold)
-    {m : ℕ} {f : Fin m ↪ Fin (J + 1)} (hf : univ.map f ∈ G.scheme.toCellScheme.faces)
-    {c : Label.{u}} (hc : IsSelfVisible (J + 1) c)
-    {ℓ : Fin (G.scheme.comap f).card → Label.{u}} (hℓ : (G.scheme.comap f).rows.IsLawful ℓ)
-    {P : Fin G.scheme.card → Label.{u}} (hP : G.scheme.rows.IsLawful P)
-    (hPℓ : ∀ i, min (P (G.scheme.cellMap f i)) c = min (ℓ i) c) :
-    ∃ r : Fin G.scheme.card → Label.{u}, G.scheme.rows.IsLawful r ∧
-      (∀ z, min (r z) c = min (P z) c) ∧ (∀ i, r (G.scheme.cellMap f i) = ℓ i) ∧
-      Q.AdmitsOnClass (fun x ↦ r (G.contextCell x)) (fun j ↦ r (G.donorCell j)) := by
-  obtain ⟨r, hr, hrc, hrℓ⟩ := G.isLegal.exists_isLawful_extend hf hc hℓ hP hPℓ
-  exact ⟨r, hr, hrc, hrℓ, fun hcls hcap j ↦
-    (G.recovers_of_recognizes Q hrec href hmk hcls hcap).apply G hr (fun _ ↦ rfl) j⟩
-
 end GrowthCarrier
 
 end VaughtConjecture

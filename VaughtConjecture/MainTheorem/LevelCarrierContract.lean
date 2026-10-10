@@ -62,8 +62,9 @@ twins of the lifts from the mixed faces, `Seed.lvLevel_twinGen`); the other uses
   every cell of full scope at the threshold is a ladder controller.
 
 **The bottom state.**  At the bottom state the levels above the first read the ladder base as gap
-values (`Seed.lvLevel_σ_embed_bot`); its cell stores `⊥` on the context and donor cells, so its
-controller clauses hold trivially, and the lift at the cap `⊥` is separate
+values (`Seed.lvLevel_σ_embed_bot`).  Its cell stores `⊥` on the context and donor cells, so its
+admission, cap and positive-value clauses hold at once, and its rung clause reads those gap values
+through the table `F` taken from its row; the lift at the cap `⊥` is separate
 (`Seed.ALvl.Good.hasOwnerCappedLifts_next_bot`).
 
 **Scope.**  The construction and its facts concern the replicated level at the top grade `m + 1`,

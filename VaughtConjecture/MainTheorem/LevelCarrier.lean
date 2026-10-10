@@ -46,9 +46,10 @@ the completion is a growth carrier with `I.left` and `d` as literal faces, a cel
 the threshold, a field ladder of height `H`, and every cell of full scope at the threshold a ladder
 controller.
 
-**The bottom state.**  The cell of the bottom state stores `⊥` on the context and donor cells; its
-clauses hold trivially (the levels above the first read its ladder base as gap values,
-`Seed.lvLevel_σ_embed_bot`, which no clause reads).
+**The bottom state.**  The cell of the bottom state stores `⊥` on the context and donor cells, so
+its admission clause, its cap clause and its clause on the positive stored values hold at once.  Its
+rung clause reads its rungs, which at the levels above the first are gap values
+(`Seed.lvLevel_σ_embed_bot`), through the table `F` taken from that row.
 
 **Scope.**  The statements concern the replicated level at the top grade `m + 1`, not the levels at
 lower grades.  At the seed position the parameters are the seed-fixed choice

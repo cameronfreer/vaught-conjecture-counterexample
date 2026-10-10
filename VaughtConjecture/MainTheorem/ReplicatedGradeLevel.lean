@@ -218,48 +218,4 @@ theorem recode_mem {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p
 
 end Seed
 
-namespace TieInstance
-
-/-- The root of the input. -/
-local notation "𝕣" => Function.Embedding.refl (Fin 1)
-
-/-- **The level at the top grade `2` of the tie input**: the orbit code at `2` of the compressed
-labelling is lawful below `(univ, 2)`, and so is its extension with the rank member from the grade
-one. -/
-theorem isLawfulBelow_stateExtOf_two {α : Ordinal.{u}} (I : Seed.{u} α 1) :
-    ∃ hP : (I.attachment 𝕣).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2)
-        (fun d ↦ orbitCode 2 (I.compressedLabel 𝕣) d),
-      (I.attachmentBase 𝕣).ladderBase (I.seedHeight 𝕣) |>.rows.IsLawfulBelow
-        ((univ : Finset (Fin 3)), 2) fun t ↦ (I.attachmentBase 𝕣).stateExtOf
-          (orbitCode 2 (I.compressedLabel 𝕣))
-          (Scheme.RankMember.ofLawfulBelowOne (I.attachmentBase 𝕣).wf (I.card_le_seedHeight 𝕣)
-            (hP.mono (show ((univ : Finset (Fin 3)), 1) ≤ ((univ : Finset (Fin 3)), 2) from
-              ⟨subset_rfl, by omega⟩))) t :=
-  Seed.isLawfulBelow_stateExtOf_orbitCode (I.seedHeight_pos 𝕣) (I.card_le_seedHeight 𝕣)
-    (by omega) (Seed.isLawful_compressedLabel (I := I) (g := 𝕣))
-
-end TieInstance
-
-namespace ApexInstance
-
-/-- The root of the input. -/
-local notation "𝕘" => (Fin.castSuccEmb : Fin 1 ↪ Fin 2)
-
-/-- **The level at the grade `2 < 3` of the input with an apex**: the orbit code at `2` of the
-compressed labelling, not lawful (`ApexInstance.not_isLawful_orbitCode_two`), is lawful below
-`(univ, 2)`, and so is its extension with the rank member from the grade one. -/
-theorem isLawfulBelow_stateExtOf_two {α : Ordinal.{u}} (I : Seed.{u} α 2) :
-    ∃ hP : (I.attachment 𝕘).rows.IsLawfulBelow ((univ : Finset (Fin 4)), 2)
-        (fun d ↦ orbitCode 2 (I.compressedLabel 𝕘) d),
-      (I.attachmentBase 𝕘).ladderBase (I.seedHeight 𝕘) |>.rows.IsLawfulBelow
-        ((univ : Finset (Fin 4)), 2) fun t ↦ (I.attachmentBase 𝕘).stateExtOf
-          (orbitCode 2 (I.compressedLabel 𝕘))
-          (Scheme.RankMember.ofLawfulBelowOne (I.attachmentBase 𝕘).wf (I.card_le_seedHeight 𝕘)
-            (hP.mono (show ((univ : Finset (Fin 4)), 1) ≤ ((univ : Finset (Fin 4)), 2) from
-              ⟨subset_rfl, by omega⟩))) t :=
-  Seed.isLawfulBelow_stateExtOf_orbitCode (I.seedHeight_pos 𝕘) (I.card_le_seedHeight 𝕘)
-    (by omega) (Seed.isLawful_compressedLabel (I := I) (g := 𝕘))
-
-end ApexInstance
-
 end VaughtConjecture

@@ -109,12 +109,6 @@ theorem prescriptionState_of_notMem {j : ℕ}
     prescriptionState H Γ A B' p a = ⊥ := by
   simp only [prescriptionState, h, dite_false]
 
-/-- All cells of the attachment lie below the full face at the grade `m + 2`. -/
-theorem attachment_mem_below_top (a : Fin (I.attachment g).card) :
-    a ∈ (I.attachment g).toCellScheme.below ((univ : Finset (Fin (m + 2))), m + 2) :=
-  ⟨subset_univ _, ((I.isWellFormed_attachment g).isWellFormed.grade_le_card a).trans
-    ((card_le_univ _).trans (by simp))⟩
-
 /-- **The ambient's state is a lawful state of the attachment.** -/
 theorem isLawful_ambientState {j : ℕ}
     {q : (I.replicated g H Γ A B').toCellScheme.below
@@ -160,16 +154,6 @@ theorem isLawfulBelow_prescriptionState {j : ℕ}
 
 /-! ### The context section -/
 
-/-- The cell of the attachment at a context cell lies in the context coatom. -/
-theorem scope_attachCtxCell_subset (x : Fin I.left.card) :
-    (I.attachment g).toCellScheme.scope (I.attachCtxCell g x) ⊆ ctxCoatom m := by
-  rw [← map_castSuccEmb_eq_ctxCoatom, attachCtxCell, Scheme.scope_faceCell]
-  exact map_subset_map.mpr (subset_univ _)
-
-theorem grade_attachCtxCell (x : Fin I.left.card) :
-    (I.attachment g).toCellScheme.grade (I.attachCtxCell g x) = I.left.toCellScheme.grade x :=
-  Scheme.grade_faceCell (I.comap_left_attachment_scheme g) x
-
 variable (H Γ A B') in
 /-- **The context section of a prescription**: the prescription's state at the context cells. -/
 noncomputable def ctxSection {j : ℕ}
@@ -199,111 +183,7 @@ theorem isLawful_ctxSection {j : ℕ}
 
 variable {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
 
-/-- **The truncation at the threshold of a state admitted on its context and donor cells is
-admitted**: the requests read the context only at cells of grade at most the threshold (the cap,
-the references, the marker, the cells below the cap), and the donor cells have grade at most the
-threshold. -/
-theorem attachAdmits_of_admitsOnClass
-    {hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀}
-    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
-    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte) (k : ℕ)
-    {R : Fin (I.attachment g).card → Label.{u}}
-    (hadm : Q.AdmitsOnClass (fun x ↦ R (I.attachCtxCell g x)) fun y ↦ R (I.attachDonCell g hd y)) :
-    I.attachAdmits g hd Q k R := by
-  intro _ hcls hcap y
-  have hctx (x : Fin I.left.card) (hx : I.left.toCellScheme.grade x ≤ Q.threshold) :
-      I.attachHatAt g Q.threshold R (I.attachCtxCell g x) = R (I.attachCtxCell g x) := by
-    unfold attachHatAt
-    rw [grade_attachCtxCell, ite_eq_left hx]
-  have hdon (y : Fin d.card) :
-      I.attachHatAt g Q.threshold R (I.attachDonCell g hd y) = R (I.attachDonCell g hd y) := by
-    unfold attachHatAt
-    have hg : (I.attachment g).toCellScheme.grade (I.attachDonCell g hd y) =
-        d.toCellScheme.grade y :=
-      Scheme.grade_faceCell (comap_toScheme_of_restrictFace
-        (I.restrictFace_donor_attachmentType g hd)) y
-    rw [hg, ite_eq_left ((d.grade_le y).trans hQ.arity)]
-  have hbelow (x : Fin I.left.card)
-      (hx : x ∈ I.left.toCellScheme.below (I.left.toCellScheme.gradedIndex Q.cap)) :
-      I.left.toCellScheme.grade x ≤ Q.threshold := hx.2
-  have hcls' : ∀ x ∈ I.left.toCellScheme.below (I.left.toCellScheme.gradedIndex Q.cap),
-      R (I.attachCtxCell g x) = ⊥ ↔ I.left.label x = ⊥ := fun x hx ↦ by
-    rw [← hctx x (hbelow x hx)]
-    exact hcls x hx
-  have hcap' : R (I.attachCtxCell g Q.cap) ≠ ⊥ := by
-    rw [← hctx Q.cap le_rfl]
-    exact hcap
-  have h := hadm hcls' hcap' y
-  change Q.CorrectAt _ y (I.attachHatAt g Q.threshold R (I.attachDonCell g hd y))
-  rw [hdon]
-  refine h.congr (hctx Q.cap le_rfl).symm (fun hy ↦ (hctx _ (hQ.ref y hy).1).symm)
-    (hctx _ hQ.marker.1).symm
-
 /-! ### The donor step -/
-
-/-- **The donor step**: from a lawful context section `u'` vanishing above the grade `j`, agreeing
-capped at `c` (self-visible at `j`) with a lawful ambient context section `u` on the cells of grade
-at most `j`, and an ambient donor section `v` reading `u` on the root, some lawful donor section
-reads `u'` on the root, has the observation of `v` at `c` at the donor cells of grade at most `j`,
-and is admitted with `u'`.  Below the threshold: the root lift of the donor at the grade
-(`StageType.IsLegal.exists_rootLift_le`), admission being vacuous since the cap value of `u'` is
-`⊥`; from the threshold on: the relative lift on the exact class at `c`, from the ambient pair at a
-positive cap (admitted by hypothesis) and from the labels pair at the cap `⊥`. -/
-theorem _root_.VaughtConjecture.StageType.exists_donorStep {k : ℕ} {t' : StageType.{u} α k}
-    {e : Fin n ↪ Fin k} {p₀ : StageType.{u} α n} (hte : restrictFace e t' = some p₀)
-    {d : StageType.{u} α (n + 1)} (hdp : restrictFace Fin.castSuccEmb d = some p₀)
-    (hdL : d.IsLegal) (hn : 0 < n) {Q : GrowthRequests t' d.toScheme}
-    (hpair : ∀ y, Q.CorrectAt t'.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    {j : ℕ} (hj : 1 ≤ j) {c : Label.{u}} (hc : IsSelfVisible j c)
-    {u' u : Fin t'.card → Label.{u}} {v : Fin d.card → Label.{u}} (hu' : t'.rows.IsLawful u')
-    (hu : t'.rows.IsLawful u) (hv : d.rows.IsLawful v)
-    (huv : ∀ i, v (d.faceCell hdp i) = u (t'.faceCell hte i))
-    (hpu : ∀ x, t'.toCellScheme.grade x ≤ j → min (u' x) c = min (u x) c)
-    (hu'0 : ∀ x, j < t'.toCellScheme.grade x → u' x = ⊥)
-    (hu0 : ∀ x, j < t'.toCellScheme.grade x → u x = ⊥)
-    (hamb : Q.threshold ≤ j → c ≠ ⊥ → Q.AdmitsOnClass u v) :
-    ∃ w : Fin d.card → Label.{u}, d.rows.IsLawful w ∧
-      (∀ i, w (d.faceCell hdp i) = u' (t'.faceCell hte i)) ∧
-      (∀ y, d.toCellScheme.grade y ≤ j → min (w y) c = min (v y) c) ∧ Q.AdmitsOnClass u' w := by
-  by_cases hN : Q.threshold ≤ j
-  · have hcN : IsSelfVisible Q.threshold c := hc.mono hN
-    by_cases hc0 : c = ⊥
-    · subst hc0
-      have hlab : Q.AllowedOnClass hte hdp t'.label d.label :=
-        ⟨t'.isLawful, d.isLawful,
-          fun i ↦ by rw [StageType.label_faceCell, StageType.label_faceCell],
-          fun _ _ y ↦ hpair y⟩
-      obtain ⟨v', ⟨-, hv', hroot', hadm'⟩, -⟩ := hrel t'.label u' d.label ⊥ hlab hu'
-        (isSelfVisible_bot _) fun x ↦ by rw [min_bot_right, min_bot_right]
-      exact ⟨v', hv', hroot', fun y _ ↦ by rw [min_bot_right, min_bot_right], hadm'⟩
-    · have hall : Q.AllowedOnClass hte hdp u v := ⟨hu, hv, huv, hamb hN hc0⟩
-      have hagree (x : Fin t'.card) : min (u' x) c = min (u x) c := by
-        by_cases hx : t'.toCellScheme.grade x ≤ j
-        · exact hpu x hx
-        · rw [hu'0 x (not_le.mp hx), hu0 x (not_le.mp hx)]
-      obtain ⟨v', ⟨-, hv', hroot', hadm'⟩, hcap⟩ := hrel u u' v c hall hu' hcN hagree
-      exact ⟨v', hv', hroot', fun y _ ↦ hcap y, hadm'⟩
-  · have hjN : j < Q.threshold := not_le.mp hN
-    have hgr (i : Fin p₀.card) :
-        t'.toCellScheme.grade (t'.faceCell hte i) = p₀.toCellScheme.grade i :=
-      Scheme.grade_faceCell (comap_toScheme_of_restrictFace hte) i
-    have hρ : p₀.rows.IsLawful fun i ↦ u' (t'.faceCell hte i) := isLawful_comp_faceCell hte hu'
-    obtain ⟨w, hw, hwr, -, hwc⟩ := hdL.exists_rootLift_le hn hdp hv hρ
-      (K := min j (n + 1)) (le_min hj (by omega)) (min_le_right _ _)
-      (fun i hi ↦ by
-        have h1 := p₀.grade_le i
-        have h2 : min j (n + 1) = j := by
-          rcases le_total j (n + 1) with h | h
-          · exact min_eq_left h
-          · exfalso; rw [min_eq_right h] at hi; omega
-        rw [h2] at hi
-        exact hu'0 _ ((hgr i).symm ▸ hi))
-      (hc.mono (min_le_left _ _))
-      (fun i hi ↦ by
-        rw [huv]
-        exact hpu _ ((hgr i).symm ▸ (hi.trans (min_le_left _ _))))
-    refine ⟨w, hw, hwr, fun y hy ↦ hwc y (le_min hy (d.grade_le y)), fun _ hcap ↦ ?_⟩
-    exact absurd (hu'0 Q.cap hjN) hcap
 
 /-! ### The state lift -/
 

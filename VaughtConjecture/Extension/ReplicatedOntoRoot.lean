@@ -70,4 +70,13 @@ theorem cappedLift_coatom_one_of_surjective (hH : 0 < H)
 
 end Seed
 
+namespace Seed
+
+open Finset Label
+variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
+  {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
+  {U V : Finset (Fin (m + 2))}
+
+end Seed
+
 end VaughtConjecture

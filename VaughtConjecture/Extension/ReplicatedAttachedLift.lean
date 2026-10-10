@@ -445,66 +445,6 @@ theorem cappedLift_attachment_univ_one
       (X := (V, 1)) (Y := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_univ _, le_rfl⟩ :=
   cappedLift_attachment_univ hdF hrF hr1 hVF le_rfl hV1 hV
 
-/-- **The lift from a face of the attachment into a mixed face at the grade one.**  For a face `V`
-inside the context face or the donor face and a mixed face `U ⊇ V`, the replicated scheme lifts
-capped from `(V, 1)` to `(U, 1)` when the attachment lifts capped from `(V, 1)` into the full face
-of grade one: the replicated scheme then lifts from `(V, 1)` to `(univ, 1)`
-(`Seed.cappedLift_attachTower_one`, `Seed.cappedLift_replicated_of_tower`), and from `(U, 1)` to
-`(univ, 1)` (`Seed.cappedLift_mixed_univ_one`), which extends every section lawful below `(U, 1)`
-(`CellScheme.Rows.cappedLift_of_extend`). -/
-theorem cappedLift_attached_mixed_one (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
-    (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
-    (hU : U ∈ I.mixedFaces g) (hVU : V ⊆ U)
-    (hV : V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∨
-      V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb)))
-    (hold : (I.attachmentBase g).S.rows.CappedLift
-      (X := (V, 1)) (Y := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_univ _, le_rfl⟩) :
-    (𝔼).rows.CappedLift (X := (V, 1)) (Y := (U, 1)) ⟨hVU, le_rfl⟩ := by
-  have hVu : ¬ ((univ : Finset (Fin (m + 2))), 1) ≤ ((V, 1) : Finset (Fin (m + 2)) × ℕ) :=
-    fun hle ↦ hV.elim
-      (fun h ↦ map_castSuccEmb_ne_univ (univ_subset_iff.mp (hle.1.trans h)))
-      fun h ↦ map_extendByLast_ne_univ g (univ_subset_iff.mp (hle.1.trans h))
-  have hT := cappedLift_attachTower_one (Γ := Γ) (A := A) (B' := B') hH hcard
-    (⟨subset_univ _, le_rfl⟩ : ((V, 1) : Finset (Fin (m + 2)) × ℕ) ≤ (univ, 1)) hVu hold
-  exact CellScheme.Rows.cappedLift_of_extend (X := (V, 1)) (Y := (U, 1))
-    (Z := ((univ : Finset (Fin (m + 2))), 1))
-    ⟨hVU, le_rfl⟩ ⟨subset_univ _, le_rfl⟩ rfl
-    (cappedLift_replicated_of_tower _ rfl hV hT) (cappedLift_mixed_univ_one hH hcard hΓ hA hU)
-
-/-- **Lifts into a mixed face through the full face**: for a mixed face `U ⊇ V` and a grade
-`1 ≤ k ≤ m + 1` with `k ≤ |U|`, a capped lift of the replicated scheme from `(V, k)` into
-`(univ, k)` gives one into `(U, k)`, since the lift from `(U, k)` into `(univ, k)`
-(`Seed.cappedLift_mixed_univ`) extends every section lawful below `(U, k)`. -/
-theorem cappedLift_attached_mixed_of_univ (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
-    (hΓ0 : ⊥ ∈ Γ) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B') (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
-    (hA0 : ∀ k, A k fun _ ↦ ⊥) (hU : U ∈ I.mixedFaces g) (hVU : V ⊆ U) {k : ℕ} (hk1 : 1 ≤ k)
-    (hkm : k ≤ m + 1) (hkU : k ≤ #U)
-    (hl : (𝔼).rows.CappedLift (X := (V, k)) (Y := ((univ : Finset (Fin (m + 2))), k))
-      ⟨subset_univ _, le_rfl⟩) :
-    (𝔼).rows.CappedLift (X := (V, k)) (Y := (U, k)) ⟨hVU, le_rfl⟩ :=
-  CellScheme.Rows.cappedLift_of_extend (X := (V, k)) (Y := (U, k))
-    (Z := ((univ : Finset (Fin (m + 2))), k)) ⟨hVU, le_rfl⟩ ⟨subset_univ _, le_rfl⟩ rfl hl
-    (cappedLift_mixed_univ hH hcard hΓ0 hΓ hA hA0 hU hk1 hkm hkU)
-
-/-- **The lift from a face of the attachment into a mixed face at the grade one**, when the donor
-face and the root are faces of the amalgam, the root nonempty
-(`Seed.cappedLift_attachment_univ_one`). -/
-theorem cappedLift_attached_mixed_one_of_faces (hH : 0 < H)
-    (hcard : (I.attachmentBase g).S.card ≤ H) (hΓ : ∀ x ∈ Γ, x ≤ gridPoint 2 B')
-    (hA : ∀ k R, A (k + 3) R → A (k + 2) R)
-    (hdF : univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
-    (hrF : univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
-      univ.map (extendByLast (g.trans Fin.castSuccEmb)) ∈ I.amalgam.toCellScheme.faces)
-    (hr1 : 1 ≤ #(univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∩
-      univ.map (extendByLast (g.trans Fin.castSuccEmb))))
-    (hU : U ∈ I.mixedFaces g) (hVF : V ∈ I.amalgam.toCellScheme.faces) (hV1 : 1 ≤ #V)
-    (hVU : V ⊆ U)
-    (hV : V ⊆ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ∨
-      V ⊆ univ.map (extendByLast (g.trans Fin.castSuccEmb))) :
-    (𝔼).rows.CappedLift (X := (V, 1)) (Y := (U, 1)) ⟨hVU, le_rfl⟩ :=
-  cappedLift_attached_mixed_one hH hcard hΓ hA hU hVU hV
-    (cappedLift_attachment_univ_one hdF hrF hr1 hVF hV1 hV)
-
 end Seed
 
 end VaughtConjecture
