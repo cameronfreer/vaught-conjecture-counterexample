@@ -12,7 +12,9 @@ import VaughtConjecture.MainTheorem.LowPaddedRoute
 
 Roadmap, Layer 3 ((R3) and (R4)) and Layer 6 ("Status: the hypotheses of the main theorem").
 
-This route is research, not yet reviewed.  It composes compiled statements only:
+These theorems were merged to `main` in the pull request "Growth carriers from re-rendered levels"
+(commit `8030d62`), after review, with CI passing on the exact head commit and the standard-axiom
+audit.  The route composes compiled statements only:
 
 * the carrier contract at the seed position, `StageType.hasLadderGrowthCarriersStableAtSeed_levels`
   (`VaughtConjecture.MainTheorem.LevelCarrierContract`, from the replicated top level), with no
@@ -72,9 +74,10 @@ namespace VaughtConjecture
 
 open StageType Realization MainTheorem FirstOrder Language baseLanguage
 
-/-- **(R3) for receiving models through the replicated levels** (research, not yet reviewed): the
-carrier contract at the seed position (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`) gives
-ladder carriers, hence recognizing and exact carriers, hence (R3)
+/-- **(R3) for receiving models through the replicated levels** (merged after review, commit
+`8030d62`): the carrier contract at the seed position
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`) gives ladder carriers, hence recognizing
+and exact carriers, hence (R3)
 (`Realization.receivingHollowReceiving_of_hasExactGrowthCarriers_pos`). -/
 theorem Realization.hollowReceiving_levels :
     HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
@@ -82,9 +85,10 @@ theorem Realization.hollowReceiving_levels :
     (hasLadderGrowthCarriersStableAtSeed_levels.hasLadderGrowthCarriers
       |>.hasRecognizingGrowthCarriers |>.hasExactGrowthCarriers)
 
-/-- **(R4) for receiving models through the replicated levels** (research, not yet reviewed): the
-carrier contract at the seed position, transported to every context, gives stable growth carriers
-at every block (`StageType.HasLadderGrowthCarriersStable.hasStableGrowthCarriers`), hence (R4)
+/-- **(R4) for receiving models through the replicated levels** (merged after review, commit
+`8030d62`): the carrier contract at the seed position, transported to every context, gives stable
+growth carriers at every block (`StageType.HasLadderGrowthCarriersStable.hasStableGrowthCarriers`),
+hence (R4)
 (`Expansion.ReceivingStableCappedReceiving.of_hasStableGrowthCarriers_gradedCapMargin`). -/
 theorem Expansion.receivingStableCappedReceiving_levels :
     Expansion.ReceivingStableCappedReceiving.{w} :=
@@ -92,8 +96,8 @@ theorem Expansion.receivingStableCappedReceiving_levels :
     hasLadderGrowthCarriersStableAtSeed_levels.hasLadderGrowthCarriersStable
       |>.hasStableGrowthCarriers ξ
 
-/-- **The thin `ℵ₁` spectrum of the density sentence through the replicated levels** (research,
-not yet reviewed): `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_padded` ((R2) for
+/-- **The thin `ℵ₁` spectrum of the density sentence through the replicated levels** (merged after
+review, commit `8030d62`): `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_padded` ((R2) for
 receiving models from the padded tower) with (R4) `Expansion.receivingStableCappedReceiving_levels`
 and (R3) `Realization.hollowReceiving_levels`. -/
 theorem MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels :

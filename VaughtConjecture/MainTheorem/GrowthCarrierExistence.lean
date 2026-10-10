@@ -26,7 +26,7 @@ statements `StageType.HasExactGrowthCarriers` and `StageType.HasStableGrowthCarr
 this is the **recovery** (`GrowthCarrier.Recovers`), for every lawful section of the carrier's rows.
 A pinned extension recovers nothing in general; the recovery is the content of the construction of
 the carrier: compiled for the margin calibration and for the hollow reference calibration with a
-nonempty root from `StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed), open
+nonempty root from `StageType.hasLadderGrowthCarriersStableAtSeed_levels`, open
 for the other calibrations.
 
 ## References
