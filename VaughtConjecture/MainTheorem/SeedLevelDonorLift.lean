@@ -15,7 +15,7 @@ The levels (`Seed.lvLevel`) lift capped from the donor face into the full face a
 legal donor with a nonempty root.  At an onto root the donor face is the second coatom
 (`Seed.donorFace_eq_coatom_of_surjective`), so the levels lift from the second coatom at every
 grade `j + 1 ≤ m + 1` (`Seed.lvLevel_cappedLift_coatom_of_surjective`; at the seed position,
-`StageType.lvLevel_cappedLift_coatom_atSeed`), and so do the levels with their copies at the mixed
+`StageType.lvLevel_cappedLift_coatoms_atSeed`), and so do the levels with their copies at the mixed
 faces (`Seed.lvRep_cappedLift_coatom_seedChoice`).
 
 * **The donor state step** (`Seed.exists_donorStateStep`): from an anchor `R₀` of the catalogue
