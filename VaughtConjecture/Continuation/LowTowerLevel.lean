@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.LowStepTie
+import VaughtConjecture.Continuation.LowTower
 
 /-!
 # The catalogue layer as a level of the profile tower
@@ -28,7 +28,9 @@ level.  Every field of `ProfileTower.Lvl.Good` is proved as for the canonical ne
 agreement heights of two codes with the cutoff `⊥` agree capped where the codes do, the rows of the
 catalogue profiles lie in the code grid, and the old cells are read literally.  The lift from
 the two coatoms at the grade `g + 1` is a hypothesis; for the LOW predicate it is
-`ProfileTower.Lvl.Good.cappedLift_lowS_seed` (`ProfileTower.Lvl.Good.lowNext`).
+`ProfileTower.Lvl.Good.cappedLift_lowS_seed` (`ProfileTower.Lvl.Good.lowNext`, in
+`VaughtConjecture.Continuation.LowDisplayLayer`).  This file imports only the generic tower of
+profiles (`VaughtConjecture.Continuation.LowTower`), not the LOW steps.
 
 ## Placement
 
@@ -228,20 +230,6 @@ theorem Lvl.Good.catNext (hL : L.Good) (hgm : g + 1 ≤ m) (hA0 : ∀ W : Prof I
     · obtain ⟨i₀, -⟩ := exists_equivFin_eq (C := 𝒞) (bot_mem_predCat (hA0 (fun _ ↦ ⊥) |> fun h ↦
         by convert h using 1; funext f; rcases f with d | z <;> rfl))
       exact ⟨Fin.natAdd _ i₀, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i₀⟩
-
-/-- **The LOW layer over a good level is a good level**, for the LOW designations of the seed, when
-the private context is a source-gap context of grade `g + 1` with the lost point last and the donor
-has top grade `g + 1`, attained, with `g + 1 ≤ m`: the LOW predicate holds with the cutoff `⊥`, and
-the lift from the two coatoms is `ProfileTower.Lvl.Good.cappedLift_lowS_seed`.  So the canonical
-layers above and the completion below the full grade apply to it. -/
-theorem Lvl.Good.lowNext (hL : L.Good) (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
-    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
-    (htb : I.right.topGrade ≤ g + 1) {z : Fin I.right.card} (hz : I.right.label z = ⊤)
-    (hzK : I.right.toCellScheme.grade z = g + 1) :
-    (L.catNext (lowPred (g + 1) (lowN I (g + 1)) (lowT I)
-      (StageType.faceCell I.restrictFace_left o')
-      (StageType.faceCell I.restrictFace_left r'))).Good :=
-  hL.catNext hgm lowPred_withCut_bot fun _ hx ↦ hL.cappedLift_lowS_seed hgm hs htb hz hzK hx
 
 /-! ### The canonical levels above -/
 
