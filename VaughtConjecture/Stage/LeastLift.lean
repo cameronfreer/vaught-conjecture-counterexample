@@ -29,8 +29,10 @@ labelling has that label (`StageType.IsLiftLabelling.eq_label_of_ne_top`).
 and every cell `e` labelled `⊤` in `q`, either `Q` has at `e` the label
 `bandMap β μ N (q.rowAt c e)` of the band lift (`StageType.IsMarker.exists_lift`), or `Q` is at
 least `β + N` at `e`.  Hence the band label is at most the label of every lift
-(`StageType.IsMarker.bandMap_rowAt_le_label`).  No legality, no coding beyond the range
-normalization carried by every stage type, and no bound on `α` is used.  The proof reads locality of
+(`StageType.IsMarker.bandMap_rowAt_le_label`).  These two lower-bound statements have weaker
+premises than the attained least lift below: `β` zero or a limit, with no legality of `q`, no bound
+on `α`, and no coding beyond the range normalization carried by every stage type (they do not
+assert that the band labelling is itself a lift).  The proof reads locality of
 `Q` at `c`, with a witness `(g, σ)`: the label `β + i` of `Q` at `e` (`i < N`) lies strictly below
 the label of `Q` at `c`, which is at least `β + N` by the order law, so the shifter sends the row
 entry `a` at `e` to `β + i`; at the marker the shifter is at least `β` and at most `β + i`, so
@@ -43,8 +45,11 @@ shifter with visibility replacement at `(N, j')` gives `i = j'`.
 legal `q` at a limit `β` and `β + ω ≤ α`, one lift labelling is least among all lift labellings,
 pointwise at every cell simultaneously: the labelling of `q` when `q` is top-free, and otherwise
 the band labelling of a top cap and a marker, `bandMap β μ N (q.rowAt c ·)` at the cells labelled
-`⊤` and the label of `q` elsewhere.  Legality is used only for the existence of the band lift (and
-of a top cap); leastness holds without it.
+`⊤` and the label of `q` elsewhere.  The premises of the attained leastness are exactly these:
+`q` legal, `β` a limit, and `β + ω ≤ α`.  The proof uses them to show that the least element is a
+lift labelling at all (the band lift, `StageType.IsMarker.exists_lift`, assumes all three) and that
+a top cap exists (from legality); only the lower bound, the fibre gap above, is proved without
+them.
 
 **The threshold characterization** (compiled in this repository (theorem named)).  For a legal
 rooted cover `(q, f)` of a root `p` at a limit `β`, `β + ω ≤ α`, a cell `d` of `p` labelled `⊤`
@@ -69,9 +74,11 @@ here: the statements hold for every legal stage type, strongly coded or not.  Th
 is the range normalization of stage types (`Scheme.IsCoded`), through the band lift, which needs
 the entry of the row of the top cap at the marker to be an ordinal.
 
-**Not claimed here.**  Nothing here concerns realizations, the stable offset over the rooted covers
-of a realization (`Realization.stableOffset`), cover-hollowness, or modelhood; the supremum forms of
-the threshold characterization and of the limit-stage monotonicity are not stated here.
+**Open, not claimed here.**  Nothing here concerns realizations.  The supremum forms over the
+rooted covers of a realization (through `Realization.stableOffset`) of the threshold
+characterization and of the limit-stage monotonicity, stated with the least lift, are not proved
+here and remain open, as do any statements about cover-hollowness and modelhood drawn from them; no
+change to the normalization of `Continuation/Normalization` is made.
 
 ## Placement
 
@@ -197,7 +204,9 @@ theorem IsLiftLabelling.coe_le_of_eq_top {ℓ : Fin q.card → Label.{u}}
 /-- **The fibre gap at a marker.**  Let `β` be zero or a limit, `c` a top cap of `q` of grade `N`,
 and `r` a marker of `c` whose row entry is `μ + j` (`μ` zero or a limit).  Every stage type `Q` at
 `α` reducing to `q` has, at a cell `e` labelled `⊤` in `q`, either the band label
-`bandMap β μ N (q.rowAt c e)` or a label at least `β + N`.  No legality is assumed. -/
+`bandMap β μ N (q.rowAt c e)` or a label at least `β + N`.  Premises: `β` zero or a limit; no
+legality of `q` and no bound on `α`.  This is a lower bound only: that the band labelling is a lift
+is `StageType.IsMarker.isLeast_bandLabelling`, under stronger premises. -/
 theorem IsMarker.label_eq_bandMap_or_le (hβ : IsSuccPrelimit β) {Q : StageType.{u} α m}
     (hQ : Q.reduce hβ = q) (hc : q.IsTopCap c) (hr : q.IsMarker c r) {μ : Ordinal.{u}} {j : ℕ}
     (hμ : IsSuccPrelimit μ) (hrj : q.rowAt c r = ((μ + j : Ordinal.{u}) : Label.{u}))
@@ -282,7 +291,8 @@ theorem IsMarker.label_eq_bandMap_or_le (hβ : IsSuccPrelimit β) {Q : StageType
 
 /-- **The band label is at most the label of every lift**: under the hypotheses of the fibre gap
 (`StageType.IsMarker.label_eq_bandMap_or_le`), every stage type at `α` reducing to `q` is at least
-`bandMap β μ N (q.rowAt c e)` at a cell `e` labelled `⊤` in `q`. -/
+`bandMap β μ N (q.rowAt c e)` at a cell `e` labelled `⊤` in `q`.  Premises as there: `β` zero or a
+limit, no legality of `q`, no bound on `α`. -/
 theorem IsMarker.bandMap_rowAt_le_label (hβ : IsSuccPrelimit β) {Q : StageType.{u} α m}
     (hQ : Q.reduce hβ = q) (hc : q.IsTopCap c) (hr : q.IsMarker c r) {μ : Ordinal.{u}} {j : ℕ}
     (hμ : IsSuccPrelimit μ) (hrj : q.rowAt c r = ((μ + j : Ordinal.{u}) : Label.{u}))
@@ -296,7 +306,10 @@ theorem IsMarker.bandMap_rowAt_le_label (hβ : IsSuccPrelimit β) {Q : StageType
 /-- **The attained least lift at a marker.**  Let `β` be a limit, `β + ω ≤ α`, `q` legal, `c` a
 top cap of `q` of grade `N`, and `r` a marker of `c` whose row entry is `μ + j` (`μ` zero or a
 limit).  The band labelling, `bandMap β μ N (q.rowAt c d)` at the cells `d` labelled `⊤` and the
-label of `q` elsewhere, is the least lift labelling of `q` to `α`. -/
+label of `q` elsewhere, is the least lift labelling of `q` to `α`.  Legality, the limit `β`, and
+`β + ω ≤ α` are premises of this statement: they make the band labelling a lift labelling
+(`StageType.IsMarker.exists_lift`); its lower bound alone is
+`StageType.IsMarker.bandMap_rowAt_le_label`. -/
 theorem IsMarker.isLeast_bandLabelling (hβ : IsSuccLimit β) (hα : β + ω ≤ α) (hq : q.IsLegal)
     (hc : q.IsTopCap c) (hr : q.IsMarker c r) {μ : Ordinal.{u}} {j : ℕ}
     (hμ : IsSuccPrelimit μ) (hrj : q.rowAt c r = ((μ + j : Ordinal.{u}) : Label.{u})) :
@@ -327,7 +340,8 @@ theorem IsMarker.isLeast_bandLabelling (hβ : IsSuccLimit β) (hα : β + ω ≤
 
 /-- **The attained least lift.**  For `β` a limit and `β + ω ≤ α`, every legal stage type `q` at
 `β` has a least lift labelling to `α`: one lawful labelling of the cells of `q`, reducing to `q`,
-at most every lift labelling at every cell. -/
+at most every lift labelling at every cell.  Legality, the limit `β`, and `β + ω ≤ α` are premises
+of the statement. -/
 theorem exists_isLeast_isLiftLabelling (hβ : IsSuccLimit β) (hα : β + ω ≤ α) (hq : q.IsLegal) :
     ∃ ℓ₀, IsLeast {ℓ | q.IsLiftLabelling α ℓ} ℓ₀ := by
   by_cases htf : q.IsTopFree
