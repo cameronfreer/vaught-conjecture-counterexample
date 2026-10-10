@@ -32,7 +32,9 @@ section `σ (camal P) e` of `L`; at the other cells `⊥`; at the cutoff the cut
 old cells the section is literal, so the entry reads `P` there
 (`ProfileTower.lowFields_old`).  The entry of a controller is the entry of its profile.
 
-**The LOW layer** (`ProfileTower.isLowLayer_of_isGradePrefix`, compiled in this repository):
+**The LOW layer** (`ProfileTower.isLowLayer_of_isGradePrefix_all` for any catalogue of states in
+the code grid LOW over the proper donor fields of every grade, and
+`ProfileTower.isLowLayer_of_isGradePrefix` for the LOW catalogue, compiled in this repository):
 
 * `rowAt_old`: a controller reads a cell of grade at most `K` that is not a controller at its
   entry, since that cell is the image of a cell of `L`, read by the row of the profile through the
@@ -303,12 +305,81 @@ variable {D : StageType.{u} α (m + 2)} {o r : Fin I.left.card}
 local notation "𝒞" => lowCat I (g + 1) (lowN I (g + 1)) (lowT I)
   (StageType.faceCell I.restrictFace_left o) (StageType.faceCell I.restrictFace_left r)
 
+local notation "𝒜all" => lowPred (g + 1) (lowNAll I) (lowT I)
+  (StageType.faceCell I.restrictFace_left o) (StageType.faceCell I.restrictFace_left r)
+
+variable {C : Finset (CProf I)}
+
+/-- **The LOW layer of a display in which a catalogue layer of states LOW over the proper donor
+fields of every grade, over a good level, is a grade prefix at `g + 1`**, for any such catalogue
+in the code grid: the entries of the controllers are the entries of their profiles
+(`ProfileTower.lowEntry`), and the separator is a pair of controllers whose profiles are a profile
+`s` of the catalogue and its partner over all proper donor cells, with the cutoff cut of `s` in the
+grid at `g + 1` and below the cutoff of `s`. -/
+theorem isLowLayer_of_isGradePrefix_all (hL : L.Good)
+    (hC : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ 𝒜all P)
+    {ψ : Fin (L.catS C).card → Fin D.card}
+    (hψ : Scheme.IsGradePrefix (L.catS C) D.toScheme ψ (g + 1))
+    (h₁ : restrictFace Fin.castSuccEmb D = some I.left)
+    (h₂ : restrictFace (extendByLast Fin.castSuccEmb) D = some I.right)
+    (hface₁ : ∀ i, faceCell h₁ i =
+      ψ (Fin.castAdd C.card (L.embed (faceCell I.restrictFace_left i))))
+    (hface₂ : ∀ i, faceCell h₂ i =
+      ψ (Fin.castAdd C.card (L.embed (faceCell I.restrictFace_right i))))
+    {ilo ihi : Fin C.card}
+    (hsep : (C.equivFin.symm ilo).1 = Function.update (C.equivFin.symm ihi).1 (Sum.inr ())
+      (cutoffCut (g + 1) (lowNAll I) (C.equivFin.symm ihi).1))
+    (hmem : cutoffCut (g + 1) (lowNAll I) (C.equivFin.symm ihi).1 ∈ grid (g + 1) (bound I))
+    (hlt : cutoffCut (g + 1) (lowNAll I) (C.equivFin.symm ihi).1 <
+      (C.equivFin.symm ihi).1 (Sum.inr ())) :
+    IsLowLayer (g + 1) h₁ h₂ o r (grid (g + 1) (bound I)) (lowEntry ψ)
+      (lowFields ψ (C.equivFin.symm ihi).1) (ψ (Fin.natAdd L.S.card ilo))
+      (ψ (Fin.natAdd L.S.card ihi)) := by
+  classical
+  have hinj := hψ.lowerEmb.injective
+  have hctrl (i : Fin C.card) : D.toCellScheme.gradedIndex (ψ (Fin.natAdd L.S.card i)) =
+      ((univ : Finset (Fin (m + 2))), g + 1) :=
+    (hψ.gradedIndex_eq _).trans (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i)
+  have hcut := cutoffCut_lowFields (C := C) hL hinj hface₂ (g + 1) (C.equivFin.symm ihi).1
+  refine
+    { bot_mem := bot_mem_grid _ _
+      isLowAt := fun w hw ↦ ?_
+      rowAt_old := fun w hw d hd hdK ↦ ?_
+      rowAt_controller := fun w x hw hx ↦ ?_
+      gradedIndex_lo := hctrl ilo
+      gradedIndex_hi := hctrl ihi
+      entry_hi := lowEntry_natAdd hinj ihi
+      entry_lo := ?_
+      cutoffCut_mem := by rw [hcut]; exact hmem
+      cutoffCut_lt := by rw [hcut, lowFields_inr]; exact hlt }
+  · obtain ⟨i, rfl⟩ := exists_ctrl_eq hψ hw
+    rw [lowEntry_natAdd hinj]
+    exact isLowAt_lowFields_all hL hinj hface₁ hface₂ (hC _ (C.equivFin.symm i).2).2
+  · obtain ⟨i, rfl⟩ := exists_ctrl_eq hψ hw
+    obtain ⟨e, rfl⟩ := exists_old_eq hψ hdK hd
+    have he : L.S.toCellScheme.grade e ≤ g + 1 := by
+      rwa [hψ.lowerEmb.grade_eq, Scheme.appendFullCellsScheme_grade_castAdd] at hdK
+    rw [hψ.rowAt_eq, rowAt_catS_natAdd_castAdd i he, lowEntry_natAdd hinj, lowFields_castAdd hinj]
+  · obtain ⟨i, rfl⟩ := exists_ctrl_eq hψ hw
+    obtain ⟨i', rfl⟩ := exists_ctrl_eq hψ hx
+    rw [hψ.rowAt_eq, rowAt_catS_natAdd_natAdd, lowEntry_natAdd hinj, lowEntry_natAdd hinj,
+      agreementHeight_lowFields hL hinj (hC _ (C.equivFin.symm i).2).1]
+  · rw [lowEntry_natAdd hinj, hsep]
+    funext f
+    rcases f with c | z
+    · have hc : camal (Function.update (C.equivFin.symm ihi).1 (Sum.inr ())
+          (cutoffCut (g + 1) (lowNAll I) (C.equivFin.symm ihi).1)) =
+          camal (C.equivFin.symm ihi).1 :=
+        funext fun d ↦ Function.update_of_ne (Sum.inl_ne_inr) _ _
+      rw [partner_of_ne _ Sum.inl_ne_inr]
+      simp only [lowFields, Sum.elim_inl, hc]
+    · rw [partner, Function.update_self, hcut]
+      simp only [lowFields, Sum.elim_inr, Function.update_self]
+
 /-- **The LOW layer of a display in which the LOW layer over a good level is a grade prefix at
-`g + 1`**, with the cells of the two faces the images of the old cells: the entries of the
-controllers are the entries of their profiles (`ProfileTower.lowEntry`), and the separator is a
-pair of controllers whose profiles are a profile `s` of the catalogue and its partner over all
-proper donor cells, with the cutoff cut of `s` in the grid at `g + 1` and below the cutoff of
-`s`. -/
+`g + 1`**, with the cells of the two faces the images of the old cells
+(`ProfileTower.isLowLayer_of_isGradePrefix_all`: a profile LOW over the proper donor fields of grade
+at most `g + 1` is LOW over all of them, `ProfileTower.lowN_subset_lowNAll`). -/
 theorem isLowLayer_of_isGradePrefix (hL : L.Good) {ψ : Fin (L.catS 𝒞).card → Fin D.card}
     (hψ : Scheme.IsGradePrefix (L.catS 𝒞) D.toScheme ψ (g + 1))
     (h₁ : restrictFace Fin.castSuccEmb D = some I.left)
@@ -325,47 +396,10 @@ theorem isLowLayer_of_isGradePrefix (hL : L.Good) {ψ : Fin (L.catS 𝒞).card �
       ((𝒞).equivFin.symm ihi).1 (Sum.inr ())) :
     IsLowLayer (g + 1) h₁ h₂ o r (grid (g + 1) (bound I)) (lowEntry ψ)
       (lowFields ψ ((𝒞).equivFin.symm ihi).1) (ψ (Fin.natAdd L.S.card ilo))
-      (ψ (Fin.natAdd L.S.card ihi)) := by
-  classical
-  have hinj := hψ.lowerEmb.injective
-  have hctrl (i : Fin (𝒞).card) : D.toCellScheme.gradedIndex (ψ (Fin.natAdd L.S.card i)) =
-      ((univ : Finset (Fin (m + 2))), g + 1) :=
-    (hψ.gradedIndex_eq _).trans (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i)
-  have hcut := cutoffCut_lowFields (C := 𝒞) hL hinj hface₂ (g + 1) ((𝒞).equivFin.symm ihi).1
-  refine
-    { bot_mem := bot_mem_grid _ _
-      isLowAt := fun w hw ↦ ?_
-      rowAt_old := fun w hw d hd hdK ↦ ?_
-      rowAt_controller := fun w x hw hx ↦ ?_
-      gradedIndex_lo := hctrl ilo
-      gradedIndex_hi := hctrl ihi
-      entry_hi := lowEntry_natAdd hinj ihi
-      entry_lo := ?_
-      cutoffCut_mem := by rw [hcut]; exact hmem
-      cutoffCut_lt := by rw [hcut, lowFields_inr]; exact hlt }
-  · obtain ⟨i, rfl⟩ := exists_ctrl_eq hψ hw
-    rw [lowEntry_natAdd hinj]
-    exact isLowAt_lowFields hL hinj hface₁ hface₂ (mem_lowCat.mp ((𝒞).equivFin.symm i).2).2.2.2
-  · obtain ⟨i, rfl⟩ := exists_ctrl_eq hψ hw
-    obtain ⟨e, rfl⟩ := exists_old_eq hψ hdK hd
-    have he : L.S.toCellScheme.grade e ≤ g + 1 := by
-      rwa [hψ.lowerEmb.grade_eq, Scheme.appendFullCellsScheme_grade_castAdd] at hdK
-    rw [hψ.rowAt_eq, rowAt_catS_natAdd_castAdd i he, lowEntry_natAdd hinj, lowFields_castAdd hinj]
-  · obtain ⟨i, rfl⟩ := exists_ctrl_eq hψ hw
-    obtain ⟨i', rfl⟩ := exists_ctrl_eq hψ hx
-    rw [hψ.rowAt_eq, rowAt_catS_natAdd_natAdd, lowEntry_natAdd hinj, lowEntry_natAdd hinj,
-      agreementHeight_lowFields hL hinj (mem_lowCat.mp ((𝒞).equivFin.symm i).2).1]
-  · rw [lowEntry_natAdd hinj, hsep]
-    funext f
-    rcases f with c | z
-    · have hc : camal (Function.update ((𝒞).equivFin.symm ihi).1 (Sum.inr ())
-          (cutoffCut (g + 1) (lowNAll I) ((𝒞).equivFin.symm ihi).1)) =
-          camal ((𝒞).equivFin.symm ihi).1 :=
-        funext fun d ↦ Function.update_of_ne (Sum.inl_ne_inr) _ _
-      rw [partner_of_ne _ Sum.inl_ne_inr]
-      simp only [lowFields, Sum.elim_inl, hc]
-    · rw [partner, Function.update_self, hcut]
-      simp only [lowFields, Sum.elim_inr, Function.update_self]
+      (ψ (Fin.natAdd L.S.card ihi)) :=
+  isLowLayer_of_isGradePrefix_all hL (fun _ hP ↦ ⟨(mem_lowCat.mp hP).1,
+    (mem_lowCat.mp hP).2.2.2.of_subset (lowN_subset_lowNAll _)⟩) hψ h₁ h₂ hface₁ hface₂ hsep hmem
+    hlt
 
 end Layer
 

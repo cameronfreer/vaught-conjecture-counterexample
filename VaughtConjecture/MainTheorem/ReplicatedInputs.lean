@@ -56,8 +56,7 @@ of the root (`0 < n`).  Every other hypothesis is handed to the inputs at the se
 no root cleanness, no bound on the donor's top grade.
 
 The inputs of the replicated scheme over the height-set tower stay open; the contract itself is
-proved by the levels re-rendered per grade (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`,
-not yet reviewed).
+proved by the levels re-rendered per grade (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`).
 
 **Scope.**  Part of the earlier route (the replicated scheme over the height-set tower, or the
 ladder tower of the amalgam), whose open inputs the levels re-rendered per grade replace; not used

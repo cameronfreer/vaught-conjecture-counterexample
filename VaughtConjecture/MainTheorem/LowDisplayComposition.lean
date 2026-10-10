@@ -20,9 +20,9 @@ hypothesis (`StageType.hasLowDisplaysOn_ge`):
 * `K = k`: `StageType.hasLowDisplaysOn_eq`, from `StageType.hasLowDisplaysOn_lowBotAll` (there is
   no grade in `(K, k]`, so the faces are vacuously `⊥` there).
 
-The case `K < k` is the padded tower (`StageType.hasLowDisplaysOn_lt`), and
-`StageType.hasLowDisplays_of_padded` assembles the two
-(`VaughtConjecture.MainTheorem.LowPaddedRoute`).
+The case `K < k` is the padded tower (`StageType.hasLowDisplaysOn_lt`); every LOW family has a
+LOW display (`StageType.hasLowDisplays_of_padded`, through the separated LOW displays,
+`VaughtConjecture.MainTheorem.LowPaddedRoute`).
 The earlier conditional forms of this file, from the lifts of the state tower
 (`StageType.hasLowDisplays_of_stateTowerLifts`) and from the steps for states above the
 controllers (`StageType.hasLowDisplays_of_stateStepsAbove`), whose conclusion

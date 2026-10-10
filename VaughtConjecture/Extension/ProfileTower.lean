@@ -513,13 +513,8 @@ theorem Lvl.Good.next_consistent (hL : L.Good) : L.next.S.rows.IsConsistent := b
 /-- **Lifts below a pair not above `(univ, g + 1)`** are those of the level. -/
 theorem Lvl.cappedLift_nextS_iff {X Y : Finset (Fin (m + 2)) × ℕ} (hXY : X ≤ Y)
     (hY : ¬ ((univ : Finset (Fin (m + 2))), g + 1) ≤ Y) :
-    L.nextS.rows.CappedLift hXY ↔ L.S.rows.CappedLift hXY := by
-  have h : L.S.toCellScheme.IsSourcePrefix L.nextS.toCellScheme (Fin.castAdd _) Y :=
-    ⟨Scheme.isLowerEmbedding_castAdd (S := L.S) (g + 1) (cat I (g + 1)).card
-      (fun i ↦ L.Φ (entry I (g + 1) i)) L.not_le,
-      Scheme.appendFullCellsScheme_scope_castAdd L.S (g + 1) _,
-      fun d hd ↦ ⟨⟨d, Scheme.lt_card_of_mem_below hY hd⟩, rfl⟩⟩
-  rw [← h.cappedLift_iff hXY le_rfl, Scheme.comap_rows_castAdd]
+    L.nextS.rows.CappedLift hXY ↔ L.S.rows.CappedLift hXY :=
+  Scheme.cappedLift_appendFullCells_iff hXY hY
 
 /-! ### Extension from the boundary through the next layer
 -/
