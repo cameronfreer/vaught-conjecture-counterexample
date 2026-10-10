@@ -5,6 +5,8 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.LevelCarrier
 import VaughtConjecture.MainTheorem.SeedLevelTopFacts
+import VaughtConjecture.MainTheorem.GrowthStableLadder
+import VaughtConjecture.MainTheorem.LevelExtendingLabel
 
 /-!
 # The carrier contract at the seed position from the replicated top level

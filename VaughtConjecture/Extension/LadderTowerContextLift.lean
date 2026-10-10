@@ -5,7 +5,6 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.SeedLadderCompletion
 import VaughtConjecture.Extension.SeedAttachment
-import VaughtConjecture.Extension.LowerRestriction
 
 /-!
 # The lift of the ladder tower from the context coatom: the reduction

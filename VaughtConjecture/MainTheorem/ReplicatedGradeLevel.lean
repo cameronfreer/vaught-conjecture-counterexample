@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedGradeRankMember
+import VaughtConjecture.Extension.HeightSetTie
+import VaughtConjecture.MainTheorem.ReplicatedCompletion
 
 /-!
 # One level of the values per grade

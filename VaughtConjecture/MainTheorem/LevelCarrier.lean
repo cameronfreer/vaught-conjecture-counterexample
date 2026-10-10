@@ -3,11 +3,11 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.MainTheorem.ReplicatedLevelBountifulTop
-import VaughtConjecture.MainTheorem.LevelExtendingLabel
-import VaughtConjecture.MainTheorem.ReplicatedLevelControl
 import VaughtConjecture.MainTheorem.ApexCompletionReading
-import VaughtConjecture.MainTheorem.ReplicatedCompletion
+import VaughtConjecture.Continuation.GrowthLadderRecognition
+import VaughtConjecture.MainTheorem.GrowthCarrierExistence
+import VaughtConjecture.MainTheorem.ReplicatedLevelBountiful
+import VaughtConjecture.MainTheorem.ReplicatedLevelMixedLift
 
 /-!
 # The completion of a replicated level, and its controllers

@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedLevelRecovery
+import VaughtConjecture.MainTheorem.ReplicatedGradeLevel
+import VaughtConjecture.MainTheorem.ReplicatedGradeStateStep
 
 /-!
 # Levels over the attachment, re-rendered per grade

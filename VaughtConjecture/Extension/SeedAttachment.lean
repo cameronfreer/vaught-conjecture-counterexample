@@ -3,11 +3,8 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.Apex
-import VaughtConjecture.Extension.FaceGluing
 import VaughtConjecture.Extension.LadderBase
 import VaughtConjecture.Extension.LowerRestriction
-import VaughtConjecture.Extension.Seed
 
 /-!
 # The attachment of a donor to a context, inside a seed

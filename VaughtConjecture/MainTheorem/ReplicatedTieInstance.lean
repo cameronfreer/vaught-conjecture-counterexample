@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedAssembly
-import VaughtConjecture.Extension.ReplicatedTieReading
 import VaughtConjecture.Extension.ReplicatedGridTie
 import VaughtConjecture.Continuation.SourceGapSeparationObstruction
+import VaughtConjecture.MainTheorem.SeedJointAdmission
 
 /-!
 # The tie input at the seed position: a standing test of the agreement heights

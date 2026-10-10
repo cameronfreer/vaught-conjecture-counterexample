@@ -3,7 +3,8 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.MainTheorem.ReplicatedGradeThreeDecoder
+import VaughtConjecture.Extension.UpperDecoderAt
+import VaughtConjecture.MainTheorem.ReplicatedGradeRankMember
 
 /-!
 # Recovery of the ladder base through the upper decoder

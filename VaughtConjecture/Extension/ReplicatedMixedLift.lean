@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.ReplicatedLiftUniv
+import VaughtConjecture.Extension.ReplicatedForcing
 
 /-!
 # The lift from a mixed face into a larger face at every grade

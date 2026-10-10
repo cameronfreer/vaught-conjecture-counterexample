@@ -3,10 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.LadderTowerContextLiftRoot
-import VaughtConjecture.Extension.ReplicatedWriting
 import VaughtConjecture.MainTheorem.ReplicatedInputs
-import VaughtConjecture.MainTheorem.SeedJointAdmission
 
 /-!
 # The context lift of the replicated scheme: the reduction

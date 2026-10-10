@@ -4,8 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.AttachmentMirror
-import VaughtConjecture.MainTheorem.GrowthAdmittedCarrier
-import VaughtConjecture.MainTheorem.GrowthCarrierExistence
 import VaughtConjecture.Continuation.GrowthStableRelativeLift
 
 /-!

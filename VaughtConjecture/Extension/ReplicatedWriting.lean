@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.AttachmentMirror
-import VaughtConjecture.Extension.CapTransport
 
 /-!
 # The writing of a state in the replicated scheme, and lifts from writings

@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedGradeStateStep
-import VaughtConjecture.Extension.LadderTowerContextLiftOne
-import VaughtConjecture.Extension.ReplicatedServingCell
 import VaughtConjecture.Extension.ReplicatedContextGap
+import VaughtConjecture.MainTheorem.ReplicatedGradeDecoder
+import VaughtConjecture.MainTheorem.ReplicatedGradeLevel
 
 /-!
 # The one-level lift at the grade two

@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Label.BlockCompress
-import VaughtConjecture.MainTheorem.ReplicatedInputs
-import VaughtConjecture.Extension.ReplicatedWriting
+import VaughtConjecture.MainTheorem.ReplicatedCompletion
 
 /-!
 # A lawful labelling of the replicated scheme extending the labels of the attachment

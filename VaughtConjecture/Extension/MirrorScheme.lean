@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.CellMirror
-import VaughtConjecture.Extension.FieldLayer
+import VaughtConjecture.Stage.Scheme
 
 /-!
 # The replicated scheme: copies of the full-scope cells at the mixed faces

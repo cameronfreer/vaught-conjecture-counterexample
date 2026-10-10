@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.MirrorMixedDecode
+import VaughtConjecture.Extension.CappedDecoder
 
 /-!
 # The lift from a mixed face of a mirrored scheme into a larger face

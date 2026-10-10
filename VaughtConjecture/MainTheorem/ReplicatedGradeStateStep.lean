@@ -3,8 +3,9 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.MainTheorem.ReplicatedGradeLevel
-import VaughtConjecture.Extension.LadderTowerContextLiftAmbient
+import VaughtConjecture.Extension.FaceGluing
+import VaughtConjecture.MainTheorem.ReplicatedCompletion
+import VaughtConjecture.MainTheorem.ReplicatedGradeRankMember
 
 /-!
 # The state step at a grade

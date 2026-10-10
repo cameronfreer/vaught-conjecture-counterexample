@@ -3,7 +3,9 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.MainTheorem.ReplicatedLevelQuad
+import VaughtConjecture.MainTheorem.ReplicatedLabel
+import VaughtConjecture.MainTheorem.ReplicatedLevelChain
+import VaughtConjecture.MainTheorem.ReplicatedLevelMirror
 
 /-!
 # The re-rendered levels at the seed position, at one choice of height and block bound
@@ -13,12 +15,10 @@ Roadmap, Layer 3 ((R3) and (R4), the levels of the replicated carrier re-rendere
 **The choice** (`Seed.seedHeightLevel`, `Seed.seedBlockBound'`), functions of the seed and the root
 only (not of a state, an ambient labelling or a cap):
 * the height `H = #attachment + 1` (the number of cells of the attachment as ladder base data plus
-  one; it is the height `Seed.seedHeight` of the earlier choice, `Seed.seedHeightLevel_eq`);
+  one);
 * the block bound `B = max (2 * #attachment + 1) (Seed.seedGridBound)`: above twice the number of
   cells of the attachment, strictly (`Seed.two_mul_card_lt_seedBlockBound'`, as the twins of the
-  mixed lifts ask), and at least the grid bound of the earlier choice, so that the compressed labels
-  of the attachment and the code set of its states lie below the grid point `ω * B + 2`
-  (`Seed.le_gridPoint_seedBlockBound'_of_mem_seedValues`).
+  mixed lifts ask), and at least the grid bound `Seed.seedGridBound`.
 Every side condition of the levels holds at every seed and root (`Seed.seedHeightLevel_pos`,
 `Seed.card_attachmentBase_le_seedHeightLevel`, `Seed.two_mul_card_le_seedBlockBound'`).
 
@@ -61,9 +61,6 @@ theorem card_attachmentBase_le_seedHeightLevel :
     (I.attachmentBase g).S.card ≤ I.seedHeightLevel g :=
   Nat.le_succ _
 
-/-- The height of the levels is the height `Seed.seedHeight` of the earlier choice. -/
-theorem seedHeightLevel_eq : I.seedHeightLevel g = I.seedHeight g := rfl
-
 /-! ### The block bound -/
 
 /-- **The block bound of the levels at a seed**: the larger of twice the number of cells of the
@@ -80,18 +77,6 @@ theorem two_mul_card_le_seedBlockBound' : 2 * (I.attachment g).card ≤ I.seedBl
 
 theorem seedGridBound_le_seedBlockBound' : I.seedGridBound g ≤ I.seedBlockBound' g :=
   le_max_right _ _
-
-/-- The values of the earlier choice lie below the grid point at the block bound. -/
-theorem le_gridPoint_seedBlockBound'_of_mem_seedValues {x : Label.{u}}
-    (hx : x ∈ I.seedValues g) : x ≤ gridPoint 2 (I.seedBlockBound' g) := by
-  rcases mem_insert.mp hx with rfl | hx
-  · exact bot_le
-  rcases mem_union.mp hx with hx | hx
-  · obtain ⟨c, -, rfl⟩ := mem_image.mp hx
-    exact compressedLabel_le_gridPoint
-      ((le_max_left _ _).trans (seedGridBound_le_seedBlockBound' I g)) c
-  · exact le_gridPoint_of_mem_codeSet
-      ((le_max_right _ _).trans (seedGridBound_le_seedBlockBound' I g)) hx
 
 variable {I g}
 

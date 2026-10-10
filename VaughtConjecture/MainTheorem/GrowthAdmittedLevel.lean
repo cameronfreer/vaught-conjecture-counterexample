@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthRecognition
-import VaughtConjecture.Extension.ProfileTowerCompletion
 import VaughtConjecture.Extension.TowerCatalogueLevel
 import VaughtConjecture.MainTheorem.GrowthCatalogueStep
 

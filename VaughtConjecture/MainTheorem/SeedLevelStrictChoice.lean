@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.SeedLevelDonorLift
+import VaughtConjecture.MainTheorem.GrowthStableLadder
+import VaughtConjecture.MainTheorem.SeedLevelChoice
 
 /-!
 # The coatom lifts of the levels at the strict block bound

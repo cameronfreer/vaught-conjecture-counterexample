@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Label.FinitePartSquash
-import VaughtConjecture.MainTheorem.ReplicatedLabel
+import VaughtConjecture.MainTheorem.ReplicatedCompletion
 
 /-!
 # The coding of states of the attachment by the catalogue

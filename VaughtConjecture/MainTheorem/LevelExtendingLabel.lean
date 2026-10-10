@@ -5,7 +5,6 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedLabel
 import VaughtConjecture.MainTheorem.ReplicatedLevelMirror
-import VaughtConjecture.MainTheorem.ReplicatedLevelQuad
 
 /-!
 # A lawful labelling of a re-rendered level extending the labels of the attachment
@@ -73,7 +72,7 @@ universe u
 
 namespace VaughtConjecture
 
-open Finset Label CellScheme StageType AvailableTopDeterminationCounterexample
+open Finset Label CellScheme StageType
 open scoped Ordinal
 
 namespace CellScheme.Rows

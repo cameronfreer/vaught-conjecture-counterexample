@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.HeightSetTie
+import VaughtConjecture.Extension.ReplicatedRankAgreement
+import VaughtConjecture.Extension.ReplicatedWriting
 
 /-!
 # Capped agreement of decoded writings in the replicated scheme

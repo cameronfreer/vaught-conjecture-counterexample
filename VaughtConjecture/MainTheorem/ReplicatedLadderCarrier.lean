@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedCompletion
 import VaughtConjecture.Continuation.GrowthLadderRecognition
+import VaughtConjecture.MainTheorem.GrowthCarrierExistence
 
 /-!
 # The ladder growth carrier over the replicated scheme

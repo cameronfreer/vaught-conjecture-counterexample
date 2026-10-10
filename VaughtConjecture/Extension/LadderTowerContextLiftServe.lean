@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.LadderTowerContextLiftCap
 import VaughtConjecture.Extension.ReplicatedRankAgreement
+import VaughtConjecture.Extension.LadderTowerContextLiftCoding
 
 /-!
 # The extension over the tower at a positive cap, from a serving code

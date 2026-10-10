@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedLadderCarrier
-import VaughtConjecture.MainTheorem.SeedLadderInputs
 import VaughtConjecture.Extension.ReplicatedMixedLift
 import VaughtConjecture.Extension.ReplicatedAttachedLift
+import VaughtConjecture.MainTheorem.GrowthStableLadder
 
 /-!
 # Ladder carriers at the seed position from the inputs of the replicated scheme

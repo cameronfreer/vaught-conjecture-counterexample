@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.LadderTowerTwins
-import VaughtConjecture.Extension.ReplicatedForcing
+import VaughtConjecture.Extension.ReplicatedGradeOne
 
 /-!
 # Decoded readings through the copies at a mixed face

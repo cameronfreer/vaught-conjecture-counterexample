@@ -3,9 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.ReplicatedMixedLift
-import VaughtConjecture.Extension.LadderLift
-import VaughtConjecture.Extension.SourcePrefix
+import VaughtConjecture.Extension.AttachmentMirror
 
 /-!
 # The lift from a face of the attachment into a mixed face at the grade one

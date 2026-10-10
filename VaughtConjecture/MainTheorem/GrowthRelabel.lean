@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.CutoffCoatomRelabel
-import VaughtConjecture.MainTheorem.GrowthAdmittedCarrier
+import VaughtConjecture.Continuation.GrowthRelativeLift
 
 /-!
 # Growth carriers under relabelling

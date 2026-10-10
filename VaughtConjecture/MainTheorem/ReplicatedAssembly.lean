@@ -4,9 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedAttachedInputs
-import VaughtConjecture.Extension.ReplicatedStateCoding
 import VaughtConjecture.MainTheorem.GrowthRelabelStable
-import VaughtConjecture.Extension.LadderTowerContextLiftOne
 import VaughtConjecture.Extension.LadderTowerContextLiftCap
 import VaughtConjecture.Extension.ReplicatedOntoRoot
 

@@ -5,7 +5,6 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedGradeCut
 import VaughtConjecture.Extension.ReplicatedRendering
-import VaughtConjecture.Extension.OrbitCode
 
 /-!
 # Codes per grade above a reachable cut

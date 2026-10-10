@@ -4,11 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.LevelCarrier
-import VaughtConjecture.MainTheorem.ReplicatedTieInstance
-import VaughtConjecture.MainTheorem.ReplicatedApexInstance
 import VaughtConjecture.MainTheorem.ReplicatedLevelQuad
-import VaughtConjecture.MainTheorem.ReplicatedLevelInstances
 import VaughtConjecture.MainTheorem.ReplicatedGradeTwoLift
+import VaughtConjecture.MainTheorem.LevelExtendingLabel
 
 /-!
 # The completion of the replicated top level at three inputs

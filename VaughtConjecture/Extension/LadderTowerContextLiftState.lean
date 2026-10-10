@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.LadderTowerContextLiftReplicated
-import VaughtConjecture.MainTheorem.ReplicatedCompletion
+import VaughtConjecture.Extension.FaceGluing
 
 /-!
 # The state lift from the context coatom over the attachment

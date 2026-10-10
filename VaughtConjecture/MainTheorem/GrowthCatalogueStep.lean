@@ -4,8 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthAdmittedSections
-import VaughtConjecture.Extension.TowerCatalogueLayer
-import VaughtConjecture.MainTheorem.GrowthSeed
 
 /-!
 # The catalogue step of the growth construction at the context coatom

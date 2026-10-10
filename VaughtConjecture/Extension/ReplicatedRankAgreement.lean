@@ -3,7 +3,9 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.ReplicatedStateCoding
+import VaughtConjecture.Extension.LadderMembers
+import VaughtConjecture.Extension.SeedAttachment
+import VaughtConjecture.Label.FinitePartSquash
 
 /-!
 # Rank agreement of a coded state with the ambient's member pins its values

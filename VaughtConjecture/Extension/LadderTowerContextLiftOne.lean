@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.LadderTowerContextLiftAmbient
-import VaughtConjecture.Extension.ReplicatedAttachedLift
 
 /-!
 # The context lift at the grade one

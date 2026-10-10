@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedLevelMixedFacts
+import VaughtConjecture.MainTheorem.MirrorMixedLift
+import VaughtConjecture.MainTheorem.ReplicatedLevelMirror
 
 /-!
 # The lifts from the mixed faces of a replicated level

@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.SeedLadderCompletion
-import VaughtConjecture.MainTheorem.GrowthAdmittedCarrier
 import VaughtConjecture.MainTheorem.GrowthCarrierExistence
+import VaughtConjecture.Continuation.GrowthLadderRecognition
 
 /-!
 # The ladder growth carrier at the seed position

@@ -4,9 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.TiedRootCapRootBottom
-import VaughtConjecture.MainTheorem.ReceivingDetermination
 import VaughtConjecture.Realization.GrowthCarrier
-import VaughtConjecture.Realization.PrivateContext
+import VaughtConjecture.MainTheorem.ReceivingDomains
 
 /-!
 # (R3) as the actual evaluation of a growth carrier

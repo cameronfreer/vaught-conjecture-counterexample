@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedLevelMixedLift
-import VaughtConjecture.MainTheorem.SeedLevelStrictChoice
+import VaughtConjecture.MainTheorem.ReplicatedLevelBountiful
+import VaughtConjecture.MainTheorem.SeedLevelChoice
+import VaughtConjecture.MainTheorem.SeedLevelDonorLift
 
 /-!
 # Bountifulness of the replicated top level

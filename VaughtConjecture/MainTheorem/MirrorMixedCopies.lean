@@ -3,8 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.MainTheorem.ReplicatedLevelTwin
-import VaughtConjecture.Extension.ReplicatedMixedLift
+import VaughtConjecture.Extension.AttachmentMirror
 
 /-!
 # Copies at a mixed face of a mirrored scheme over the attachment

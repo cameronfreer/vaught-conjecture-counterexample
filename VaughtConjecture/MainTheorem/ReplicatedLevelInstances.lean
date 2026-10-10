@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedLevelChain
+import VaughtConjecture.MainTheorem.ReplicatedApexInstance
 
 /-!
 # The re-rendered levels at the two test inputs

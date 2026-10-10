@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.ReplicatedLevelLift
+import VaughtConjecture.Extension.ReplicatedAttachedLift
+import VaughtConjecture.MainTheorem.ReplicatedLevelGrades
 
 /-!
 # The context lift at every grade of the re-rendered levels
@@ -111,7 +113,7 @@ theorem lvLevel_cappedLift (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤
 
 end Seed
 
-open Finset Label CellScheme StageType AvailableTopDeterminationCounterexample
+open Finset Label CellScheme StageType
 
 /-- **The first coatom type of a seed has a cell of full scope at every grade** from `1` to
 `m + 1`: it is legal. -/
@@ -120,7 +122,7 @@ theorem Seed.exists_gradedIndex_univ_left {α : Ordinal.{u}} {m : ℕ} (I : Seed
     ∃ x : Fin I.left.card, I.left.toCellScheme.gradedIndex x = ((univ : Finset (Fin (m + 1))), k) :=
   StageType.exists_gradedIndex_univ_of_isLegal I.isLegal_left hk hkm
 
-open Finset Label CellScheme StageType AvailableTopDeterminationCounterexample
+open Finset Label CellScheme StageType
 
 /-- **The context lift at every grade of the levels, at any threshold**: the chain lemma
 `Seed.lvLevel_cappedLift` with the cells of full scope taken from the first coatom type, which is

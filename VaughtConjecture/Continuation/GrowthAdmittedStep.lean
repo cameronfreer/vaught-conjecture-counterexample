@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthRequests
-import VaughtConjecture.Extension.OrbitCode
 
 /-!
 # The admitted step of the growth construction: the reads below the cap

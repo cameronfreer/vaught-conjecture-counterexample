@@ -3,7 +3,8 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.MainTheorem.ReplicatedLevelControl
+import VaughtConjecture.MainTheorem.ReplicatedLevelChain
+import VaughtConjecture.MainTheorem.ReplicatedLevelMirror
 
 /-!
 # Bountifulness of a replicated level from its lifts into the mixed faces

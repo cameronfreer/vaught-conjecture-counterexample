@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.MainTheorem.ReplicatedLevelBountiful
+import VaughtConjecture.MainTheorem.ReplicatedLevelGrades
 
 /-!
 # The twin of a controller one grade below, in the re-rendered levels
