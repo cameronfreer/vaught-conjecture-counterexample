@@ -22,12 +22,13 @@ the private context and the donor with their labels, and its LOW layer at `K` ha
 labelled by a proper label and `⊤`.
 
 **LOW displays for every LOW family** (`StageType.hasLowDisplays_of_padded`, compiled in this
-repository): `K < k` by the padded tower, `K ≥ k` by `StageType.hasLowDisplaysOn_ge`.  The
-statement is `StageType.HasLowDisplays`, with no hypothesis.  So are its stronger forms: LOW
-layers (`StageType.hasLowLayers_of_padded`: `K < k` by the padded tower, `K = k` by
-`StageType.hasLowLayersOn_eq`, `K = k + 1` by `StageType.hasLowLayersOn_fullGradeAll`), controlled
-LOW displays (`StageType.hasControlledLowDisplays_of_padded`) and separated LOW displays
-(`StageType.hasSeparatedLowDisplays_of_padded`).
+repository).  The statement is `StageType.HasLowDisplays`, with no hypothesis.  So are its
+stronger forms, through which it is proved: LOW layers (`StageType.hasLowLayers_of_padded`:
+`K < k` by the padded tower, `K = k` by `StageType.hasLowLayersOn_eq`, `K = k + 1` by
+`StageType.hasLowLayersOn_fullGradeAll`), controlled LOW displays
+(`StageType.hasControlledLowDisplays_of_padded`) and separated LOW displays
+(`StageType.hasSeparatedLowDisplays_of_padded`).  The LOW displays at `K ≥ k` also hold directly
+(`StageType.hasLowDisplaysOn_ge`).
 
 **The chain to (R2)** (compiled in this repository): the bounded coatom form for the source-gap
 contexts with the lost point last (`Realization.boundedCoatomCutoffDetermination_sourceGapLast`)
@@ -37,7 +38,9 @@ and (R2) for receiving models (`Realization.receivingResidualReceiving_of_padded
 
 **The main theorem with (R2) from the padded tower**
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_padded`, compiled in this repository):
-conditional on (R4) for receiving models and (R3) for receiving models, which are not proved here.
+conditional on (R4) for receiving models and (R3) for receiving models.  Both are proved in
+`VaughtConjecture.MainTheorem.GrowthLevelRoute` (`Expansion.receivingStableCappedReceiving_levels`
+and `Realization.hollowReceiving_levels`).
 
 ## References
 
@@ -96,13 +99,10 @@ theorem hasControlledLowDisplays_of_padded : HasControlledLowDisplays.{u} :=
 theorem hasSeparatedLowDisplays_of_padded : HasSeparatedLowDisplays.{u} :=
   hasControlledLowDisplays_of_padded.hasSeparatedLowDisplays
 
-/-- **LOW displays for every LOW family**: `K < k` through the padded tower
-(`StageType.hasLowDisplaysOn_lt`), `K ≥ k` by `StageType.hasLowDisplaysOn_ge`. -/
-theorem hasLowDisplays_of_padded : HasLowDisplays.{u} := by
-  intro α K k t' tb p o r hα hF
-  rcases lt_or_ge K k with hlt | hge
-  · exact hasLowDisplaysOn_lt t' tb p o r hα hF hlt
-  · exact hasLowDisplaysOn_ge t' tb p o r hα hF hge
+/-- **LOW displays for every LOW family**: the separated LOW displays
+(`StageType.HasSeparatedLowDisplays.hasLowDisplays`). -/
+theorem hasLowDisplays_of_padded : HasLowDisplays.{u} :=
+  hasSeparatedLowDisplays_of_padded.hasLowDisplays
 
 end VaughtConjecture.StageType
 
@@ -128,7 +128,8 @@ open FirstOrder Language baseLanguage Realization StageType Expansion
 
 /-- **The thin `ℵ₁` spectrum with (R2) from the padded tower**
 (`StageType.hasLowDisplays_of_padded`): conditional on (R4) for receiving models (`hR4`) and (R3)
-for receiving models (`hhol`); neither is proved here. -/
+for receiving models (`hhol`), both proved in `VaughtConjecture.MainTheorem.GrowthLevelRoute`
+(`Expansion.receivingStableCappedReceiving_levels`, `Realization.hollowReceiving_levels`). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_padded
     (hR4 : ReceivingStableCappedReceiving.{0})
     (hhol : HollowReceiving.{0, 0} IsReceivingCoverHollowAtBlock) :

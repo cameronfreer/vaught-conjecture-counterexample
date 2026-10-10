@@ -105,9 +105,10 @@ last, and a legal donor `tb` of top grade at most `K` with the same face `p` alo
 `Fin.castSuccEmb`) has a LOW display at a threshold occurring at the stage.
 
 Proved: `StageType.hasLowDisplays_of_padded`, in `VaughtConjecture.MainTheorem.LowPaddedRoute`
-(`K < k` through the padded tower of the LOW clause over the proper donor fields of every grade,
-`K = k` and `K = k + 1` by `StageType.hasLowDisplaysOn_ge`).  With a label other than `⊥` above
-`K < k` the completed display over the LOW layer with the actual labels carries no separator
+(through the separated LOW displays; `K < k` through the padded tower of the LOW clause over the
+proper donor fields of every grade, `K = k` by `StageType.hasLowLayersOn_eq`, `K = k + 1` by
+`StageType.hasLowLayersOn_fullGradeAll`).  With a label other than `⊥` above `K < k` the
+completed display over the LOW layer with the actual labels carries no separator
 labelled `⊤` (`StageType.not_lowReadingFamily`); the padded tower reads the actual state through
 the cutoff of the state of each cell of full scope above `K` instead. -/
 def HasLowDisplays : Prop :=

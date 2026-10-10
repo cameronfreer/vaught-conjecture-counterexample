@@ -51,8 +51,11 @@ first coatom is closed.  There the source-gap form asks determination with every
 point on a closed first coatom, and this file does not reduce that to the form with the lost point
 last.
 
-**Not claimed.**  Coatom cutoff determination for `IsSourceGapContextLast` is not proved, nor are
-(R4) and (R3), so the spectrum is not proved here.
+**Not claimed.**  Coatom cutoff determination for `IsSourceGapContextLast` is not proved, and this
+file proves neither (R4) nor (R3) in the forms it asks, so the spectrum is not proved through this
+route.  The main theorem is proved through the replicated levels
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`, in
+`VaughtConjecture.MainTheorem.GrowthLevelRoute`).
 
 ## Placement
 

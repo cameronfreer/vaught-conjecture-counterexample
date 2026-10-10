@@ -192,7 +192,7 @@ end StageType
 /-- **(R4) from stable growth carriers for the margin calibration**: stable growth carriers for
 `StageType.GradedCapMarginCalibration` at every `ξ < ω₁`, a finite statement about stage types
 (compiled from `StageType.hasLadderGrowthCarriersStableAtSeed_levels` through
-`StageType.HasLadderGrowthCarriersStable.hasStableGrowthCarriers`; not yet reviewed), give (R4); the
+`StageType.HasLadderGrowthCarriersStable.hasStableGrowthCarriers`), give (R4); the
 acquisition of the calibration is compiled
 (`Realization.IsModel.acquiresCalibratedContexts_gradedCapMargin`). -/
 theorem StableCappedReceiving.of_hasStableGrowthCarriers_gradedCapMargin
