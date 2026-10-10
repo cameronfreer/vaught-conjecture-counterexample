@@ -549,7 +549,7 @@ theorem IsSourceGapContextAt.serve_of_lowered {u v : Fin t'.card → Label.{u}}
 
 variable (t' K l o r) in
 /-- **The unserved case of the private frontier** (proved with the lost point last,
-`StageType.lowStepUnserved`, in `VaughtConjecture.Continuation.LowFullGradeUnserved`, and below
+`StageType.lowStepUnserved`, in `VaughtConjecture.Continuation.LowStepTie`, and below
 the full grade `StageType.lowStepUnserved_of_le`): in a legal source-gap context of grade `K`
 with lost point `l`, owner `o` and lost top `r`, every section `u` lawful below `(univ, K)` with the
 proper cells avoiding `l` at most a cap `c` (self-visible at `K`, `⊥ < c`), with
