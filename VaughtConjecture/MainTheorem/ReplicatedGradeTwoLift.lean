@@ -65,13 +65,6 @@ open scoped Ordinal
 
 namespace Label
 
-/-- The key of `1` at a grade `k ≥ 2` is the least grid point `k`. -/
-theorem visibilityReplace_one_eq_gridPoint {k : ℕ} (hk : 2 ≤ k) :
-    visibilityReplace k k (1 : Label.{u}) = gridPoint k 0 := by
-  have h : (1 : Label.{u}) = gridPoint 1 0 := by simp [gridPoint]
-  rw [h]
-  exact visibilityReplace_gridPoint_of_lt (by omega) 0
-
 /-- **A code with the natural key is an orbit key with the natural key**: if the key of the code
 of a cell is at most the least grid point `ω * 0 + k`, the cell's value is not `⊥`, its code block
 is `0`, so (`Label.le_codeBlock`, the key rank being positive) its value is an orbit key with the

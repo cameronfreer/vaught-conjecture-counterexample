@@ -133,13 +133,6 @@ theorem grade_ladCell
     (I.attachTower g H Γ A B').toCellScheme.grade (ladCell H Γ A B' p) = 1 :=
   congrArg Prod.snd (gradedIndex_ladCell p)
 
-/-- A mixed face is not empty. -/
-theorem one_le_card_of_mem_mixedFaces (hU : U ∈ I.mixedFaces g) : 1 ≤ #U := by
-  obtain ⟨-, -, hc, -⟩ := (I.mem_mixedFaces g).mp hU
-  rcases U.eq_empty_or_nonempty with he | hne
-  · exact absurd (he ▸ empty_subset _) hc
-  · exact hne.card_pos
-
 variable (H Γ A B') in
 /-- **The copied ladder** at the mixed face `U`: the copies at `U` of the ladder points. -/
 noncomputable def copyLadder (hU : U ∈ I.mixedFaces g)

@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.SeedLadderCompletion
+import VaughtConjecture.Extension.SeedAttachment
+import VaughtConjecture.Extension.LowerRestriction
 
 /-!
 # The lift of the ladder tower from the context coatom: the reduction
@@ -120,13 +122,6 @@ theorem towerAmalgamEmb_mem_below_iff (a : Fin I.amalgam.card) (X : Finset (Fin 
 
 /-! ### The two statements and the reduction -/
 
-/-- The **context coatom**: the points other than the last. -/
-abbrev ctxCoatom (m : ℕ) : Finset (Fin (m + 2)) := univ.erase (Fin.last (m + 1))
-
-theorem ctxCoatom_le (j : ℕ) :
-    ((ctxCoatom m, j) : Finset (Fin (m + 2)) × ℕ) ≤ ((univ : Finset (Fin (m + 2))), j) :=
-  ⟨erase_subset _ _, le_rfl⟩
-
 variable (I H Γ A B') in
 /-- **The state lift from the context coatom at the grade `j`**: for a cap `c` self-visible at
 `j`, an ambient `q` lawful below `(univ, j)` and a prescription `p` lawful below the context coatom
@@ -203,14 +198,6 @@ theorem cappedLift_context_of_stateLift (hH : 0 < H) (hcard : I.amalgam.card ≤
   exact hPp d a ha
 
 /-! ### The state lift below the predicate -/
-
-/-- **A labelling lawful below every cell is lawful**: if every cell lies below `X`, lawfulness
-below `X` is lawfulness. -/
-theorem _root_.VaughtConjecture.CellScheme.Rows.isLawful_of_isLawfulBelow {ι β : Type*}
-    {D : CellScheme ι β} {R : D.Rows.{u}} {X : Finset β × ℕ} {w : ι → Label.{u}}
-    (hall : ∀ d, d ∈ D.below X) (hw : R.IsLawfulBelow X fun d ↦ w d) : R.IsLawful w := by
-  obtain ⟨ho, hl, ha⟩ := Rows.isLawfulBelow_iff_forall.mp hw
-  exact ⟨fun d ↦ ho d (hall d), fun s ↦ hl s (hall s), fun s t hst hg ↦ ha s t (hall t) hst hg⟩
 
 /-- **The amalgam lift from the context coatom**: for a cap `c` self-visible at `j`, an ambient `q`
 lawful below `(univ, j)` and a prescription `p` lawful below the context coatom at `j` with the same

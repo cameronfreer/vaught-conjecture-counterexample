@@ -217,21 +217,6 @@ theorem attachAdmits_of_vanishing
   simp only [attachHatAt]
   rw [hg, ite_eq_left le_rfl, hP _ (hg ▸ hk)]) hcap
 
-/-- The context face does not lie in the donor face: it contains the point `m`. -/
-theorem not_map_castSuccEmb_subset_donor :
-    ¬ univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) ⊆
-      univ.map (extendByLast (g.trans Fin.castSuccEmb)) := by
-  intro hsub
-  obtain ⟨y, -, hy⟩ := mem_map.mp (hsub (mem_map_of_mem _ (mem_univ (Fin.last m))))
-  induction y using Fin.lastCases with
-  | last =>
-    rw [extendByLast_last] at hy
-    exact (Fin.castSucc_lt_last (Fin.last m)).ne' hy
-  | cast i =>
-    rw [extendByLast_castSucc, Function.Embedding.trans_apply, Fin.castSuccEmb_apply,
-      Fin.castSuccEmb_apply] at hy
-    exact (Fin.castSucc_lt_last (g i)).ne (Fin.castSucc_injective _ hy)
-
 /-- **The state lift from the donor face at the threshold** `n + 1`, for requests calibrated on the
 class over a nonempty root.  The attachment lifts the prescription on the donor face into the full
 face (`Seed.cappedLift_attachment_univ`); the cells of the top grade outside the donor face (in the

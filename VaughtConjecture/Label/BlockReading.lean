@@ -185,4 +185,31 @@ theorem le_finNat_visibilityReplace {sa : Ordinal.{u}} {R : ℕ} (hR : R < N) :
   · rw [visibilityReplace_blockOf_of_le (not_lt.mp hfa)]
     omega
 
+open Finset Label
+
+/-- **Agreement at the cap of a reading by a reader of the maximal grade.**  The arithmetic of the
+observation of the ambient: if a reader of label `z` reads `d` as `ℓ` (`min d z = min ℓ z`), the
+ambient and the prescription agree capped at `c` at `ℓ` and at the reader (`min z c = min M c`),
+and `d` is at most a label `w` with `min w c ≤ min M c`, then `min (min p M) c = min d c`. -/
+theorem min_min_eq_of_reader {d z ℓ p M w c : Label.{u}} (hdz : min d z = min ℓ z)
+    (hℓ : min ℓ c = min p c) (hzM : min z c = min M c) (hdw : d ≤ w)
+    (hwM : min w c ≤ min M c) : min (min p M) c = min d c := by
+  rcases le_or_gt d z with hle | hlt
+  · rw [min_eq_left hle] at hdz
+    rw [hdz]
+    calc min (min p M) c = min (min p c) (min M c) := by rw [min_min_min_comm, min_self]
+      _ = min (min ℓ c) (min z c) := by rw [hℓ, hzM]
+      _ = min (min ℓ z) c := by rw [min_min_min_comm, min_self]
+  · rcases le_or_gt c z with hcz | hzc
+    · rw [min_eq_right (hcz.trans hlt.le)]
+      rw [min_eq_right hlt.le] at hdz
+      have hℓz : z ≤ ℓ := hdz ▸ min_le_left _ _
+      have hpc : min p c = c := by rw [← hℓ]; exact min_eq_right (hcz.trans hℓz)
+      have hMc : min M c = c := by rw [← hzM]; exact min_eq_right hcz
+      rw [min_assoc, hMc, hpc]
+    · exfalso
+      have h1 : min w c ≤ z := hwM.trans (le_of_eq (hzM.symm.trans (min_eq_left hzc.le)))
+      have h2 : z < min w c := lt_min (hlt.trans_le hdw) hzc
+      exact absurd h1 (not_le.mpr h2)
+
 end VaughtConjecture.Label

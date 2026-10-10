@@ -49,17 +49,6 @@ namespace Scheme
 
 variable {n : ℕ} {S : Scheme.{u} n}
 
-/-- **Equal readings give equal capped values**: in a section lawful below `Y`, two cells read
-alike by a cell `u` below `Y` carry the same label capped at the label of `u`. -/
-theorem min_eq_min_of_rowAt_eq {Y : Finset (Fin n) × ℕ} {w : Fin S.card → Label.{u}}
-    (hw : S.rows.IsLawfulBelow Y fun d ↦ w d) {u t v : Fin S.card}
-    (huY : u ∈ S.toCellScheme.below Y)
-    (ht : t ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u))
-    (hv : v ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u))
-    (hrow : S.rowAt u t = S.rowAt u v) : min (w t) (w u) = min (w v) (w u) := by
-  obtain ⟨θ, -, -, hθ⟩ := exists_cappedDecoder_below hw huY rfl
-  rw [← hθ t ht, ← hθ v hv, hrow]
-
 end Scheme
 
 namespace Seed

@@ -54,42 +54,6 @@ namespace VaughtConjecture
 
 open Finset Label CellScheme StageType AvailableTopDeterminationCounterexample
 
-/-- **A legal stage type has a cell of full scope at every grade** from `1` to the number of
-points. -/
-theorem StageType.exists_gradedIndex_univ_of_isLegal {α : Ordinal.{u}} {n : ℕ}
-    {t : StageType.{u} α n} (ht : t.IsLegal) {k : ℕ} (hk : 0 < k) (hkn : k ≤ n) :
-    ∃ x : Fin t.card, t.toCellScheme.gradedIndex x = ((univ : Finset (Fin n)), k) :=
-  ht.isComplete _ ⟨t.isWellFormed.univ_mem_faces, hk, by
-    rw [card_univ, Fintype.card_fin]; exact hkn⟩
-
-/-- **The first coatom type of a seed has a cell of full scope at every grade** from `1` to
-`m + 1`: it is legal. -/
-theorem Seed.exists_gradedIndex_univ_left {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) {k : ℕ}
-    (hk : 0 < k) (hkm : k ≤ m + 1) :
-    ∃ x : Fin I.left.card, I.left.toCellScheme.gradedIndex x = ((univ : Finset (Fin (m + 1))), k) :=
-  StageType.exists_gradedIndex_univ_of_isLegal I.isLegal_left hk hkm
-
-/-- **The context lift at every grade of the levels, at any threshold**: the chain lemma
-`Seed.lvLevel_cappedLift` with the cells of full scope taken from the first coatom type, which is
-legal.  No relation between the threshold and the grades is asked (the threshold is at most
-`m + 1` by calibration only).  The premises `hQ` (calibration on the class), `hpair` (the labels
-pair correct), `hrel` (the relative lift on the class), `hdL` (a legal donor) and `0 < n` stay
-explicit until their proof is composed at the seed position. -/
-theorem Seed.lvLevel_cappedLift' {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m}
-    {g : Fin n ↪ Fin m} {H B : ℕ} (hH : 0 < H) (hcard : (I.attachmentBase g).S.card ≤ H)
-    {p₀ : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
-    (hte : restrictFace (g.trans Fin.castSuccEmb) I.left = some p₀)
-    (hdp : restrictFace Fin.castSuccEmb d = some p₀) (hdL : d.IsLegal) (hn : 0 < n)
-    (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
-    {Q : GrowthRequests I.left d.toScheme} (hQ : Q.ClassCalibrated hte)
-    (hpair : ∀ y, Q.CorrectAt I.left.label y (d.label y)) (hrel : Q.HasRelativeLiftOnClass hte hdp)
-    (hB : 2 * (I.attachment g).card ≤ B) :
-    ∀ j, j + 1 ≤ m + 1 → (I.lvLevel g H B hd Q j).S.rows.CappedLift
-      (X := (univ.erase (Fin.last (m + 1)), j + 1)) (Y := ((univ : Finset (Fin (m + 2))), j + 1))
-      ⟨erase_subset _ _, le_rfl⟩ :=
-  Seed.lvLevel_cappedLift hH hcard hte hdp hdL hn hd hQ hpair hrel hB
-    fun _ hk2 hkm ↦ I.exists_gradedIndex_univ_left (by omega) hkm
-
 /-- The chain lemma for a first coatom type given up to equality. -/
 theorem Seed.lvLevel_cappedLift_of_eq {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m}
     {t' : StageType.{u} α (m + 1)} (hI : I.left = t') {g : Fin n ↪ Fin m}

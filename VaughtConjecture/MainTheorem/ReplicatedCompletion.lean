@@ -289,4 +289,22 @@ theorem restrictFace_donor_replicatedCompletion
 
 end Seed
 
+namespace Seed
+
+open Finset Label StageType
+variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m}
+variable {d : StageType.{u} α (n + 1)}
+  (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
+
+/-- The truncation at the threshold of a mapped state is the mapped truncation. -/
+theorem attachHatAt_comp {ν : Label.{u} → Label.{u}} (hν : ν ⊥ = ⊥) (N : ℕ)
+    (P : Fin (I.attachment g).card → Label.{u}) (a : Fin (I.attachment g).card) :
+    I.attachHatAt g N (ν ∘ P) a = ν (I.attachHatAt g N P a) := by
+  unfold attachHatAt
+  split_ifs
+  · rfl
+  · exact hν.symm
+
+end Seed
+
 end VaughtConjecture

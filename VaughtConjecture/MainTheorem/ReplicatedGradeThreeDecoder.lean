@@ -132,18 +132,6 @@ theorem min_orbitDecoder_eq_iff (hag : ∀ d, min (orbitCode k W d) h = min (W d
     · rw [hl]
     · exact absurd ⟨hxh, hvx, hr⟩ hno
 
-/-- A value that is not an orbit key is coded in an odd block. -/
-theorem orbitCode_ne_even_of_not_isOrbitKey {e : ι} (hWe : W e ≠ ⊥)
-    (hno : ¬ IsOrbitKey k W (W e)) (r : ℕ) : orbitCode k W e ≠ gridPoint k (2 * r) := by
-  intro h
-  have hk : IsKey k W (W e) := isKey_apply_iff.mpr hWe
-  have h1 := one_le_keyRank hk
-  rw [orbitCode_apply, orbitMap_of_not_isOrbitKey hWe hno, codeBlock_of_not_isOrbitKey hk hno]
-    at h
-  have := gridPoint_le_gridPoint.mp h.le
-  have := gridPoint_le_gridPoint.mp h.ge
-  omega
-
 /-- **Decoder preservation at an even cut**: at a cut `ω * (2 r) + k`, for a code agreeing with the
 state capped at the cut, the orbit decoder keeps every label capped at the cut. -/
 theorem min_orbitDecoder_eq_of_even (r : ℕ)

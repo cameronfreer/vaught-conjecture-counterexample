@@ -1089,5 +1089,34 @@ theorem isReadableAt_upperDecoderAt_of_mem {κ : Type*} [Fintype κ] {Q : κ →
     exact .inr (.inl ((isSelfVisible_gridPoint K B).min (Finset.inf_induction
       (isSelfVisible_top K) (fun a ha b hb ↦ ha.min hb)
       fun d _ ↦ isSelfVisible_admissibleBelowAt K B (w d))))
+open Finset Label CellScheme StageType
+open scoped Ordinal
+
+open Classical in
+/-- **The upper decoder at the top grid point dominates the labelling** when every code block lies
+below `B`. -/
+theorem le_upperDecoderAt_gridPoint {ι : Type*} [Fintype ι] {k K B' : ℕ}
+    (hB : 2 * Fintype.card ι < B') (w : ι → Label.{u}) (d : ι) :
+    w d ≤ upperDecoderAt k K B' w (gridPoint k B') := by
+  by_cases hd : w d = ⊥
+  · rw [hd]; exact bot_le
+  have hcode : visibilityReplace k k (orbitCode k w d) = gridPoint k (codeBlock k w (w d)) := by
+    rw [orbitCode_apply, visibilityReplace_orbitMap hd]
+  have hblk : codeBlock k w (w d) < B' :=
+    (codeBlock_le k w (w d)).trans_lt (by have := keyRank_le_card k w (w d); omega)
+  have hmem : d ∈ ({e | gridPoint k 0 ≤ visibilityReplace k k (orbitCode k w e)} : Finset ι) := by
+    rw [Finset.mem_filter, hcode]
+    exact ⟨Finset.mem_univ _, gridPoint_le_gridPoint.mpr (Nat.zero_le _)⟩
+  have hlt : gridPoint.{u} k (codeBlock k w (w d)) < gridPoint k B' :=
+    gridPoint_lt_gridPoint_iff_lex.mpr (.inl hblk)
+  have hread : cellReading k w d (gridPoint k B') = visibilityReplace k k (w d) := by
+    unfold cellReading
+    rw [isSelfVisible_gridPoint k B', hcode, ite_eq_right (not_lt.mpr hlt.le),
+      ite_eq_right fun h ↦ hlt.ne h.1.symm]
+  calc w d ≤ visibilityReplace k k (w d) := le_visibilityReplace (by omega) _
+    _ = cellReading k w d (gridPoint k B') := hread.symm
+    _ ≤ orbitDecoder k w (gridPoint k 0) (gridPoint k B') :=
+      le_max_of_le_right (Finset.le_sup (f := fun e ↦ cellReading k w e (gridPoint k B')) hmem)
+    _ ≤ upperDecoderAt k K B' w (gridPoint k B') := le_max_left _ _
 
 end VaughtConjecture.Label

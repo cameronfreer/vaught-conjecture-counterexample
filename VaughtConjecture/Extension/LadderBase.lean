@@ -387,5 +387,31 @@ theorem ladderBase_exists_shape [Nonempty Q] {hS : S.NoFullOne} (hwf : S.IsWellF
   (ladderLawful_of_isLawful hwf hv).exists_shape hH (ladderCeil_le hprof)
     (fun a i ↦ (a, Sum.inl ⟨min i (H - 1), by omega⟩)) (fun _ _ _ ↦ rfl)
     fun _ i hi ↦ by simp only [ladderCeil, Sum.elim_inl]; omega
+open Finset Label
+variable {n : ℕ} {S : Scheme.{u} n}
+variable {Q : Type} [Fintype Q] {H : ℕ} {prof : Q → Fin S.card → ℕ}
+
+/-- **A ladder point reads an old cell of grade one** through the code, at its ceiling, of the rank
+of the cell for its member. -/
+theorem rowAt_ladderBase_old {hS : S.NoFullOne} (hwf : S.IsWellFormed) (p : LadderPt S Q H)
+    {e : Fin S.card} (he : S.toCellScheme.grade e = 1) :
+    (ladderBase H prof hS).rowAt (Fin.natAdd _ (ladderEquiv S Q H p)) (Fin.castAdd _ e) =
+      ladderSource (ladderCeil prof p) (prof p.1 e) := by
+  have hq : (Fin.castAdd _ e : Fin (S.card + ladderCard S Q H)) ∈
+      (ladderBase H prof hS).toCellScheme.below ((univ : Finset (Fin n)), 1) := by
+    change (S.appendFullCellsScheme 1 _).gradedIndex _ ≤ _
+    rw [appendFullCellsScheme_gradedIndex_castAdd]
+    exact ⟨subset_univ _, he.le⟩
+  have hmem : (Fin.castAdd _ e : Fin (S.card + ladderCard S Q H)) ∈
+      (ladderBase H prof hS).toCellScheme.below
+        ((ladderBase H prof hS).toCellScheme.gradedIndex
+          (Fin.natAdd S.card (ladderEquiv S Q H p))) := by
+    change (S.appendFullCellsScheme 1 _).gradedIndex _ ≤ (S.appendFullCellsScheme 1 _).gradedIndex _
+    rw [appendFullCellsScheme_gradedIndex_natAdd]
+    exact hq
+  rw [rowAt_of_mem hmem]
+  have h1 := appendFullCells_row_natAdd (S := S) (k := 1) (M := ladderCard S Q H)
+    (r := baseRow H prof) (h := hS) (ladderEquiv S Q H p) ⟨_, hmem⟩
+  rw [h1, baseRow_of_mem hwf _ hq, Equiv.symm_apply_apply, baseIndex_castAdd]
 
 end VaughtConjecture.Scheme

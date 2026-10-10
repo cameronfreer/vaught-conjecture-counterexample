@@ -117,11 +117,6 @@ noncomputable def seedHeight : ℕ := (I.attachment g).card + 1
 noncomputable def seedValues : Finset Label.{u} :=
   insert ⊥ (univ.image (I.compressedLabel g) ∪ codeSet (I.attachment g).card (m + 2))
 
-/-- **The grid bound of the choice**: the larger of the number of blocks of the labels of the
-attachment plus one and the number of cells of the attachment plus one. -/
-noncomputable def seedGridBound : ℕ :=
-  max (blockCount (I.attachLabels g) + 1) ((I.attachment g).card + 1)
-
 theorem seedHeight_pos : 0 < I.seedHeight g := Nat.succ_pos _
 
 theorem card_le_seedHeight : (I.attachment g).card ≤ I.seedHeight g := Nat.le_succ _

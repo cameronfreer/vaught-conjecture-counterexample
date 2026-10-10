@@ -67,11 +67,6 @@ namespace Seed
 variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
   {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
 
-/-- The context coatom is the image of the first points. -/
-theorem map_castSuccEmb_eq_ctxCoatom :
-    univ.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2)) = ctxCoatom m :=
-  Coatom.univ_map_left
-
 /-- **The cells of the replicated scheme below the context coatom are cells of the attachment.** -/
 theorem exists_attachEmb_eq_of_mem_below_ctx {G : ℕ → Finset Label.{u}} {j : ℕ}
     {z : Fin (I.replicated g H Γ A B' G).card}

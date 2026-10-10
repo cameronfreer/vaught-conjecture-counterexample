@@ -37,13 +37,6 @@ namespace Seed
 variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
   {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
 
-variable (g) in
-/-- **For an onto root the donor face is the second coatom** (the points other than `m`). -/
-theorem donorFace_eq_coatom_of_surjective (hg : Function.Surjective g) :
-    univ.map (extendByLast (g.trans Fin.castSuccEmb)) = univ.erase (Fin.castSucc (Fin.last m)) := by
-  rw [← Coatom.univ_map_right, Coatom.right, univ_map_extendByLast, univ_map_extendByLast,
-    ← map_map, map_univ_of_surjective hg]
-
 /-- **The lift from the second coatom at the grade one for an onto root**: the second coatom is
 then the donor face, the attachment lifts capped from it into `(univ, 1)`
 (`Seed.cappedLift_attachment_univ_one`), the tower does so by gluing of rank members

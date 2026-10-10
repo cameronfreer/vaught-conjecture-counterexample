@@ -602,4 +602,18 @@ theorem exists_stateStep_three {α : Ordinal.{u}} (I : Seed.{u} α 2) (hI : I.le
 
 end ApexInstance
 
+namespace Label
+
+open Finset Label CellScheme StageType
+open scoped Ordinal
+
+/-- The key of `1` at a grade `k ≥ 2` is the least grid point `k`. -/
+theorem visibilityReplace_one_eq_gridPoint {k : ℕ} (hk : 2 ≤ k) :
+    visibilityReplace k k (1 : Label.{u}) = gridPoint k 0 := by
+  have h : (1 : Label.{u}) = gridPoint 1 0 := by simp [gridPoint]
+  rw [h]
+  exact visibilityReplace_gridPoint_of_lt (by omega) 0
+
+end Label
+
 end VaughtConjecture

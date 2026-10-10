@@ -92,15 +92,6 @@ def StateCodingAt (Γ : Finset Label.{u})
 variable {d : StageType.{u} α (n + 1)}
   (hd : restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d)
 
-/-- The truncation at the threshold of a mapped state is the mapped truncation. -/
-theorem attachHatAt_comp {ν : Label.{u} → Label.{u}} (hν : ν ⊥ = ⊥) (N : ℕ)
-    (P : Fin (I.attachment g).card → Label.{u}) (a : Fin (I.attachment g).card) :
-    I.attachHatAt g N (ν ∘ P) a = ν (I.attachHatAt g N P a) := by
-  unfold attachHatAt
-  split_ifs
-  · rfl
-  · exact hν.symm
-
 /-- **Admission is carried by a witness** bounded by `m + 2` and sending only `⊥` to `⊥` on the
 values of the state, for requests calibrated on the class. -/
 theorem attachAdmits_comp {p : StageType.{u} α n}

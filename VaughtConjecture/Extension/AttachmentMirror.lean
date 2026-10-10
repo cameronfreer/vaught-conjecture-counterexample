@@ -324,4 +324,60 @@ theorem comap_donor_replicated {d : StageType.{u} α (n + 1)}
 
 end Seed
 
+namespace Seed
+
+open Finset Label
+variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {g : Fin n ↪ Fin m} {H : ℕ}
+  {Γ : Finset Label.{u}} {A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop} {B' : ℕ}
+  {U : Finset (Fin (m + 2))}
+
+/-- A mixed face is not empty. -/
+theorem one_le_card_of_mem_mixedFaces (hU : U ∈ I.mixedFaces g) : 1 ≤ #U := by
+  obtain ⟨-, -, hc, -⟩ := (I.mem_mixedFaces g).mp hU
+  rcases U.eq_empty_or_nonempty with he | hne
+  · exact absurd (he ▸ empty_subset _) hc
+  · exact hne.card_pos
+
+end Seed
+
+namespace Seed
+
+open Finset Label StageType
+variable {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m) (H : ℕ)
+  (Γ : Finset Label.{u}) (A : ℕ → (Fin (I.attachmentBase g).S.card → Label.{u}) → Prop) (B' : ℕ)
+variable {I g H Γ A B'}
+
+/-- **The second coatom is a mixed face** when the root is not onto: it contains the new point
+(so it is not inside the context face) and a point of the context outside the root (so it is not
+inside the donor face). -/
+theorem mem_mixedFaces_coatom (hg : ¬ Function.Surjective g) :
+    univ.erase (Fin.castSucc (Fin.last m)) ∈ I.mixedFaces g := by
+  rw [mem_mixedFaces]
+  refine ⟨?_, fun he ↦ ?_, fun hsub ↦ ?_, fun hsub ↦ ?_⟩
+  · rw [← Coatom.univ_map_right]
+    exact ((StageType.restrictFace_eq_some_iff _ _).mp I.restrictFace_right).1
+  · have h := mem_univ (Fin.castSucc (Fin.last m) : Fin (m + 2))
+    rw [← he, mem_erase] at h
+    exact h.1 rfl
+  · have hl : Fin.last (m + 1) ∈ univ.erase (Fin.castSucc (Fin.last m)) :=
+      mem_erase.mpr ⟨(Fin.castSucc_lt_last _).ne', mem_univ _⟩
+    exact Coatom.last_notMem_univ_map_left (hsub hl)
+  · obtain ⟨i, hi⟩ : ∃ i, ∀ x, g x ≠ i := by
+      by_contra h
+      push Not at h
+      exact hg fun i ↦ (h i).imp fun _ h ↦ h
+    have hmem : Fin.castSucc (Fin.castSucc i) ∈ univ.erase (Fin.castSucc (Fin.last m)) :=
+      mem_erase.mpr ⟨fun h ↦ (Fin.castSucc_lt_last i).ne (Fin.castSucc_injective _ h),
+        mem_univ _⟩
+    obtain ⟨y, -, hy⟩ := mem_map.mp (hsub hmem)
+    induction y using Fin.lastCases with
+    | last =>
+      rw [extendByLast_last] at hy
+      exact (Fin.castSucc_lt_last _).ne' hy
+    | cast y =>
+      rw [extendByLast_castSucc, Function.Embedding.trans_apply] at hy
+      exact hi y (Fin.castSucc_injective _ (Fin.castSucc_injective _ hy))
+
+end Seed
+
 end VaughtConjecture

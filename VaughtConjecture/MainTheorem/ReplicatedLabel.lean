@@ -223,4 +223,16 @@ theorem replicatedInputs_of_lifts {p : StageType.{u} α n}
 
 end Seed
 
+namespace Seed
+
+open Finset Label StageType
+variable {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) (g : Fin n ↪ Fin m)
+
+/-- **The grid bound of the choice**: the larger of the number of blocks of the labels of the
+attachment plus one and the number of cells of the attachment plus one. -/
+noncomputable def seedGridBound : ℕ :=
+  max (blockCount (I.attachLabels g) + 1) ((I.attachment g).card + 1)
+
+end Seed
+
 end VaughtConjecture
