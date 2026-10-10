@@ -34,7 +34,7 @@ growth carriers at the seed position
 (`StageType.GrowthRequests.Calibrated.not_surjective`), lies in the first coatom after a relabelling
 (`Realization.exists_perm_root_eq`), and the recognizing carrier there is relabelled back with its
 recognition (`GrowthCarrier.Recognizes.relabel`).  These are implications; the recognizing carriers
-also follow from `StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed).
+also follow from `StageType.hasLadderGrowthCarriersStableAtSeed_levels`.
 
 ## References
 
