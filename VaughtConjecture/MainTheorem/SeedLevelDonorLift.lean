@@ -275,10 +275,9 @@ theorem cappedLiftAtShort_next_donor (hn : 0 < n) (hQ : Q.ClassCalibrated hte)
   intro h hh hs hb f hf _ hfS
   obtain ⟨i, rfl⟩ := exists_natAdd_of_gradedIndex C hu
   set R := (C.equivFin.symm i).1 with hRdef
-  obtain ⟨hRB, hRl, hRv, hRc, hRA⟩ := mem_lvCat.mp (C.equivFin.symm i).2
+  obtain ⟨-, hRl, hRv, hRc, hRA⟩ := mem_lvCat.mp (C.equivFin.symm i).2
   have hR1 : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), 1)
       (fun e ↦ R e) := hRl.mono (X := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_rfl, by omega⟩
-  have hcB : 2 * Fintype.card (Fin (I.attachment g).card) ≤ B := by simpa using hB
   have hS (e : (N.nS B C).toCellScheme.below ((univ : Finset (Fin (m + 2))), j + 2)) :
       (N.nS B C).rows.rowBelow (Fin.natAdd _ i) hu e = N.Φ B C R e.1 :=
     Scheme.appendFullCells_row_natAdd i _
@@ -299,41 +298,16 @@ theorem cappedLiftAtShort_next_donor (hn : 0 < n) (hQ : Q.ClassCalibrated hte)
     rw [hfT, Rows.extendBot_of_mem f (hmemD a ha), hfS, hS]
     change min (N.Φ B C R (Fin.castAdd _ (N.attEmb a))) h = _
     rw [ALvl.Φ_castAdd, hN.literal R hR1]
-  -- the donor state step at the grade `j + 2`
+  -- the donor state step at the grade `j + 2`, and the decoded row of its orbit code
   obtain ⟨W, hWD, hWl, hWA, hWR, hWv⟩ := exists_donorStateStep hte hn hd hQ (k := j + 2)
     (by omega) hkn hRl hRv hRA hh hV hVR
-  set P := orbitCode (j + 2) W with hPdef
-  have hPC : P ∈ C := mem_lvCat.mpr ⟨fun e ↦ orbitMap_mem_codeGrid hcB _,
-    hWl.orbitCode fun e ↦ e.2.2, fun e ↦ isSelfVisible_one_orbitCode (by omega) (hWv e),
-    orbitCode_orbitCode, attachAdmits_orbitCode hQ hWA⟩
-  obtain ⟨hPB, hPl, -, hPc, -⟩ := mem_lvCat.mp hPC
-  have hP1 : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), 1)
-      (fun e ↦ P e) := hPl.mono (X := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_rfl, by omega⟩
-  have hPR : ∀ a, min (P a) h = min (R a) h := min_orbitCode_eq hh hs hRc hWR
-  have hPW : ∀ a, min (orbitCode (j + 2) W a) h = min (W a) h :=
-    fun a ↦ (hPR a).trans (hWR a).symm
-  refine ⟨fun z ↦ orbitDecoder (j + 2) W h (N.Φ B C P z.1),
-    (hN.isLawfulBelow_Φ hPC).map_of_apply_eq_bot (fun z ↦ z.2.2)
-      (isWitness_orbitDecoder hh hb.ne') (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot hb.ne'),
-    fun e ↦ ?_, fun z ↦ ?_⟩
-  · -- the prescription below the donor face
-    obtain ⟨a, he, ha⟩ := hN.exists_attEmb_of_mem_donor C e.2
-    change orbitDecoder (j + 2) W h (N.Φ B C P e.1) = f e
-    rw [he, ALvl.Φ_castAdd, hN.literal P hP1, orbitDecoder_orbitCode hPW, hWD a ha, hfT, ← he]
-    exact Rows.extendBot_of_mem f e.2
-  · -- the capped agreement with the row of `R`
-    rw [hS z]
-    obtain ⟨z, -⟩ := z
-    dsimp only
-    induction z using Fin.addCases with
-    | left e =>
-      rw [ALvl.Φ_castAdd, ALvl.Φ_castAdd,
-        min_orbitDecoder_eq_of_isReadableAt hh hPW (hN.readable P hPc hPB hP1 e)]
-      exact hN.capAgree P R hP1 hR1 hPB h hh hs hPR e
-    | right i' =>
-      rw [ALvl.Φ_natAdd, ALvl.Φ_natAdd, min_orbitDecoder_eq
-        (isSelfVisible_of_mem_grid (agreementHeight_spec (bot_mem_grid _ _) _ _).1)]
-      exact min_agreementHeight_eq_of_isShort hh hs (fun e ↦ ⟨hPB e, hRB e⟩) hPR _
+  obtain ⟨r, hrl, hrW, hrR⟩ := hN.exists_decodedRow_next hQ hB hWl hWA hWv hh hb.ne'
+    fun a ↦ (min_orbitCode_eq hh hs hRc hWR a).trans (hWR a).symm
+  refine ⟨r, hrl, fun e ↦ ?_, fun z ↦ by rw [hS z]; exact hrR R (C.equivFin.symm i).2 hs hWR z⟩
+  -- the prescription below the donor face
+  obtain ⟨a, he, ha⟩ := hN.exists_attEmb_of_mem_donor C e.2
+  rw [hrW _ _ he, hWD a ha, hfT, ← he]
+  exact Rows.extendBot_of_mem f e.2
 
 /-- **The owner-capped lift from the donor face at the cap `⊥` of the next level** at the grade
 `j + 2 ≤ n + 1`: the donor state step at the cut `⊥` from the bottom state. -/
@@ -345,7 +319,6 @@ theorem hasOwnerCappedLifts_next_bot_donor (hn : 0 < n) (hQ : Q.ClassCalibrated 
   set C := I.lvCat g B hd Q (j + 2) with hC
   set D := univ.map (extendByLast (g.trans Fin.castSuccEmb)) with hDdef
   intro p q hp _ _ o ho _ _
-  have hcB : 2 * Fintype.card (Fin (I.attachment g).card) ≤ B := by simpa using hB
   have hM : IsSelfVisible (j + 1 + 1) (p o) := hp.isSelfVisible_of_gradedIndex_eq ho
   have hp' := hp.min_const_of_isSelfVisible hM
   set pT := Rows.extendBot (D, j + 1 + 1) (fun e ↦ min (p e) (p o)) with hpT
@@ -356,24 +329,11 @@ theorem hasOwnerCappedLifts_next_bot_donor (hn : 0 < n) (hQ : Q.ClassCalibrated 
     (by omega) hkn (R₀ := fun _ ↦ ⊥) (Rows.isLawfulBelow_const_bot _)
     (fun _ ↦ isSelfVisible_bot 1) (I.attachAdmits_bot g hd Q _) (isSelfVisible_bot _)
     (V := fun a ↦ pT (Fin.castAdd _ (N.attEmb a))) hV fun _ _ ↦ by simp only [min_bot_right]
-  set P := orbitCode (j + 2) W with hPdef
-  have hPC : P ∈ C := mem_lvCat.mpr ⟨fun e ↦ orbitMap_mem_codeGrid hcB _,
-    hWl.orbitCode fun e ↦ e.2.2, fun e ↦ isSelfVisible_one_orbitCode (by omega) (hWv e),
-    orbitCode_orbitCode, attachAdmits_orbitCode hQ hWA⟩
-  obtain ⟨-, hPl, -, -, -⟩ := mem_lvCat.mp hPC
-  have hP1 : (I.attachment g).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), 1)
-      (fun e ↦ P e) := hPl.mono (X := ((univ : Finset (Fin (m + 2))), 1)) ⟨subset_rfl, by omega⟩
-  have hPW (a : Fin (I.attachment g).card) :
-      min (orbitCode (j + 2) W a) (gridPoint (j + 2) 0) = min (W a) (gridPoint (j + 2) 0) :=
-    min_orbitCode_gridPoint_zero a
-  refine ⟨fun z ↦ orbitDecoder (j + 2) W (gridPoint (j + 2) 0) (N.Φ B C P z.1),
-    (hN.isLawfulBelow_Φ hPC).map_of_apply_eq_bot (fun z ↦ z.2.2)
-      (isWitness_orbitDecoder (isSelfVisible_gridPoint _ 0) (gridPoint_ne_bot _ 0))
-      (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot (gridPoint_ne_bot _ 0)), fun e ↦ ?_,
-    fun _ ↦ by rw [min_bot_right, min_bot_right]⟩
+  obtain ⟨r, hrl, hrW, -⟩ := hN.exists_decodedRow_next hQ hB hWl hWA hWv
+    (isSelfVisible_gridPoint _ 0) (gridPoint_ne_bot _ 0) min_orbitCode_gridPoint_zero
+  refine ⟨r, hrl, fun e ↦ ?_, fun _ ↦ by rw [min_bot_right, min_bot_right]⟩
   obtain ⟨a, he, ha⟩ := hN.exists_attEmb_of_mem_donor C e.2
-  change orbitDecoder (j + 2) W (gridPoint (j + 2) 0) (N.Φ B C P e.1) = min (p e) (p o)
-  rw [he, ALvl.Φ_castAdd, hN.literal P hP1, orbitDecoder_orbitCode hPW, hWD a ha, hpT, ← he]
+  rw [hrW _ _ he, hWD a ha, hpT, ← he]
   exact Rows.extendBot_of_mem _ e.2
 
 /-- **The lift of the next level from the donor face at the grade `j + 2 ≤ n + 1`**, for requests
