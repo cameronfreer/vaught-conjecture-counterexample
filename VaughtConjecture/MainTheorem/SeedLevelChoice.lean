@@ -19,7 +19,10 @@ only (not of a state, an ambient labelling or a cap):
   that the compressed labels of the attachment and the code set of its states lie below the grid
   point `ω * B + 2` (`Seed.le_gridPoint_seedBlockBound_of_mem_seedValues`).
 Every side condition of the levels holds at every seed and root (`Seed.seedHeightLevel_pos`,
-`Seed.card_attachmentBase_le_seedHeightLevel`, `Seed.two_mul_card_le_seedBlockBound`).
+`Seed.card_attachmentBase_le_seedHeightLevel`, `Seed.two_mul_card_le_seedBlockBound`).  The
+alternative `Seed.seedBlockBound' = max (2 * #attachment + 1) (Seed.seedGridBound)` exceeds twice
+the number of cells strictly (`Seed.two_mul_card_lt_seedBlockBound'`), with the same other side
+conditions; it is a function of the seed and the root as well.
 
 **The context lift at the seed position** (`StageType.lvLevel_cappedLift_atSeed`): with exactly
 the binders of `StageType.HasLadderGrowthCarriersStableAtSeed` (a legal context on `m + 1` points
@@ -97,6 +100,35 @@ theorem le_gridPoint_seedBlockBound_of_mem_seedValues {x : Label.{u}} (hx : x �
       ((le_max_left _ _).trans (seedGridBound_le_seedBlockBound I g)) c
   · exact le_gridPoint_of_mem_codeSet
       ((le_max_right _ _).trans (seedGridBound_le_seedBlockBound I g)) hx
+
+/-! ### The alternative block bound with the strict bound -/
+
+/-- **The alternative block bound of the levels at a seed**: the larger of twice the number of
+cells of the attachment plus one and the grid bound `Seed.seedGridBound`; it exceeds twice the
+number of cells strictly. -/
+noncomputable def seedBlockBound' : ℕ :=
+  max (2 * (I.attachment g).card + 1) (I.seedGridBound g)
+
+theorem two_mul_card_lt_seedBlockBound' : 2 * (I.attachment g).card < I.seedBlockBound' g :=
+  Nat.lt_of_succ_le (le_max_left _ _)
+
+theorem two_mul_card_le_seedBlockBound' : 2 * (I.attachment g).card ≤ I.seedBlockBound' g :=
+  (two_mul_card_lt_seedBlockBound' I g).le
+
+theorem seedGridBound_le_seedBlockBound' : I.seedGridBound g ≤ I.seedBlockBound' g :=
+  le_max_right _ _
+
+/-- The values of the earlier choice lie below the grid point at the alternative block bound. -/
+theorem le_gridPoint_seedBlockBound'_of_mem_seedValues {x : Label.{u}}
+    (hx : x ∈ I.seedValues g) : x ≤ gridPoint 2 (I.seedBlockBound' g) := by
+  rcases mem_insert.mp hx with rfl | hx
+  · exact bot_le
+  rcases mem_union.mp hx with hx | hx
+  · obtain ⟨c, -, rfl⟩ := mem_image.mp hx
+    exact compressedLabel_le_gridPoint
+      ((le_max_left _ _).trans (seedGridBound_le_seedBlockBound' I g)) c
+  · exact le_gridPoint_of_mem_codeSet
+      ((le_max_right _ _).trans (seedGridBound_le_seedBlockBound' I g)) hx
 
 /-! ### The context lift at every seed, at the choice -/
 
