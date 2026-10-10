@@ -357,8 +357,10 @@ variable {α : Ordinal.{u}} {K k : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : 
 instance a top of grade `K`, by availability): `StageType.IsLowFamily.exists_raised_of_gap`, which
 uses neither the tie premise nor the top cell. -/
 theorem lowStepTie_of_top (hF : IsLowFamily K t' tb p o r) {Z : Fin tb.card}
-    (_hZ : tb.label Z = ⊤) (_hZi : tb.toCellScheme.gradedIndex Z = (univ, K)) :
+    (hZ : tb.label Z = ⊤) (hZi : tb.toCellScheme.gradedIndex Z = (univ, K)) :
     LowStepTie K t' tb hF.face_private hF.face_donor o r :=
+  have _ := hZ
+  have _ := hZi
   fun _ hb hhc _ _ hR hf hag hc htop hlow _ ↦
     hF.exists_raised_of_gap hb hhc hR hf hag hlow hc htop
 

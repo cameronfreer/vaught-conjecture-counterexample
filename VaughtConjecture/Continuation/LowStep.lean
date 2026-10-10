@@ -526,8 +526,8 @@ capped at `h`, reads every donor top off the root at least at `c`:
 `StageType.IsLowFamily.exists_raised_of_gap`, which uses neither the tie case `hT` nor the
 self-visibility of the cap. -/
 theorem IsLowFamily.exists_raised (hF : IsLowFamily K t' tb p o r)
-    (_hT : LowStepTie K t' tb hF.face_private hF.face_donor o r) {h c : Label.{u}}
-    (_hh : IsSelfVisible K h) (hb : ⊥ < h) (hhc : h < c) {R : Fin tb.card → Label.{u}}
+    (hT : LowStepTie K t' tb hF.face_private hF.face_donor o r) {h c : Label.{u}}
+    (hh : IsSelfVisible K h) (hb : ⊥ < h) (hhc : h < c) {R : Fin tb.card → Label.{u}}
     {f : Fin t'.card → Label.{u}} (hR : LawfulAt tb K R) (hf : LawfulAt t' K f)
     (hag : ∀ x, min (f (faceCell hF.face_private x)) h = min (R (faceCell hF.face_donor x)) h)
     (hlow : ∀ x, tb.label x ≠ ⊤ → tb.toCellScheme.grade x ≤ K → R x < h)
@@ -539,6 +539,8 @@ theorem IsLowFamily.exists_raised (hF : IsLowFamily K t' tb p o r)
       (∀ d, min (W d) h = min (R d) h) ∧
       ∀ t, tb.label t = ⊤ → tb.toCellScheme.grade t ≤ K →
         t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → c ≤ W t :=
+  have _ := @hT
+  have _ := hh
   hF.exists_raised_of_gap hb hhc hR hf hag hlow hc htop
 
 end VaughtConjecture.StageType
