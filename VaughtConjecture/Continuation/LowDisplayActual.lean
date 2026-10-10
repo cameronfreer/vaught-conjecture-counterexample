@@ -217,23 +217,13 @@ local notation "𝒜" => lowPred (g + 1) (lowN I (g + 1)) (lowT I)
   (StageType.faceCell I.restrictFace_left o) (StageType.faceCell I.restrictFace_left r)
 
 /-- **The actual profile and its partner agree up to the cutoff cut**: their agreement height in
-the grid at `g + 1` is the cutoff cut. -/
+the grid at `g + 1` is the cutoff cut (`ProfileTower.agreementHeight_sepHi_sepLo_eq_cutoffCut` on
+the seed of `g + 1 + j + 2` points). -/
 theorem agreementHeight_sepHi_sepLo
     (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last (g + 1 + j)) o r) :
     agreementHeight (grid (g + 1) (bound I)) (sepHi I g) (sepLo I g) =
-      cutoffCut (g + 1) (lowNAll I) (sepHi I g) := by
-  have hG : (⊥ : Label.{u}) ∈ grid (g + 1) (bound I) := bot_mem_grid _ _
-  have hlt := cutoffCut_sepHi_lt hs
-  refine le_antisymm (not_lt.mp fun hgt ↦ ?_) (le_agreementHeight cutoffCut_sepHi_mem fun f ↦ ?_)
-  · have h := (agreementHeight_spec hG (sepHi I g) (sepLo I g)).2 (Sum.inr ())
-    have h2 : sepLo I g (Sum.inr ()) = cutoffCut (g + 1) (lowNAll I) (sepHi I g) :=
-      Function.update_self _ _ _
-    rw [h2, min_eq_left hgt.le] at h
-    exact (lt_min hlt hgt).ne' h
-  · rcases f with d | z
-    · rw [sepLo, Function.update_of_ne Sum.inl_ne_inr]
-    · cases z
-      rw [sepLo, Function.update_self, min_eq_right hlt.le, min_self]
+      cutoffCut (g + 1) (lowNAll I) (sepHi I g) :=
+  agreementHeight_sepHi_sepLo_eq_cutoffCut hs
 
 /-- **The reading of the completed display holds when the glued labels above `K` are `⊥`**:
 at a stage that is zero or a limit, for the seed of a LOW family at `K = g + 1` (the private
