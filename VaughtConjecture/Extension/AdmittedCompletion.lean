@@ -60,80 +60,17 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
 /-- **The fill of the other coatom at the top grade `m + 1`**, for `0 < m`: a profile `f` lawful
 below a coatom `(C, m + 1)`, agreeing below it with a profile `P` lawful on the cut capped at `h`
 (self-visible at `m + 1`), agrees below `(C, m + 1)` with a profile lawful on the cut that agrees
-with `P` capped at `h` everywhere.  The other coatom `D` is filled at the grade `m` by the capped
-lift of the amalgam from `(C ∩ D, m)` to `(D, m)` at the ambient `P`, then from `m` to `m + 1`
-within `D` (`Seed.exists_lift_union_of_le`: the common face carries no cell of the grade
-`m + 1`). -/
-theorem exists_isCutLawful_of_coatom_top (hm : 0 < m) {x : Fin (m + 2)}
+with `P` capped at `h` everywhere (`ProfileTower.exists_isCutLawful_of_coatom_succ`, which holds
+for every `m`). -/
+theorem exists_isCutLawful_of_coatom_top (_hm : 0 < m) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {h : Label.{u}} (hh : IsSelfVisible (m + 1) h)
     {P : Prof I} (hP : IsCutLawful I (m + 1) P) {f : Prof I}
     (hf : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ f d)
     (hfP : ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1), min (f d) h = min (P d) h) :
     ∃ W : Prof I, IsCutLawful I (m + 1) W ∧
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1), W d = f d) ∧
-      ∀ d, min (W d) h = min (P d) h := by
-  classical
-  obtain ⟨y, hy, hxy⟩ := Seed.exists_other hx
-  obtain ⟨hOf, hOcard⟩ := inter_props (I := I) hx hy hxy
-  have hXf : ((univ.erase x ∩ univ.erase y, m) : Finset (Fin (m + 2)) × ℕ) ∈
-      I.amalgam.toCellScheme.gradedFaces := ⟨hOf, hm, by simp only; rw [hOcard]⟩
-  have hYf : ((univ.erase y, m) : Finset (Fin (m + 2)) × ℕ) ∈
-      I.amalgam.toCellScheme.gradedFaces :=
-    ⟨I.erase_mem_faces hy, hm, by simp only; rw [Seed.card_erase]; omega⟩
-  have hXY : ((univ.erase x ∩ univ.erase y, m) : Finset (Fin (m + 2)) × ℕ) ≤ (univ.erase y, m) :=
-    ⟨inter_subset_right, le_rfl⟩
-  have hXC : ((univ.erase x ∩ univ.erase y, m) : Finset (Fin (m + 2)) × ℕ) ≤
-      (univ.erase x, m + 1) := ⟨inter_subset_left, Nat.le_succ m⟩
-  have hDD : ((univ.erase y, m) : Finset (Fin (m + 2)) × ℕ) ≤ (univ.erase y, m + 1) :=
-    ⟨subset_rfl, Nat.le_succ m⟩
-  -- The fill of the other coatom at the grade `m`.
-  obtain ⟨v₁, hv₁, hv₁P, hv₁f⟩ := (Rows.cappedLift_iff_forall_exists hXY).mp
-    (I.isBountiful hXf hYf hXY) h (hh.mono (Nat.le_succ m)) (fun d ↦ f d) (fun d ↦ P d)
-    (hf.mono (X := (univ.erase x ∩ univ.erase y, m)) hXC)
-    ((hP.erase hy).mono (X := (univ.erase y, m)) hDD)
-    fun d ↦ (hfP d.1 (CellScheme.below_mono _ hXC d.2)).symm
-  set w : Prof I := fun d ↦
-    if d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1) then f d
-    else Rows.extendBot (univ.erase y, m) v₁ d with hw_def
-  have hwv (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m)) : w d = v₁ ⟨d, hd⟩ := by
-    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)
-    · rw [hw_def]
-      simp only [hdC, ite_true]
-      exact (hv₁f ⟨d, ⟨subset_inter hdC.1 hd.1, hd.2⟩⟩).symm
-    · rw [hw_def]
-      simp only [hdC, ite_false]
-      exact Rows.extendBot_of_mem v₁ hd
-  have hw : I.amalgam.rows.IsLawfulBelow (univ.erase y, m) fun d ↦ w d := by
-    convert hv₁ using 1
-    exact funext fun d ↦ hwv d d.2
-  -- The fill within the other coatom from `m` to `m + 1`.
-  obtain ⟨v, hv, hvw, hvP⟩ := I.exists_lift_union_of_le hx hy hxy (j := m) le_rfl hh
-    (a := fun d ↦ P d) (hP.erase hy) hw fun d hd ↦ by rw [hwv d hd]; exact hv₁P ⟨d, hd⟩
-  set W : Prof I := fun d ↦
-    if d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1) then f d
-    else if hD : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1) then v ⟨d, hD⟩ else P d
-    with hW
-  have hWC (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)) : W d = f d :=
-    ite_eq_left hd
-  have hWD (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1)) :
-      W d = v ⟨d, hd⟩ := by
-    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)
-    · rw [hWC d hdC, hvw ⟨d, hd⟩ (.inl ⟨subset_inter hdC.1 hd.1, hd.2⟩), hw_def]
-      simp only [hdC, ite_true]
-    · rw [hW]
-      simp only [hdC, hd, ite_false, dite_true]
-  have hlC : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ W d :=
-    (Rows.isLawfulBelow_congr fun d hd ↦ (hWC d hd).symm).mp hf
-  have hlD : I.amalgam.rows.IsLawfulBelow (univ.erase y, m + 1) fun d ↦ W d := by
-    convert hv using 1
-    exact funext fun d ↦ hWD d d.2
-  refine ⟨W, lawful_pair hx hy hxy hlC hlD, hWC, fun d ↦ ?_⟩
-  by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)
-  · rw [hWC d hdC]; exact hfP d hdC
-  by_cases hdD : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1)
-  · rw [hWD d hdD]; exact hvP ⟨d, hdD⟩
-  · rw [hW]
-    simp only [hdC, hdD, ite_false, dite_false]
+      ∀ d, min (W d) h = min (P d) h :=
+  exists_isCutLawful_of_coatom_succ hx hh hP hf hfP
 
 /-! ### The admitted top over the level at the grade `m` -/
 

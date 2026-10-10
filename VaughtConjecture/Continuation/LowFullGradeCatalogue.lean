@@ -24,7 +24,8 @@ The capped lift from a coatom into a catalogue layer over a good level
   grade `m + 1`.  The common face of the two coatoms has `m` points, so it carries no cell of the
   grade `m + 1`: the trace on it is lifted from the graded face `(C ∩ D, m)` into the other coatom
   at the grade `m + 1` (bountifulness of the amalgam between graded faces of different grades), and
-  every cell below both coatoms lies below `(C ∩ D, m)`.
+  every cell below both coatoms lies below `(C ∩ D, m)`
+  (`ProfileTower.exists_isCutLawful_of_coatom_succ`, for every `m`).
 * `ProfileTower.Lvl.Good.cappedLift_catS_of_catStep_top`: the capped lift at the grade `m + 1`
   from the catalogue step (`ProfileTower.Lvl.CatStep`).
 
@@ -163,91 +164,17 @@ theorem Lvl.Good.cappedLift_catS_succ (hL : L.Good) (hgm : g + 1 ≤ m + 1) {x :
 
 end Succ
 
-/-- **The lift from the common face of the two coatoms into a coatom at the grade `m + 1`**: the
-common face has `m` points, so its graded face of grade `m` lies below the coatom at `m + 1`; for
-`1 ≤ m` the lift is bountifulness of the amalgam, and for `m = 0` no cell lies below it. -/
-theorem cappedLift_inter_succ {B C : Finset (Fin (m + 2))} (hB : B ∈ I.amalgam.toCellScheme.faces)
-    (hBc : #B = m) (hC : C ∈ I.amalgam.toCellScheme.faces) (hCc : #C = m + 1)
-    (h : ((B, m) : Finset (Fin (m + 2)) × ℕ) ≤ (C, m + 1)) : I.amalgam.rows.CappedLift h := by
-  by_cases hm : 1 ≤ m
-  · exact I.isBountiful
-      (show ((B, m) : Finset (Fin (m + 2)) × ℕ) ∈ I.amalgam.toCellScheme.gradedFaces from
-        ⟨hB, hm, hBc.ge⟩)
-      (show ((C, m + 1) : Finset (Fin (m + 2)) × ℕ) ∈ I.amalgam.toCellScheme.gradedFaces from
-        ⟨hC, by omega, hCc.ge⟩) h
-  · refine (Rows.cappedLift_iff_forall_exists h).mpr fun _ _ _ q _ hq _ ↦
-      ⟨q, hq, fun _ ↦ rfl, fun d ↦ ?_⟩
-    exfalso
-    have h1 : I.amalgam.toCellScheme.grade d.1 ≤ m := d.2.2
-    have h2 := I.amalgam.isWellFormed.isWellFormed.grade_pos d.1
-    omega
-
 section Top
 
 variable {L : Lvl I m} {A : CProf I → Prop} {C : Finset (CProf I)}
 
 local notation "𝒞" => predCat I (m + 1) A
 
-/-- **The catalogue step at the cap `⊥`**: every labelling of the catalogue layer
-lawful below a coatom at the grade `m + 1` is, at the amalgam cells below the coatom, an amalgam
-profile lawful on the grade-`(m + 1)` cut: lift its trace on the common face into the other coatom
-at the cap `⊥` (bountifulness of the amalgam) and glue. -/
-theorem Lvl.Good.exists_cutLawful_of_coatom_top (hL : L.Good) {x : Fin (m + 2)}
-    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {w : Fin (L.catS C).card → Label.{u}}
-    (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, m + 1) (fun z ↦ w z)) :
-    ∃ W : Prof I, IsCutLawful I (m + 1) W ∧
-      ∀ d, I.amalgam.toCellScheme.grade d ≤ m + 1 →
-        I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d)) := by
-  classical
-  obtain ⟨y, hy, hxy⟩ := Seed.exists_other hx
-  obtain ⟨hOf, hOcard⟩ := inter_props (I := I) hx hy hxy
-  have hcard (z : Fin (m + 2)) : #(univ.erase z) = m + 1 := Seed.card_erase z
-  set a : Prof I := fun d ↦ w (Fin.castAdd _ (L.embed d)) with ha_def
-  -- the amalgam labelling is lawful below the coatom `x`
-  have ha : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ a d := by
-    have h1 := (L.isLawfulBelow_catS_iff (C := C) (fun h ↦ Seed.ne_univ_erase x
-      (univ_subset_iff.mp h.1))).mp hw
-    exact (hL.isLawfulBelow_old_iff (X := (univ.erase x, m + 1)) (Seed.ne_univ_erase x)
-      (w := fun e ↦ w (Fin.castAdd _ e))).mp h1
-  -- lift the trace on the common face into the coatom `y` at the cap `⊥`
-  set O : Finset (Fin (m + 2)) × ℕ := (univ.erase x ∩ univ.erase y, m) with hO
-  have hOV : O ≤ (univ.erase y, m + 1) := ⟨inter_subset_right, by simp only [hO]; omega⟩
-  have hOU : O ≤ (univ.erase x, m + 1) := ⟨inter_subset_left, by simp only [hO]; omega⟩
-  have hlift : I.amalgam.rows.CappedLift hOV :=
-    cappedLift_inter_succ hOf hOcard (I.erase_mem_faces hy) (Seed.card_erase _) hOV
-  obtain ⟨q', hq', -, hq'a⟩ := (Rows.cappedLift_iff_forall_exists hOV).mp hlift ⊥
-    (isSelfVisible_bot _) (fun d ↦ a d) (fun _ ↦ ⊥) (ha.mono hOU)
-    (Rows.isLawfulBelow_const_bot _) fun _ ↦ by simp
-  -- glue
-  set W : Prof I := fun d ↦
-    if hd : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1) then a d
-    else if hd' : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1) then q' ⟨d, hd'⟩
-    else ⊥ with hW
-  have hWx (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)) :
-      W d = a d := dite_eq_left hd
-  have hWy (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1)) :
-      W d = q' ⟨d, hd⟩ := by
-    by_cases hdx : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)
-    · rw [hWx d hdx]
-      have hdO : d ∈ I.amalgam.toCellScheme.below O :=
-        ⟨subset_inter hdx.1 hd.1, (I.amalgam.isWellFormed.isWellFormed.grade_le_card d).trans
-          ((card_le_card (subset_inter hdx.1 hd.1)).trans hOcard.le)⟩
-      exact (hq'a ⟨d, hdO⟩).symm
-    · exact (dite_eq_right hdx).trans (dite_eq_left hd)
-  have hWlx : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ W d :=
-    (Rows.isLawfulBelow_congr fun d hd ↦ (hWx d hd).symm).mp ha
-  have hWly : I.amalgam.rows.IsLawfulBelow (univ.erase y, m + 1) fun d ↦ W d := by
-    convert hq' using 1
-    funext d
-    exact hWy d.1 d.2
-  refine ⟨W, lawful_pair hx hy hxy hWlx hWly, fun d hd hds ↦ hWx d ⟨hds, hd⟩⟩
-
 /-- **The step on the amalgam at a positive cap, with the cap ball of a profile**: for a profile
 `P` lawful on the grade-`(m + 1)` cut and a cap `h` self-visible at `m + 1`, every labelling lawful
 below a coatom that agrees there with `P` capped at `h` is, at the amalgam cells below the coatom,
-an amalgam profile lawful on the cut agreeing everywhere with `P` capped at `h`: the trace on the
-common face is lifted into the other coatom in the cap ball of `P` (bountifulness of the amalgam),
-and the cells above the cut keep `P`. -/
+an amalgam profile lawful on the cut agreeing everywhere with `P` capped at `h`
+(`ProfileTower.exists_isCutLawful_of_coatom_succ` at the old labels). -/
 theorem Lvl.Good.exists_cutLawful_of_coatom_cap_top (hL : L.Good)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {P : Prof I}
     (hP : IsCutLawful I (m + 1) P) {h : Label.{u}} (hh : IsSelfVisible (m + 1) h)
@@ -260,54 +187,29 @@ theorem Lvl.Good.exists_cutLawful_of_coatom_cap_top (hL : L.Good)
       (∀ d, I.amalgam.toCellScheme.grade d ≤ m + 1 →
         I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d))) ∧
       ∀ d, min (W d) h = min (P d) h := by
-  classical
-  obtain ⟨y, hy, hxy⟩ := Seed.exists_other hx
-  obtain ⟨hOf, hOcard⟩ := inter_props (I := I) hx hy hxy
-  have hcard (z : Fin (m + 2)) : #(univ.erase z) = m + 1 := Seed.card_erase z
-  set a : Prof I := fun d ↦ w (Fin.castAdd _ (L.embed d)) with ha_def
-  have ha : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ a d := by
-    have h1 := (L.isLawfulBelow_catS_iff (C := C) (fun h ↦ Seed.ne_univ_erase x
-      (univ_subset_iff.mp h.1))).mp hw
-    exact (hL.isLawfulBelow_old_iff (X := (univ.erase x, m + 1)) (Seed.ne_univ_erase x)
-      (w := fun e ↦ w (Fin.castAdd _ e))).mp h1
-  set O : Finset (Fin (m + 2)) × ℕ := (univ.erase x ∩ univ.erase y, m) with hO
-  have hOV : O ≤ (univ.erase y, m + 1) := ⟨inter_subset_right, by simp only [hO]; omega⟩
-  have hOU : O ≤ (univ.erase x, m + 1) := ⟨inter_subset_left, by simp only [hO]; omega⟩
-  have hlift : I.amalgam.rows.CappedLift hOV :=
-    cappedLift_inter_succ hOf hOcard (I.erase_mem_faces hy) (Seed.card_erase _) hOV
-  obtain ⟨q', hq', hq'P, hq'a⟩ := (Rows.cappedLift_iff_forall_exists hOV).mp hlift h hh
-    (fun d ↦ a d) (fun d ↦ P d) (ha.mono hOU) (hP.isLawfulBelow_erase hy)
-    fun d ↦ (hwP d.1 (d.2.2.trans (by simp only [hO]; omega)) (subset_inter_iff.mp d.2.1).1).symm
-  set W : Prof I := fun d ↦
-    if hd : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1) then a d
-    else if hd' : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1) then q' ⟨d, hd'⟩
-    else P d with hW
-  have hWx (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)) :
-      W d = a d := dite_eq_left hd
-  have hWy (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1)) :
-      W d = q' ⟨d, hd⟩ := by
-    by_cases hdx : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)
-    · rw [hWx d hdx]
-      have hdO : d ∈ I.amalgam.toCellScheme.below O :=
-        ⟨subset_inter hdx.1 hd.1, (I.amalgam.isWellFormed.isWellFormed.grade_le_card d).trans
-          ((card_le_card (subset_inter hdx.1 hd.1)).trans hOcard.le)⟩
-      exact (hq'a ⟨d, hdO⟩).symm
-    · exact (dite_eq_right hdx).trans (dite_eq_left hd)
-  have hWlx : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1) fun d ↦ W d :=
-    (Rows.isLawfulBelow_congr fun d hd ↦ (hWx d hd).symm).mp ha
-  have hWly : I.amalgam.rows.IsLawfulBelow (univ.erase y, m + 1) fun d ↦ W d := by
-    convert hq' using 1
-    funext d
-    exact hWy d.1 d.2
-  refine ⟨W, lawful_pair hx hy hxy hWlx hWly, fun d hd hds ↦ hWx d ⟨hds, hd⟩, fun d ↦ ?_⟩
-  by_cases hdx : d ∈ I.amalgam.toCellScheme.below (univ.erase x, m + 1)
-  · rw [hWx d hdx]
-    exact hwP d hdx.2 hdx.1
-  · by_cases hdy : d ∈ I.amalgam.toCellScheme.below (univ.erase y, m + 1)
-    · rw [hWy d hdy]
-      exact hq'P ⟨d, hdy⟩
-    · have hWd : W d = P d := (dite_eq_right hdx).trans (dite_eq_right hdy)
-      rw [hWd]
+  have ha : I.amalgam.rows.IsLawfulBelow (univ.erase x, m + 1)
+      fun d ↦ w (Fin.castAdd _ (L.embed d)) :=
+    (hL.isLawfulBelow_old_iff (X := (univ.erase x, m + 1)) (Seed.ne_univ_erase x)
+      (w := fun e ↦ w (Fin.castAdd _ e))).mp ((L.isLawfulBelow_catS_iff (C := C)
+        (fun h ↦ Seed.ne_univ_erase x (univ_subset_iff.mp h.1))).mp hw)
+  obtain ⟨W, hW, hWa, hWP⟩ := exists_isCutLawful_of_coatom_succ hx hh hP
+    (f := fun d ↦ w (Fin.castAdd _ (L.embed d))) ha fun d hd ↦ hwP d hd.2 hd.1
+  exact ⟨W, hW, fun d hd hds ↦ hWa d ⟨hds, hd⟩, hWP⟩
+
+/-- **The catalogue step at the cap `⊥`**: every labelling of the catalogue layer
+lawful below a coatom at the grade `m + 1` is, at the amalgam cells below the coatom, an amalgam
+profile lawful on the grade-`(m + 1)` cut
+(`ProfileTower.Lvl.Good.exists_cutLawful_of_coatom_cap_top` at the profile `⊥` and the cap `⊥`). -/
+theorem Lvl.Good.exists_cutLawful_of_coatom_top (hL : L.Good) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {w : Fin (L.catS C).card → Label.{u}}
+    (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, m + 1) (fun z ↦ w z)) :
+    ∃ W : Prof I, IsCutLawful I (m + 1) W ∧
+      ∀ d, I.amalgam.toCellScheme.grade d ≤ m + 1 →
+        I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d)) :=
+  have ⟨W, hW, hWw, _⟩ := hL.exists_cutLawful_of_coatom_cap_top hx (P := fun _ ↦ ⊥)
+    ⟨Rows.isLawfulBelow_const_bot _, Rows.isLawfulBelow_const_bot _⟩ (isSelfVisible_bot _) hw
+    fun _ _ _ ↦ by simp
+  ⟨W, hW, hWw⟩
 
 /-- **The capped lift from a coatom into the catalogue layer at the grade `m + 1`, from the
 catalogue step**: the cap `⊥` is `ProfileTower.Lvl.Good.exists_cutLawful_of_coatom_top`. -/
@@ -325,5 +227,39 @@ theorem Lvl.Good.cappedLift_catS_of_catStep_top (hL : L.Good) {x : Fin (m + 2)}
     exact ⟨W, hW, hWw, hAbot _⟩) hstep
 
 end Top
+
+/-! ### The case `m = 0`
+
+The fill of the other coatom and the two steps on the amalgam at the grade `1`, on a seed of `2`
+points: no positivity premise on `m`. -/
+
+example {I : Seed.{u} α 0} {x : Fin 2} (hx : x ∈ (Pts : Finset (Fin 2))) {h : Label.{u}}
+    (hh : IsSelfVisible 1 h) {P : Prof I} (hP : IsCutLawful I 1 P) {f : Prof I}
+    (hf : I.amalgam.rows.IsLawfulBelow (univ.erase x, 1) fun d ↦ f d)
+    (hfP : ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, 1), min (f d) h = min (P d) h) :
+    ∃ W : Prof I, IsCutLawful I 1 W ∧
+      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, 1), W d = f d) ∧
+      ∀ d, min (W d) h = min (P d) h :=
+  exists_isCutLawful_of_coatom_succ hx hh hP hf hfP
+
+example {I : Seed.{u} α 0} {L : Lvl I 0} {C : Finset (CProf I)} (hL : L.Good) {x : Fin 2}
+    (hx : x ∈ (Pts : Finset (Fin 2))) {P : Prof I} (hP : IsCutLawful I 1 P) {h : Label.{u}}
+    (hh : IsSelfVisible 1 h) {w : Fin (L.catS C).card → Label.{u}}
+    (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, 1) (fun z ↦ w z))
+    (hwP : ∀ d, I.amalgam.toCellScheme.grade d ≤ 1 → I.amalgam.toCellScheme.scope d ⊆ univ.erase x →
+      min (w (Fin.castAdd _ (L.embed d))) h = min (P d) h) :
+    ∃ W : Prof I, IsCutLawful I 1 W ∧
+      (∀ d, I.amalgam.toCellScheme.grade d ≤ 1 →
+        I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d))) ∧
+      ∀ d, min (W d) h = min (P d) h :=
+  hL.exists_cutLawful_of_coatom_cap_top hx hP hh hw hwP
+
+example {I : Seed.{u} α 0} {L : Lvl I 0} {C : Finset (CProf I)} (hL : L.Good) {x : Fin 2}
+    (hx : x ∈ (Pts : Finset (Fin 2))) {w : Fin (L.catS C).card → Label.{u}}
+    (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, 1) (fun z ↦ w z)) :
+    ∃ W : Prof I, IsCutLawful I 1 W ∧
+      ∀ d, I.amalgam.toCellScheme.grade d ≤ 1 →
+        I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d)) :=
+  hL.exists_cutLawful_of_coatom_top hx hw
 
 end VaughtConjecture.ProfileTower
