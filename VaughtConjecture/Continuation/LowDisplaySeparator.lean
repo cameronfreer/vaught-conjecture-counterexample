@@ -25,7 +25,8 @@ cutoff to the cutoff cut `c` over all proper donor cells; it is LOW (`ProfileTow
 donor maximum of the actual profile is `⊥` or the code of a proper donor label `W d`, so `c` is
 `⊥` or the grid point of the code block of `W d` (`Label.visibilityReplace_orbitMap`): it lies in
 the grid, and below `β`, the grid point of the code block of `⊤`, since the key of `W d` is below
-that of `⊤` (`Label.codeBlock_lt_codeBlock`).
+that of `⊤` (`Label.codeBlock_lt_codeBlock`).  The agreement height of the actual profile and its
+partner in the grid at `K` is `c` (`ProfileTower.agreementHeight_sepHi_sepLo_eq_cutoffCut`).
 
 **The reading of the actual profile** (`ProfileTower.sepDecoder`, the upper decoder of `w` at
 `K`, a witness bounded by `K`).  It reads the code of `W` as `W` at the cells of grade at most `K`
@@ -187,6 +188,26 @@ theorem cutoffCut_sepHi_lt
       exact hne)
     exact lt_of_le_of_ne (gridPoint_le_gridPoint.mpr hlt.le)
       fun he ↦ absurd (gridPoint_le_gridPoint.mp he.ge) (not_le.mpr hlt)
+
+/-- **The actual profile and its partner agree up to the cutoff cut**, on a seed of any arity: their
+agreement height in the grid at `g + 1` is the cutoff cut, which lies in the grid and below the
+cutoff (`ProfileTower.cutoffCut_sepHi_mem`, `ProfileTower.cutoffCut_sepHi_lt`). -/
+theorem agreementHeight_sepHi_sepLo_eq_cutoffCut
+    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o r) :
+    agreementHeight (grid (g + 1) (bound I)) (sepHi I g) (sepLo I g) =
+      cutoffCut (g + 1) (lowNAll I) (sepHi I g) := by
+  have hG : (⊥ : Label.{u}) ∈ grid (g + 1) (bound I) := bot_mem_grid _ _
+  have hlt := cutoffCut_sepHi_lt hs
+  refine le_antisymm (not_lt.mp fun hgt ↦ ?_) (le_agreementHeight cutoffCut_sepHi_mem fun f ↦ ?_)
+  · have h := (agreementHeight_spec hG (sepHi I g) (sepLo I g)).2 (Sum.inr ())
+    have h2 : sepLo I g (Sum.inr ()) = cutoffCut (g + 1) (lowNAll I) (sepHi I g) :=
+      Function.update_self _ _ _
+    rw [h2, min_eq_left hgt.le] at h
+    exact (lt_min hlt hgt).ne' h
+  · rcases f with d | z
+    · rw [sepLo, Function.update_of_ne Sum.inl_ne_inr]
+    · cases z
+      rw [sepLo, Function.update_self, min_eq_right hlt.le, min_self]
 
 /-- **The partner of the actual profile lies in the LOW catalogue.** -/
 theorem sepLo_mem (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o r)

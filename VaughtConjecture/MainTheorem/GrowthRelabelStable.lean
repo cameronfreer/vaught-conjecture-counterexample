@@ -22,7 +22,7 @@ with (R2) (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed`
 
 The contract at the seed position is compiled with no hypotheses
 (`StageType.hasLadderGrowthCarriersStableAtSeed_levels`, in
-`VaughtConjecture.MainTheorem.LevelCarrierContract`; not yet reviewed); (R2) is proved by
+`VaughtConjecture.MainTheorem.LevelCarrierContract`); (R2) is proved by
 `Realization.receivingResidualReceiving_of_padded`.
 
 ## References
@@ -59,7 +59,7 @@ open Ordinal Realization FirstOrder Language Structure baseLanguage Expansion St
 /-- **The main theorem from the stable ladder contract at the seed position**: (R3) and (R4) both
 from the one constructor; the hypothesis (R2) `hres` is kept (it is
 `Realization.receivingResidualReceiving_of_padded`).  The contract `hlad` is
-`StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed). -/
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels`. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_stableAtSeed
     (hres : ReceivingResidualReceiving.{0, 0})
     (hlad : HasLadderGrowthCarriersStableAtSeed.{0}) :
