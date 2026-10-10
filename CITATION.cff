@@ -6,10 +6,16 @@ abstract: >-
   A Lean 4 proof that a sentence of the infinitary logic L_{ω₁ω}, in a countable relational
   language, has exactly ℵ₁ countable models up to isomorphism and no perfect set of pairwise
   non-isomorphic countable models. It is not a counterexample to the first-order Vaught
-  conjecture.
+  conjecture. It proves the stated theorem for its own sentence, following the construction of
+  the manuscript; it does not formalize every claim of the manuscript.
+# The mathematics is cited separately: preferred-citation below, the manuscript [AFK26].
 authors:
+  - family-names: Ackerman
+    given-names: Nathanael
   - family-names: Freer
     given-names: Cameron
+  - family-names: Knight
+    given-names: Robin
 repository-code: "https://github.com/cameronfreer/vaught-conjecture-counterexample"
 url: "https://github.com/cameronfreer/vaught-conjecture-counterexample"
 license: Apache-2.0
@@ -33,6 +39,6 @@ preferred-citation:
     - family-names: Freer
       given-names: Cameron
     - family-names: Knight
-      given-names: R. W.
+      given-names: Robin
   notes: Draft
   year: 2026

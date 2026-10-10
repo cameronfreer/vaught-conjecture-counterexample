@@ -40,8 +40,8 @@ bash scripts/check.sh --no-build
 
 ## Dependency pins and upgrades
 
-The only pins are `lean-toolchain` and the InfinitaryLogic and ComputableModelTheory revisions in
-`lakefile.toml`.  Mathlib is not required directly: it is inherited from InfinitaryLogic's
+The only pins are `lean-toolchain` and the [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) and
+[ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory) revisions in `lakefile.toml`.  Mathlib is not required directly: it is inherited from InfinitaryLogic's
 manifest (a `cameronfreer/mathlib4` fork commit), and the toolchain must equal InfinitaryLogic's
 (`scripts/check.sh` checks this).
 

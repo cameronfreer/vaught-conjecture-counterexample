@@ -8,14 +8,19 @@ A Lean 4 proof that a sentence of the infinitary logic $L_{\omega_1,\omega}$, in
 relational language, has exactly $\aleph_1$ countable models up to isomorphism and no perfect set
 of pairwise non-isomorphic countable models, following the drafts [Kni26] and [AFK26] (see
 [`roadmap/REFERENCES.bib`](roadmap/REFERENCES.bib)).  It is a counterexample to Vaught's
-conjecture for $L_{\omega_1,\omega}$, not to the first-order Vaught conjecture.
+conjecture for $L_{\omega_1,\omega}$, not to the first-order Vaught conjecture.  The
+formalization proves the stated theorem for its own sentence, `baseLanguage.densitySentence`,
+following the construction of the manuscript; it does not formalize every claim of [AFK26], and it
+does not identify the models of that sentence with the manuscript's class of strongly coded
+templates.
 
 ## Status
 
 The main theorem is proved, with no hypotheses:
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels : HasThinAlephOneSpectrum baseLanguage.densitySentence`.
 Axioms: `propext`, `Classical.choice`, `Quot.sound` (audited in CI).  Pinned: Lean
-`v4.35.0-rc3`, InfinitaryLogic `e460cb6`, ComputableModelTheory `a1fe761`.
+`v4.35.0-rc3`, [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) `e460cb6`,
+[ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory) `a1fe761`.
 Not covered: the first-order Vaught conjecture.  Statements the proof does not use, among them
 (R1) and (R2) for every model, remain open; see [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md).
 
@@ -61,9 +66,14 @@ echo 'import VaughtConjecture.MainTheorem.GrowthLevelRoute
   | lake env lean --stdin
 ```
 
-Mathlib is inherited from InfinitaryLogic's manifest (the fork `cameronfreer/mathlib4` at
-`346a4bd`), so `lake exe cache get` covers only part of it.  CI runs the same commands on every
-push to `main` and every pull request.
+The library builds on [Mathlib](https://github.com/leanprover-community/mathlib4),
+[InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) (syntax and semantics of
+$L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting), and
+[ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory) (classical
+Fraïssé interfaces, factorization of tuples through age representatives, orbit isolation, atomic
+and prime structures).  Mathlib is inherited from InfinitaryLogic's manifest (the fork
+`cameronfreer/mathlib4` at `346a4bd`), so `lake exe cache get` covers only part of it.  CI runs the
+same commands on every push to `main` and every pull request.
 
 ## Reading the proof
 
@@ -80,8 +90,8 @@ in `Extension/ProfileTowerCompletion.lean`); the sentence and its models (`Langu
 GitHub's "Cite this repository" uses [`CITATION.cff`](CITATION.cff):
 
 ```bibtex
-@software{FreerVaughtCounterexampleLean,
-  author  = {Freer, Cameron},
+@software{AckermanFreerKnightVaughtCounterexampleLean,
+  author  = {Ackerman, Nathanael and Freer, Cameron and Knight, Robin},
   title   = {Formalization of a counterexample to {Vaught}'s conjecture for {$L_{\omega_1\omega}$}},
   year    = {2026},
   url     = {https://github.com/cameronfreer/vaught-conjecture-counterexample},
@@ -96,7 +106,9 @@ For the mathematics, cite the manuscript [AFK26] (entry `AFK26` of
 by the same authors is registered as Palomar entry
 [PALOMAR-2026-10-07-000001](https://palomar-registry.org/entry?id=PALOMAR-2026-10-07-000001&version=1)
 ([`cameronfreer/vaught-conjecture-palomar`](https://github.com/cameronfreer/vaught-conjecture-palomar)
-at `032ccb7`); this repository does not depend on it, and the registration does not extend to it.
+at commit `032ccb7a25b0ff6227128aa0aeba549c5901ea9a`, theorem
+`PalomarChallenge.independent_challenge`); this repository does not depend on it, and the
+registration does not extend to it.
 
 ## Contributing and license
 
