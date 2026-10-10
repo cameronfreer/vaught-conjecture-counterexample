@@ -162,4 +162,80 @@ theorem exists_cappedDecoder_isWitness {v : Fin S.card → Label.{u}} (hv : S.ro
 
 end Scheme
 
+namespace Scheme
+
+open Finset Label
+variable {n : ℕ} {S : Scheme.{u} n}
+
+/-- **The capped decoder of a section lawful below a pair**, at a cell `c` below the pair of grade
+`N`: a witness bounded by `N`, bounded by the label of `c`, reading the row of `c` as the section
+capped at `c` (`Scheme.exists_cappedDecoder_isWitness` for sections lawful below a pair). -/
+theorem exists_cappedDecoder_below {Y : Finset (Fin n) × ℕ} {w : Fin S.card → Label.{u}}
+    (hw : S.rows.IsLawfulBelow Y fun d ↦ w d) {c : Fin S.card}
+    (hcY : c ∈ S.toCellScheme.below Y) {N : ℕ} (hcN : S.toCellScheme.grade c = N) :
+    ∃ θ : Label.{u} → Label.{u}, IsWitness (stepSuppressor N) θ ∧ (∀ x, θ x ≤ w c) ∧
+      ∀ d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex c),
+        θ (S.rowAt c d) = min (w d) (w c) := by
+  obtain ⟨hord, hloc, -⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hw
+  obtain ⟨g, σ, hwit, hq⟩ := hloc c hcY
+  have hcb : c ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex c) :=
+    CellScheme.mem_below_gradedIndex _ c
+  have hvc : IsSelfVisible N (w c) := hcN ▸ hord c hcY
+  have hqc := hq ⟨c, hcb⟩
+  simp only [min_self] at hqc
+  rw [hcN] at hqc
+  have hvcg : w c ≤ g N := hqc ▸ min_le_right _ _
+  refine ⟨fun x ↦ min (min (σ x) (g N)) (w c),
+    ⟨(IsWitness.id_step N).antitone, (IsWitness.id_step N).isSelfVisible, by simp [hwit.map_bot],
+      fun x y hxy ↦ min_le_min_right _ (min_le_min_right _ (hwit.monotone hxy)),
+      fun x k hx i hi ↦ ?_⟩, fun x ↦ min_le_right _ _, fun d hd ↦ ?_⟩
+  · by_cases hk : k ≤ N
+    · rw [hwit.min_visibilityReplace_of_le hk hi,
+        visibilityReplace_min_of_isSelfVisible hi (hvc.mono hk)]
+    · rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff] at hx
+      rw [hx, visibilityReplace_bot]
+      rcases min_eq_bot.mp hx with h | h
+      · rcases min_eq_bot.mp h with h' | h'
+        · rw [hwit.apply_visibilityReplace_eq_bot h' k hi]; simp
+        · rw [h']; simp
+      · rw [h]; simp
+  · have hqd := hq ⟨d, hd⟩
+    simp only at hqd
+    rw [← rowAt_of_mem hd] at hqd
+    have hgd : g N ≤ g (S.toCellScheme.grade d) := by
+      apply hwit.antitone
+      have := hd.2
+      simp only [CellScheme.gradedIndex_snd] at this
+      rw [hcN] at this
+      exact this
+    have hle : min (w d) (w c) ≤ g N := (min_le_right _ _).trans hvcg
+    have h1 : min (σ (S.rowAt c d)) (g N) = min (w d) (w c) := by
+      apply le_antisymm
+      · rw [hqd]
+        exact le_min (min_le_left _ _) ((min_le_right _ _).trans hgd)
+      · rw [hqd] at hle ⊢
+        exact le_min (min_le_left _ _) hle
+    beta_reduce
+    rw [h1, min_assoc, min_self]
+
+end Scheme
+
+namespace Scheme
+
+open Finset Label
+variable {n : ℕ} {S : Scheme.{u} n}
+
+/-- **Equal readings give equal capped values**: in a section lawful below `Y`, two cells read
+alike by a cell `u` below `Y` carry the same label capped at the label of `u`. -/
+theorem min_eq_min_of_rowAt_eq {Y : Finset (Fin n) × ℕ} {w : Fin S.card → Label.{u}}
+    (hw : S.rows.IsLawfulBelow Y fun d ↦ w d) {u t v : Fin S.card}
+    (huY : u ∈ S.toCellScheme.below Y)
+    (ht : t ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u))
+    (hv : v ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u))
+    (hrow : S.rowAt u t = S.rowAt u v) : min (w t) (w u) = min (w v) (w u) := by
+  obtain ⟨θ, -, -, hθ⟩ := exists_cappedDecoder_below hw huY rfl
+  rw [← hθ t ht, ← hθ v hv, hrow]
+
+end Scheme
+
 end VaughtConjecture

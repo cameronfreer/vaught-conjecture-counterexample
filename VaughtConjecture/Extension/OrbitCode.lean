@@ -1371,5 +1371,20 @@ theorem orbitCode_omega0_mul_add {x y : ι} {c : Ordinal.{u}} {i n : ℕ} (hi : 
   refine ⟨blockIndex (gridPoint k (codeBlock k w (w x))), ?_, ?_⟩
   · rw [orbitCode_apply, orbitMap_of_isOrbitKey hxO, hx, hmove]
   · rw [orbitCode_apply, orbitMap_of_isOrbitKey hyO, ← hblock, hy, hmove]
+open Finset
+open scoped Ordinal
+variable {ι : Type*} [Fintype ι] {k : ℕ} {W : ι → Label.{u}} {h x : Label.{u}}
+
+/-- A value that is not an orbit key is coded in an odd block. -/
+theorem orbitCode_ne_even_of_not_isOrbitKey {e : ι} (hWe : W e ≠ ⊥)
+    (hno : ¬ IsOrbitKey k W (W e)) (r : ℕ) : orbitCode k W e ≠ gridPoint k (2 * r) := by
+  intro h
+  have hk : IsKey k W (W e) := isKey_apply_iff.mpr hWe
+  have h1 := one_le_keyRank hk
+  rw [orbitCode_apply, orbitMap_of_not_isOrbitKey hWe hno, codeBlock_of_not_isOrbitKey hk hno]
+    at h
+  have := gridPoint_le_gridPoint.mp h.le
+  have := gridPoint_le_gridPoint.mp h.ge
+  omega
 
 end VaughtConjecture.Label

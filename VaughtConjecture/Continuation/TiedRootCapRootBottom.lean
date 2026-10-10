@@ -245,7 +245,6 @@ theorem rootBottomAcquisition_of_botKeeping
         (by rw [StageType.grade_faceCell, hcc.grade_eq_topGrade]; exact hNZ)
         (by rw [StageType.grade_faceCell, hcc.grade_eq_topGrade]; exact hKZ)
 
-
 /-- **Acquisition of marked-cap contexts respecting the root bottoms**, with no hypothesis. -/
 theorem rootBottomAcquisition : Realization.RootBottomAcquisition.{u, w} :=
   rootBottomAcquisition_of_botKeeping fun _ _ I ↦ I.exists_botKeeping

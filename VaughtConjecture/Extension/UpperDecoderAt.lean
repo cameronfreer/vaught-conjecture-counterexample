@@ -907,6 +907,87 @@ theorem min_upperDecoderAt_comp_eq (hk : k < K) (hh : IsSelfVisible K h) (hs : I
       (le_gapValueAt hk hγ hhB hT hge').trans (le_max_right _ _)
     rw [min_eq_right h1, min_eq_right h2]
 
+/-- **Capped agreement of a construction on the two orbit codes, decoded**: as
+`Label.min_upperDecoderAt_comp_eq`, with the construction asked to keep capped agreement only
+between the orbit codes of `w` and `w'` at the caps self-visible and short at `k` (the proof uses
+the construction there only). -/
+theorem min_upperDecoderAt_comp_eq_of_codes (hk : k < K) (hh : IsSelfVisible K h)
+    (hs : IsShort K h)
+    (hw : ∀ d, w d ≤ gridPoint K B) (hag : ∀ d, min (w d) h = min (w' d) h) {ι' : Type*}
+    (F : (ι → Label.{u}) → ι' → Label.{u})
+    (hF : ∀ Γ, IsSelfVisible k Γ → IsShort k Γ →
+      (∀ d, min (orbitCode k w d) Γ = min (orbitCode k w' d) Γ) →
+      ∀ z, min (F (orbitCode k w) z) Γ = min (F (orbitCode k w') z) Γ) (z : ι') :
+    min (upperDecoderAt k K B w (F (orbitCode k w) z)) h =
+      min (upperDecoderAt k K B w' (F (orbitCode k w') z)) h := by
+  classical
+  by_cases h0 : h = ⊥
+  · rw [h0, min_bot_right, min_bot_right]
+  by_cases hT : h ≤ gridPoint K B
+  swap
+  · have : w' = w := funext fun d ↦ eq_of_min_eq_of_lt (hag d) ((hw d).trans_lt (not_le.mp hT))
+    rw [this]
+  have htop : h ≠ ⊤ := ne_top_of_le_ne_top (gridPoint_ne_top K B) hT
+  obtain ⟨γ, hγ⟩ := exists_eq_block_of_isShort hh hs h0 htop
+  have hhk : IsSelfVisible k h := by
+    rw [hγ]; exact isSelfVisible_block.mpr (by omega)
+  have hhB : h ∈ codeGrid K B := by
+    have hle := hT
+    rw [hγ, gridPoint, WithBot.coe_le_coe, WithTop.coe_le_coe,
+      omega0_mul_add_natCast_le_iff] at hle
+    have hγB : γ ≤ (B : Ordinal.{u}) := by
+      rcases hle with hle | ⟨hle, -⟩
+      exacts [hle.le, hle.le]
+    obtain ⟨g, rfl⟩ : ∃ g : ℕ, γ = g :=
+      Ordinal.lt_omega0.mp (hγB.trans_lt (Ordinal.natCast_lt_omega0 _))
+    rw [hγ]
+    exact mem_codeGrid.mpr (.inr ⟨g, by exact_mod_cast hγB, K, le_rfl, rfl⟩)
+  have hag' : ∀ d, min (w' d) h = min (w d) h := fun d ↦ (hag d).symm
+  have hL : keysBelow k w' h = keysBelow k w h := (keysBelow_congr hag).symm
+  set Γ : Label.{u} := gridPoint k (2 * #(keysBelow k w h) + 1) with hΓ
+  have hcc (d : ι) : min (orbitCode k w d) Γ = min (orbitCode k w' d) Γ := by
+    rcases lt_or_ge (w d) h with hdh | hdh
+    · rw [orbitCode_eq_of_min_eq hhk hag hdh]
+    · have h1 := le_orbitCode (k := k) h0 hk hγ hdh
+      have h2 := le_orbitCode (k := k) h0 hk hγ (le_of_min_eq_of_le (hag d) hdh)
+      rw [hL] at h2
+      rw [min_eq_right h1, min_eq_right h2]
+  have hFz : min (F (orbitCode k w) z) Γ = min (F (orbitCode k w') z) Γ :=
+    hF Γ (isSelfVisible_gridPoint k _) (isShort_gridPoint k _) hcc z
+  generalize F (orbitCode k w) z = x at hFz ⊢
+  generalize F (orbitCode k w') z = x' at hFz ⊢
+  rcases lt_or_ge (visibilityReplace k k x) Γ with hlt | hge
+  · -- Below the key `Γ`: one label, read alike.
+    have hxΓ : x < Γ := (le_visibilityReplace (Nat.le_succ k) x).trans_lt hlt
+    have hxx : x' = x := by
+      rw [min_eq_left hxΓ.le] at hFz
+      rcases lt_or_ge x' Γ with h' | h'
+      · rw [min_eq_left h'.le] at hFz; exact hFz.symm
+      · rw [min_eq_right h'] at hFz; exact absurd hFz hxΓ.ne
+    have hlt' : visibilityReplace k k x' < gridPoint k (2 * #(keysBelow k w' h) + 1) := by
+      rw [hxx, hL]; exact hlt
+    rw [hxx, upperDecoderAt, upperDecoderAt, min_max_distrib_right, min_max_distrib_right]
+    congr 1
+    · rw [le_antisymm (orbitDecoder_le_of_lt h0 hk hγ hag hlt)
+        (orbitDecoder_le_of_lt h0 hk hγ hag' (hxx ▸ hlt'))]
+    · exact le_antisymm (min_gapValueAt_le hhB hh hhk hag x) (min_gapValueAt_le hhB hh hhk hag' x)
+  · -- From the key `Γ` on: both decoded labels are at least `h`.
+    have hge' : gridPoint k (2 * #(keysBelow k w' h) + 1) ≤ visibilityReplace k k x' := by
+      rw [hL]
+      rcases lt_or_ge x' Γ with h' | h'
+      · have hxx : x = x' := by
+          rw [min_eq_left h'.le] at hFz
+          rcases lt_or_ge x Γ with h'' | h''
+          · rwa [min_eq_left h''.le] at hFz
+          · rw [min_eq_right h''] at hFz; exact absurd hFz.symm h'.ne
+        rw [← hxx]; exact hge
+      · exact h'.trans (le_visibilityReplace (Nat.le_succ k) x')
+    have h1 : h ≤ upperDecoderAt k K B w x :=
+      (le_gapValueAt hk hγ hhB hT hge).trans (le_max_right _ _)
+    have h2 : h ≤ upperDecoderAt k K B w' x' :=
+      (le_gapValueAt hk hγ hhB hT hge').trans (le_max_right _ _)
+    rw [min_eq_right h1, min_eq_right h2]
+
 /-! ### Values and readability at every point of the code grid of grade `k` -/
 
 /-- A point of the code grid of grade `k` at most the least grid point lies in the block `0`. -/
@@ -1008,5 +1089,34 @@ theorem isReadableAt_upperDecoderAt_of_mem {κ : Type*} [Fintype κ] {Q : κ →
     exact .inr (.inl ((isSelfVisible_gridPoint K B).min (Finset.inf_induction
       (isSelfVisible_top K) (fun a ha b hb ↦ ha.min hb)
       fun d _ ↦ isSelfVisible_admissibleBelowAt K B (w d))))
+open Finset Label CellScheme StageType
+open scoped Ordinal
+
+open Classical in
+/-- **The upper decoder at the top grid point dominates the labelling** when every code block lies
+below `B`. -/
+theorem le_upperDecoderAt_gridPoint {ι : Type*} [Fintype ι] {k K B' : ℕ}
+    (hB : 2 * Fintype.card ι < B') (w : ι → Label.{u}) (d : ι) :
+    w d ≤ upperDecoderAt k K B' w (gridPoint k B') := by
+  by_cases hd : w d = ⊥
+  · rw [hd]; exact bot_le
+  have hcode : visibilityReplace k k (orbitCode k w d) = gridPoint k (codeBlock k w (w d)) := by
+    rw [orbitCode_apply, visibilityReplace_orbitMap hd]
+  have hblk : codeBlock k w (w d) < B' :=
+    (codeBlock_le k w (w d)).trans_lt (by have := keyRank_le_card k w (w d); omega)
+  have hmem : d ∈ ({e | gridPoint k 0 ≤ visibilityReplace k k (orbitCode k w e)} : Finset ι) := by
+    rw [Finset.mem_filter, hcode]
+    exact ⟨Finset.mem_univ _, gridPoint_le_gridPoint.mpr (Nat.zero_le _)⟩
+  have hlt : gridPoint.{u} k (codeBlock k w (w d)) < gridPoint k B' :=
+    gridPoint_lt_gridPoint_iff_lex.mpr (.inl hblk)
+  have hread : cellReading k w d (gridPoint k B') = visibilityReplace k k (w d) := by
+    unfold cellReading
+    rw [isSelfVisible_gridPoint k B', hcode, ite_eq_right (not_lt.mpr hlt.le),
+      ite_eq_right fun h ↦ hlt.ne h.1.symm]
+  calc w d ≤ visibilityReplace k k (w d) := le_visibilityReplace (by omega) _
+    _ = cellReading k w d (gridPoint k B') := hread.symm
+    _ ≤ orbitDecoder k w (gridPoint k 0) (gridPoint k B') :=
+      le_max_of_le_right (Finset.le_sup (f := fun e ↦ cellReading k w e (gridPoint k B')) hmem)
+    _ ≤ upperDecoderAt k K B' w (gridPoint k B') := le_max_left _ _
 
 end VaughtConjecture.Label
