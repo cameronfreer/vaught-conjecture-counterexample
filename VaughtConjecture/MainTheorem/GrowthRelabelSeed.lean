@@ -264,7 +264,8 @@ open Ordinal Realization FirstOrder Language Structure baseLanguage Expansion
 /-- **The thin `ℵ₁` spectrum from recognizing growth carriers at the seed position**: as
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriers`, with the carriers
 asked only at the seed position.  `hstab` and `hrec` follow from
-`StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed); `hres` is (R2). -/
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed); `hres` is (R2), proved by
+`Realization.receivingResidualReceiving_of_padded`. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriersAtSeed
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})
@@ -276,7 +277,8 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriersAtSeed
 /-- **The thin `ℵ₁` spectrum from ladder growth carriers at the seed position**: as
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_ladderCarriers`, with the carriers asked
 only at the seed position.  `hstab` follows from
-`StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed); `hres` is (R2). -/
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels` (not yet reviewed); `hres` is (R2), proved by
+`Realization.receivingResidualReceiving_of_padded`. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_ladderCarriersAtSeed
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})

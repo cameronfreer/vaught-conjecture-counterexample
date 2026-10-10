@@ -126,8 +126,8 @@ open Realization FirstOrder Language Structure baseLanguage Expansion
 on the class (`StageType.HasLadderGrowthCarriersStable`) give both (R4) (the stable evaluation) and
 (R3) (the actual evaluation); with (R2) (`hres`) the density sentence has a thin `ℵ₁` spectrum.  The
 ladder hypothesis is compiled from the contract at the seed position
-(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed); (R2) is a hypothesis
-here. -/
+(`StageType.hasLadderGrowthCarriersStableAtSeed_levels`; not yet reviewed); (R2) is proved by
+`Realization.receivingResidualReceiving_of_padded`. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_stableLadderCarriers
     (hres : ReceivingResidualReceiving.{0, 0}) (hlad : HasLadderGrowthCarriersStable.{0}) :
     HasThinAlephOneSpectrum densitySentence.{0} :=
