@@ -20,8 +20,11 @@
 # ("working tree"); with --exact, a working tree with such changes is refused instead.
 #
 # Steps (each fails the script with a message on error):
-#  1. records the mode, the commit, the toolchain, the SHA-256 of every input and of every tool
-#     binary and shared library invoked;
+#  1. records the mode, the commit, the toolchain, an inventory of the inputs (every
+#     `VaughtConjecture/**/*.lean`, `VaughtConjecture.lean`, every file under `comparator/`,
+#     `lean-toolchain`, `lakefile.toml`, `lake-manifest.json`, with their SHA-256) and the SHA-256
+#     of the tools listed at `TOOL-SHA256SUMS` below; at the end, the inventory and `HEAD` are
+#     taken again and must be unchanged;
 #  2. checks that each dependency's git checkout is at its pinned revision with no modified
 #     tracked file (this says nothing about the dependencies' cached build outputs, which are
 #     read as they are), and that the root library build is up to date;
@@ -125,10 +128,15 @@ toolchain_dir=${expected_toolchain//\//--}
   "$tools/nanoda_bin" --help 2>&1 | head -n 1 || true
   /usr/bin/bwrap --version
 } > "$out/toolchain.txt"
-# Every binary of the toolchain (lean, lake, leanexport, nanoda_bin, leanchecker,
-# leanchecker-paranoid, lean4lean, con-leche, con-ron, …), the toolchain's shared libraries and
-# one digest of the toolchain's own `.olean` files, with paths relative to the toolchain; and,
-# separately (they differ between machines), the system programs invoked.
+# TOOL-SHA256SUMS: every executable file and every `*.so` directly in the toolchain's `bin/` and
+# `lib/lean/` (in v4.35.0-rc3: lean, lake, leanexport, nanoda_bin, leanchecker,
+# leanchecker-paranoid, lean4lean, con-leche, con-ron, leanc, leanir, leanmake, leantar, cadical,
+# clang, ld.lld, llvm-ar; libleanshared.so, libleanshared_1.so, libleanshared_2.so,
+# libInit_shared.so, libLake_shared.so), with paths relative to the toolchain, and one digest of
+# the list of SHA-256 of the toolchain's `lib/lean/**/*.olean`.  SYSTEM-TOOL-SHA256SUMS (it
+# differs between machines): /usr/bin/bwrap and the resolved jq, python3 and git.  Nothing else
+# is hashed (in particular not the system's shared libraries, Python's standard library, or the
+# dependencies' build outputs).
 (
   cd "$tools/.."
   find bin lib/lean -maxdepth 1 -type f \( -perm -u+x -o -name '*.so' \) -print0 | sort -z |
@@ -139,11 +147,15 @@ toolchain_dir=${expected_toolchain//\//--}
 sha256sum /usr/bin/bwrap "$(readlink -f "$(command -v jq)")" \
   "$(readlink -f "$(command -v python3)")" "$(readlink -f "$(command -v git)")" \
   > "$out/SYSTEM-TOOL-SHA256SUMS"
-{
-  find comparator -type f \( -name '*.lean' -o -name '*.sh' -o -name '*.py' -o -name '*.json' \
-    -o -name '*.md' \) -print0 | sort -z | xargs -0 sha256sum
-  sha256sum lean-toolchain lakefile.toml lake-manifest.json
-} > "$out/SOURCE-SHA256SUMS"
+# The inventory of the inputs, taken again at the end of the run.
+inventory() {
+  {
+    find VaughtConjecture -type f -name '*.lean' -print0
+    find comparator -type f -print0
+    printf '%s\0' VaughtConjecture.lean lean-toolchain lakefile.toml lake-manifest.json
+  } | sort -z | xargs -0 sha256sum
+}
+inventory > "$out/SOURCE-SHA256SUMS"
 
 # ---------------------------------------------------------------------------------------------
 log "2. dependency pins and the root library build"
@@ -294,8 +306,8 @@ printf 'ok: reference closure of %s modules, whose Mathlib sources are those of 
 log "5. the solution module and the expected failures, without the reference on the search path"
 solution=$out/build/solution
 new_dir "$solution"
-root_build=$repo/.lake/build/lib/lean
-solution_roots=("${all_roots[@]}" "$repo")
+root_build=$(readlink -f "$repo/.lake/build/lib/lean")
+solution_roots=("${all_roots[@]}" "$repo" "$(readlink -f "$repo/.lake/build")")
 solution_path="$solution:$root_build:$(path_of "${all_roots[@]}")"
 [[ ":$solution_path:" != *":$challenge:"* ]] || fail "the reference build is on the search path"
 compile_logged solution-definitions SolutionDefinitions "$solution" solution_roots \
@@ -316,7 +328,7 @@ fi
 printf 'ok: Challenge is not on the solution search path nor in its import closure (%s modules)\n' \
   "$(wc -l < "$out/solution-import-closure.txt")"
 # The expected failures: each in its own build directory, the solution's read-only.
-expected_roots=("${all_roots[@]}" "$repo" "$solution")
+expected_roots=("${solution_roots[@]}" "$solution")
 for module in WeakenedStatement AlteredSemantics SorrySolution; do
   build=$out/build/$module
   new_dir "$build"
@@ -385,8 +397,15 @@ grep -Fxq 'Your solution is okay!' "$out/logs/comparator-solution.log" ||
 (cd "$out" && sha256sum export/*.ndjson) > "$out/EXPORT-SHA256SUMS"
 (cd "$out/build" && find . -name '*.olean' -print0 | sort -z | xargs -0 sha256sum) \
   > "$out/OLEAN-SHA256SUMS"
-sha256sum --check --status "$out/SOURCE-SHA256SUMS" ||
-  fail "an input changed during the check"
+# The same inputs, with the same contents, and the same commit as at the start.
+inventory > "$created_tmp/inputs-after.txt"
+if ! cmp -s "$out/SOURCE-SHA256SUMS" "$created_tmp/inputs-after.txt"; then
+  changed=$({ diff "$out/SOURCE-SHA256SUMS" "$created_tmp/inputs-after.txt" || true; } |
+    sed -n 's/^[<>] [0-9a-f]\{64\}  //p' | sort -u | paste -sd ' ' -)
+  fail "inputs changed during the check: $changed"
+fi
+[[ $(git rev-parse HEAD) == "$commit" ]] ||
+  fail "HEAD changed during the check: $commit -> $(git rev-parse HEAD)"
 git status --porcelain --untracked-files=all -- "${inputs[@]}" > "$created_tmp/status-after.txt"
 cmp -s "$out/inputs-status.txt" "$created_tmp/status-after.txt" ||
   fail "the working tree of the inputs changed during the check"

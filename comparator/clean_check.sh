@@ -13,8 +13,10 @@
 #
 # check.sh verifies that every dependency's git checkout is at its pinned revision with no
 # modified tracked file.  The dependencies' cached build outputs are reused as they are: they
-# are not rebuilt here and not authenticated against their sources (CI rebuilds them from
-# source when a pin changes).  Nothing is deleted; afterwards WORK_DIR/checkout can be removed.
+# are not rebuilt here and not authenticated against their sources.  (On a new pin, CI downloads
+# the Mathlib cache artifacts available for the pinned revision with `lake exe cache get`, builds
+# only the outputs missing from them, and caches the result; it never rebuilds all of Mathlib.)
+# Nothing is deleted; afterwards WORK_DIR/checkout can be removed.
 set -euo pipefail
 set -o noclobber
 fail() { printf 'FAILED: %s\n' "$*" >&2; exit 1; }

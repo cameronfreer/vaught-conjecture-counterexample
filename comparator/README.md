@@ -29,6 +29,7 @@ to say is for a human reader of `Challenge.lean`.
 | `comparator.json` | The Comparator configuration. |
 | `check.sh` | The check on the current checkout (requires `lake build` first). |
 | `clean_check.sh` | The check on a fresh clone of the current commit, after a clean build. |
+| `test_check.sh` | Tests of `check.sh`: its refusals and its input-change test. |
 | `scripts/declarations.py` | The comment-free declarations of a Lean file (for the reference hash). |
 | `scripts/ImportClosure.lean` | The transitive import closure of a compiled module. |
 
@@ -131,7 +132,16 @@ bash comparator/clean_check.sh [--paranoid] WORK_DIR [DEPS_DIR]
   the changes listed in `inputs-status.txt`.
 
 With `--exact`, `check.sh` refuses to run in the second case.  `clean_check.sh` (a fresh clone)
-and CI always run with `--exact`.  `check.sh` also fails if the inputs change during the run.
+and CI always run with `--exact`.
+
+**Inputs unchanged during the run.**  At the start, `check.sh` writes an inventory of the inputs to
+`SOURCE-SHA256SUMS`: the path and SHA-256 of every `VaughtConjecture/**/*.lean`, of
+`VaughtConjecture.lean`, of every file under `comparator/`, and of `lean-toolchain`,
+`lakefile.toml` and `lake-manifest.json`.  At the end it takes the inventory again and checks that
+it is the same (the same files with the same hashes) and that `HEAD` is the same commit; otherwise
+it fails, naming the files that changed (`FAILED: inputs changed during the check: …`).  It also
+checks that the `git status` of the inputs is the same.  In the working-tree mode, the inventory
+is what catches a further change to a file that was already modified.
 
 **Outputs.**  `OUT_DIR` must not exist: it is created, and a path that exists, is a symbolic link
 or passes through one is refused.  Without `OUT_DIR`, the outputs go to a new directory
@@ -142,12 +152,20 @@ the only deletion is of the temporary directory `OUT_DIR/tmp` that the same run 
 `check.sh` needs `bwrap`, `jq`, `python3` and the pinned toolchain, and fetches nothing.  In
 order, it
 
-1. records the mode, the commit, the toolchain, the SHA-256 of every input, and the SHA-256 of
-   every tool it invokes: in `TOOL-SHA256SUMS`, every binary of the toolchain (`lean`, `lake`,
-   `leanexport`, `nanoda_bin`, `leanchecker`, `leanchecker-paranoid`, `lean4lean`, `con-leche`,
-   `con-ron`, …), the toolchain's shared libraries and one digest of the toolchain's own
-   `.olean` files, with paths relative to the toolchain; in `SYSTEM-TOOL-SHA256SUMS`, which
-   differs between machines, `bwrap`, `jq`, `python3` and `git`;
+1. records the mode, the commit, the toolchain, the inventory of the inputs, and the SHA-256 of
+   these tools, and of nothing else:
+   * `TOOL-SHA256SUMS`, with paths relative to the toolchain: every executable file and every
+     `*.so` directly in the toolchain's `bin/` and `lib/lean/`.  For v4.35.0-rc3 these are
+     `bin/` `cadical`, `clang`, `con-leche`, `con-ron`, `lake`, `ld.lld`, `lean`, `lean4lean`,
+     `leanc`, `leanchecker`, `leanchecker-paranoid`, `leanexport`, `leanir`, `leanmake`,
+     `leantar`, `llvm-ar`, `nanoda_bin`, and `lib/lean/` `libInit_shared.so`,
+     `libLake_shared.so`, `libleanshared.so`, `libleanshared_1.so`, `libleanshared_2.so`.  It
+     also has one digest of the list of SHA-256 of the toolchain's `lib/lean/**/*.olean`;
+   * `SYSTEM-TOOL-SHA256SUMS`, which differs between machines: `/usr/bin/bwrap` and the resolved
+     `jq`, `python3` and `git`.
+
+   Not hashed: the system's shared libraries, the toolchain's other files (such as `lib/`'s LLVM
+   libraries), Python's standard library, and the dependencies' build outputs;
 2. checks that each dependency's git checkout is at its pinned revision with no modified tracked
    file, that the toolchain is that of `lean-toolchain` and of `InfinitaryLogic`, that the root
    library build is up to date (`lake build --no-build`), and the description of the pinned
@@ -174,6 +192,21 @@ ten minutes more.  The outputs are `mode.txt`, `RESULT.txt`, `inputs-status.txt`
 `SYSTEM-TOOL-SHA256SUMS`, `dependency-pins.tsv`, the two import closures, the list of files the
 pinned Mathlib changes, and the exports themselves (about 650 MB).  `clean_check.sh` adds `WORK_DIR/clean-build` with
 `lake-build.log` and `ROOT-OLEAN-SHA256SUMS`.
+
+### Tests of `check.sh`
+
+```bash
+bash comparator/test_check.sh WORK_DIR
+```
+
+runs `check.sh` on a clone of the committed `HEAD` (the working tree of this checkout is not
+modified; this checkout's root library must be built) and asserts that it fails, with its
+message, when `OUT_DIR` exists, is a symbolic link, or passes through one; when `--exact` meets a
+modified input; and, in the input-change test, when a working-tree run whose
+`comparator/README.md` is already modified sees the same file modified again after its inventory
+(`inputs changed during the check: comparator/README.md`).  The first four cases take seconds,
+the last a whole check.  CI does not run this script; its output is recorded on the pull request
+that introduces or changes `check.sh`.
 
 ### Expected results
 
@@ -221,8 +254,11 @@ lets `NoFiniteModels` quantify over `Fin (n + 1)`, no longer excluding the empty
   outputs (Mathlib, `InfinitaryLogic`, `ComputableModelTheory`), which are read as they are.  The
   kernels re-check every exported proof term, so a wrong dependency output cannot make a false
   proof pass; but the declarations of the reference statement that come from Mathlib are read
-  from those outputs too.  CI builds the dependencies from source when a pin changes and caches
-  the result; later runs reuse that cache.
+  from those outputs too.  On a new pin, CI downloads the Mathlib cache artifacts available for
+  the pinned revision (`lake exe cache get`), builds only the outputs missing from them
+  (the Mathlib modules the public cache does not have for the fork, `InfinitaryLogic` and the
+  classical entry module of `ComputableModelTheory`), and caches the result; later runs reuse
+  that cache.  No run builds all of Mathlib.
 * That the reference's build is invisible to the solution side: what is checked is that it is
   not on the solution's search path and that `Challenge` is not in the solution's import
   closure.
