@@ -29,6 +29,12 @@ statement it is used to prove.
   `omega0_mul_add_lt`, `mod_le_mod_of_div_eq`, `Ordinal.visibilityReplace_omega0_mul_add`, and
   their forms with a natural number `x`) are stated once, here, for this file and for
   `VaughtConjecture.Extension.Encoders`.
+* **Finite parts and block pieces.**  The finite part `finitePart o` of an ordinal, as a natural
+  number (`natCast_finitePart`, `omega0_mul_div_add_finitePart`); a label not self-visible at `N`
+  is a point `ω * r + j` with `j < N` (`exists_eq_of_not_isSelfVisible`); the block start `ω * b`
+  is zero or a limit (`isSuccPrelimit_omega0_mul`).  The **block piece** `blockPiece N b r` is `⊥`
+  below the block `b`, moves `ω * b + n` to `ω * r + min n N`, sends the higher blocks to
+  `ω * r + N`, and fixes `⊤`; it is a witness bounded by grade `N` (`isWitness_blockPiece`).
 * **Short labels** (`IsShort m x`): bottom, the formal top, or an ordinal whose finite part is at
   most `m` (`isShort_coe`).  The **flattening of finite parts** at `m`, `flatten m`, replaces a
   finite part above `m` by `m` (`flatten_coe`); it is monotone (`monotone_flatten`), fixes the short
@@ -167,6 +173,72 @@ theorem _root_.Ordinal.visibilityReplace_omega0_mul_add_natCast (a : Ordinal.{u}
       ω * a + ((if n < k then i else n : ℕ) : Ordinal.{u}) := by
   rw [Ordinal.visibilityReplace_omega0_mul_add (natCast_lt_omega0 n)]
   split_ifs <;> simp_all
+
+
+/-! #### Finite parts -/
+
+/-- The **finite part** `o % ω` of an ordinal `o`, as a natural number. -/
+noncomputable def finitePart (o : Ordinal.{u}) : ℕ :=
+  (lt_omega0.mp (mod_lt o omega0_ne_zero)).choose
+
+/-- The finite part, cast back to an ordinal, is `o % ω`. -/
+theorem natCast_finitePart (o : Ordinal.{u}) : (finitePart o : Ordinal.{u}) = o % ω :=
+  (lt_omega0.mp (mod_lt o omega0_ne_zero)).choose_spec.symm
+
+/-- The finite part of `ω * b + n` is `n`. -/
+@[simp] theorem finitePart_omega0_mul_add (b : Ordinal.{u}) (n : ℕ) :
+    finitePart (ω * b + n) = n := by
+  have h := natCast_finitePart (ω * b + n)
+  rw [omega0_mul_add_natCast_mod] at h
+  exact_mod_cast h
+
+/-- An ordinal is `ω * (o / ω) + finitePart o`. -/
+theorem omega0_mul_div_add_finitePart (o : Ordinal.{u}) : ω * (o / ω) + finitePart o = o := by
+  rw [natCast_finitePart, div_add_mod]
+
+/-- A multiple of `ω` is zero or a limit. -/
+theorem isSuccPrelimit_omega0_mul (b : Ordinal.{u}) : Order.IsSuccPrelimit (ω * b) :=
+  isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _)
+
+/-- The labels `ω * a + m` and `ω * b + n` compare lexicographically in block and finite part. -/
+theorem coe_omega0_mul_add_le_coe_iff {a b : Ordinal.{u}} {m n : ℕ} :
+    ((ω * a + m : Ordinal.{u}) : Label.{u}) ≤ ((ω * b + n : Ordinal.{u}) : Label.{u}) ↔
+      a < b ∨ a = b ∧ m ≤ n := by
+  rw [WithBot.coe_le_coe, WithTop.coe_le_coe, omega0_mul_add_natCast_le_iff]
+
+/-- Capping a finite part at `N` commutes with visibility replacement at a threshold `k ≤ N` with
+a value `i ≤ k`. -/
+theorem min_visibilityReplace_natCast {N k i : ℕ} (hk : k ≤ N) (hi : i ≤ k) (δ : Ordinal.{u}) :
+    min (Ordinal.visibilityReplace k i δ) (N : Ordinal.{u}) =
+      Ordinal.visibilityReplace k i (min δ (N : Ordinal.{u})) := by
+  rcases lt_or_ge δ ω with hδ | hδ
+  · obtain ⟨n, rfl⟩ := lt_omega0.mp hδ
+    rw [← Nat.mono_cast.map_min, Ordinal.visibilityReplace_natCast,
+      Ordinal.visibilityReplace_natCast]
+    by_cases hnk : n < k
+    · have : min n N < k := (min_le_left n N).trans_lt hnk
+      simp only [hnk, this, ↓reduceIte, ← Nat.mono_cast.map_min,
+        min_eq_left (hi.trans hk)]
+    · have : ¬ min n N < k := by omega
+      simp only [hnk, this, ↓reduceIte, ← Nat.mono_cast.map_min]
+  · have hN : (N : Ordinal.{u}) < ω := natCast_lt_omega0 N
+    have hvr : ω ≤ Ordinal.visibilityReplace k i δ :=
+      not_lt.mp fun h ↦ (not_lt.mpr hδ)
+        ((Ordinal.visibilityReplace_lt_iff isSuccLimit_omega0.isSuccPrelimit k i).mp h)
+    rw [min_eq_right (hN.le.trans hvr), min_eq_right (hN.le.trans hδ),
+      Ordinal.visibilityReplace_natCast, ite_eq_right (by omega)]
+
+/-- A label that is not self-visible at `N` is a point `ω * r + j` with `j < N`. -/
+theorem exists_eq_of_not_isSelfVisible {N : ℕ} {c : Label.{u}}
+    (hc : ¬ IsSelfVisible N c) :
+    ∃ (r : Ordinal.{u}) (j : ℕ), j < N ∧ c = ((ω * r + j : Ordinal.{u}) : Label.{u}) := by
+  induction c using recBotCoeTop with
+  | bot => exact absurd (isSelfVisible_bot N) hc
+  | top => exact absurd (isSelfVisible_top N) hc
+  | coe o =>
+    refine ⟨o / ω, finitePart o, ?_, by rw [omega0_mul_div_add_finitePart]⟩
+    rw [isSelfVisible_coe, ← natCast_finitePart, Nat.cast_le] at hc
+    omega
 
 end Blocks
 
@@ -463,5 +535,110 @@ and back (`Label.transformsTo_strongEncode_comp`, `Label.strongEncode_comp_trans
 theorem IsWitness.transformsTo_comp (hν : IsWitness (stepSuppressor K) ν)
     (hK : ∀ d, grade d ≤ K) (p : D → Label.{u}) : TransformsTo grade p (ν ∘ p) :=
   ⟨_, ν, hν, fun d ↦ by rw [stepSuppressor_of_le (hK d), min_top_right, Function.comp_apply]⟩
+
+/-! ### Block pieces -/
+
+/-- The **block piece** at threshold `N` from the block `b` to the block `r`: `⊥` below the block
+`b` (that is, below `ω * b`), the ordinal `ω * r + min (o - ω * b) N` at an ordinal `o ≥ ω * b`,
+and `⊤` at `⊤`.  On the block `b` it moves `ω * b + n` to `ω * r + min n N`, and above that block
+it is the constant `ω * r + N`. -/
+noncomputable def blockPiece (N : ℕ) (b r : Ordinal.{u}) : Label.{u} → Label.{u} :=
+  recBotCoeTop ⊥ (fun o ↦ if o < ω * b then ⊥ else
+    ((ω * r + min (o - ω * b) (N : Ordinal.{u}) : Ordinal.{u}) : Label.{u})) ⊤
+
+/-- The block piece fixes `⊥`. -/
+@[simp] theorem blockPiece_bot (N : ℕ) (b r : Ordinal.{u}) : blockPiece N b r ⊥ = ⊥ := rfl
+
+/-- The block piece fixes `⊤`. -/
+@[simp] theorem blockPiece_top (N : ℕ) (b r : Ordinal.{u}) : blockPiece N b r ⊤ = ⊤ := rfl
+
+/-- The block piece at an ordinal. -/
+theorem blockPiece_coe (N : ℕ) (b r o : Ordinal.{u}) : blockPiece N b r (o : Label.{u}) =
+    if o < ω * b then ⊥ else
+      ((ω * r + min (o - ω * b) (N : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) := rfl
+
+/-- The block piece at a point `ω * b + n` of its own block with `n ≤ N`. -/
+theorem blockPiece_omega0_mul_add {N n : ℕ} (hn : n ≤ N) (b r : Ordinal.{u}) :
+    blockPiece N b r ((ω * b + n : Ordinal.{u}) : Label.{u}) =
+      ((ω * r + n : Ordinal.{u}) : Label.{u}) := by
+  rw [blockPiece_coe, ite_eq_right (not_lt.mpr le_self_add), Ordinal.add_sub_cancel,
+    min_eq_left (by exact_mod_cast hn)]
+
+/-- The block piece at a point `ω * b' + n` of a higher block `b' > b` is `ω * r + N`. -/
+theorem blockPiece_omega0_mul_add_of_lt {N : ℕ} {b b' : Ordinal.{u}} (h : b < b') (r : Ordinal.{u})
+    (n : ℕ) : blockPiece N b r ((ω * b' + n : Ordinal.{u}) : Label.{u}) =
+      ((ω * r + N : Ordinal.{u}) : Label.{u}) := by
+  have hlt : ω * b + N < ω * b' + n := omega0_mul_add_natCast_lt h N n
+  rw [blockPiece_coe, ite_eq_right (not_lt.mpr (le_self_add.trans hlt.le)), min_eq_right
+    (Ordinal.le_sub_of_add_le hlt.le)]
+
+/-- The block piece is monotone. -/
+theorem monotone_blockPiece (N : ℕ) (b r : Ordinal.{u}) : Monotone (blockPiece N b r) := by
+  intro x y hxy
+  induction x using recBotCoeTop with
+  | bot => exact bot_le
+  | top => rw [top_le_iff.mp hxy]
+  | coe o =>
+    induction y using recBotCoeTop with
+    | bot => exact absurd hxy (not_le.mpr (WithBot.bot_lt_coe _))
+    | top => exact le_top
+    | coe o' =>
+      have hoo : o ≤ o' := WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hxy)
+      rw [blockPiece_coe, blockPiece_coe]
+      split_ifs with h1 h2 h2
+      · exact le_rfl
+      · exact bot_le
+      · exact absurd (hoo.trans_lt h2) h1
+      · refine WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_)
+        have hsub : o - ω * b ≤ o' - ω * b := by
+          rw [Ordinal.sub_le, Ordinal.add_sub_cancel_of_le (not_lt.mp h2)]
+          exact hoo
+        gcongr
+
+/-- The block piece commutes with visibility replacement at every threshold `k ≤ N` and every
+value `i ≤ k`. -/
+theorem blockPiece_visibilityReplace {N k i : ℕ} (hk : k ≤ N) (hi : i ≤ k) (b r : Ordinal.{u})
+    (x : Label.{u}) :
+    blockPiece N b r (visibilityReplace k i x) = visibilityReplace k i (blockPiece N b r x) := by
+  induction x using recBotCoeTop with
+  | bot => rfl
+  | top => rfl
+  | coe o =>
+    have hb := isSuccPrelimit_omega0_mul b
+    rw [visibilityReplace_coe, blockPiece_coe, blockPiece_coe]
+    by_cases ho : o < ω * b
+    · rw [ite_eq_left ((Ordinal.visibilityReplace_lt_iff hb k i).mpr ho), ite_eq_left ho,
+        visibilityReplace_bot]
+    · rw [ite_eq_right (mt (Ordinal.visibilityReplace_lt_iff hb k i).mp ho), ite_eq_right ho,
+        visibilityReplace_coe]
+      obtain ⟨δ, rfl⟩ : ∃ δ, o = ω * b + δ :=
+        ⟨o - ω * b, (Ordinal.add_sub_cancel_of_le (not_lt.mp ho)).symm⟩
+      rw [Ordinal.visibilityReplace_add hb, Ordinal.add_sub_cancel, Ordinal.add_sub_cancel,
+        Ordinal.visibilityReplace_add (isSuccPrelimit_omega0_mul r),
+        min_visibilityReplace_natCast hk hi]
+
+/-- **The block piece is a witness bounded by grade `N`.**  Above `N` the guard holds only where
+the piece is `⊥`, below the block `b`, and visibility replacement stays below that block. -/
+theorem isWitness_blockPiece (N : ℕ) (b r : Ordinal.{u}) :
+    IsWitness (stepSuppressor.{u} N) (blockPiece N b r) where
+  antitone := (IsWitness.id_step N).antitone
+  isSelfVisible := (IsWitness.id_step N).isSelfVisible
+  map_bot := rfl
+  monotone := monotone_blockPiece N b r
+  visibilityReplace_comm x k hx i hi := by
+    by_cases hk : k ≤ N
+    · exact blockPiece_visibilityReplace hk hi b r x
+    rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff] at hx
+    induction x using recBotCoeTop with
+    | bot => rfl
+    | top => exact absurd hx (by simp)
+    | coe o =>
+      have ho : o < ω * b := by
+        by_contra h
+        rw [blockPiece_coe, ite_eq_right h] at hx
+        exact WithBot.coe_ne_bot hx
+      rw [visibilityReplace_coe, blockPiece_coe, blockPiece_coe, ite_eq_left ho,
+        ite_eq_left ((Ordinal.visibilityReplace_lt_iff (isSuccPrelimit_omega0_mul b) k i).mpr ho),
+        visibilityReplace_bot]
 
 end VaughtConjecture.Label

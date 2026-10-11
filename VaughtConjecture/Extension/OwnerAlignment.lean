@@ -146,10 +146,6 @@ private theorem pt_ne_bot (b : Ordinal.{u}) (n : ℕ) : pt b n ≠ ⊥ := WithBo
 private theorem pt_zero (b : Ordinal.{u}) : pt b 0 = ((ω * b : Ordinal.{u}) : Label.{u}) := by
   simp [pt]
 
-/-- The start `ω * b` of a block is zero or a limit. -/
-private theorem isSuccPrelimit_omega0_mul (b : Ordinal.{u}) : Order.IsSuccPrelimit (ω * b) :=
-  isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right ω b)
-
 /-- **Visibility replacement at `m` by `m` keeps a label short at `m`**: it replaces a finite part
 below `m` by `m` and fixes the others.  The source cap of the owner-local alignment is such a
 replacement of a source short at `m`, and so is short at `m`. -/

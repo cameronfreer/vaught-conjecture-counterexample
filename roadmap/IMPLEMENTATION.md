@@ -4382,18 +4382,18 @@ witnesses).**
   `CappedDonorReading.PrivateReference`, the cut, activity, the capped reading, the capped-donor
   lemma `CappedDonorReading.PrivateReference.HasMargin.isLawful_reading`, the reading at the actual
   labels, and the three inputs `CappedDonorReading.AnchorInput`, `CappedDonorReading.TwoBlockInput`
-  and `CappedDonorReading.OppositeCellsInput`), in place, beside `Extension/AttachedGate`.  Generic
-  statements stated there so that their homes are unchanged:
-  `Label.IsWitness.min_const_of_isSelfVisible` belongs in `Extension/WitnessAlgebra`, beside
-  `Label.IsWitness.max`, and the block pieces (`CappedDonorReading.piece`,
-  `CappedDonorReading.piece_omega0_mul_add`, `CappedDonorReading.piece_omega0_mul_add_of_lt`,
-  `piece_bot`, `piece_top`, `piece_coe`,
-  `CappedDonorReading.monotone_piece`, `CappedDonorReading.piece_visibilityReplace`,
-  `CappedDonorReading.isWitness_piece`) beside its block arithmetic;
-  `Label.exists_eq_of_not_isSelfVisible`, `CappedDonorReading.finitePart` with
-  `natCast_finitePart`, `finitePart_omega0_mul_add` and `omega0_mul_div_add_finitePart`,
-  `CappedDonorReading.isSuccPrelimit_omega0_mul`, `CappedDonorReading.coe_omega0_mul_add_le_coe_iff`
-  and `CappedDonorReading.min_visibilityReplace_natCast` belong in `Label/Visibility`.
+  and `CappedDonorReading.OppositeCellsInput`), in place, beside `Extension/AttachedGate`.  The
+  generic statements it uses are in their owners: capping a witness bounded by a grade is the
+  library's `Label.IsWitness.min_const` (`Extension/FlattenedSource`); the finite parts
+  (`Label.finitePart`, `Label.natCast_finitePart`, `Label.finitePart_omega0_mul_add`,
+  `Label.omega0_mul_div_add_finitePart`), `Label.isSuccPrelimit_omega0_mul` (the former private
+  copy in `Extension/OwnerAlignment` is removed in its favour),
+  `Label.coe_omega0_mul_add_le_coe_iff`, `Label.min_visibilityReplace_natCast`,
+  `Label.exists_eq_of_not_isSelfVisible`, and the block pieces (`Label.blockPiece` with
+  `blockPiece_bot`, `blockPiece_top`, `blockPiece_coe`, `blockPiece_omega0_mul_add`,
+  `blockPiece_omega0_mul_add_of_lt`, `monotone_blockPiece`, `blockPiece_visibilityReplace`,
+  `isWitness_blockPiece`) are in `Extension/WitnessAlgebra`, beside its block arithmetic. The
+  offsets `PrivateReference.off` are data on the requested blocks only.
   `CappedDonorReading.AnchorInput` carries its own copy of the two-point private type with the
   reference cell `z₁` and of its one-point donor, whose module is not on `main`; the
   copy declares `AnchorInput.rowValue` and `AnchorInput.donorRowValue` public where that module
