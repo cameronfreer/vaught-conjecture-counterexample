@@ -6,7 +6,7 @@ By Nathanael Ackerman, Cameron Freer, and Robin Knight.
 
 A Lean 4 proof that a sentence of the infinitary logic $L_{\omega_1,\omega}$, in a countable
 relational language, has exactly $\aleph_1$ countable models up to isomorphism and no perfect set
-of pairwise non-isomorphic countable models, following the drafts [Kni26] and [AFK26] (see
+of pairwise non-isomorphic countable models, following [Kni26] and [AFK26] (see
 [`roadmap/REFERENCES.bib`](roadmap/REFERENCES.bib)).  It is a counterexample to Vaught's
 conjecture for $L_{\omega_1,\omega}$, not to the first-order Vaught conjecture.  The
 formalization proves the stated theorem for its own sentence, `baseLanguage.densitySentence`,
@@ -104,8 +104,12 @@ GitHub's "Cite this repository" uses [`CITATION.cff`](CITATION.cff):
 }
 ```
 
-For the mathematics, cite the manuscript [AFK26] (entry `AFK26` of
-[`roadmap/REFERENCES.bib`](roadmap/REFERENCES.bib)).  A separate formalization of the same theorem
+For the mathematics, cite our initial paper [AFK26],
+[hexagon:2610.00188](https://hexagonmath.org/2610.00188) (entry `AFK26` of
+[`roadmap/REFERENCES.bib`](roadmap/REFERENCES.bib)), which explains the proof strategy and many
+details. A fuller account of the proof will follow.
+
+A separate formalization of the same theorem
 by the same authors is registered as Palomar entry
 [PALOMAR-2026-10-07-000001](https://palomar-registry.org/entry?id=PALOMAR-2026-10-07-000001&version=1)
 ([`cameronfreer/vaught-conjecture-palomar`](https://github.com/cameronfreer/vaught-conjecture-palomar)
