@@ -15,8 +15,7 @@ and (R4) for receiving models (`Realization.hollowReceiving_levels`,
 `StageType.hasLadderGrowthCarriersStableAtSeed_levels`).  Not used by it, and open: (R1)
 (`Expansion.FiniteCutReceiving`), (R2) for every model (`Realization.ResidualReceiving`), and the
 bounded coatom form for all source-gap contexts (`StageType.IsSourceGapContext`; proved when the
-lost point is last, `Realization.boundedCoatomCutoffDetermination_sourceGapLast`).  The entries
-below that list (R3) and (R4) for receiving models as open predate #183.
+lost point is last, `Realization.boundedCoatomCutoffDetermination_sourceGapLast`).
 
 **Rules.**  Every entry either names a theorem compiled in this repository on `main` (marked
 *compiled*, with the hypotheses that it takes) or carries one of the markers of `README.md`,
@@ -40,8 +39,8 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 1, finite kernel | 98% | `StageType.provisionalOffset` | the bound (d) of the offset (prospective) |
 | 2, realizations, syntax | 95% | `Realization.eq_of_eval_eq_some` | hull items 4–5 for realizations |
 | 3, the completion (R6) | 98% | `StageType.hasApexCoatomExtensions`, `Seed.nonempty_completionBelowFullGrade` | the statements at successor stages only (not needed) |
-| 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the (R1) conditional theorems under it are retired, after an audit of the uses of the refuted hypothesis as well as the calls by name; `IMPLEMENTATION.md`, checkpoint 4); (R2) (its form for receiving models compiled, `Realization.receivingResidualReceiving_of_padded`), (R3), (R4) |
-| 4, continuation | 68% | `Realization.stableCandidate` | output 3: (R4) |
+| 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the (R1) conditional theorems under it are retired, after an audit of the uses of the refuted hypothesis as well as the calls by name; `IMPLEMENTATION.md`, checkpoint 4); (R2), (R3), (R4) for every model (their forms for receiving models compiled, `Realization.receivingResidualReceiving_of_padded`, `Realization.hollowReceiving_levels`, `Expansion.receivingStableCappedReceiving_levels`) |
+| 4, continuation | 68% | `Realization.stableCandidate` | output 3: (R4) for every model (its form for receiving models compiled, `Expansion.receivingStableCappedReceiving_levels`) |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
 | Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff`; the concordance rows (`IMPLEMENTATION.md`) | rows 2–5, 29 and 43 P, and row 14 for the printed definitions of [AFK26, §2] that it names; row 1 C, with its truncation function P; rows 6 and 44 S (one direction at `ω₁`); rows 8/11 P on corrected row 7 with domains S; row 15 P/C/P/S by part; the remaining rows S or C |
@@ -173,7 +172,11 @@ Notes on the rows, each with its marker:
   at every stage above `ω` at which a model exists (`Realization.IsModel.not_hasTightSaturations`),
   so both conditional theorems are vacuous above `ω`; acquisition itself is not refuted, and nothing
   here shows models absent at any stage.  Still to be proved: (R1) by another construction, or by
-  the coupled one restricted to carrying private contexts (prospective); (R2), (R3), (R4).
+  the coupled one restricted to carrying private contexts (prospective); (R2), (R3), (R4) for
+  every model.  Compiled with no hypothesis: their forms for receiving models
+  (`Realization.receivingResidualReceiving_of_padded`, `MainTheorem/LowPaddedRoute`;
+  `Realization.hollowReceiving_levels` and `Expansion.receivingStableCappedReceiving_levels`,
+  `MainTheorem/GrowthLevelRoute`).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
   property (`forcingDonors_of_hasCoatomExtensions`), hence at every block index with no hypothesis
@@ -212,10 +215,11 @@ Notes on the rows, each with its marker:
   (`Realization.exists_hasTerminalProperty`); output 3 and the continuation criterion from (R4)
   alone (`Realization.isModel_stableCandidate_of_stableCappedReceiving`,
   `ContinuationCriterion.of_stableCappedReceiving'`; the coatom extension property with apex at
-  the next block is compiled).  Still to be proved: (R4), for output 3; the equivalence of
-  cover-hollowness (with
-  which the compiled statements are formulated) and the original no-anchor predicate (the meaning of
-  "hollow", `SEMANTIC_CONTRACT.md`, item 8); the exact-age Scott sentences.
+  the next block is compiled).  Still to be proved: (R4) for every model, for output 3 (its form
+  for receiving models is compiled, `Expansion.receivingStableCappedReceiving_levels`); the
+  equivalence of cover-hollowness (with which the compiled statements are formulated) and the
+  original no-anchor predicate (the meaning of "hollow", `SEMANTIC_CONTRACT.md`, item 8); the
+  exact-age Scott sentences.
 - *Layers 5 and 6.*  Compiled conditionally on the hypotheses below, or on statements derived
   from them (next-block uniqueness; finite-extension receiving, from (R1)): uniqueness and limit
   existence (`ModelExpansion.subsingleton`, `ModelExpansion.nonempty_of_forall_lt`, under
@@ -264,11 +268,12 @@ Notes on the rows, each with its marker:
   now strong coding (row 45).  [AFK26] states Propositions 4.32 (amalgamation of charts, where
   hypothesis 8 enters), 4.34 and 4.35 without proof and sketches Lemma 4.33.  Their counterparts
   here are compiled (the hereditary property, `hereditary_legalAge`, with no hypothesis) or
-  compiled conditionally on the hypotheses below, and every compiled form of the main theorem is
-  conditional on named hypotheses: on the retained all-model terminal-classification route, at
-  fewest the four of the four-hypothesis form ((R1), the continuation criterion, (R2), (R3)), and
-  on the receiving-models route the three of its three-hypothesis form ((R4), (R2) and (R3) for
-  receiving models), each still to be proved; hypothesis 8 is compiled.
+  compiled conditionally on the hypotheses below.  The forms of the main theorem on the retained
+  all-model terminal-classification route are conditional, at fewest on the four of the
+  four-hypothesis form ((R1), the continuation criterion, (R2), (R3)), each still to be proved; on
+  the receiving-models route the three hypotheses of its three-hypothesis form ((R4), (R2) and
+  (R3) for receiving models) are compiled, so the main theorem is compiled with no hypothesis
+  (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`); hypothesis 8 is compiled.
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`),
   and with both compiled, at every `β < ω₁` with no further hypothesis
@@ -314,7 +319,9 @@ finite-cut receiving (`Realization.HasFiniteCutReceiving`, `Realization/Model.le
 are the **receiving models**.  A **receiving expansion** of a countable base structure is a model
 expansion whose realization is a receiving model; a **receiving successor** of a receiving model
 at `λ_ξ` is a receiving model at `λ_{ξ+1}` on the same carrier whose stage reduction to `λ_ξ` is
-it; the receiving expansion domains are defined with receiving expansions (all prospective).
+it; the receiving expansion domains are defined with receiving expansions (all defined in the
+library: `Realization.IsReceivingModel`, `Realization.IsReceivingTerminalAt`,
+`Expansion.receivingExpansionDomain`).
 Receiving is part of the definition, so existence, reduction, uniqueness, logical comparison,
 continuation, and classification are to be proved for `𝒞`.  This postpones, and does not weaken,
 the equivalence with the original presentation: (R1) becomes a later fidelity theorem relating
@@ -339,7 +346,9 @@ not formalized):
   `MainTheorem.hasThinAlephOneSpectrum_of_filtration` (`MainTheorem/Spectrum.lean`), through
   `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_expansionDomains`.
 
-**Interfaces to build** (all prospective):
+**Interfaces to build** (prospective when written; the route through them is compiled,
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'`,
+`MainTheorem/ReceivingRoute`):
 
 | Item | Statement | Note |
 | --- | --- | --- |
@@ -356,29 +365,35 @@ test of the route.  Item (c) is the counterpart of `Expansion.bfEquiv_of_modelEx
 `Expansion.exists_reduce_covers` state their output expansions existentially, so a receiving
 version needs them restated with the reductions as outputs
 (`Expansion.exists_extend_covers_reduceBlock` and `Expansion.exists_extend_covers_back_reduceBlock`,
-compiled in a separate open change).  For item (e): "no receiving successor" does not imply "no
-successor that is a model" (`Realization.IsTerminalAt`).  Items (a) and (f) are compiled in a
-separate open change, not yet reviewed, (f) as a form of the main theorem without (R1) whose
-remaining hypotheses are the coatom extension property with apex at every countable block stage
-and (R4), (R2) and (R3) for receiving models (`Expansion.ReceivingStableCappedReceiving`,
+compiled, `Expansion/ReceivingAgreement`).  For item (e): "no receiving successor" does not imply
+"no successor that is a model" (`Realization.IsTerminalAt`).  Item (a) is compiled
+(`Realization.hasFiniteCutReceiving_of_forall_reduce_blockStage`, `Realization/ReceivingLimit`),
+and so is item (f), as a form of the main theorem without (R1) whose remaining hypotheses are the
+coatom extension property with apex at every countable block stage and (R4), (R2) and (R3) for
+receiving models (`Expansion.ReceivingStableCappedReceiving`,
 `Realization.ReceivingResidualReceiving`, and `Realization.HollowReceiving` for
-`Realization.IsReceivingCoverHollowAtBlock`); their status here stays prospective.  Nonempty
-receiving losses need next-block uniqueness of receiving expansions and receiving witnesses, not
+`Realization.IsReceivingCoverHollowAtBlock`;
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`).  Nonempty receiving
+losses need next-block uniqueness of receiving expansions and receiving witnesses, not
 `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`, whose hypothesis `hnext` is next-block
-uniqueness of all model expansions.
+uniqueness of all model expansions; they are compiled from next-block uniqueness of receiving
+models and the apex property (`MainTheorem.receivingExpansionDomains_hasNonemptyLosses`), and the
+first follows from forcing donors (`Expansion.ReceivingNextBlockUniqueness.of_forcingDonors`).
 
-**The three finite reading constructions** (the remaining hard mathematics; open).  Completion
-yields a lawful extension (`Seed.nonempty_completionBelowFullGrade`); classification and
-continuation need a lawful extension whose rows read specified labels.  `StageType.ReadsAtLeast`
+**The three finite reading constructions** (open; (R2), (R3) and (R4) for receiving models were
+compiled by other constructions, recorded with each item below).  Completion yields a lawful
+extension (`Seed.nonempty_completionBelowFullGrade`); classification and continuation need a
+lawful extension whose rows read specified labels.  `StageType.ReadsAtLeast`
 (grade of `x` at most that of `s`; at every cell of `(univ, grade s)`, row at `s` at most row at
 `x`) is satisfied by a row `⊥` at both cells, so a stronger requirement is stated where needed.
-The warnings for (R2)–(R4) below are compiled in separate open changes, not in the library.
+The warnings for (R2)–(R4) below are compiled in the library.
 
 - (R2): extensions satisfying the per-top reading criterion for arbitrary relevant donors.  The
   version with one fixed **lost top** (an old top of the context read for every new top) is
-  *refuted* in a separate open change (`StageType.HasSeparatedPinnedExtensions`, false at every
-  stage); the replacement reads each new top through its own old reference top.  (R2) for
-  receiving models is compiled by another construction, LOW displays
+  *refuted* (`StageType.HasSeparatedPinnedExtensions`, false at every stage,
+  `SeparationObstruction.not_hasSeparatedPinnedExtensions`); the replacement reads each new top
+  through its own old reference top (`StageType.HasReadingPinnedExtensions`, defined; open).
+  (R2) for receiving models is compiled by another construction, LOW displays
   (`Realization.receivingResidualReceiving_of_padded`), so the receiving-models route does not need
   this one.
 - (R3): uniform acquisition of marked-cap contexts (`StageType.IsMarkedCapContext`) and **reading
@@ -386,11 +401,18 @@ The warnings for (R2)–(R4) below are compiled in separate open changes, not in
   new tops); **marked closure** (an entry agreeing with a marked one above its cap is marked) for
   sufficiently rich marked specifications of the **leaf-and-marked layer** (a leaf cell for each
   catalogue entry, a marked cell for each chosen entry); the empty specification solves nothing.
-- (R4): cap-reading extensions (`StageType.IsCapReadingExtension`, prospective here): every cell
-  at `(univ, N)` reads each new cell through the cap (`StageType.ReadsThroughCap`, a value
+  (R3) for receiving models is compiled by another construction, growth carriers through the
+  replicated levels (`Realization.hollowReceiving_levels`, `MainTheorem/GrowthLevelRoute`), so the
+  receiving-models route does not need this one.
+- (R4): cap-reading extensions (`StageType.IsCapReadingExtension`, defined in the library): every
+  cell at `(univ, N)` reads each new cell through the cap (`StageType.ReadsThroughCap`, a value
   `ω · c + n` at a new cell labelled `μ + n`, not `⊥`); the profile and leaf-and-marked
   completions keep a cell whose row there is `⊥`, so they are not cap-reading extensions at a cap
-  of grade 3 or 4, and the completion theorem cannot be applied unchanged.
+  of grade 3 or 4 (`TowerProfile.not_isCapReadingExtension_completion`,
+  `TowerProfile.not_isCapReadingExtension_markedCompletion`), and the completion theorem cannot be
+  applied unchanged.  (R4) for receiving models is compiled by another construction, growth
+  carriers through the replicated levels (`Expansion.receivingStableCappedReceiving_levels`,
+  `MainTheorem/GrowthLevelRoute`), so the receiving-models route does not need this one.
 
 No single universal reading theorem is required: the quantifiers differ, and the stronger
 unifications examined have been refuted
@@ -413,9 +435,13 @@ Four forms of the main theorem on `ℕ` by the all-model terminal-classification
 are compiled, each conditionally on named hypotheses.  Each later form is obtained from the one
 before it; all four are kept.  On this route the fewest hypotheses are four.  The receiving-models
 route (below) has a separate form with three hypotheses, (R4), (R2) and (R3) for receiving
-models, of which (R2) for receiving models is compiled (`Realization.receivingResidualReceiving_of_padded`,
-through LOW displays, `StageType.hasLowDisplays_of_padded`); it changes nothing in this list or the
-table.  The count went from seven to six to five
+models, all three compiled: (R2) for receiving models
+(`Realization.receivingResidualReceiving_of_padded`, through LOW displays,
+`StageType.hasLowDisplays_of_padded`), and (R3) and (R4) for receiving models
+(`Realization.hollowReceiving_levels`, `Expansion.receivingStableCappedReceiving_levels`), so the
+main theorem is compiled with no hypothesis
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`); it changes nothing in this list or
+the table.  The count went from seven to six to five
 by compiled derivations, and from five to four by a compiled proof of hypothesis 8
 (`StageType.hasApexCoatomExtensions`, compiled in this repository (theorem named)); with it
 hypotheses 1 and 3 are compiled with no hypothesis, and hypothesis 7 from next-block uniqueness
@@ -470,7 +496,10 @@ original (`MainTheorem.receivingForms_of_stableCappedReceiving`).  (R2) for rece
 compiled (`Realization.receivingResidualReceiving_of_padded`: LOW displays at source-gap contexts,
 `StageType.hasLowDisplays_of_padded`, through the padded tower, `MainTheorem/LowPaddedRoute`), so
 the form `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_padded` is conditional on (R4) and
-(R3) for receiving models only; those two are open.  (R1) is
+(R3) for receiving models only.  Those two are compiled
+(`Expansion.receivingStableCappedReceiving_levels`, `Realization.hollowReceiving_levels`,
+`MainTheorem/GrowthLevelRoute`), which gives the main theorem with no hypothesis,
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`.  (R1) is
 not a hypothesis of it and is not proved by it: receiving is a clause of the class, and (R1)
 stays a later fidelity theorem, here meaning a later theorem relating models and receiving models
 (two presentations of the tower), not the fidelity theorem of Layer 2 (the density sentence
@@ -613,8 +642,10 @@ Status of each:
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
    Compiled conditionally on (R4) and the coatom extension property with apex at every successor
    block stage (`ContinuationCriterion.of_hasApexCoatomExtensions`), and with the latter compiled,
-   on (R4) alone (`ContinuationCriterion.of_stableCappedReceiving'`); (R4) is still to be proved,
-   so the six-, five- and four-hypothesis forms keep the criterion as a hypothesis.
+   on (R4) alone (`ContinuationCriterion.of_stableCappedReceiving'`); (R4) for every model is still
+   to be proved (its form for receiving models is compiled,
+   `Expansion.receivingStableCappedReceiving_levels`), so the six-, five- and four-hypothesis forms
+   keep the criterion as a hypothesis.
 5. `Realization.ResidualReceiving`: still to be proved; its form for receiving models,
    `Realization.ReceivingResidualReceiving`, is compiled by the LOW construction
    (`Realization.receivingResidualReceiving_of_padded`, `MainTheorem/LowPaddedRoute`).  Exactly
@@ -697,7 +728,10 @@ Status of each:
    separated supports (`Realization.not_exists_isGloballySeparatedRigidCore`); the converse is not
    formalized.
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
-   growth construction).  Exactly reformulated as exact receiving of all legal types
+   growth construction); its form for receiving models, `Realization.HollowReceiving` for
+   `Realization.IsReceivingCoverHollowAtBlock`, is compiled by growth carriers through the
+   replicated levels (`Realization.hollowReceiving_levels`, `MainTheorem/GrowthLevelRoute`).
+   Exactly reformulated as exact receiving of all legal types
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
    `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P` with
    `H := Realization.IsCoverHollowAtBlock` (`Realization.hollowReceiving_of_schemeDetermination`,
@@ -812,9 +846,10 @@ compiled).
 
 ## The research front
 
-Each item is open or still to be proved, except item 1, now compiled and kept with the history of
-its refuted designs, and item 4, compiled from it; none is assumed by a theorem of the library
-except as a named hypothesis.
+Each item carries its own marker: item 1 is now compiled and kept with the history of its refuted
+designs, item 2 and item 4 (from item 1) are compiled, item 3 is refuted, and the attained least
+lift of item 6 is compiled; the rest is open or still to be proved.  None is assumed by a theorem
+of the library except as a named hypothesis.
 
 1. **Layer 3 at every `m`** (compiled in this repository (theorem named)): every seed has a
    completion below the full grade, at every arity `m`, with no hypothesis
@@ -1097,7 +1132,9 @@ except as a named hypothesis.
 4. **Forcing donors** (compiled in this repository (theorem named)): from the coatom extension
    property (`forcingDonors_of_hasCoatomExtensions`) and its proof, at every block index with no
    hypothesis (`forcingDonors_blockStage`).
-5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots; the empty root by
+5. **Output 3, part D, and (R4)** (still to be proved for every model; (R4) for receiving models
+   is compiled by another construction, `Expansion.receivingStableCappedReceiving_levels`,
+   `MainTheorem/GrowthLevelRoute`): (R4) over positive roots; the empty root by
    the coatom extension over the empty face and the coatom extension properties at `λ_{ξ+1}` are
    compiled (`StageType.hasApexCoatomExtensions_blockStage`); the
    lawfulness of the candidate is item 2.  Compiled conditionally on (R4) and the coface instances:
@@ -1318,12 +1355,17 @@ except as a named hypothesis.
    every marked specification (`TowerProfile.not_isCapReadingExtension_markedCompletion`).
    Status, each named statement separately: `HasCapRowExtensions ξ` open; RCC open;
    `HasCapReadingExtensions ξ` open; (R4) still to be proved; hypothesis 8 compiled.
-6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
-   legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
-   separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
-   off that one lift, and the threshold characterization and the limit-stage monotonicity are
-   derived from it under that stage hypothesis; the least lift itself rests on the finite row
-   algebra and the lawful provisional lift only, not on that monotonicity.  The stable section is
+6. **The attained least lift and structural successor leastness** (the attained least lift
+   compiled, `Stage/LeastLift`; structural successor leastness prospective).  One lift of a legal
+   stage type at a limit stage `β` to `β + ω`, least at every cell (compiled,
+   `StageType.exists_isLeast_isLiftLabelling`; each minimum is also attained separately,
+   `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read off that one
+   lift (compiled per cover, `StageType.forcesThreshold_iff_coe_add_le_of_isLeast`, and in
+   supremum form, `Realization.stableOffset_eq_iSup_labellingOffset` and
+   `Realization.natCast_le_stableOffset_iff_exists_isLeast`, `Continuation/StableOffsetLeastLift`);
+   the monotonicity of the least lifts along extensions of rooted covers is not stated; the least
+   lift itself rests on the finite row algebra and the lawful provisional lift only, not on that
+   monotonicity.  The stable section is
    at most every coherent next-block assignment
    (`README.md`, Layer 3, 3.1, "The attained least lift"; Layer 4, "Status", output 2 refined).
    The structural successors of a consistent realization `R` (the consistent realizations at the
@@ -1362,9 +1404,11 @@ except as a named hypothesis.
      known refuting context: the block prescription is not compatible wherever the context has a
      lawful labelling `⊥` at a block cell and not `⊥` at a cell of the top grade
      (`PrescribedFullRows.not_isFaceCompatible_block`, compiled), which holds at the per-block
-     route's refuting context `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued
-     from compiled pieces of that route, not on `main`; the joining lemma is to be compiled once
-     it lands).  It is not a reduction.
+     route's refuting context `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued,
+     not compiled: from `PrescribedFullRows.not_isFaceCompatible_block` and a lawful labelling of
+     that context that is `⊥` at its cell `z₁` and `ω + 2` at its cell of grade `2`; the context
+     is compiled, `Extension/CoupledGatedExtensionCounterexample`, and the lemma joining the two is
+     not).  It is not a reduction.
    - (R4): the core with a compatible cap prescription gives a cap-reading scheme
      (`StageType.HasPrescribedFullRows.exists_isCapReadingScheme`), only the part concerning the
      scheme of the sufficient condition for a stable recovery scheme

@@ -75,6 +75,11 @@ and prime structures).  Mathlib is inherited from InfinitaryLogic's manifest (th
 `cameronfreer/mathlib4` at `346a4bd`), so `lake exe cache get` covers only part of it.  CI runs the
 same commands on every push to `main` and every pull request.
 
+The main theorem is also checked against an external reference statement with Comparator
+(`bash comparator/check.sh --exact`; [`comparator/README.md`](comparator/README.md)), and the
+proof milestone, with its commit, pins, axioms and checks, is recorded in
+[`milestones/2026-10-11-main-theorem.md`](milestones/2026-10-11-main-theorem.md).
+
 ## Reading the proof
 
 Under `VaughtConjecture/`: finite structures (`Stage/Basic.lean`, and the coatom extension theorem
