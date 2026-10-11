@@ -44,25 +44,29 @@ has offset `0`, as it has provisional offset `0` (it forces nothing).
   `Realization.natCast_le_stableOffset_iff`, that `c` covers `p` in `S` and `d` is labelled `⊤`
   in `p`: then `n` is at most the stable offset exactly when some rooted cover `(m, q, f)` of `c`
   in `S` has `q` restricting to `p` along `f` and `β + n ≤ ℓ₀ x e` at the transported cell `e`.
+  These premises enter only at `n = 0`, where the root itself, `(k, p, id)`, is a rooted cover
+  forcing `0` (as in `Realization.natCast_le_stableOffset_iff`); the equality form needs neither.
+  These forms take the family `ℓ₀` as a hypothesis; its existence is a separate statement, below.
 * **Legality of the cover types** (`Realization.ExtendsToCover.isLegal`).  The definition of the
   stable offset and its forcing form `Realization.natCast_le_stableOffset_iff` place no condition
-  on the types of `S`: `S` is any realization at `β`.  Legality of the type of a rooted cover
-  therefore does not follow from them, and is taken here as one additional, named premise:
-  `S.HasLegalTypes`.  With it, every rooted cover has a legal type.
+  on the types of `S`: `S` is any realization at `β`, and these hypotheses do not include
+  legality of the type of a rooted cover.  It is taken here from one additional, named premise,
+  `S.HasLegalTypes`: with it, every rooted cover has a legal type.
 * **Existence of the least lifts** (`Realization.exists_isLeast_isLiftLabelling_family`): given
-  `S.HasLegalTypes`, `β` a limit and `β + ω ≤ α` (the premises of
-  `StageType.exists_isLeast_isLiftLabelling`, of which `β` a limit and `β + ω ≤ α` are also not
-  premises of the stable offset, which carries only `β` zero or a limit and any `α`), some family
-  `ℓ₀` is a least lift labelling at every rooted cover.  Hence the supremum form and the threshold
-  form with a least lift at each rooted cover
+  `S.HasLegalTypes`, `β` a limit and `β + ω ≤ α`, some family `ℓ₀` is a least lift labelling at
+  every rooted cover.  These three premises are sufficient for the existence, through
+  `StageType.exists_isLeast_isLiftLabelling`; they are not shown necessary or minimal.  The
+  stable offset itself carries only `β` zero or a limit and any `α`.  Hence the supremum form and
+  the threshold form with a least lift at each rooted cover
   (`Realization.exists_stableOffset_eq_iSup_labellingOffset`,
   `Realization.exists_natCast_le_stableOffset_iff_exists_isLeast`), and at consecutive block stages
   for the reduction of a realization with legal types
   (`Realization.exists_natCast_le_stableOffset_reduce_iff_exists_isLeast`).
 
 A least lift labelling is unique when it exists (`IsLeast.unique`), so the choice of family does
-not matter.  The supremum form of the limit-stage monotonicity, stated with the least lift, is not
-proved here.  No change is made to `Realization.stableOffset` or to the statements of
+not matter.  A stable offset `⊤` says that every `n` is reached at some rooted cover, the cover
+depending on `n`; it does not say that one rooted cover has least-lift offset `⊤`.  No change is
+made to `Realization.stableOffset` or to the statements of
 `VaughtConjecture.Continuation.Normalization`.
 
 ## Placement
@@ -143,8 +147,9 @@ theorem ExtendsToCover.isLegal (hS : S.HasLegalTypes)
 
 /-- **A least lift at every rooted cover**: for `S` with legal types, `β` a limit and
 `β + ω ≤ α`, some family `ℓ₀` assigns to every rooted cover `x` of `c` in `S` a least lift
-labelling of its type to `α`.  The three premises are those of
-`StageType.exists_isLeast_isLiftLabelling`, with legality from `S.HasLegalTypes`. -/
+labelling of its type to `α`.  The three premises are sufficient, through
+`StageType.exists_isLeast_isLiftLabelling` with legality from `S.HasLegalTypes`; they are not
+shown necessary or minimal. -/
 theorem exists_isLeast_isLiftLabelling_family (hS : S.HasLegalTypes) (hlim : IsSuccLimit β)
     (hα : β + ω ≤ α) (c : Fin k → M) :
     ∃ ℓ₀ : ∀ x : Σ m : ℕ, StageType.{u} β m × (Fin k ↪ Fin m), Fin x.2.1.card → Label.{u},
@@ -214,10 +219,11 @@ end Family
 /-! ### With legal types -/
 
 /-- **The supremum form with a least lift at each rooted cover**, given legal types.  For `S`
-with legal types (`S.HasLegalTypes`, the premise giving the legality of the type of each rooted
-cover, which the stable offset does not carry), `β` a limit and `β + ω ≤ α`, some family `ℓ₀` is a
-least lift labelling at every rooted cover of `c` in `S`, and the stable offset of `d` at `c` is
-the supremum, over the rooted covers of `c` in `S`, of the offsets of the `ℓ₀ x` at the cell
+with legal types (`S.HasLegalTypes`, giving the legality of the type of each rooted cover, which
+the hypotheses of the stable offset do not include), `β` a limit and `β + ω ≤ α`, sufficient
+premises for the existence of the least lifts (not shown necessary or minimal), some family `ℓ₀`
+is a least lift labelling at every rooted cover of `c` in `S`, and the stable offset of `d` at `c`
+is the supremum, over the rooted covers of `c` in `S`, of the offsets of the `ℓ₀ x` at the cell
 transported from `d`. -/
 theorem exists_stableOffset_eq_iSup_labellingOffset (hS : S.HasLegalTypes) (hlim : IsSuccLimit β)
     (hα : β + ω ≤ α) :
@@ -229,11 +235,12 @@ theorem exists_stableOffset_eq_iSup_labellingOffset (hS : S.HasLegalTypes) (hlim
   exact ⟨ℓ₀, hleast, stableOffset_eq_iSup_labellingOffset ℓ₀ hleast⟩
 
 /-- **The thresholds of the stable offset with a least lift at each rooted cover**, given legal
-types.  For `S` with legal types (the premise giving legality, which the stable offset does not
-carry), `β` a limit, `β + ω ≤ α`, `c` covering the root `p` in `S` and `d` labelled `⊤` in `p`,
-some family `ℓ₀` is a least lift labelling at every rooted cover of `c` in `S`, and for every `n`,
-`n` is at most the stable offset exactly when some rooted cover `(m, q, f)` of `c` in `S` has `q`
-restricting to `p` along `f` and `β + n ≤ ℓ₀ x e` at a cell `e` of `q` transported from `d`. -/
+types.  For `S` with legal types, `β` a limit and `β + ω ≤ α` (sufficient premises for the
+existence of the least lifts, not shown necessary or minimal), `c` covering the root `p` in `S`
+and `d` labelled `⊤` in `p`, some family `ℓ₀` is a least lift labelling at every rooted cover of
+`c` in `S`, and for every `n`, `n` is at most the stable offset exactly when some rooted cover
+`(m, q, f)` of `c` in `S` has `q` restricting to `p` along `f` and `β + n ≤ ℓ₀ x e` at a cell `e`
+of `q` transported from `d`. -/
 theorem exists_natCast_le_stableOffset_iff_exists_isLeast (hS : S.HasLegalTypes)
     (hlim : IsSuccLimit β) (hα : β + ω ≤ α) (hc : S.Covers p c) (hd : p.label d = ⊤) :
     ∃ ℓ₀ : ∀ x : Σ m : ℕ, StageType.{u} β m × (Fin k ↪ Fin m), Fin x.2.1.card → Label.{u},
@@ -251,8 +258,8 @@ theorem exists_natCast_le_stableOffset_iff_exists_isLeast (hS : S.HasLegalTypes)
 some family `ℓ₀` is a least lift labelling to `λ_{η+1}` at every rooted cover of `c` in `S`, and
 `n` is at most the stable offset of `d` at `c` in `S` exactly when some rooted cover `(m, q, f)`
 of `c` in `S` has `q` restricting to `p` along `f` and `λ_η + n ≤ ℓ₀ x e` at a cell `e` of `q`
-transported from `d`.  The legality, limit and stage premises are met: `R.HasLegalTypes` passes
-to the reduction, `λ_η` is a limit, and `λ_{η+1} = λ_η + ω`. -/
+transported from `d`.  The sufficient premises for the existence of the least lifts hold here:
+`R.HasLegalTypes` passes to the reduction, `λ_η` is a limit, and `λ_{η+1} = λ_η + ω`. -/
 theorem exists_natCast_le_stableOffset_reduce_iff_exists_isLeast {η : Ordinal.{u}}
     {R : Realization.{u, v} (blockStage (η + 1)) M} (hl : R.HasLegalTypes)
     {p : StageType.{u} (blockStage η) k} {d : Fin p.card}

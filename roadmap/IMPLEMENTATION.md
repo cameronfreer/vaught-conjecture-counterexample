@@ -406,17 +406,21 @@ them.  Each statement with its hypotheses and marker.  Here `β` is the lower st
 at `β`, and a lift of `q` a stage type at `β + ω` whose reduction to `β` is `q` (same scheme and
 rows).
 
-1. *The attained least lift* (prospective).  Hypotheses: `β` a limit stage, the stage hypothesis
-   under which the statement is formulated, and a **legal** stage type `q` at `β`
-   (`StageType.IsLegal`), an explicit hypothesis: the availability law is existential, so the
-   cell-wise minima of the lifts of an arbitrary stage type need not be attained by one lawful
-   labelling.  Any further hypothesis its proof needs is recorded with it.  Conclusion: a lift `q₀`
-   of `q` with `q₀.label d ≤ Q.label d` for every lift `Q` of `q` and every cell `d`, one lawful
-   labelling attaining every minimum at once.  The threshold forced by a rooted cover is identified
-   by testing against this one lift, not by combining lifts chosen separately at the cells.
-   Compiled in this repository (theorem named), cell by cell: each minimum is attained by some lift
-   (`StageType.exists_lift_label_eq_ofOffset`, for `β` zero or a limit).  The statement validates no
-   ordering of twins fixed in advance: the twin-ordering hypothesis is refuted
+1. *The attained least lift* (compiled in this repository (theorem named), in `Stage/LeastLift`).
+   Hypotheses: `β` a limit stage, the stage hypothesis under which the statement is formulated; a
+   **legal** stage type `q` at `β` (`StageType.IsLegal`), an explicit hypothesis: the availability
+   law is existential, so the cell-wise minima of the lifts of an arbitrary stage type need not be
+   attained by one lawful labelling; and lifts to a stage `α` with `β + ω ≤ α`.  These are the
+   premises of the compiled statement, sufficient for it, not shown necessary or minimal.
+   Conclusion: a lift labelling `ℓ₀` of `q` to `α` (`StageType.IsLiftLabelling`, the labellings of
+   the lifts of `q` by `StageType.isLiftLabelling_iff`) with `ℓ₀ d ≤ ℓ d` for every lift labelling
+   `ℓ` and every cell `d`, one lawful labelling attaining every minimum at once
+   (`StageType.exists_isLeast_isLiftLabelling`); at a top cap and a marker it is the band labelling
+   (`StageType.IsMarker.isLeast_bandLabelling`).  The threshold forced by a rooted cover is
+   identified by testing against this one lift, not by combining lifts chosen separately at the
+   cells.  Also compiled in this repository (theorem named), cell by cell: each minimum is attained
+   by some lift (`StageType.exists_lift_label_eq_ofOffset`, for `β` zero or a limit).  The statement
+   validates no ordering of twins fixed in advance: the twin-ordering hypothesis is refuted
    (`Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`, compiled in this repository
    (theorem named)).
 2. *The limit-stage monotonicity* (prospective in its derived form; the monotonicity of thresholds
@@ -433,21 +437,25 @@ rows).
    (`Realization.stableOffset_eq_iSup_labellingOffset`, `Continuation/StableOffsetLeastLift`,
    compiled in this repository (theorem named)); the monotonicity of the least lifts along
    extensions is not stated.
-3. *The threshold characterization* (prospective in its derived form).  Hypotheses: those of 1, a
-   rooted cover `(q, f)` of a root `p`, and a cell `d` labelled `⊤` in `p`.  Per-cover form (Layers
-   1–3): `(q, f)` forces `n` at `d` exactly when every lift is at least `β + n` there (the
-   definition), exactly when the least lift is.  Supremum form (Layer 4): `n` is at most the stable
-   offset exactly when the least lift of some rooted cover is at least `β + n` at `d`.  Compiled in
-   this repository (theorem named), with forcing in place of the least lift:
-   `StageType.ForcesThreshold` (`Stage/Threshold`) and `Realization.natCast_le_stableOffset_iff`
-   (`Continuation/Normalization`); per cover with the least lift,
-   `StageType.forcesThreshold_iff_coe_add_le_of_isLeast` (`Stage/LeastLift`); and the supremum
-   form with least lifts, over the same rooted covers, for any family of least lifts at the rooted
-   covers (`Realization.natCast_le_stableOffset_iff_exists_isLeast`), such a family existing for a
-   realization with legal types, `β` a limit and `β + ω ≤ α`
-   (`Realization.exists_natCast_le_stableOffset_iff_exists_isLeast`, both in
-   `Continuation/StableOffsetLeastLift`).  Legal types are an added premise: the stable offset is
-   defined for any realization.
+3. *The threshold characterization* (compiled in this repository (theorem named), per cover and in
+   supremum form).  Setting: a rooted cover `(q, f)` of a root `p` and a cell `d` labelled `⊤` in
+   `p`.  Per-cover form (Layers 1–3): `(q, f)` forces `n` at `d` (`StageType.ForcesThreshold`,
+   `Stage/Threshold`) exactly when every lift is at least `β + n` there
+   (`StageType.forcesThreshold_iff_forall_lift`), exactly when a least lift labelling is
+   (`StageType.forcesThreshold_iff_coe_add_le_of_isLeast`, `Stage/LeastLift`); both assume only `β`
+   zero or a limit, with `q` restricting to `p` along `f`, and the second takes the least lift
+   labelling as a hypothesis.  Supremum form (Layer 4): with forcing in place of the least lift,
+   `Realization.natCast_le_stableOffset_iff` (`Continuation/Normalization`); with least lifts, over
+   the same rooted covers and with the restriction to the root and the transported cell read
+   literally, for any family of least lift labellings at the rooted covers, taken as a hypothesis,
+   `n` is at most the stable offset exactly when the least lift of some rooted cover is at least
+   `β + n` at the transported cell (`Realization.natCast_le_stableOffset_iff_exists_isLeast`,
+   `Continuation/StableOffsetLeastLift`).  Existence of such a family is separate: sufficient
+   premises (not shown necessary or minimal) are legal types of the realization, `β` a limit and
+   `β + ω ≤ α` (`Realization.exists_isLeast_isLiftLabelling_family`,
+   `Realization.exists_natCast_le_stableOffset_iff_exists_isLeast`).  Legal types are an added
+   premise: the stable offset is defined for any realization, and its hypotheses do not include
+   legality of the types of its rooted covers.
 4. *Structural successor leastness* (the "least" property prospective).  Hypotheses: `R` an exactly
    consistent covering realization at `λ_ξ`; a coherent next-block assignment (a
    restriction-compatible labelling of `R` whose values are lifts to `λ_{ξ+1}`).  Conclusion: the
