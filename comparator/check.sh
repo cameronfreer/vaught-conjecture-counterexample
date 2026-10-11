@@ -1,45 +1,88 @@
 #!/usr/bin/env bash
 # Comparator check of the solution module against the reference statement.
 #
-# Usage: bash comparator/check.sh [--paranoid] [OUT_DIR]
+# Usage: bash comparator/check.sh [--exact] [--paranoid] [OUT_DIR]
 #
 # Run at the root of a checkout whose root library is built (`lake build`) and whose
 # dependencies are at the pinned revisions; `comparator/clean_check.sh` runs it on a fresh clone
 # after a clean build of the root library.  Needs bwrap, jq, python3 and the pinned toolchain
-# (whose `lake comparator`, `leanexport` and `nanoda_bin` are used).  Nothing is fetched and
-# nothing in the checkout is written outside `.lake/comparator` (or OUT_DIR).
+# (whose `lake comparator`, `leanexport` and `nanoda_bin` are used).  Nothing is fetched.
 #
-# Steps (each fails the script on error):
-#  1. records the commit, the toolchain and the hashes of every input;
-#  2. checks the dependency pins, and that the root library build is up to date;
+# Outputs go to OUT_DIR, which must not exist (it is created; an existing path, a symbolic link
+# or a path through a symbolic link is refused), or by default to a new directory
+# `.lake/comparator/run.XXXXXX`.  Every output file is created new (`noclobber`); the only
+# deletion is of the temporary directory OUT_DIR/tmp that this run created.
+#
+# Two modes.  If the files that enter the check (`comparator/`, `VaughtConjecture/`,
+# `VaughtConjecture.lean`, `lean-toolchain`, `lakefile.toml`, `lake-manifest.json`) have no
+# uncommitted change and no untracked file, the result is a check of the commit HEAD
+# ("exact commit").  Otherwise it is a check of the working tree, and every output says so
+# ("working tree"); with --exact, a working tree with such changes is refused instead.
+#
+# Steps (each fails the script with a message on error):
+#  1. records the mode, the commit, the toolchain, the SHA-256 of every input and of every tool
+#     binary and shared library invoked;
+#  2. checks that each dependency's git checkout is at its pinned revision with no modified
+#     tracked file (this says nothing about the dependencies' cached build outputs, which are
+#     read as they are), and that the root library build is up to date;
 #  3. checks that the declarations of comparator/Challenge.lean are those of the reviewed
 #     specification (a SHA-256 of the comment-free text);
-#  4. compiles the reference statement in a sandbox that sees only Mathlib and Mathlib's own
-#     dependencies, and checks its transitive import closure;
-#  5. compiles the solution module, its axiom test and the three expected failures in sandboxes
-#     that do not see the compiled reference statement;
+#  4. compiles the reference statement in a sandbox whose search path has only Mathlib and
+#     Mathlib's own dependencies, and checks its transitive import closure;
+#  5. compiles the solution module, its axiom test and the three expected failures, with search
+#     paths that do not contain the reference's build directory, and checks that `Challenge` is
+#     not in the solution's import closure;
 #  6. exports each with `leanexport` and runs `lake comparator` (Lean's kernel and nanoda) on the
 #     solution, which must be accepted, and on each expected failure, which must be rejected with
 #     its intended diagnostic.  With --paranoid, the solution is also checked by every external
 #     checker bundled with the toolchain (`lake comparator --paranoid`: leanchecker-paranoid,
 #     lean4lean, nanoda, con-leche and con-ron); this takes about ten minutes more.
 set -euo pipefail
-paranoid=()
-if [[ ${1:-} == --paranoid ]]; then paranoid=(--paranoid); shift; fi
-if (( $# > 1 )) || [[ ${1:-} == -* ]]; then
-  printf 'Usage: bash comparator/check.sh [--paranoid] [OUT_DIR]\n' >&2
+set -o noclobber
+usage() {
+  printf 'Usage: bash comparator/check.sh [--exact] [--paranoid] [OUT_DIR]\n' >&2
   exit 2
-fi
+}
+fail() { printf 'FAILED: %s\n' "$*" >&2; exit 1; }
+exact=0
+paranoid=()
+while [[ ${1:-} == --* ]]; do
+  case $1 in
+    --exact) exact=1 ;;
+    --paranoid) paranoid=(--paranoid) ;;
+    *) usage ;;
+  esac
+  shift
+done
+(( $# <= 1 )) || usage
 repo=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
 cd "$repo"
+
+# A new output directory: the path must not exist, and neither it nor any parent may be or pass
+# through a symbolic link.
+new_dir() {
+  local path=$1
+  [[ ! -e $path && ! -L $path ]] || fail "output path $path already exists"
+  local parent
+  parent=$(dirname "$path")
+  [[ -d $parent ]] || fail "parent directory $parent does not exist"
+  [[ $(realpath -e "$parent") == "$(realpath -s -e "$parent")" ]] ||
+    fail "output path $path passes through a symbolic link"
+  mkdir -- "$path"
+}
 if [[ -n ${1:-} ]]; then
-  mkdir -p "$1"
-  out=$(readlink -f "$1")
+  new_dir "$(realpath -s -m "$1")"
+  out=$(realpath -s -e "$1")
 else
+  [[ ! -L .lake && ! -L .lake/comparator ]] || fail ".lake/comparator is a symbolic link"
   mkdir -p .lake/comparator
   out=$(mktemp -d "$repo/.lake/comparator/run.XXXXXX")
 fi
-printf 'Outputs: %s\n' "$out"
+new_dir "$out/build"
+new_dir "$out/export"
+new_dir "$out/logs"
+new_dir "$out/tmp"
+created_tmp=$out/tmp
 src=$repo/comparator
 log() { printf '== %s\n' "$*"; }
 
@@ -53,16 +96,27 @@ target=PalomarChallenge.independent_challenge
 
 # ---------------------------------------------------------------------------------------------
 log "1. inputs"
-mkdir -p "$out/build" "$out/export" "$out/logs" "$out/tmp"
-git rev-parse HEAD > "$out/commit.txt"
-git status --porcelain --untracked-files=no > "$out/worktree-status.txt"
+commit=$(git rev-parse HEAD)
+inputs=(comparator VaughtConjecture VaughtConjecture.lean lean-toolchain lakefile.toml
+  lake-manifest.json)
+git status --porcelain --untracked-files=all -- "${inputs[@]}" > "$out/inputs-status.txt"
+if [[ -s "$out/inputs-status.txt" ]]; then
+  (( exact == 0 )) || {
+    cat "$out/inputs-status.txt" >&2
+    fail "--exact: the inputs have uncommitted changes or untracked files"
+  }
+  mode="working tree (uncommitted changes in the inputs; see inputs-status.txt) on $commit"
+else
+  mode="exact commit $commit"
+fi
+printf '%s\n' "$mode" > "$out/mode.txt"
+printf '%s\n' "$commit" > "$out/commit.txt"
+printf 'Mode: %s\nOutputs: %s\n' "$mode" "$out"
 expected_toolchain=$(cat lean-toolchain)
 tools=$(dirname "$(readlink -f "$(elan which lean)")")
 toolchain_dir=${expected_toolchain//\//--}
-[[ $(basename "$(dirname "$tools")") == "${toolchain_dir//:/---}" ]] || {
-  printf 'toolchain %s does not match lean-toolchain %s\n' "$tools" "$expected_toolchain" >&2
-  exit 1
-}
+[[ $(basename "$(dirname "$tools")") == "${toolchain_dir//:/---}" ]] ||
+  fail "toolchain $tools does not match lean-toolchain $expected_toolchain"
 {
   printf 'lean-toolchain: %s\n' "$expected_toolchain"
   "$tools/lean" --version
@@ -71,60 +125,81 @@ toolchain_dir=${expected_toolchain//\//--}
   "$tools/nanoda_bin" --help 2>&1 | head -n 1 || true
   /usr/bin/bwrap --version
 } > "$out/toolchain.txt"
-(cd "$tools" && sha256sum lean lake leanexport nanoda_bin) > "$out/TOOL-SHA256SUMS"
-(find comparator -type f \( -name '*.lean' -o -name '*.sh' -o -name '*.py' -o -name '*.json' \
+# Every binary of the toolchain (lean, lake, leanexport, nanoda_bin, leanchecker,
+# leanchecker-paranoid, lean4lean, con-leche, con-ron, …), the toolchain's shared libraries and
+# one digest of the toolchain's own `.olean` files, with paths relative to the toolchain; and,
+# separately (they differ between machines), the system programs invoked.
+(
+  cd "$tools/.."
+  find bin lib/lean -maxdepth 1 -type f \( -perm -u+x -o -name '*.so' \) -print0 | sort -z |
+    xargs -0 sha256sum
+  printf '%s  %s\n' "$(cd lib/lean && find . -name '*.olean' -print0 | sort -z |
+    xargs -0 sha256sum | sha256sum | cut -d' ' -f1)" "lib/lean/**/*.olean (digest of the list)"
+) > "$out/TOOL-SHA256SUMS"
+sha256sum /usr/bin/bwrap "$(readlink -f "$(command -v jq)")" \
+  "$(readlink -f "$(command -v python3)")" "$(readlink -f "$(command -v git)")" \
+  > "$out/SYSTEM-TOOL-SHA256SUMS"
+{
+  find comparator -type f \( -name '*.lean' -o -name '*.sh' -o -name '*.py' -o -name '*.json' \
     -o -name '*.md' \) -print0 | sort -z | xargs -0 sha256sum
-  sha256sum lean-toolchain lakefile.toml lake-manifest.json) > "$out/SOURCE-SHA256SUMS"
+  sha256sum lean-toolchain lakefile.toml lake-manifest.json
+} > "$out/SOURCE-SHA256SUMS"
 
 # ---------------------------------------------------------------------------------------------
 log "2. dependency pins and the root library build"
-diff -q lean-toolchain .lake/packages/InfinitaryLogic/lean-toolchain
+diff -q lean-toolchain .lake/packages/InfinitaryLogic/lean-toolchain > /dev/null ||
+  fail "lean-toolchain differs from InfinitaryLogic's"
 jq -er '.packages[] | if .type != "git" then error("git dependency required")
   else [.name, .rev] | @tsv end' lake-manifest.json > "$out/dependency-pins.tsv"
 declare -A dep_root
 while IFS=$'\t' read -r name rev; do
-  [[ $name =~ ^[A-Za-z_][A-Za-z0-9_-]*$ && $rev =~ ^[0-9a-f]{40}$ ]]
+  [[ $name =~ ^[A-Za-z_][A-Za-z0-9_-]*$ && $rev =~ ^[0-9a-f]{40}$ ]] ||
+    fail "unexpected manifest entry $name $rev"
   root=$(readlink -f ".lake/packages/$name")
-  [[ $(git -C "$root" rev-parse HEAD) == "$rev" ]] || {
-    printf 'dependency %s is not at its pinned revision %s\n' "$name" "$rev" >&2; exit 1; }
-  git -C "$root" diff --quiet HEAD -- || {
-    printf 'dependency %s has modified tracked files\n' "$name" >&2; exit 1; }
+  [[ $(git -C "$root" rev-parse HEAD) == "$rev" ]] ||
+    fail "dependency $name is not at its pinned revision $rev"
+  git -C "$root" diff --quiet HEAD -- || fail "dependency $name has modified tracked files"
   dep_root[$name]=$root
 done < "$out/dependency-pins.tsv"
+printf 'ok: dependency sources at their pinned revisions (their cached build outputs are not\n'
+printf '    authenticated against these sources)\n'
 # Up to date: Lake exits nonzero if any module of the root library would need rebuilding.
 lake build --no-build > "$out/logs/lake-build-no-build.log" 2>&1 || {
-  printf 'the root library build is missing or out of date; run lake build first\n' >&2
   cat "$out/logs/lake-build-no-build.log" >&2
-  exit 1
+  fail "the root library build is missing or out of date; run lake build first"
 }
-# The pinned Mathlib is upstream mathlib4 plus new files only.
+# The pinned Mathlib's sources are upstream mathlib4 plus new files only.
 mathlib=${dep_root[mathlib]}
-git -C "$mathlib" merge-base --is-ancestor "$mathlib_upstream" HEAD
+git -C "$mathlib" merge-base --is-ancestor "$mathlib_upstream" HEAD ||
+  fail "the pinned Mathlib does not contain upstream mathlib4 $mathlib_upstream"
 git -C "$mathlib" diff --name-only "$mathlib_upstream" HEAD > "$out/mathlib-fork-changes.txt"
-fork_files='^(Mathlib\.lean|Mathlib/ModelTheory/Infinitary/[A-Za-z]+\.lean|MathlibTest/[A-Za-z]+\.lean)$'
-if grep -vE "$fork_files" \
-    "$out/mathlib-fork-changes.txt"; then
-  printf 'the pinned Mathlib changes upstream files beyond Mathlib/ModelTheory/Infinitary\n' >&2
-  exit 1
+fork_files='^(Mathlib\.lean|Mathlib/ModelTheory/Infinitary/[A-Za-z]+\.lean'
+fork_files+='|MathlibTest/[A-Za-z]+\.lean)$'
+if grep -vE "$fork_files" "$out/mathlib-fork-changes.txt"; then
+  fail "the pinned Mathlib changes upstream files beyond Mathlib/ModelTheory/Infinitary"
 fi
 git -C "$mathlib" diff --diff-filter=A --name-only "$mathlib_upstream" HEAD -- \
-  'Mathlib/ModelTheory/Infinitary' > "$out/tmp/added.txt"
+  'Mathlib/ModelTheory/Infinitary' > "$created_tmp/added.txt"
 git -C "$mathlib" diff --name-only "$mathlib_upstream" HEAD -- 'Mathlib/ModelTheory/Infinitary' \
-  | cmp -s - "$out/tmp/added.txt"
+  > "$created_tmp/changed.txt"
+cmp -s "$created_tmp/added.txt" "$created_tmp/changed.txt" ||
+  fail "the pinned Mathlib modifies (not only adds) files in Mathlib/ModelTheory/Infinitary"
 
 # ---------------------------------------------------------------------------------------------
 log "3. the reference declarations"
 python3 comparator/scripts/declarations.py comparator/Challenge.lean \
   > "$out/challenge-declarations.lean"
 actual=$(sha256sum < "$out/challenge-declarations.lean" | cut -d' ' -f1)
-[[ $actual == "$reviewed_declarations" ]] || {
-  printf 'comparator/Challenge.lean declarations changed: %s\n' "$actual" >&2; exit 1; }
+[[ $actual == "$reviewed_declarations" ]] ||
+  fail "comparator/Challenge.lean declarations changed: $actual"
 printf 'ok: declarations of comparator/Challenge.lean match the reviewed specification\n'
 
 # ---------------------------------------------------------------------------------------------
-# Sandboxes: the whole file system read-only, home directories and /tmp hidden, no network, an
-# empty environment.  Each compile sees the toolchain, the source directory `comparator/` and
-# exactly the dependency roots passed to it, and writes only its own build directory.
+# Sandboxes: the whole file system read-only, home directories and /tmp covered, no network, an
+# empty environment.  Each command sees the toolchain, the source directory `comparator/`, the
+# directories passed to it read-only and its one writable directory; its LEAN_PATH is set
+# explicitly.  Paths below a directory passed to it stay visible: the property relied on is
+# the search path, and for the solution its import closure, not the invisibility of files.
 base_sandbox=(/usr/bin/bwrap --ro-bind / / --tmpfs /home --tmpfs /root --tmpfs /run/user
   --tmpfs /tmp --dev /dev --proc /proc --clearenv --unshare-all --die-with-parent --new-session
   --ro-bind "$(dirname "$tools")" "$(dirname "$tools")" --ro-bind "$src" "$src"
@@ -161,86 +236,97 @@ compile() {
 }
 strict=(-DwarningAsError=true -Dweak.linter.mathlibStandardSet=true
   -Dweak.linter.style.longFile=1500 -Dweak.linter.style.longFileDefValue=1500)
+# compile_logged NAME MODULE BUILD_DIR ROOTS_VAR LEAN_PATH [LEAN_OPTIONS...]
+compile_logged() {
+  local name=$1
+  shift
+  compile "$@" > "$out/logs/$name.log" 2>&1 || {
+    cat "$out/logs/$name.log" >&2
+    fail "compilation of $2 failed"
+  }
+}
 
 # ---------------------------------------------------------------------------------------------
 log "4. the reference statement, compiled against Mathlib alone"
 challenge=$out/build/challenge
-mkdir -p "$challenge"
-reference_path=$(path_of "${reference_roots[@]}")
-reference_path="$challenge:$reference_path"
-compile Challenge "$challenge" reference_roots "$reference_path" > "$out/logs/challenge.log" 2>&1
+new_dir "$challenge"
+reference_path="$challenge:$(path_of "${reference_roots[@]}")"
+compile_logged challenge Challenge "$challenge" reference_roots "$reference_path"
 # Exactly one diagnostic: the deliberate `sorry` of the reference theorem.
-grep -c 'warning:' "$out/logs/challenge.log" | grep -qx 1
-grep -q 'Challenge.lean:[0-9]*:[0-9]*: warning: declaration uses `sorry`' "$out/logs/challenge.log"
-! grep -q 'error:' "$out/logs/challenge.log"
+warnings=$(grep -c 'warning:' "$out/logs/challenge.log" || true)
+[[ $warnings == 1 ]] || fail "the reference statement has $warnings warnings, expected 1"
+grep -q 'Challenge.lean:[0-9]*:[0-9]*: warning: declaration uses `sorry`' \
+  "$out/logs/challenge.log" || fail "the reference statement's one warning is not its sorry"
+if grep -q 'error:' "$out/logs/challenge.log"; then
+  fail "the reference statement's compilation reports an error"
+fi
 # The import closure, read from the compiled `.olean` headers in the same sandbox.
 closure_runner=$out/build/closure
-mkdir -p "$closure_runner"
+new_dir "$closure_runner"
 cp comparator/scripts/ImportClosure.lean "$closure_runner/"
 reference_read=("${reference_roots[@]}" "$challenge")
 run_in reference_read "$reference_path" "$closure_runner" -- \
   "$tools/lean" --run "$closure_runner/ImportClosure.lean" Challenge \
-  > "$out/challenge-import-closure.txt"
+  > "$out/challenge-import-closure.txt" || fail "reading the reference's import closure failed"
 # Every module is in Init, Std, Lean, Mathlib or one of Mathlib's own dependencies, and none is
-# in a part of Mathlib that the pinned fork adds.
+# in a part of Mathlib that the pinned fork changes or adds.
 allowed='^(Challenge|Init|Std|Lean|Mathlib|Batteries|Aesop|Qq|Plausible|ProofWidgets'
 allowed+='|LeanSearchClient|ImportGraph)(\.|$)'
 if grep -vE "$allowed" "$out/challenge-import-closure.txt"; then
-  printf 'the reference statement imports a module outside Mathlib and its dependencies\n' >&2
-  exit 1
+  fail "the reference statement imports a module outside Mathlib and its dependencies"
 fi
-forbidden='^(Mathlib\.ModelTheory\.Infinitary|VaughtConjecture|InfinitaryLogic|ComputableModelTheory)(\.|$)'
-if grep -E "$forbidden" \
-    "$out/challenge-import-closure.txt"; then
-  printf 'the reference statement imports a forbidden module\n' >&2
-  exit 1
+forbidden='^(Mathlib\.ModelTheory\.Infinitary|VaughtConjecture|InfinitaryLogic'
+forbidden+='|ComputableModelTheory)(\.|$)'
+if grep -E "$forbidden" "$out/challenge-import-closure.txt"; then
+  fail "the reference statement imports a forbidden module"
 fi
-sed -n 's#^\(Mathlib/.*\)\.lean$#\1#p' "$out/mathlib-fork-changes.txt" | tr / . \
-  > "$out/tmp/fork-modules.txt"
-printf 'Mathlib\n' >> "$out/tmp/fork-modules.txt"
-if grep -Fxf "$out/tmp/fork-modules.txt" "$out/challenge-import-closure.txt"; then
-  printf 'the reference statement imports a module the pinned Mathlib adds\n' >&2
-  exit 1
+{
+  sed -n 's#^\(Mathlib/.*\)\.lean$#\1#p' "$out/mathlib-fork-changes.txt" | tr / .
+  printf 'Mathlib\n'
+} > "$created_tmp/fork-modules.txt"
+if grep -Fxf "$created_tmp/fork-modules.txt" "$out/challenge-import-closure.txt"; then
+  fail "the reference statement imports a module the pinned Mathlib changes or adds"
 fi
-printf 'ok: reference closure of %s modules, all from upstream Mathlib %s and its dependencies\n' \
+printf 'ok: reference closure of %s modules, whose Mathlib sources are those of upstream %s\n' \
   "$(wc -l < "$out/challenge-import-closure.txt")" "$mathlib_upstream"
 
 # ---------------------------------------------------------------------------------------------
-log "5. the solution module and the expected failures, compiled without the reference"
+log "5. the solution module and the expected failures, without the reference on the search path"
 solution=$out/build/solution
-mkdir -p "$solution"
+new_dir "$solution"
 root_build=$repo/.lake/build/lib/lean
 solution_roots=("${all_roots[@]}" "$repo")
 solution_path="$solution:$root_build:$(path_of "${all_roots[@]}")"
-compile SolutionDefinitions "$solution" solution_roots "$solution_path" "${strict[@]}" \
-  > "$out/logs/solution-definitions.log" 2>&1
-compile Solution "$solution" solution_roots "$solution_path" "${strict[@]}" \
-  > "$out/logs/solution.log" 2>&1
-compile Tests.SolutionAxioms "$solution" solution_roots "$solution_path" "${strict[@]}" \
-  > "$out/logs/solution-axioms.log" 2>&1
+[[ ":$solution_path:" != *":$challenge:"* ]] || fail "the reference build is on the search path"
+compile_logged solution-definitions SolutionDefinitions "$solution" solution_roots \
+  "$solution_path" "${strict[@]}"
+compile_logged solution Solution "$solution" solution_roots "$solution_path" "${strict[@]}"
+compile_logged solution-axioms Tests.SolutionAxioms "$solution" solution_roots \
+  "$solution_path" "${strict[@]}"
 cat "$out/logs/solution-axioms.log"
 grep -q "axioms of $target: \[propext, Classical.choice, Quot.sound\]" \
-  "$out/logs/solution-axioms.log"
+  "$out/logs/solution-axioms.log" || fail "the solution's axioms are not the standard three"
 solution_read=("${solution_roots[@]}" "$solution")
 run_in solution_read "$solution_path" "$closure_runner" -- \
   "$tools/lean" --run "$closure_runner/ImportClosure.lean" Solution \
-  > "$out/solution-import-closure.txt"
+  > "$out/solution-import-closure.txt" || fail "reading the solution's import closure failed"
 if grep -qx 'Challenge' "$out/solution-import-closure.txt"; then
-  printf 'the solution module imports the reference statement\n' >&2
-  exit 1
+  fail "the solution module imports the reference statement"
 fi
+printf 'ok: Challenge is not on the solution search path nor in its import closure (%s modules)\n' \
+  "$(wc -l < "$out/solution-import-closure.txt")"
 # The expected failures: each in its own build directory, the solution's read-only.
 expected_roots=("${all_roots[@]}" "$repo" "$solution")
 for module in WeakenedStatement AlteredSemantics SorrySolution; do
   build=$out/build/$module
-  mkdir -p "$build"
+  new_dir "$build"
   options=("${strict[@]}")
   [[ $module == SorrySolution ]] && options=(-Dweak.linter.mathlibStandardSet=true)
-  compile "ExpectedFailures.$module" "$build" expected_roots \
-    "$build:$solution:$root_build:$(path_of "${all_roots[@]}")" "${options[@]}" \
-    > "$out/logs/$module.log" 2>&1
+  compile_logged "$module" "ExpectedFailures.$module" "$build" expected_roots \
+    "$build:$solution:$root_build:$(path_of "${all_roots[@]}")" "${options[@]}"
 done
-grep -q 'warning: declaration uses `sorry`' "$out/logs/SorrySolution.log"
+grep -q 'warning: declaration uses `sorry`' "$out/logs/SorrySolution.log" ||
+  fail "SorrySolution does not report its sorry"
 
 # ---------------------------------------------------------------------------------------------
 log "6. exports and Comparator"
@@ -250,22 +336,22 @@ primitives=(propext Quot.sound Classical.choice
   Nat.land Nat.lor Nat.xor Nat.shiftLeft Nat.shiftRight
   String.ofList Char.ofNat List eagerReduce Nat String String.mk Char
   optParam autoParam semiOutParam outParam Quot Quot.mk Quot.lift Quot.ind)
-export_module() {  # MODULE ROOTS_VAR LEAN_PATH
-  run_in "$2" "$3" "$out/export" -- "$tools/leanexport" "$1" -- "$target" "${primitives[@]}"
+export_module() {  # MODULE ROOTS_VAR LEAN_PATH NAME
+  run_in "$2" "$3" "$out/export" -- "$tools/leanexport" "$1" -- "$target" "${primitives[@]}" \
+    > "$out/export/$4.ndjson" || fail "exporting $1 failed"
 }
-export_module Challenge reference_read "$reference_path" > "$out/export/challenge.ndjson"
-export_module Solution solution_read "$solution_path" > "$out/export/solution.ndjson"
+export_module Challenge reference_read "$reference_path" challenge
+export_module Solution solution_read "$solution_path" solution
 for module in WeakenedStatement AlteredSemantics SorrySolution; do
   build=$out/build/$module
   expected_read=("${expected_roots[@]}" "$build")
   export_module "ExpectedFailures.$module" expected_read \
-    "$build:$solution:$root_build:$(path_of "${all_roots[@]}")" \
-    > "$out/export/$module.ndjson"
+    "$build:$solution:$root_build:$(path_of "${all_roots[@]}")" "$module"
 done
 compare() {  # SOLUTION_EXPORT [OPTIONS...]
   local export=$1
   shift
-  COMPARATOR_BWRAP=/usr/bin/bwrap PATH="$tools:/usr/bin:/bin" TMPDIR="$out/tmp" \
+  COMPARATOR_BWRAP=/usr/bin/bwrap PATH="$tools:/usr/bin:/bin" TMPDIR="$created_tmp" \
     "$tools/lake" comparator "$@" --config "$src/comparator.json" \
     --challenge-from-export "$out/export/challenge.ndjson" --solution-from-export "$export"
 }
@@ -273,9 +359,8 @@ expect_rejection() {  # NAME DIAGNOSTIC
   local status=0
   compare "$out/export/$1.ndjson" > "$out/logs/comparator-$1.log" 2>&1 || status=$?
   if [[ $status != 1 ]] || ! grep -Fq "$2" "$out/logs/comparator-$1.log"; then
-    printf 'expected failure %s: exit %s, wanted 1 with: %s\n' "$1" "$status" "$2" >&2
     cat "$out/logs/comparator-$1.log" >&2
-    exit 1
+    fail "expected failure $1: exit $status, wanted 1 with: $2"
   fi
   printf 'ok: %s rejected (exit 1): %s\n' "$1" "$(grep -F "$2" "$out/logs/comparator-$1.log")"
 }
@@ -285,19 +370,26 @@ expect_rejection AlteredSemantics \
   "Const does not match between challenge and target 'PalomarChallenge.NoFiniteModels'"
 expect_rejection SorrySolution "Illegal axiom detected: 'sorryAx'"
 compare "$out/export/solution.ndjson" "${paranoid[@]}" > "$out/logs/comparator-solution.log" 2>&1 \
-  || { cat "$out/logs/comparator-solution.log" >&2; exit 1; }
+  || { cat "$out/logs/comparator-solution.log" >&2; fail "Comparator rejected the solution"; }
 cat "$out/logs/comparator-solution.log"
 accepted=("Lean default" nanoda)
 (( ${#paranoid[@]} )) && accepted+=("Lean paranoid" lean4lean con-leche con-ron)
 for kernel in "${accepted[@]}"; do
-  grep -Fq "$kernel kernel accepts the solution" "$out/logs/comparator-solution.log"
+  grep -Fq "$kernel kernel accepts the solution" "$out/logs/comparator-solution.log" ||
+    fail "no acceptance line for the $kernel kernel"
 done
-grep -Fxq 'Your solution is okay!' "$out/logs/comparator-solution.log"
+grep -Fxq 'Your solution is okay!' "$out/logs/comparator-solution.log" ||
+  fail "no final acceptance line"
 
 # ---------------------------------------------------------------------------------------------
 (cd "$out" && sha256sum export/*.ndjson) > "$out/EXPORT-SHA256SUMS"
 (cd "$out/build" && find . -name '*.olean' -print0 | sort -z | xargs -0 sha256sum) \
   > "$out/OLEAN-SHA256SUMS"
-sha256sum --check --status "$out/SOURCE-SHA256SUMS"
-rm -rf "${out:?}/tmp"
-printf 'Comparator check passed at %s: %s\n' "$(cat "$out/commit.txt")" "$out"
+sha256sum --check --status "$out/SOURCE-SHA256SUMS" ||
+  fail "an input changed during the check"
+git status --porcelain --untracked-files=all -- "${inputs[@]}" > "$created_tmp/status-after.txt"
+cmp -s "$out/inputs-status.txt" "$created_tmp/status-after.txt" ||
+  fail "the working tree of the inputs changed during the check"
+rm -rf -- "${created_tmp:?}"
+printf 'Comparator check passed (%s): %s\n' "$mode" "$out" > "$out/RESULT.txt"
+cat "$out/RESULT.txt"

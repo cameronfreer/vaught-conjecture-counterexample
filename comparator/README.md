@@ -54,15 +54,18 @@ specification `Palomar/Challenge.lean` of `cameronfreer/vaught-conjecture-paloma
 `Mathlib.Topology.Perfect`, for first-order structures and terms, `Cardinal.aleph`, the product
 topology and `Perfect`.  It does not import `InfinitaryLogic`: the syntax and semantics of
 infinitary formulas (`FirstOrder.Language.BoundedFormulaInf` and its `Realize`, about thirty
-lines) are restated in the file instead.  `check.sh` compiles it in a sandbox in which only
-Mathlib and the dependencies of Mathlib's own manifest are visible, and then checks its whole
-transitive import closure (2563 modules at the current pins): every module is in `Init`, `Std`,
+lines) are restated in the file instead.  `check.sh` compiles it in a sandbox whose search path
+(`LEAN_PATH`) consists of Mathlib, the dependencies of Mathlib's own manifest and the toolchain,
+and then checks its whole transitive import closure (2563 modules at the current pins): every module is in `Init`, `Std`,
 `Lean`, `Mathlib` or a dependency of Mathlib, none is in `Mathlib.ModelTheory.Infinitary`,
 `InfinitaryLogic`, `ComputableModelTheory` or `VaughtConjecture`, and none is a file that the
 pinned Mathlib changes or adds.  The pinned Mathlib (`cameronfreer/mathlib4` at `346a4bd`) is
 upstream mathlib4 at `c55e6e7` plus three commits that only add `Mathlib/ModelTheory/Infinitary`
-(and its tests and the umbrella file `Mathlib.lean`); `check.sh` verifies this with git, so every
-module the reference statement imports is byte for byte that of upstream mathlib4 `c55e6e7`.
+(and its tests and the umbrella file `Mathlib.lean`); `check.sh` verifies this with git, so the
+source of every module the reference statement imports is byte for byte that of upstream mathlib4
+`c55e6e7`.  This is a statement about sources: the compiled Mathlib that the reference is built
+against is the cached build output of the dependency, which is not authenticated against these
+sources (see below).
 
 **Compatibility with the density sentence.**  The reference statement is compatible with the
 sentence `baseLanguage.densitySentence` of `VaughtConjecture/Language/Density.lean`:
@@ -96,17 +99,19 @@ nothing about those further clauses.
 `Solution.lean` proves `PalomarChallenge.independent_challenge` with `R := baseLanguage.{0}.Relations`
 and `φ := baseLanguage.densitySentence.{0}` from the three clauses of
 `SolutionDefinitions.lean`, which come from `MainTheorem.vaughtCounterexample_allCarriers_densitySentence`
-(`VaughtConjecture/MainTheorem/GrowthLevelRoute.lean`).  Neither file imports `Challenge.lean`
-(they are compiled in a sandbox where its build is not visible, and `check.sh` checks that the
-solution's import closure does not contain it), and `Challenge.lean` imports nothing of this
-repository.  `SolutionDefinitions.lean` restates the definitions of the reference statement
+(`VaughtConjecture/MainTheorem/GrowthLevelRoute.lean`).  Neither file imports `Challenge.lean`:
+the reference's build directory is not on the search path (`LEAN_PATH`) of any solution-side
+compilation or export, and `check.sh` checks that `Challenge` is not in the solution's import
+closure (4795 modules at the current pins).  The reference's build directory is not otherwise
+hidden: when the outputs are inside the checkout, the read-only view of the checkout includes
+it.  `Challenge.lean` imports nothing of this repository.  `SolutionDefinitions.lean` restates the definitions of the reference statement
 declaration for declaration; Comparator checks each against the reference.
 
 ## Running the check
 
 ```bash
 lake build
-bash comparator/check.sh [--paranoid] [OUT_DIR]
+bash comparator/check.sh [--exact] [--paranoid] [OUT_DIR]
 ```
 
 or, from a fresh clone of the committed head with a clean build of the root library:
@@ -115,31 +120,60 @@ or, from a fresh clone of the committed head with a clean build of the root libr
 bash comparator/clean_check.sh [--paranoid] WORK_DIR [DEPS_DIR]
 ```
 
-`check.sh` needs `bwrap`, `jq`, `python3` and the pinned toolchain, fetches nothing, and writes only
-under `.lake/comparator` (or `OUT_DIR`).  In order, it
+**Two modes.**  The files that enter the check are `comparator/`, `VaughtConjecture/`,
+`VaughtConjecture.lean`, `lean-toolchain`, `lakefile.toml` and `lake-manifest.json`.
 
-1. records the commit, the toolchain (and the SHA-256 of `lean`, `lake`, `leanexport`,
-   `nanoda_bin`) and the SHA-256 of every input;
-2. checks that each dependency is at its pinned revision with no modified tracked file, that the
-   toolchain is that of `lean-toolchain` and of `InfinitaryLogic`, that the root library build is up
-   to date (`lake build --no-build`), and the description of the pinned Mathlib above;
+* *Exact commit*: if `git status` shows no uncommitted change and no untracked file in them, the
+  result is a check of the commit `HEAD`, and `mode.txt`, `RESULT.txt` and the final line say
+  `exact commit <sha>`.
+* *Working tree*: otherwise the result is a check of the working tree, and `mode.txt`,
+  `RESULT.txt` and the final line say `working tree (uncommitted changes in the inputs …)`, with
+  the changes listed in `inputs-status.txt`.
+
+With `--exact`, `check.sh` refuses to run in the second case.  `clean_check.sh` (a fresh clone)
+and CI always run with `--exact`.  `check.sh` also fails if the inputs change during the run.
+
+**Outputs.**  `OUT_DIR` must not exist: it is created, and a path that exists, is a symbolic link
+or passes through one is refused.  Without `OUT_DIR`, the outputs go to a new directory
+`.lake/comparator/run.XXXXXX`.  Every output file is created new (the shell's `noclobber`), and
+the only deletion is of the temporary directory `OUT_DIR/tmp` that the same run created.
+`clean_check.sh` likewise requires that `WORK_DIR` does not exist, and deletes nothing.
+
+`check.sh` needs `bwrap`, `jq`, `python3` and the pinned toolchain, and fetches nothing.  In
+order, it
+
+1. records the mode, the commit, the toolchain, the SHA-256 of every input, and the SHA-256 of
+   every tool it invokes: in `TOOL-SHA256SUMS`, every binary of the toolchain (`lean`, `lake`,
+   `leanexport`, `nanoda_bin`, `leanchecker`, `leanchecker-paranoid`, `lean4lean`, `con-leche`,
+   `con-ron`, …), the toolchain's shared libraries and one digest of the toolchain's own
+   `.olean` files, with paths relative to the toolchain; in `SYSTEM-TOOL-SHA256SUMS`, which
+   differs between machines, `bwrap`, `jq`, `python3` and `git`;
+2. checks that each dependency's git checkout is at its pinned revision with no modified tracked
+   file, that the toolchain is that of `lean-toolchain` and of `InfinitaryLogic`, that the root
+   library build is up to date (`lake build --no-build`), and the description of the pinned
+   Mathlib above.  This concerns the dependencies' sources only: their cached build outputs
+   (`.lake/build` of each dependency) are read as they are and are not authenticated against
+   those sources;
 3. checks the hash of the reference declarations;
 4. compiles `Challenge.lean` in a sandbox (bubblewrap: read-only file system, home directories
-   hidden, no network, empty environment) that sees only Mathlib and its dependencies; it must
+   covered, no network, empty environment) whose search path has only Mathlib, its dependencies
+   and the toolchain; it must
    compile with exactly one warning, ``declaration uses `sorry` `` for its theorem; then checks
    its import closure;
 5. compiles `SolutionDefinitions.lean`, `Solution.lean` and `Tests/SolutionAxioms.lean` with the
    repository's options (warnings as errors, Mathlib's linter set), and each expected failure in
-   its own build directory, all in sandboxes that do not see the reference's build;
+   its own build directory, with search paths that do not contain the reference's build
+   directory; then checks that `Challenge` is not in the solution's import closure;
 6. exports each with `leanexport` (the theorem and the kernel's primitive constants with all their
    dependencies) and runs `lake comparator --challenge-from-export … --solution-from-export …`.
 
 With `--paranoid`, the solution is also checked by every external checker bundled with the
 toolchain (`leanchecker-paranoid`, `lean4lean`, `nanoda`, `con-leche`, `con-ron`); this takes about
-ten minutes more.  The outputs are `logs/`, `EXPORT-SHA256SUMS`, `OLEAN-SHA256SUMS`,
-`SOURCE-SHA256SUMS`, `TOOL-SHA256SUMS`, `dependency-pins.tsv`, the two import closures, the list of
-files the pinned Mathlib changes, and the exports themselves (about 650 MB; `clean_check.sh` adds
-`ROOT-OLEAN-SHA256SUMS` and `logs/lake-build.log`).
+ten minutes more.  The outputs are `mode.txt`, `RESULT.txt`, `inputs-status.txt`, `logs/`,
+`EXPORT-SHA256SUMS`, `OLEAN-SHA256SUMS`, `SOURCE-SHA256SUMS`, `TOOL-SHA256SUMS`,
+`SYSTEM-TOOL-SHA256SUMS`, `dependency-pins.tsv`, the two import closures, the list of files the
+pinned Mathlib changes, and the exports themselves (about 650 MB).  `clean_check.sh` adds `WORK_DIR/clean-build` with
+`lake-build.log` and `ROOT-OLEAN-SHA256SUMS`.
 
 ### Expected results
 
@@ -163,11 +197,15 @@ lets `NoFiniteModels` quantify over `Fin (n + 1)`, no longer excluding the empty
 * Its statement, and every declaration that statement uses (the restated definitions,
   `BoundedFormulaInf` and its `Realize` from the pinned Mathlib, and the Mathlib and core
   declarations below them), are identical to those of the reference statement.
-* The reference statement was compiled without access to anything but Mathlib and Mathlib's own
-  dependencies, imports only modules identical to upstream mathlib4 `c55e6e7`, and has the
+* The reference statement was compiled with a search path of only Mathlib, Mathlib's own
+  dependencies and the toolchain; its import closure contains no module of this repository,
+  `InfinitaryLogic`, `ComputableModelTheory` or `Mathlib.ModelTheory.Infinitary`; the sources of
+  the Mathlib modules it imports are identical to upstream mathlib4 `c55e6e7`; and it has the
   declarations of the reviewed specification.
-* With `clean_check.sh` (and in CI), all of this holds for a fresh clone of the exact commit whose
-  root library was built from nothing.
+* `Challenge` is not on the search path of the solution and not in its import closure.
+* In the exact-commit mode, all of this is about the commit `HEAD`; with `clean_check.sh` and on
+  pushes to `main` in CI, about a fresh clone of that commit whose root library was built from
+  nothing.
 
 ## What it does not establish
 
@@ -178,19 +216,32 @@ lets `NoFiniteModels` quantify over `Fin (n + 1)`, no longer excluding the empty
   `HasThinAlephOneSpectrum`, the clauses on all countable carriers, and the identity of the
   witness sentence are not compared.  The other theorems of the repository are checked by
   `lake build` and the axiom audit of `scripts/check.sh`, not by Comparator.
-* That the dependencies were built from their sources here: the build outputs of the pinned
-  dependencies (Mathlib, `InfinitaryLogic`, `ComputableModelTheory`) are reused, after checking
-  their revisions and tracked files.  The kernels re-check every exported proof term, so a wrong
-  dependency output cannot make a false proof pass; but the reference statement's Mathlib
-  declarations are read from those outputs too.  CI rebuilds them from source whenever a pin
-  changes.
+* That the cached build outputs of the dependencies correspond to their sources.  Checking a
+  dependency's git revision and tracked files authenticates its sources, not its `.lake/build`
+  outputs (Mathlib, `InfinitaryLogic`, `ComputableModelTheory`), which are read as they are.  The
+  kernels re-check every exported proof term, so a wrong dependency output cannot make a false
+  proof pass; but the declarations of the reference statement that come from Mathlib are read
+  from those outputs too.  CI builds the dependencies from source when a pin changes and caches
+  the result; later runs reuse that cache.
+* That the reference's build is invisible to the solution side: what is checked is that it is
+  not on the solution's search path and that `Challenge` is not in the solution's import
+  closure.
+* In the working-tree mode, anything about a commit.
 * The correctness of the toolchain binaries, of bubblewrap, or of the kernels themselves (Lean's
   kernel and nanoda are separate implementations; `--paranoid` adds four more).
 * Any Palomar registration or review.
 
 ## CI
 
-The job `comparator` of `.github/workflows/ci.yml` runs after the job `build`: it checks out the
-exact commit, restores the dependency cache for the current pins, builds the root library without
-restoring any root build output, and runs `comparator/check.sh`; the logs and hash lists (not the
-exports) are uploaded as the artifact `comparator-check`.
+Two jobs of `.github/workflows/ci.yml` run after the job `build`, which saves the dependency
+cache for the current pins and the root build of the commit:
+
+* on pull requests, `comparator-replay` restores those two caches (the root build by the exact
+  key of the commit) and runs `comparator/check.sh --exact`.  It does not rebuild the root
+  library and adds a few minutes to a pull request;
+* on pushes to `main` and on manual runs, `comparator-clean` restores the dependency cache only
+  and runs `comparator/clean_check.sh`: a fresh clone, the root library built from nothing (no
+  root build cache), then `check.sh --exact`.  It takes about 20 minutes, about 17 of them the
+  clean build.
+
+Both upload the logs and hash lists (not the exports) as the artifact `comparator-check`.
