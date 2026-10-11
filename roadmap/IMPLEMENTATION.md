@@ -428,7 +428,11 @@ rows).
    `StageType.ForcesThreshold.trans_face` and `StageType.provisionalOffset_le_trans_face`, which are
    themselves the forms for an arbitrary second stage (only `β` zero or a limit is assumed) and are
    kept as separate statements; the supremum through the definitions `Realization.stableOffset` and
-   `Realization.stableLabel`.
+   `Realization.stableLabel`.  The stable offset is the supremum of the offsets of the least lifts,
+   for any family of least lifts at the rooted covers
+   (`Realization.stableOffset_eq_iSup_labellingOffset`, `Continuation/StableOffsetLeastLift`,
+   compiled in this repository (theorem named)); the monotonicity of the least lifts along
+   extensions is not stated.
 3. *The threshold characterization* (prospective in its derived form).  Hypotheses: those of 1, a
    rooted cover `(q, f)` of a root `p`, and a cell `d` labelled `⊤` in `p`.  Per-cover form (Layers
    1–3): `(q, f)` forces `n` at `d` exactly when every lift is at least `β + n` there (the
@@ -436,7 +440,14 @@ rows).
    offset exactly when the least lift of some rooted cover is at least `β + n` at `d`.  Compiled in
    this repository (theorem named), with forcing in place of the least lift:
    `StageType.ForcesThreshold` (`Stage/Threshold`) and `Realization.natCast_le_stableOffset_iff`
-   (`Continuation/Normalization`).
+   (`Continuation/Normalization`); per cover with the least lift,
+   `StageType.forcesThreshold_iff_coe_add_le_of_isLeast` (`Stage/LeastLift`); and the supremum
+   form with least lifts, over the same rooted covers, for any family of least lifts at the rooted
+   covers (`Realization.natCast_le_stableOffset_iff_exists_isLeast`), such a family existing for a
+   realization with legal types, `β` a limit and `β + ω ≤ α`
+   (`Realization.exists_natCast_le_stableOffset_iff_exists_isLeast`, both in
+   `Continuation/StableOffsetLeastLift`).  Legal types are an added premise: the stable offset is
+   defined for any realization.
 4. *Structural successor leastness* (the "least" property prospective).  Hypotheses: `R` an exactly
    consistent covering realization at `λ_ξ`; a coherent next-block assignment (a
    restriction-compatible labelling of `R` whose values are lifts to `λ_{ξ+1}`).  Conclusion: the
@@ -5802,7 +5813,8 @@ witnesses).**
 - `Stage/Threshold`: Layer 1, in place. `natCast_le_iSup_iff_of_ne_zero`, a fact about `ℕ∞`, is a
   Mathlib candidate, beside the supremum lemmas of `ENat`; `Label.ofOffset` with its laws concerns
   labels only and goes to `Label/`.
-- `Continuation/Normalization`, `Continuation/Hollow`, `Continuation/Terminal`,
+- `Continuation/Normalization`, `Continuation/StableOffsetLeastLift`, `Continuation/Hollow`,
+  `Continuation/Terminal`,
   `Continuation/ExactAge`, `Continuation/Comparison`, `Continuation/Classification`,
   `Continuation/Candidate`, `Continuation/CandidateCounterexamples`, and their examples modules:
   Layer 4, in place. `ContinuationCriterion`, the statement of output 3, is in
