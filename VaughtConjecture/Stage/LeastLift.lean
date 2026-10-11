@@ -77,11 +77,13 @@ here: the statements hold for every legal stage type, strongly coded or not.  Th
 is the range normalization of stage types (`Scheme.IsCoded`), through the band lift, which needs
 the entry of the row of the top cap at the marker to be an ordinal.
 
-**Open, not claimed here.**  Nothing here concerns realizations.  The supremum forms over the
+**Open, not claimed here.**  Nothing here concerns realizations.  The supremum form over the
 rooted covers of a realization (through `Realization.stableOffset`) of the threshold
-characterization and of the limit-stage monotonicity, stated with the least lift, are not proved
-here and remain open, as do any statements about cover-hollowness and modelhood drawn from them; no
-change to the normalization of `Continuation/Normalization` is made.
+characterization, stated with the least lift, is in
+`VaughtConjecture.Continuation.StableOffsetLeastLift`
+(`Realization.natCast_le_stableOffset_iff_exists_isLeast`); that of the limit-stage monotonicity
+is not proved and remains open, as do any statements about cover-hollowness and modelhood drawn
+from them; no change to the normalization of `Continuation/Normalization` is made.
 
 ## Placement
 
