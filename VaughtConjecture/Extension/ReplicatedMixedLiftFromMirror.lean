@@ -64,6 +64,29 @@ local notation "idx" => ladderIndex H (Scheme.rankProf (I.attachmentBase g).S H)
 theorem attachTower_grade_le (f : Fin (𝕋).card) : (𝕋).toCellScheme.grade f ≤ m + 1 :=
   Nat.lt_succ_iff.mp (Scheme.LadderBaseData.grade_lt_ladderTower (K := m) (by omega) f)
 
+/-- The cells of proper scope of the tower are the cells of the attachment. -/
+theorem attachTower_cells (x : Fin (𝕋).card) (hx : (𝕋).toCellScheme.scope x ≠ univ) :
+    ∃ e, x = (I.attachmentBase g).baseCellEmb m e :=
+  ((I.attachmentBase g).mem_range_baseCellEmb m x hx).elim fun e he ↦ ⟨e, he.symm⟩
+
+/-- A ladder point reads a ladder point through the index of its member and its ceiling. -/
+theorem attachTower_rowAt_lad_lad
+    (p v : Scheme.LadderPt (I.attachmentBase g).S (Scheme.RankMember (I.attachmentBase g).S H) H) :
+    (𝕋).rowAt (ladCell H Γ A B' p) (ladCell H Γ A B' v) =
+      ladderSource (Scheme.ladderCeil (Scheme.rankProf (I.attachmentBase g).S H) p)
+        (idx p.1 v) := by
+  rw [rowAt_ladCell_ladCell, Scheme.baseIndex_natAdd, Equiv.symm_apply_apply]
+
+/-- The cells of full scope at the grade one are the ladder points. -/
+theorem attachTower_eq_ladCell (x : Fin (𝕋).card)
+    (hx : (𝕋).toCellScheme.gradedIndex x = ((univ : Finset (Fin (m + 2))), 1)) :
+    ∃ p, x = ladCell H Γ A B' p := by
+  rcases tower_grade_one_cases x (congrArg Prod.snd hx) with ⟨v, rfl⟩ | ⟨e, -, rfl⟩
+  · exact ⟨v, rfl⟩
+  · exact ((I.attachmentBase g).scope_ne_univ e
+      ((congrArg Prod.fst (Scheme.LadderBaseData.gradedIndex_baseCellEmb (H := H) (Γ := Γ)
+        (A := A) (B' := B') m e)).symm.trans (congrArg Prod.fst hx))).elim
+
 /-- **A cell of full scope at a grade `K ≥ 2` reads the ladder through one member**, with a
 monotone table that is `⊥` at `0`, and the cells of the attachment of grade at most `K` through
 the ranks of that member. -/
@@ -154,24 +177,17 @@ theorem cappedLift_mixed_face_of_mirror (hH : 0 < H) (hcard : (I.attachmentBase 
   have hne : ∀ k, ((I.attachmentBase g).towerCat Γ A (k + 2)).Nonempty := fun _ ↦
     ⟨fun _ ↦ ⊥, Scheme.LadderBaseData.mem_towerCat.mpr
       ⟨fun _ ↦ hΓ0, CellScheme.Rows.isLawful_const_bot, hA0 _⟩⟩
-  refine cappedLift_mirror_mixed_face (hmix := I.not_subset_scope_tower g H Γ A B') hH
+  exact cappedLift_mirror_mixed_face (hmix := I.not_subset_scope_tower g H Γ A B') hH
     (Scheme.LadderBaseData.ladderTower_lawful hH hcard hΓ hA m).1
     (fun d ↦ (Scheme.LadderBaseData.isWellFormed_ladderTower (k := m)
       (by omega)).isWellFormed.grade_pos d)
     (fun e ↦ (I.attachmentBase g).gradedIndex_baseCellEmb (H := H) (Γ := Γ) (A := A) (B' := B') m e)
-    (fun x hx ↦ ((I.attachmentBase g).mem_range_baseCellEmb m x hx).elim fun e he ↦ ⟨e, he.symm⟩)
-    gradedIndex_ladCell (fun p v ↦ by
-      rw [rowAt_ladCell_ladCell, Scheme.baseIndex_natAdd, Equiv.symm_apply_apply])
-    (fun p e he ↦ rowAt_ladCell_baseCellEmb p he) (fun x hx ↦ ?_)
+    attachTower_cells gradedIndex_ladCell attachTower_rowAt_lad_lad
+    (fun p e he ↦ rowAt_ladCell_baseCellEmb p he) attachTower_eq_ladCell
     (attachTower_reads_ladder hcard) (attachTower_agree_shadow hcard)
     (attachTower_twin hcard hΓ hA) hU hUW τ hτo hτg
     (fun k hk2 hkj ↦ (I.attachmentBase g).exists_gradedIndex_univ_ladderTower (B' := B') hH hne
       m k (by omega) (by omega)) hj1 hjU
-  rcases tower_grade_one_cases x (congrArg Prod.snd hx) with ⟨v, rfl⟩ | ⟨e, -, rfl⟩
-  · exact ⟨v, rfl⟩
-  · exact ((I.attachmentBase g).scope_ne_univ e
-      ((congrArg Prod.fst (Scheme.LadderBaseData.gradedIndex_baseCellEmb (H := H) (Γ := Γ)
-        (A := A) (B' := B') m e)).symm.trans (congrArg Prod.fst hx))).elim
 
 end Seed
 

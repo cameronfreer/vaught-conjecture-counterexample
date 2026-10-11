@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.ReplicatedMixedLiftFromMirror
+import VaughtConjecture.Extension.ReplicatedLiftUniv
 import VaughtConjecture.Extension.ReplicatedForcing
 
 /-!
@@ -56,15 +56,10 @@ noncomputable def cpy (hU : U ∈ I.mixedFaces g) (v : Fin (𝕋).card) : Fin (�
   if h : (𝕋).toCellScheme.scope v = univ ∧ (𝕋).toCellScheme.grade v ≤ #U then
     copyAt H Γ A B' hU v h.1 h.2 else Fin.castAdd _ v
 
-theorem gradedIndex_cpy (hU : U ∈ I.mixedFaces g) {v : Fin (𝕋).card} {k : ℕ}
+theorem cpy_eq (hU : U ∈ I.mixedFaces g) {v : Fin (𝕋).card} {k : ℕ}
     (hv : (𝕋).toCellScheme.gradedIndex v = ((univ : Finset (Fin (m + 2))), k)) (hk : k ≤ #U) :
-    (𝔼).toCellScheme.gradedIndex (cpy H Γ A B' hU v) = (U, k) := by
-  classical
-  unfold cpy
-  rw [dite_eq_left ⟨congrArg Prod.fst hv, (congrArg Prod.snd hv).trans_le hk⟩]
-  exact (gradedIndex_copyAt hU _ _ _).trans
-    (Prod.ext rfl (show (𝕋).toCellScheme.grade v = k from congrArg Prod.snd hv))
-
+    cpy H Γ A B' hU v = copyFull H Γ A B' hU v hv hk :=
+  mCpy_eq (hmix := I.not_subset_scope_tower g H Γ A B') hU hv hk
 
 /-- **The lift from a mixed face into a larger face** carrying cells of full scope or their copies:
 for a mixed face `U ⊆ W` and a grade `j` with `1 ≤ j ≤ m + 1` and `j ≤ |U|`, given a choice `τ` of
@@ -113,7 +108,9 @@ theorem cappedLift_mixed_mixed (hH : 0 < H) (hcard : (I.attachmentBase g).S.card
     (hjU : j ≤ #U) :
     (𝔼).rows.CappedLift (X := (U, j)) (Y := (V, j)) ⟨hUV, le_rfl⟩ :=
   cappedLift_mixed_face hH hcard hΓ0 hΓ hA hA0 hU hUV (cpy H Γ A B' hV) (mirrorOrig_cpy hV)
-    (fun _ _ hv hk ↦ gradedIndex_cpy hV hv (hk.trans (hjU.trans (card_le_card hUV)))) hj1 hjm hjU
+    (fun _ _ hv hk ↦ by
+      rw [cpy_eq hV hv (hk.trans (hjU.trans (card_le_card hUV)))]
+      exact gradedIndex_copyFull hV _ _ _) hj1 hjm hjU
 
 end Seed
 
