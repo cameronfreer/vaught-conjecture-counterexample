@@ -58,6 +58,9 @@ transported to the cell `e` of `q`, a top cap `c` of grade `N`, and a marker `r`
 
 * `(q, f)` forces the threshold `n` at `d` (`StageType.ForcesThreshold`);
 * every lift of `q` is at least `β + n` at `e` (`StageType.forcesThreshold_iff_forall_lift`);
+* any least lift labelling `ℓ₀` of `q` is at least `β + n` at `e`
+  (`StageType.forcesThreshold_iff_coe_add_le_of_isLeast`; this equivalence uses only that `β` is
+  zero or a limit, with `q` restricting to `p` and `e` transported from `d`);
 * the band label is at least `β + n` (`StageType.IsMarker.forcesThreshold_iff_coe_add_le_bandMap`);
 * `n ≤ N` and `visibilityReplace N n (q.rowAt c r) ≤ q.rowAt c e`
   (`StageType.IsMarker.forcesThreshold_iff_le_grade_and_visibilityReplace_rowAt_le`, the converse
@@ -391,6 +394,29 @@ theorem forcesThreshold_iff_forall_lift (hβ : IsSuccPrelimit β) {f : Fin k ↪
     obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff Q f).mp hP
     rw [comap_label]
     exact h Q _ rfl (congrArg Fin.val (he i hi))
+
+/-- **Forcing is read by any least lift.**  Let `β` be zero or a limit, `q` restrict to `p` along
+`f`, `e` be the cell of `q` transported from the cell `d` of `p`, and `ℓ₀` be a least lift labelling
+of `q` to `α`.  Then `(q, f)` forces `n` at `d` exactly when `β + n ≤ ℓ₀ e`.  No other premise is
+used: no legality, no bound on `α`, no top cap or marker, and no hypothesis on the label of `d`.
+Legality, a limit `β`, and `β + ω ≤ α` give the existence of `ℓ₀`
+(`StageType.exists_isLeast_isLiftLabelling`). -/
+theorem forcesThreshold_iff_coe_add_le_of_isLeast (hβ : IsSuccPrelimit β) {f : Fin k ↪ Fin m}
+    {p : StageType.{u} β k} {d : Fin p.card} (hfp : restrictFace f q = some p)
+    (he : ∀ i : Fin (q.toScheme.comap f).card, (i : ℕ) = d → q.cellMap f i = e)
+    {ℓ₀ : Fin q.card → Label.{u}} (hleast : IsLeast {ℓ | q.IsLiftLabelling α ℓ} ℓ₀) {n : ℕ} :
+    ForcesThreshold α hβ q f p d n ↔ ((β + n : Ordinal.{u}) : Label.{u}) ≤ ℓ₀ e := by
+  rw [forcesThreshold_iff_forall_lift hβ hfp he]
+  refine ⟨fun h ↦ ?_, fun h Q e' hQ he' ↦ ?_⟩
+  · obtain ⟨Q₀, hQ₀, hQ₀l⟩ := (isLiftLabelling_iff hβ).mp hleast.1
+    set e₀ : Fin Q₀.card := ⟨e, lt_of_lt_of_eq e.2 (card_eq_of_reduce_eq hQ₀)⟩
+    rw [← hQ₀l e e₀ rfl]
+    exact h Q₀ e₀ hQ₀ rfl
+  · -- the labels of `Q`, read on the cells of `q`, form a lift labelling, which is above `ℓ₀`
+    have hlift : q.IsLiftLabelling α fun x : Fin q.card ↦
+        Q.label ⟨x, lt_of_lt_of_eq x.2 (card_eq_of_reduce_eq hQ)⟩ :=
+      (isLiftLabelling_iff hβ).mpr ⟨Q, hQ, fun x x' hxx' ↦ congrArg Q.label (Fin.ext hxx')⟩
+    exact (h.trans (hleast.2 hlift e)).trans_eq (congrArg Q.label (Fin.ext he'.symm))
 
 /-- **Forcing is read by the band label.**  Let `β` be a limit, `β + ω ≤ α`, `q` a legal stage
 type at `β` restricting to `p` along `f`, `c` a top cap of `q` of grade `N`, and `r` a marker of `c`
