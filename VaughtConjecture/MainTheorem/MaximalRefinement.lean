@@ -36,10 +36,9 @@ for model expansions of base structures isomorphic to `B` on any carrier
    `scottSentence_characterizes`, with the passage from a formula with no free variables to a
    sentence, `Formulaω.realize_as_sentence_iff_toSentenceω`).  Every sentence of `L_{ω₁ω}` has
    countable quantifier rank (`qrank_lt_omega_one`, in `VaughtConjecture.MainTheorem.Spectrum`,
-   by induction on the formula; the same statement as InfinitaryLogic's
-   `BoundedFormulaω.qrank_lt_omega1`, at the pin `eb9f12d`).  The bound used below is
-   `δ = qrank σ` for the *chosen* isolating sentence `σ`; it is not identified with any Scott
-   rank of `B`.
+   proved by InfinitaryLogic's `BoundedFormulaω.qrank_lt_omega1`, the same statement).  The
+   bound used below is `δ = qrank σ` for the *chosen* isolating sentence `σ`; it is not
+   identified with any Scott rank of `B`.
 2. *Two classes in every countable domain* (`expansionDomain_nontrivial`).  At a countable `η`,
    the loss `D_η \ D_{η+1}` and the loss `D_{η+1} \ D_{η+2}` are nonempty
    (`nonempty_loss_of_hasApexCoatomExtensions`, in `VaughtConjecture.MainTheorem.LowerBound`), so

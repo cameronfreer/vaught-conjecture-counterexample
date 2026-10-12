@@ -692,9 +692,10 @@ the last stage at `β`, `terminalClasses β = lastStage (modelExpansionDomains h
 which identifies the losses with the terminal classes.  At the pin `eb9f12d`, which contains
 `2cd44c3` ("Dependency pins", "Upstream statements quoted, now at the pin"),
 `ExpansionDomains.notMem_of_isolating` is
-`notMem_of_isolating_of_uniform` applied to the set `D_ξ`, and `ExpansionDomains.lastStage_lt_qrank`
-combines `stage_lt_rank_of_isolating` with the greatest-stage theorem; the local proofs may
-quote them in a later change, with the statements kept.
+`notMem_of_isolating_of_uniform` applied to the set `D_ξ`, and is proved by it, with its statement
+kept; `ExpansionDomains.lastStage_lt_qrank` combines `stage_lt_rank_of_isolating` with the
+greatest-stage theorem, and its local proof is kept (a quotation would still need the attained
+last stage, so it would not be shorter).
 
 ## The top-free witnesses: milestone order and acceptance
 
@@ -3096,12 +3097,14 @@ statements (#171; `Definability/BlockFormulas` uses the first, through its impor
 and the per-level Silver step of `Conditional/MorleyPerfect` as one lemma (#172).  No declaration
 used here was renamed or removed, and no call site changed.  The greatest-stage and
 Scott-separation statements quoted below are `#check`ed in `SuggestedInterfaces.lean` (signatures
-checked); the other merges are named in prose only.  No application of any of them is compiled in
-this repository: the local statements compiled in place of the greatest-stage statement and of
-Scott separation (`Counting/OrdinalAttainment`, `MainTheorem/MaximalRefinement`,
-`MainTheorem/LastStage`, and `qrank_lt_omega_one` of `MainTheorem/Spectrum`, the same statement as
-`BoundedFormulaω.qrank_lt_omega1`) are kept, and their replacement by quotations is a later change
-of proofs only ("Placement record").
+checked); the other merges are named in prose only.  Two of them are applied in this repository:
+`qrank_lt_omega_one` of `MainTheorem/Spectrum` (the same elaborated statement) is proved by
+`BoundedFormulaω.qrank_lt_omega1`, and `ExpansionDomains.notMem_of_isolating` of
+`MainTheorem/LastStage` by `notMem_of_isolating_of_uniform`, with their statements kept.  The other
+local statements compiled in place of the greatest-stage statement and of Scott separation
+(`Counting/OrdinalAttainment`, `MainTheorem/MaximalRefinement`, and
+`ExpansionDomains.lastStage_lt_qrank`) are kept, and their replacement by quotations is a later
+change of proofs only ("Placement record").
 
 **Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, none
 (after the release v6.1.0 its `master` changes only its own CI scripts); of ComputableModelTheory,
@@ -3111,10 +3114,12 @@ is recorded in this subsection.
 
 **Upstream statements quoted, now at the pin.**  These are the statements of `c16de09` and
 `2cd44c3`, as merged (hypotheses included), available at the pin `eb9f12d` (which contains both;
-signatures checked: `SuggestedInterfaces.lean` `#check`s every name below); no application is
-compiled in this repository.  Local statements compiled in place of the greatest-stage statement
-and of Scott separation, to be replaced by these in a later change of proofs, are listed in the
-"Placement record" (`Counting/OrdinalAttainment` and `MainTheorem/MaximalRefinement`).
+signatures checked: `SuggestedInterfaces.lean` `#check`s every name below); of these,
+`notMem_of_isolating_of_uniform` and `BoundedFormulaω.qrank_lt_omega1` are applied in this
+repository (`MainTheorem/LastStage`, `MainTheorem/Spectrum`).  Local statements compiled in
+place of the greatest-stage statement and of Scott separation, to be replaced by these in a later
+change of proofs, are listed in the "Placement record" (`Counting/OrdinalAttainment` and
+`MainTheorem/MaximalRefinement`).
 
 - *Greatest attained stage* (`OrdinalUtil`): a predicate on stages that holds at `0`, is closed
   downward, is closed under successor limits below `ω₁`, and is bounded on the stages below `ω₁`
@@ -5530,8 +5535,8 @@ lands, their notes stay in those modules.
   `lt_qrank_of_isolates`) is to be derived from `notMem_of_isolating_of_uniform`
   (`OrdinalCountability`), with the statements kept.  `qrank_lt_omega_one`
   (`MainTheorem/Spectrum`) is the same statement as InfinitaryLogic's
-  `BoundedFormulaω.qrank_lt_omega1` (`Lomega1omega/QuantifierRank`, at the pin), and may then be
-  replaced by it.
+  `BoundedFormulaω.qrank_lt_omega1` (`Lomega1omega/QuantifierRank`, at the pin), and is proved by
+  it.
   Its attained greatest index is the Layer 0 statement of `Counting/OrdinalAttainment` (below,
   "Counting").
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
