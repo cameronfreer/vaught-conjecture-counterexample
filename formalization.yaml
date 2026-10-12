@@ -1,0 +1,187 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# formalization.yaml (v0.4): repo-root metadata for this formalization.
+# What the repository already encodes (toolchain, pins, CI, history) is not repeated here.
+
+version: "v0.4"
+
+project:
+  name: "Formalization of a counterexample to Vaught's conjecture for L_{ω₁ω}"
+  description: >-
+    A Lean 4 proof that a sentence of the infinitary logic L_{ω₁ω}, in a countable relational
+    language, has exactly ℵ₁ countable models up to isomorphism and no perfect set of pairwise
+    non-isomorphic countable models. It is a counterexample to Vaught's conjecture for L_{ω₁ω},
+    not to the first-order Vaught conjecture. The main theorem is proved with no hypotheses for
+    the repository's own sentence, `baseLanguage.densitySentence`, following the construction of
+    the manuscript; the formalization does not formalize every claim of the manuscript, and it
+    does not identify the models of that sentence with the manuscript's class of strongly coded
+    templates.
+  authors:
+    - Nathanael Ackerman
+    - Cameron Freer
+    - Robin Knight
+  responsible_maintainers:
+    - Cameron Freer
+  license: Apache-2.0
+
+sources:
+  - title: "A counterexample to Vaught's Conjecture for L_{ω₁,ω}"
+    authors:
+      - Nathanael L. Ackerman
+      - Cameron Freer
+      - Robin W. Knight
+    id: "https://hexagonmath.org/2610.00188"
+    type: article
+    relationship: formalizes
+    author_endorsement: participated
+    note: >-
+      The initial paper [AFK26] (entry `AFK26` of `roadmap/REFERENCES.bib`), which explains the
+      proof strategy and many details. The formalization proves the stated theorem for its own
+      sentence following the paper's construction; it does not formalize every claim of the
+      paper. A fuller account of the proof will follow.
+  - title: "A counterexample to Vaught's Conjecture using generalised Stone spaces"
+    authors:
+      - Robin W. Knight
+    type: unpublished-draft
+    relationship: adapts
+    author_endorsement: participated
+    note: >-
+      Unpublished draft of 20 February 2026 (entry `Kni26` of `roadmap/REFERENCES.bib`), not
+      public. The construction and the proof strategy were adapted from this draft; new ideas
+      developed through human–AI interaction entered the formalization.
+
+related_formalizations:
+  - id: https://github.com/cameronfreer/infinitary-logic
+    relationship: builds-on
+    note: >-
+      Infinitary model theory (syntax, satisfaction, Scott analysis, codes of countable models),
+      pinned in `lake-manifest.json`.
+  - id: https://github.com/cameronfreer/computable-model-theory
+    relationship: builds-on
+    note: >-
+      Classical model-theoretic infrastructure (Fraïssé limits and related constructions),
+      pinned in `lake-manifest.json`.
+  - id: https://github.com/cameronfreer/vaught-conjecture-palomar
+    relationship: other
+    note: >-
+      The earlier formalization of the same theorem by the same authors, registered separately
+      as Palomar entry PALOMAR-2026-10-07-000001 at commit
+      032ccb7a25b0ff6227128aa0aeba549c5901ea9a (theorem `PalomarChallenge.independent_challenge`).
+      This repository does not depend on it, and that registration does not extend to this
+      repository. The two share the Comparator reference statement: the declarations of
+      `comparator/Challenge.lean` here are, after removing comments and docstrings, character
+      for character those of that entry's `Palomar/Challenge.lean`.
+
+classification:
+  arxiv:
+    - math.LO
+  msc2020:
+    - "03C15"
+    - "03C75"
+    - "03E15"
+
+status:
+  scope: >-
+    The main theorem is proved with no hypotheses and depends only on the three standard axioms.
+    CI runs the build, the library-wide axiom audit (`scripts/check.sh`) and the dependency
+    manifest (`scripts/manifest.sh`) on pull requests and pushes to `main`. Comparator
+    (`comparator/`) replays the reference proof through the Lean kernel and nanoda on pull
+    requests; `main` pushes and manual runs additionally use a fresh root-library build.
+    Placeholder counts below concern the proof library under `VaughtConjecture/`; deliberate
+    roadmap sketches, the Comparator reference hole and the expected-failure fixtures are
+    outside that count. The
+    annotated tag `main-theorem-2026-10-11` (commit b00bb878b12a1ef75b9aecf1ef5a1e6577645ff4,
+    notes in `milestones/2026-10-11-main-theorem.md`) is a historical reference to one verified
+    commit; later commits are verified by their own CI runs and do not inherit that
+    verification. Open mathematics outside the main theorem (the hypotheses (R1) and (R2) for
+    every model, and other correspondence questions) is recorded in `roadmap/`.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+  main_results:
+    - declaration: MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels
+      file: VaughtConjecture/MainTheorem/GrowthLevelRoute.lean
+      sorry_count: 0
+      axioms:
+        - propext
+        - Classical.choice
+        - Quot.sound
+    - declaration: MainTheorem.vaughtCounterexample_allCarriers_densitySentence
+      file: VaughtConjecture/MainTheorem/GrowthLevelRoute.lean
+      sorry_count: 0
+      axioms:
+        - propext
+        - Classical.choice
+        - Quot.sound
+    - declaration: PalomarChallenge.independent_challenge
+      file: comparator/Solution.lean
+      sorry_count: 0
+      axioms:
+        - propext
+        - Classical.choice
+        - Quot.sound
+      comparator_config: comparator/comparator.json
+
+automation:
+  methods:
+    - method: manual
+      tool_setup: "Human mathematical collaboration and direction of the formalization."
+    - method: agent
+      models:
+        - "GPT-5.2 through GPT-6"
+        - "Claude Opus 4.5 through Fable 5.1 and Opus 5.5"
+      framework: "Claude Code and Codex"
+      tool_setup: >-
+        GPT models from 5.2 through 6 and Claude models from Opus 4.5 through Fable 5.1 and
+        Opus 5.5. Initially used for proof implementation
+        following the manuscript; later models were also used for mathematical exploration,
+        counterexample search, refactoring, documentation, and review.
+  notes: >-
+    SMT and Horn solvers were used in the course of finding the proof, but do not play a role
+    in the final formalization.
+
+fidelity:
+  divergences: >-
+    The theorem is proved for the repository's own sentence, `baseLanguage.densitySentence`,
+    constructed following the manuscript; the formalization does not identify its models with
+    the manuscript's strongly coded templates, and several intermediate statements of the
+    manuscript are not formalized. Where the formal route differs from the manuscript (for
+    example, receiving models in place of hypotheses on every model), the roadmap records the
+    difference next to the named declarations.
+
+review:
+  status: agent-reviewed
+  notes: >-
+    Human mathematical direction, with agent-assisted implementation and review of every change
+    before merge. Mechanical checks in CI, on pull requests and pushes to `main`: a full build
+    with warnings as errors, a placeholder scan, a library-wide audit that every declaration
+    depends only on the three standard axioms, a dependency manifest for the main theorem, and
+    the Comparator replay of the reference statement (Lean kernel and nanoda, with
+    expected-failure cases); `main` pushes and manual runs additionally use a fresh root-library
+    build for the Comparator check. No human peer review of the
+    formalization is claimed, and no Palomar registration is claimed for this repository.
+
+alignment:
+  namespace: VaughtConjecture
+  statements:
+    - source: "[AFK26], main theorem"
+      lean: MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels
+      module: VaughtConjecture/MainTheorem/GrowthLevelRoute.lean
+      status: proved
+      note: "For the repository's own sentence; no hypotheses."
+    - source: "[AFK26], main theorem on all countable carriers"
+      lean: MainTheorem.vaughtCounterexample_allCarriers_densitySentence
+      module: VaughtConjecture/MainTheorem/GrowthLevelRoute.lean
+      status: proved
+      note: "Exactly ℵ₁ isomorphism classes, no perfect set of pairwise non-isomorphic models, no finite models."
+    - source: "Comparator reference statement `PalomarChallenge.independent_challenge`"
+      lean: PalomarChallenge.independent_challenge
+      module: comparator/Solution.lean
+      status: proved
+      note: "Stated in `comparator/Challenge.lean` with Mathlib-only imports; proved from the main theorem."
+
+acknowledgements: >-
+  Built on Mathlib and the pinned InfinitaryLogic and ComputableModelTheory developments; the
+  reference statement and checking workflow follow the Comparator tool (leanprover/comparator).
