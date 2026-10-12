@@ -9,10 +9,11 @@ import VaughtConjecture.Continuation.ActualCoverConverse
 # Global row anchors
 
 Roadmap, Layer 4 (cover-hollowness and the anchor definition of hollowness); semantic contract,
-item 8.  A research file: the anchor at infinity of [Kni26, Definition 5.4.2, p. 56], with its
-cells quantified over the whole realization as printed, compared at the same bound with the row
-anchor `Realization.IsRowAnchor` (`VaughtConjecture.Continuation.ActualCoverTransport`), whose
-cells are those of the actual rooted covers of one occurrence.
+item 8.  A research file: a native global-cell rendering of the printed inequality of the anchor
+at infinity of [Kni26, Definition 5.4.2, p. 56], its cells quantified over the whole realization
+as in the printed definition, compared at the same bound with the row anchor
+`Realization.IsRowAnchor` (`VaughtConjecture.Continuation.ActualCoverTransport`), whose cells are
+those of the actual rooted covers of one occurrence.
 
 **The same cell** (`Realization.IsSameCell x a z e`).  The printed definition quantifies over
 elements `Θ`, `Σ` of the domains of all the types of the model, with the value `𝔐(Θ)` allotted by
@@ -41,21 +42,23 @@ the position of one cell of `w` on the two faces (`StageType.IsFaceCell`).  Its 
   is below `θ'` exactly when `a` is below `θ`, and the rows agree
   (`IsSameCell.mem_below_iff`, `IsSameCell.rowAt_eq`, under exact consistency).
 
-**Minimality at infinity and the label.**  `Realization.IsMinimalAtInfinity x a K` is the
-printed condition at the cell `a` with the bound `K` (the printed `K'`), no label being required
-of `a`.  `Realization.IsGlobalRowAnchor x a K` adds that `a` is labelled `⊤`.  The label conjunct
-makes explicit the requirement that the anchor be labelled `⊤`, which the printed definition does
-not state: without it the inequality degenerates.  Under exact consistency every cell not labelled
-`⊤` is minimal at infinity at every bound, strictly
+**Minimality at infinity and the label.**  `Realization.IsMinimalAtInfinity x a K` is a native
+global-cell rendering of the printed inequality at the cell `a` with the bound `K` (the printed
+`K'`), no label being required of `a`.  `Realization.IsGlobalRowAnchor x a K` adds that `a` is
+labelled `⊤`.  The label conjunct makes explicit the requirement that the anchor be labelled `⊤`,
+which the printed definition does not state: without it the inequality degenerates.  Under
+exact consistency every cell not labelled `⊤` is minimal at infinity at every bound, strictly
 (`Realization.isMinimalAtInfinity_of_label_ne_top`, from the locality law through
 `StageType.rowAt_lt_rowAt_of_label_ne_top`), and every model at a positive stage has such a cell,
-by uniformity at `γ = 0` (`Realization.IsModel.exists_isMinimalAtInfinity`); so the condition
+by uniformity at `γ = 0` (`Realization.IsModel.exists_isMinimalAtInfinity`); so the inequality
 without the label never yields hollowness.  The proof of [Kni26, Lemma 5.5.1, p. 57] uses the
-label (`𝔐⁺(⚓∞) ∈ [α, α + ω)` is derived from the alternative `𝔐⁺(⚓∞) = ∞`).  The conjunct is
-a formalization adjustment supported by the degeneracy lemma, not an erratum confirmed by the
-author.
+label (`𝔐⁺(⚓∞) ∈ [α, α + ω)` is derived from the alternative `𝔐⁺(⚓∞) = ∞`).  The compiled
+degeneracy supports making the top-label requirement explicit; the conjunct is a formalization
+adjustment, not an erratum confirmed by the author, and not a correspondence between the models
+of [Kni26] and the models of this repository.
 
-**Clauses of [Kni26, Definition 5.4.2, p. 56] and of `IsMinimalAtInfinity`.**
+**Clauses of [Kni26, Definition 5.4.2, p. 56] and of `IsMinimalAtInfinity`**, the native
+global-cell rendering of the printed inequality.
 
 | Printed | Here |
 | --- | --- |
@@ -81,6 +84,12 @@ with value `K'` ([Kni26, Definition 2.2.3, p. 9]; concordance row 2).
 * At a model: `Realization.IsModel.isGlobalRowAnchor_iff_isRowAnchor`,
   `Realization.IsModel.hasGlobalRowAnchor_iff_hasRowAnchor`, and, at a block stage,
   `Realization.IsModel.isCoverHollow_iff_not_hasGlobalRowAnchor`.
+
+The comparison here is between the global and the rooted readings of one row condition, at one
+bound.  It does not remove the distinction of bounds between the row anchor and the anchor at
+the top (`Realization.IsTopAnchor`): under legal types a row anchor at `K` gives an anchor at the
+top at `K + 1` (`Realization.IsRowAnchor.isTopAnchor`), and at a model an anchor at the top at `N`
+is a row anchor at `N` (`Realization.IsTopAnchor.isRowAnchor`).
 
 **Open.**  Characteristic arity ([Kni26, Definition 5.4.1, p. 54]) has no counterpart here, and
 the hypothesis `0 < K ≤ ∞` under which the printed definition is made is not represented: the
@@ -530,11 +539,12 @@ end SameCell
 section Anchor
 
 variable (R) in
-/-- The condition **"minimal at infinity"** of [Kni26, Definition 5.4.2, p. 56], at the cell
-`a` of the type of `x` with the bound `K` (the printed `K'`), quantified over the cells of the
-whole realization: for every occurrence `z`, every cell `e` of its type that is the same cell as
-`a`, every cell `θ` labelled `⊤` of grade at least `K` and every cell `σ` labelled `⊤`, with `σ`
-and `e` below `θ` (the domain of the row of `θ`),
+/-- **Minimal at infinity**: a native global-cell rendering of the printed inequality of
+[Kni26, Definition 5.4.2, p. 56], at the cell `a` of the type of `x` with the bound `K` (the
+printed `K'`), quantified over the cells of the whole realization: for every occurrence `z`,
+every cell `e` of its type that is the same cell as `a`, every cell `θ` labelled `⊤` of grade at
+least `K` and every cell `σ` labelled `⊤`, with `σ` and `e` below `θ` (the domain of the row of
+`θ`),
 `z.type.rowAt θ e ≤ visibilityReplace K K (z.type.rowAt θ σ)`, strictly when the grade of `θ`
 exceeds `K`.  No label is required of `a`; see `Realization.IsGlobalRowAnchor`. -/
 def IsMinimalAtInfinity (x : R.Occurrence) (a : Fin x.type.card) (K : ℕ) : Prop :=
@@ -548,12 +558,14 @@ def IsMinimalAtInfinity (x : R.Occurrence) (a : Fin x.type.card) (K : ℕ) : Pro
           z.type.rowAt θ e < visibilityReplace K K (z.type.rowAt θ σ))
 
 variable (R) in
-/-- A **global row anchor**: the anchor at infinity of [Kni26, Definition 5.4.2, p. 56], with the
-requirement that the anchor be labelled `⊤` made explicit.  The cell `a` is labelled `⊤` and is
-minimal at infinity at the bound `K`.  Without the label the condition degenerates: every cell not
-labelled `⊤` is minimal at infinity at every bound
-(`Realization.isMinimalAtInfinity_of_label_ne_top`), and every model at a positive stage has such
-a cell (`Realization.IsModel.exists_isMinimalAtInfinity`). -/
+/-- A **global row anchor**: the native global-cell rendering of the printed inequality of the
+anchor at infinity of [Kni26, Definition 5.4.2, p. 56], with the requirement that the anchor be
+labelled `⊤` made explicit.  The cell `a` is labelled `⊤` and is minimal at infinity at the bound
+`K`.  Without the label the inequality degenerates: every cell not labelled `⊤` is minimal at
+infinity at every bound (`Realization.isMinimalAtInfinity_of_label_ne_top`), and every model at a
+positive stage has such a cell (`Realization.IsModel.exists_isMinimalAtInfinity`).  The compiled
+degeneracy supports making the label explicit; this is a formalization adjustment, not an erratum
+confirmed by the author, and not a correspondence of model classes. -/
 def IsGlobalRowAnchor (x : R.Occurrence) (a : Fin x.type.card) (K : ℕ) : Prop :=
   x.type.label a = ⊤ ∧ R.IsMinimalAtInfinity x a K
 
@@ -564,7 +576,7 @@ def HasGlobalRowAnchor : Prop :=
 
 variable {x : R.Occurrence} {a : Fin x.type.card} {K : ℕ}
 
-/-- **The condition without the label degenerates**: under exact consistency, a cell not
+/-- **The inequality without the label degenerates**: under exact consistency, a cell not
 labelled `⊤` is minimal at infinity at every bound, with the strict inequality at every `θ`.
 The cell read by the row of `θ` is the same cell, so it is not labelled `⊤`
 (`Realization.IsSameCell.label_eq`), and the row of `θ` reads it strictly below every cell
@@ -578,7 +590,7 @@ theorem isMinimalAtInfinity_of_label_ne_top (hR : R.IsConsistent) (ha : x.type.l
   exact ⟨hlt.le, fun _ ↦ hlt⟩
 
 /-- **Every model at a positive stage has a cell minimal at infinity at every bound** that is
-not labelled `⊤`: uniformity at `γ = 0` gives a cell labelled in `[0, ω)`.  So the condition
+not labelled `⊤`: uniformity at `γ = 0` gives a cell labelled in `[0, ω)`.  So the inequality
 "minimal at infinity" without the label holds in every such model, and its absence never
 holds. -/
 theorem IsModel.exists_isMinimalAtInfinity (hR : R.IsModel) (hα : 0 < α) :
@@ -653,7 +665,9 @@ end Anchor
 (`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor` and
 `Realization.IsModel.hasGlobalRowAnchor_iff_hasRowAnchor`).  [Kni26, Definition 5.4.2, p. 56]
 defines hollowness only for models of characteristic arity `0 < K ≤ ∞`; this statement has no
-such hypothesis, and characteristic arity has no counterpart here. -/
+such hypothesis, and characteristic arity has no counterpart here.  The existential form absorbs
+the distinction of bounds between row anchors and anchors at the top (`K` to `K + 1` forward,
+`N` to `N` conversely); no equivalence with anchors at the top at one bound is stated. -/
 theorem IsModel.isCoverHollow_iff_not_hasGlobalRowAnchor {ξ : Ordinal.{u}}
     {R : Realization.{u, v} (blockStage ξ) M} (hR : R.IsModel) :
     R.IsCoverHollow ↔ ¬ R.HasGlobalRowAnchor := by
