@@ -103,8 +103,8 @@ GitHub's "Cite this repository" uses [`CITATION.cff`](CITATION.cff):
   title   = {Formalization of a counterexample to {Vaught}'s conjecture for {$L_{\omega_1\omega}$}},
   year    = {2026},
   url     = {https://github.com/cameronfreer/vaught-conjecture-counterexample},
-  version = {8030d62},
-  note    = {Lean 4; commit 8030d6229ad758f55e5e13fe5d5de1667d7b006d},
+  version = {main-theorem-2026-10-11},
+  note    = {Lean 4; tag main-theorem-2026-10-11, commit b00bb878b12a1ef75b9aecf1ef5a1e6577645ff4},
   license = {Apache-2.0}
 }
 ```

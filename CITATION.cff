@@ -19,9 +19,9 @@ authors:
 repository-code: "https://github.com/cameronfreer/vaught-conjecture-counterexample"
 url: "https://github.com/cameronfreer/vaught-conjecture-counterexample"
 license: Apache-2.0
-version: "8030d62"
-commit: "8030d6229ad758f55e5e13fe5d5de1667d7b006d"
-date-released: "2026-10-10"
+version: "main-theorem-2026-10-11"
+commit: "b00bb878b12a1ef75b9aecf1ef5a1e6577645ff4"
+date-released: "2026-10-11"
 keywords:
   - Lean 4
   - Vaught's conjecture
