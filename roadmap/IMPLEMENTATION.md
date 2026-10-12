@@ -692,9 +692,11 @@ the last stage at `β`, `terminalClasses β = lastStage (modelExpansionDomains h
 which identifies the losses with the terminal classes.  At the pin `eb9f12d`, which contains
 `2cd44c3` ("Dependency pins", "Upstream statements quoted, now at the pin"),
 `ExpansionDomains.notMem_of_isolating` is
-`notMem_of_isolating_of_uniform` applied to the set `D_ξ`, and `ExpansionDomains.lastStage_lt_qrank`
-combines `stage_lt_rank_of_isolating` with the greatest-stage theorem; the local proofs may
-quote them in a later change, with the statements kept.
+`notMem_of_isolating_of_uniform` applied to the set `D_ξ`, and is proved by it, with its statement
+kept; `ExpansionDomains.lastStage_lt_qrank` combines `stage_lt_rank_of_isolating` with the
+greatest-stage theorem, and its local proof is deliberately retained: a bound on each stage does
+not alone give the strict bound on the supremum `lastStage`, which still needs the attained last
+stage ("Placement record").
 
 ## The top-free witnesses: milestone order and acceptance
 
@@ -1956,8 +1958,9 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     bound `ξ ≤ A` only below `ω₁` (here `A = δ`), and concludes `P ξ ↔ ξ ≤ ρ`; the general forms
     `exists_forall_iff_le_of_bounded_of_isSuccLimit_closed` and
     `exists_isGreatest_setOf_of_bounded_of_isSuccLimit_closed` assume closure at every successor
-    limit (here vacuous above `δ`, where `P` fails).  It is to be replaced by a quotation of one
-    of them (available at the pin `eb9f12d`) in a later change ("Placement record").
+    limit (here vacuous above `δ`, where `P` fails).  It is deliberately retained, not replaced by
+    a quotation of one of them (available at the pin `eb9f12d`): it keeps its Mathlib-only
+    dependencies ("Placement record").
 35. Prospective, conditional on the injectivity of model reduction at each countable index (two
     model presentations of the base at one index are equal), an explicit hypothesis until proved.
     Both its steps use it: the inequality at `ρ` (terminal collision, which also uses
@@ -2582,15 +2585,16 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    countable index (`ModelExpansion.subsingleton`, conditional on
    `Expansion.NextBlockUniqueness`), and limit coherence (`ModelExpansion.nonempty_of_forall_lt`,
    under the same hypothesis); so both equivalences carry the injectivity of model reduction as an
-   explicit hypothesis.  The intended quotation for bounded-stage attainment is
+   explicit hypothesis.  The upstream counterpart of bounded-stage attainment is
    `exists_greatest_stage_lt_omega1` (`OrdinalUtil`; available at the pin `eb9f12d`, signatures
    checked; "Dependency pins"), with `P` the serving indices, `hzero` from a model base, `hdown`
    from downward model reduction, `hlim` from limit coherence, and `hA` and `hbound` from criterion
-   4 (a prospective application).  Bounded-stage attainment is compiled here conditionally, in the
-   raw base encoding: `MainTheorem.exists_isGreatest_servingIndex_of_le`, conditional on
+   4 (a correspondence of hypotheses, not an application compiled here).  Bounded-stage
+   attainment is compiled here conditionally, in the raw base encoding:
+   `MainTheorem.exists_isGreatest_servingIndex_of_le`, conditional on
    `Expansion.NextBlockUniqueness`, through the local ordinal statement
-   `exists_isGreatest_of_closed` (`Counting/OrdinalAttainment`; note 34), which the quotation
-   replaces in a later change ("Placement record").  The negative
+   `exists_isGreatest_of_closed` (`Counting/OrdinalAttainment`; note 34), which is deliberately
+   retained in place of the quotation ("Placement record").  The negative
    special case (the everywhere-undefined assignment: criteria 1 and 4 vacuous, criterion 5 false)
    compiled as an example.  No proof of criterion 1 that uses termination is cited as a proof of
    termination.
@@ -2642,8 +2646,8 @@ named, and none is complete because another is.
    of a countable family is not among them; if it is ever used, it is quoted only once
    "Dependency pins" records a pin containing it, signatures checked.  No hypothesis or lemma
    about termination enters; the conditional of row 31 and this route are not used in a cycle;
-   and the expansion-domain endpoint does not depend on it.  The intended quotations (available
-   at the pin `eb9f12d`, signatures checked; "Dependency pins"; a prospective application) are Scott
+   and the expansion-domain endpoint does not depend on it.  The upstream counterparts (available
+   at the pin `eb9f12d`, signatures checked; "Dependency pins") are Scott
    separation for the strict bound on serving stages (`stage_lt_rank_of_isolating` for one class,
    at the rank of its isolating sentence, with nonsingletonness of the domain there from an
    element of a loss at a countable stage at or above that rank and an element of the next domain
@@ -2656,9 +2660,11 @@ named, and none is complete because another is.
    `MainTheorem.expansionDomain_subsingleton_of_isolates`, and `MainTheorem.lt_qrank_of_isolates`,
    which specialize `notMem_of_isolating_of_uniform` to the domain at the quantifier rank of the
    isolating sentence, and the attained maximum by `exists_isGreatest_of_closed`
-   (`Counting/OrdinalAttainment`).  In a later change (the pin `eb9f12d` contains `c16de09` and
-   `2cd44c3`), the quotations replace them: `exists_isGreatest_of_closed` by the greatest-stage
-   statement, and the local two-class argument by Scott separation ("Placement record").
+   (`Counting/OrdinalAttainment`).  Although the pin `eb9f12d` contains `c16de09` and `2cd44c3`,
+   both are deliberately retained, not replaced by the quotations: `exists_isGreatest_of_closed`
+   keeps its Mathlib-only dependencies, and the local two-class argument isolates a structure, not
+   a point of a set, so Scott separation would apply only after a coded-model translation, which is
+   not introduced merely to shorten a proof ("Placement record").
 5. *The stopping proofs and positive niceness:* each stopping proof that is used (the
    countable-slot argument; the Scott route, 4 above) stated as its own theorem, concluding a
    terminal presentation of each base that is a model, with its own dependencies, the two not
@@ -3096,12 +3102,14 @@ statements (#171; `Definability/BlockFormulas` uses the first, through its impor
 and the per-level Silver step of `Conditional/MorleyPerfect` as one lemma (#172).  No declaration
 used here was renamed or removed, and no call site changed.  The greatest-stage and
 Scott-separation statements quoted below are `#check`ed in `SuggestedInterfaces.lean` (signatures
-checked); the other merges are named in prose only.  No application of any of them is compiled in
-this repository: the local statements compiled in place of the greatest-stage statement and of
-Scott separation (`Counting/OrdinalAttainment`, `MainTheorem/MaximalRefinement`,
-`MainTheorem/LastStage`, and `qrank_lt_omega_one` of `MainTheorem/Spectrum`, the same statement as
-`BoundedFormulaω.qrank_lt_omega1`) are kept, and their replacement by quotations is a later change
-of proofs only ("Placement record").
+checked); the other merges are named in prose only.  Two of them are applied in this repository:
+`qrank_lt_omega_one` of `MainTheorem/Spectrum` (the same elaborated statement) is proved by
+`BoundedFormulaω.qrank_lt_omega1`, and `ExpansionDomains.notMem_of_isolating` of
+`MainTheorem/LastStage` by `notMem_of_isolating_of_uniform`, with their statements kept.  The other
+local statements compiled in place of the greatest-stage statement and of Scott separation
+(`Counting/OrdinalAttainment`, `MainTheorem/MaximalRefinement`, and
+`ExpansionDomains.lastStage_lt_qrank`) are deliberately retained, with the reasons recorded in the
+"Placement record"; their replacement by quotations is not a planned change.
 
 **Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, none
 (after the release v6.1.0 its `master` changes only its own CI scripts); of ComputableModelTheory,
@@ -3111,10 +3119,12 @@ is recorded in this subsection.
 
 **Upstream statements quoted, now at the pin.**  These are the statements of `c16de09` and
 `2cd44c3`, as merged (hypotheses included), available at the pin `eb9f12d` (which contains both;
-signatures checked: `SuggestedInterfaces.lean` `#check`s every name below); no application is
-compiled in this repository.  Local statements compiled in place of the greatest-stage statement
-and of Scott separation, to be replaced by these in a later change of proofs, are listed in the
-"Placement record" (`Counting/OrdinalAttainment` and `MainTheorem/MaximalRefinement`).
+signatures checked: `SuggestedInterfaces.lean` `#check`s every name below); of these,
+`notMem_of_isolating_of_uniform` and `BoundedFormulaω.qrank_lt_omega1` are applied in this
+repository (`MainTheorem/LastStage`, `MainTheorem/Spectrum`).  Local statements compiled in
+place of the greatest-stage statement and of Scott separation, deliberately retained, are listed
+with their reasons in the "Placement record" (`Counting/OrdinalAttainment`,
+`MainTheorem/MaximalRefinement`, and `ExpansionDomains.lastStage_lt_qrank`).
 
 - *Greatest attained stage* (`OrdinalUtil`): a predicate on stages that holds at `0`, is closed
   downward, is closed under successor limits below `ω₁`, and is bounded on the stages below `ω₁`
@@ -4069,8 +4079,9 @@ list of merged pull requests updated to match; the toolchain and Mathlib checked
 InfinitaryLogic's manifest at the new revision (both unchanged); ComputableModelTheory built
 against it; no call site changed and no statement changed; the statements quoted as available
 upstream ("Dependency pins") `#check`ed in `SuggestedInterfaces.lean`; and that subsection
-updated.  No statement here applies the greatest-stage theorem or Scott separation yet: the
-replacement of the local statements by quotations ("Placement record") is a later change.
+updated.  The repin itself applied neither the greatest-stage theorem nor Scott separation; the
+applications made since, and the local statements deliberately retained, are recorded in the
+"Placement record".
 
 **Six non-implications, as examples.**  Each is a statement that fails in general, to be shown by
 an example in the examples module of its layer; only the second is compiled.
@@ -5525,13 +5536,14 @@ lands, their notes stay in those modules.
   A3, **Upstream ingredients**: each with its upstream module, except the two `realize_*_equiv`
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
-- `MainTheorem/MaximalRefinement`: in a later change (the pin `eb9f12d` contains `c16de09` and
-  `2cd44c3`), the two-class argument (`expansionDomain_subsingleton_of_isolates` with
-  `lt_qrank_of_isolates`) is to be derived from `notMem_of_isolating_of_uniform`
-  (`OrdinalCountability`), with the statements kept.  `qrank_lt_omega_one`
-  (`MainTheorem/Spectrum`) is the same statement as InfinitaryLogic's
-  `BoundedFormulaω.qrank_lt_omega1` (`Lomega1omega/QuantifierRank`, at the pin), and may then be
-  replaced by it.
+- `MainTheorem/MaximalRefinement`: the two-class argument
+  (`expansionDomain_subsingleton_of_isolates` with `lt_qrank_of_isolates`) is deliberately
+  retained, not derived from `notMem_of_isolating_of_uniform` (`OrdinalCountability`, at the pin
+  `eb9f12d`): that statement excludes an isolated point of a set, while here the isolated object
+  is a structure `B`, and a coded-model translation is not introduced merely to shorten a proof.
+  `qrank_lt_omega_one` (`MainTheorem/Spectrum`) is the same statement as InfinitaryLogic's
+  `BoundedFormulaω.qrank_lt_omega1` (`Lomega1omega/QuantifierRank`, at the pin), and is proved by
+  it.
   Its attained greatest index is the Layer 0 statement of `Counting/OrdinalAttainment` (below,
   "Counting").
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
@@ -5562,7 +5574,10 @@ lands, their notes stay in those modules.
   from `Counting/OrdinalAttainment` (Layer 0), with no local copy.
   `ExpansionDomains.notMem_of_isolating` and `ExpansionDomains.lastStage_lt_qrank` are local forms
   of InfinitaryLogic's Scott separation (`OrdinalCountability`, available at the pin `eb9f12d`
-  since `2cd44c3`), to be proved by quotation in a later change.
+  since `2cd44c3`).  `ExpansionDomains.notMem_of_isolating` is proved by
+  `notMem_of_isolating_of_uniform`, with its statement kept.  `ExpansionDomains.lastStage_lt_qrank`
+  is deliberately retained: `stage_lt_rank_of_isolating` bounds each stage, which does not alone
+  give the strict bound on the supremum `lastStage`.
 
 **Lifting and alignment (checkpoint 2.4; Layer 3, (R6)).**
 
@@ -5885,9 +5900,11 @@ witnesses).**
 - `Counting/OrdinalAttainment`: Layer 0, a general ordinal statement (Mathlib only, no
   construction imports).  `exists_isGreatest_of_closed`, used by `MainTheorem/MaximalRefinement` and
   `MainTheorem/LastStage`,
-  is to be replaced in a later change by a quotation of the greatest-stage statements of
-  InfinitaryLogic (`OrdinalUtil`, at the pin `eb9f12d`; "Dependency pins", **Upstream statements
-  quoted, now at the pin**), from which it follows (note 34).
+  follows from the greatest-stage statements of InfinitaryLogic (`OrdinalUtil`, at the pin
+  `eb9f12d`; "Dependency pins", **Upstream statements quoted, now at the pin**; note 34) and is
+  deliberately retained, not replaced by a quotation: it keeps its Mathlib-only dependencies (a
+  proof from the greatest-stage statement would add InfinitaryLogic's `OrdinalUtil` to the import
+  closure of `Counting/OrdinalAttainment`).
 - `Counting/Filtration` and `Counting/Separation`: their generic statements are proved as quotations
   of InfinitaryLogic's `OrdinalCountability` (at the pin `eb9f12d`), with their statements kept:
   `Filtration.ofRank` is built from `rankTail` (its domain is `rankTail r` by definition), and

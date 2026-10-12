@@ -166,14 +166,10 @@ theorem realize_sentenceω_equiv (e : M ≃[L] N) (φ : L.Sentenceω) :
   have h := realize_boundedFormulaω_equiv e φ (Empty.elim : Empty → M) (Fin.elim0 : Fin 0 → M)
   rwa [comp_empty_elim e, comp_fin_elim0 e] at h
 
-/-- **Every infinitary formula has countable quantifier rank.** -/
-theorem qrank_lt_omega_one {α : Type*} {n : ℕ} (φ : L.BoundedFormulaω α n) : φ.qrank < ω₁ := by
-  induction φ with
-  | falsum | equal | rel => exact Ordinal.omega_pos 1
-  | imp φ ψ ihφ ihψ => exact max_lt ihφ ihψ
-  | all φ ih => exact (isSuccLimit_omega 1).succ_lt ih
-  | iSup φs ih => exact Ordinal.iSup_lt_omega_one ih
-  | iInf φs ih => exact Ordinal.iSup_lt_omega_one ih
+/-- **Every infinitary formula has countable quantifier rank.**  Proved by the upstream lemma
+`BoundedFormulaω.qrank_lt_omega1` of InfinitaryLogic, whose elaborated statement is the same. -/
+theorem qrank_lt_omega_one {α : Type*} {n : ℕ} (φ : L.BoundedFormulaω α n) : φ.qrank < ω₁ :=
+  BoundedFormulaω.qrank_lt_omega1 φ
 
 end CarrierUniverses
 

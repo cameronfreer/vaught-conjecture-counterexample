@@ -147,15 +147,13 @@ theorem HasNonemptyLosses.nontrivial_domain (hn : D.HasNonemptyLosses) {ξ : Ord
 
 /-- **An isolated class is not in a domain with two members on which its observation is
 constant**: if `truth s` holds exactly at `q` and is constant on `D_ξ`, and `D_ξ` has two members,
-then `q ∉ D_ξ`; otherwise every member of `D_ξ` would agree with `q` on `s`, hence equal `q`. -/
+then `q ∉ D_ξ`; otherwise every member of `D_ξ` would agree with `q` on `s`, hence equal `q`.
+Proved by the upstream lemma `notMem_of_isolating_of_uniform` of InfinitaryLogic, applied to the
+set `D_ξ`. -/
 theorem notMem_of_isolating {S : Type v} {truth : S → X → Prop} {s : S} {q : X}
     {ξ : Ordinal.{0}} (hξ : ∀ p ∈ D.domain ξ, ∀ p' ∈ D.domain ξ, (truth s p ↔ truth s p'))
-    (hiso : ∀ p, truth s p ↔ p = q) (hnt : (D.domain ξ).Nontrivial) : q ∉ D.domain ξ := by
-  intro hq
-  have heq : ∀ p ∈ D.domain ξ, p = q := fun p hp ↦
-    (hiso p).1 ((hξ p hp q hq).2 ((hiso q).2 rfl))
-  obtain ⟨a, ha, b, hb, hab⟩ := hnt
-  exact hab ((heq a ha).trans (heq b hb).symm)
+    (hiso : ∀ p, truth s p ↔ p = q) (hnt : (D.domain ξ).Nontrivial) : q ∉ D.domain ξ :=
+  InfinitaryLogic.notMem_of_isolating_of_uniform truth hiso (fun _ _ hp hp' ↦ hξ _ hp _ hp') hnt
 
 /-- **A class isolated by a sentence of quantifier rank `δ` is not in `D_δ`**, under the sharp
 agreement (`hr`, condition 3, rank `≤ δ` at stage `δ`) and nonempty losses (`hn`, condition 4, at
