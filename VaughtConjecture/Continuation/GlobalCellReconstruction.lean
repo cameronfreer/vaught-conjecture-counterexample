@@ -42,12 +42,25 @@ whose scope on the carrier lies in the points of `y` correspond, by the same cel
 of `y` whose scope on the carrier lies in the points of `x`.
 
 **Open.**  The statements here concern realizations of this repository and the positional cells
-of their types.  A class under the same cell is not determined by its scope on the carrier:
-cells with equal scope and grade are not identified (`Realization.IsSameCell.eq`).  The
-reconstruction of the printed coded domains of [Kni26, Definition 3.2.5, p. 31] (the codes of
-the cells, forgotten here; roadmap, `IMPLEMENTATION.md`, "Manuscript concordance", note 7) and
-the correspondence between the models of `S^α` of [Kni26, Definition 3.2.1] and the models of
-this repository are not addressed, and nothing here assumes strong coding.
+of their types, and nothing here assumes strong coding.  The reconstruction of the printed coded
+domains of [Kni26, Definition 3.2.5, p. 31] is not addressed; what remains to be established for
+it are correspondence requirements, not hypotheses shown to be necessary:
+
+* codes: the cells here are positions, with the codes of the cells forgotten (roadmap,
+  `IMPLEMENTATION.md`, "Manuscript concordance", note 7); no map from classes under the same cell
+  to the printed coded elements is defined;
+* identification: the same-cell relation keeps distinct cells of one type distinct
+  (`Realization.IsSameCell.eq`), and the scope, grade and label of a cell are not used as a
+  criterion of identification; no compiled example is given either way of two distinct cells
+  sharing them, and no coding separating the classes is assumed;
+* domains: the printed domain of the type of a tuple is not matched with the cells of an
+  occurrence; that needs the correspondence between the models of `S^α` of
+  [Kni26, Definition 3.2.1] and the models of this repository, which is not addressed;
+* values and semantics: labels, rows and below-domains are invariant under the same cell
+  (`Realization.IsSameCell.label_eq`, `IsSameCell.rowAt_eq`, `IsSameCell.mem_below_iff`), and
+  their correspondence with the printed values and semantics is not addressed;
+* tuples without a type: they enter here only through covering, and the printed domains of
+  arbitrary finite sets are not compared.
 
 ## Placement
 
