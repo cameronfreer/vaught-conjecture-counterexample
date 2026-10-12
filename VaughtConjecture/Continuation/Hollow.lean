@@ -73,10 +73,10 @@ has a proper stable label `λ_ξ + i`
 **Relation to the original definition of hollowness.**  The roadmap retains the original anchor
 definition of hollowness (roadmap, Layer 4; semantic contract, item 8), with stable-label fixedness
 as a theorem for models.  `IsCoverHollow` is a separate predicate, phrased through rooted covers
-and forcing; it is not that definition, and no equivalence with it is claimed here.  Three later
+and forcing; it is not that definition, and no equivalence with it is claimed here.  Four later
 modules compare it with the row reading of an anchor, `Realization.IsRowAnchor` (defined in
 `VaughtConjecture.Continuation.ActualCoverTransport`), a native reading of [Kni26, Definition 5.4.2]
-over the definitions of this repository:
+over the definitions of this repository, and with its global form:
 
 * `VaughtConjecture.Continuation.ActualCoverTransport`: under legal types, a row anchor at `K` gives
   an anchor at the top at `K + 1` (`Realization.IsRowAnchor.isTopAnchor`,
@@ -90,14 +90,26 @@ over the definitions of this repository:
   `Realization.stableOffset_eq_of_covers`); hence, for a model at a block stage, a row anchor
   exists exactly when an anchor at the top exists (`Realization.HasTopAnchor.hasRowAnchor`,
   `Realization.IsModel.hasRowAnchor_iff_hasTopAnchor`), and the model is cover-hollow exactly when
-  it has no row anchor (`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`).
+  it has no row anchor (`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`);
+* `VaughtConjecture.Continuation.GlobalRowAnchor`: the global row anchor
+  `Realization.IsGlobalRowAnchor`, a native global-cell rendering of the printed inequality with
+  its cells quantified over the whole realization, agrees at a model with the row anchor at the
+  same bound (`Realization.IsModel.isGlobalRowAnchor_iff_isRowAnchor`), so a model at a block
+  stage is cover-hollow exactly when it has no global row anchor
+  (`Realization.IsModel.isCoverHollow_iff_not_hasGlobalRowAnchor`).  Its label `⊤` of the anchor
+  is an explicit formalization adjustment, supported by the compiled degeneracy of the inequality
+  without it (`Realization.isMinimalAtInfinity_of_label_ne_top`,
+  `Realization.IsModel.exists_isMinimalAtInfinity`), not an erratum confirmed by the author.
 
-The bounds differ: `K` to `K + 1` under legal types, `N` to `N` at models.  Existential
-quantification over the bound absorbs the shift; no equivalence of the two readings at one bound
-is proved.  `Realization.IsRowAnchor` is not shown to agree with the printed definition of
-[Kni26, Definition 5.4.2], and nothing identifies the models of this repository with the
-manuscript's strongly coded templates; so the equivalence of `IsCoverHollow` with the original
-hollowness, as printed, is still to be proved.
+The bounds differ between row anchors and anchors at the top: `K` to `K + 1` under legal types,
+`N` to `N` at models.  Existential quantification over the bound absorbs the shift; no
+equivalence of these two readings at one bound is proved.  Neither the row anchor nor the global
+row anchor is shown to agree with the printed definition of [Kni26, Definition 5.4.2]:
+characteristic arity and the hypothesis `0 < K ≤ ∞` have no counterpart, the coded domains are
+not reconstructed, and nothing identifies the models of [Kni26, Definition 3.2.1] (the
+manuscript's strongly coded templates) with the realizations satisfying `Realization.IsModel`;
+so the equivalence of `IsCoverHollow` with the original hollowness, as printed, is still to be
+proved.
 
 The countable cover of terminal classes (condition 2, terminal countability;
 `VaughtConjecture.Expansion.Losses`) and the modelhood criterion (output 3, `ContinuationCriterion`)
@@ -170,8 +182,13 @@ def HasTopAnchor : Prop :=
 
 /-- The realization is **cover-hollow**: it has no anchor at the top.  This is not the original
 anchor definition of hollowness of the roadmap.  At a model it is the absence of a row anchor
-(`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`), for the native row reading
-`Realization.IsRowAnchor`, which is not shown to agree with [Kni26, Definition 5.4.2]; the
+(`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`), for the native rooted reading
+`Realization.IsRowAnchor`, and equally the absence of a global row anchor
+(`Realization.IsModel.isCoverHollow_iff_not_hasGlobalRowAnchor`), for the native global-cell
+rendering `Realization.IsGlobalRowAnchor`, which agrees with the rooted reading at a model at the
+same bound and makes the label `⊤` of the anchor an explicit formalization adjustment.  Neither
+is shown to agree with [Kni26, Definition 5.4.2]: characteristic arity, the coded domains and the
+correspondence of the manuscript's models with `Realization.IsModel` remain open, and the
 equivalence with the original definition, as printed, is still to be proved. -/
 def IsCoverHollow : Prop :=
   ¬ R.HasTopAnchor
