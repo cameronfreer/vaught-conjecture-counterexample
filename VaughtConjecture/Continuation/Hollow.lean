@@ -73,12 +73,37 @@ has a proper stable label `λ_ξ + i`
 **Relation to the original definition of hollowness.**  The roadmap retains the original anchor
 definition of hollowness (roadmap, Layer 4; semantic contract, item 8), with stable-label fixedness
 as a theorem for models.  `IsCoverHollow` is a separate predicate, phrased through rooted covers
-and forcing; it is not that definition, and no equivalence with it is claimed here.  The
-equivalence of `IsCoverHollow` with the original hollowness is still to be proved.  The countable
-cover of terminal classes (condition 2, terminal countability; `VaughtConjecture.Expansion.Losses`)
-and the modelhood criterion (output 3, `ContinuationCriterion`) are stated with `IsCoverHollow`
-elsewhere.  Classification and receiving for `IsCoverHollow` enter there as separate named
-hypotheses, the continuation criterion and (R3); neither follows from anything proved here.
+and forcing; it is not that definition, and no equivalence with it is claimed here.  Three later
+modules compare it with the row reading of an anchor, `Realization.IsRowAnchor` (defined in
+`VaughtConjecture.Continuation.ActualCoverTransport`), a native reading of [Kni26, Definition 5.4.2]
+over the definitions of this repository:
+
+* `VaughtConjecture.Continuation.ActualCoverTransport`: under legal types, a row anchor at `K` gives
+  an anchor at the top at `K + 1` (`Realization.IsRowAnchor.isTopAnchor`,
+  `Realization.HasRowAnchor.hasTopAnchor`), so a model that is cover-hollow at a block stage has no
+  row anchor (`Realization.IsCoverHollowAtBlock.not_hasRowAnchor`);
+* `VaughtConjecture.Continuation.RowComparison`: the row comparison at a cell of high grade, for a
+  lawful labelling (`StageType.rowAt_lt_visibilityReplace_of_isLawful`) and, at a model, through
+  the stable section (`Realization.IsModel.rowAt_lt_visibilityReplace_of_stableOffset_lt`);
+* `VaughtConjecture.Continuation.ActualCoverConverse`: at a model, an anchor at the top at `N` is a
+  row anchor at the same bound `N` (`Realization.IsTopAnchor.isRowAnchor`, through
+  `Realization.stableOffset_eq_of_covers`); hence, for a model at a block stage, a row anchor
+  exists exactly when an anchor at the top exists (`Realization.HasTopAnchor.hasRowAnchor`,
+  `Realization.IsModel.hasRowAnchor_iff_hasTopAnchor`), and the model is cover-hollow exactly when
+  it has no row anchor (`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`).
+
+The bounds differ: `K` to `K + 1` under legal types, `N` to `N` at models.  Existential
+quantification over the bound absorbs the shift; no equivalence of the two readings at one bound
+is proved.  `Realization.IsRowAnchor` is not shown to agree with the printed definition of
+[Kni26, Definition 5.4.2], and nothing identifies the models of this repository with the
+manuscript's strongly coded templates; so the equivalence of `IsCoverHollow` with the original
+hollowness, as printed, is still to be proved.
+
+The countable cover of terminal classes (condition 2, terminal countability;
+`VaughtConjecture.Expansion.Losses`) and the modelhood criterion (output 3, `ContinuationCriterion`)
+are stated with `IsCoverHollow` elsewhere.  Classification and receiving for `IsCoverHollow` enter
+there as separate named hypotheses, the continuation criterion and (R3); neither follows from
+anything proved here.
 
 **Cover-hollowness from exact receiving** (`Realization.isCoverHollow_of_exactReceivingWithin`).
 A realization at `λ_ξ` with legal types and exact receiving of every legal donor
@@ -144,7 +169,10 @@ def HasTopAnchor : Prop :=
   ∃ (x : R.Occurrence) (a : Fin x.type.card) (N : ℕ), R.IsTopAnchor x a N
 
 /-- The realization is **cover-hollow**: it has no anchor at the top.  This is not the original
-anchor definition of hollowness of the roadmap; their equivalence is still to be proved. -/
+anchor definition of hollowness of the roadmap.  At a model it is the absence of a row anchor
+(`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`), for the native row reading
+`Realization.IsRowAnchor`, which is not shown to agree with [Kni26, Definition 5.4.2]; the
+equivalence with the original definition, as printed, is still to be proved. -/
 def IsCoverHollow : Prop :=
   ¬ R.HasTopAnchor
 
