@@ -60,9 +60,17 @@ it has no row anchor.  Existential quantification over the bound absorbs the shi
 these are not equivalences at one bound.
 
 Both transports and their existential forms concern the native definitions
-`Realization.IsTopAnchor` and `Realization.IsRowAnchor` of this repository;
-`Realization.IsRowAnchor` is a reading of [Kni26, Definition 5.4.2] that is not shown to agree
-with the printed definition, so nothing here is a statement about the manuscript's definition.
+`Realization.IsTopAnchor` and `Realization.IsRowAnchor` of this repository.  At a model the row
+anchor agrees at the same bound with the native global-cell rendering of the printed inequality,
+`Realization.IsGlobalRowAnchor` (`Realization.IsModel.isGlobalRowAnchor_iff_isRowAnchor`, in
+`VaughtConjecture.Continuation.GlobalRowAnchor`), whose label `⊤` of the anchor is an explicit
+formalization adjustment, not an erratum confirmed by the author; so a model at a block stage is
+cover-hollow exactly when it has no global row anchor
+(`Realization.IsModel.isCoverHollow_iff_not_hasGlobalRowAnchor`).  Neither reading is shown to
+agree with [Kni26, Definition 5.4.2]: characteristic arity and the hypothesis `0 < K ≤ ∞` have no
+counterpart, the coded domains are not reconstructed, and the models of
+[Kni26, Definition 3.2.1] are not shown to correspond to the realizations satisfying
+`Realization.IsModel`; so nothing here is a statement about the manuscript's definition.
 
 **The bound `0`.**  No cover anchor has the bound `0` (`Realization.not_isTopAnchor_zero`: the
 trivial rooted cover forces `0`), so at `N = 0` the premise is impossible; the proof treats that
