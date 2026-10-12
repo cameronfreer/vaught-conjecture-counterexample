@@ -78,19 +78,13 @@ range normalization carried by every stage type, through the band lift
 (`StageType.IsMarker.exists_lift`), which places the row entry of a top cap at its marker at an
 ordinal `μ + j`.  No exact consistency, covering or receiving of `R` is used.
 
-**Open, not claimed here.**  The converse transport, from a cover anchor to a row anchor at some
-bound, is not proved.  At one cover the least-lift characterization
-(`StageType.IsMarker.forcesThreshold_iff_le_grade_and_visibilityReplace_rowAt_le`) gives the row
-inequality only for `θ` a top cap and `σ` a marker of it; the row reading asks it at every cell
-`θ` labelled `⊤` of grade at least the bound and every `σ` labelled `⊤` below `θ`.  One sufficient
-route, not a requirement: at a legal stage type at a limit, for a top cap `c` with a marker `r`,
-cells `θ`, `σ`, `e` labelled `⊤` with `σ` and `e` below `θ`, and `K` at most the grade of `θ`, if
-`q.rowAt c e < visibilityReplace K K (q.rowAt c r)` then the row clause holds at `θ`, `σ`, `e`
-(weakly, and strictly when the grade of `θ` exceeds `K`).  With legal types this statement gives
-the converse at the bound `N` of a cover anchor; it is not proved, and refuting it would not
-refute the converse, which may be reached through several covers instead.  No equivalence
-of the two readings, of cover-hollowness with the absence of a row anchor, or any modelhood
-statement is claimed, and `Realization.stableOffset` and the normalization of
+**The converse, and what is not claimed.**  The converse transport at models, from a cover
+anchor at `N` to a row anchor at the same bound `N`, is `Realization.IsTopAnchor.isRowAnchor`
+(in `VaughtConjecture.Continuation.ActualCoverConverse`), through the lawful stable section at
+the actual rooted covers rather than through the rows of a top cap.  The bounds differ: a row
+anchor at `K` gives a cover anchor at `K + 1` here, and a cover anchor at `N` a row anchor at `N`
+there.  No equivalence of the two readings, of cover-hollowness with the absence of a row anchor,
+or any modelhood statement is stated here, and `Realization.stableOffset` and the normalization of
 `VaughtConjecture.Continuation.Normalization` are unchanged.
 
 ## Placement
@@ -231,7 +225,7 @@ theorem HasRowAnchor.hasTopAnchor (hl : R.HasLegalTypes) (h : R.HasRowAnchor) :
   ⟨x, a, K + 1, hx.isTopAnchor hl⟩
 
 /-- **A cover-hollow realization has no row anchor**, for `R` at `λ_ξ` with legal types.  One
-implication only; the converse is not proved. -/
+implication; no equivalence is stated here. -/
 theorem IsCoverHollow.not_hasRowAnchor (hl : R.HasLegalTypes) (hH : R.IsCoverHollow) :
     ¬ R.HasRowAnchor :=
   fun h ↦ hH (h.hasTopAnchor hl)
@@ -239,8 +233,8 @@ theorem IsCoverHollow.not_hasRowAnchor (hl : R.HasLegalTypes) (hH : R.IsCoverHol
 end Transport
 
 /-- **At the callers holding a model**: a model cover-hollow at a block stage has no row anchor.
-Legal types are a clause of modelhood (`Realization.IsModel.hasLegalTypes`).  One implication only;
-the converse is not proved. -/
+Legal types are a clause of modelhood (`Realization.IsModel.hasLegalTypes`).  One implication;
+no equivalence is stated here. -/
 theorem IsCoverHollowAtBlock.not_hasRowAnchor {α : Ordinal.{u}} {M : Type w}
     {R : Realization.{u, w} α M} (hR : R.IsModel) (hH : R.IsCoverHollowAtBlock) :
     ¬ R.HasRowAnchor := by

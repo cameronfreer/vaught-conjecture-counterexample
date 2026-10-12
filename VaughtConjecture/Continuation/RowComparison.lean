@@ -51,13 +51,10 @@ it is `λ_ξ + i` with `i` below `N`; at `θ` the stable offset is at least the 
 (`Realization.grade_le_stableOffset`), so the section is at least `λ_ξ + N`; at `σ` it is at
 least `λ_ξ`.
 
-**Open, not claimed here.**  The converse of `Realization.IsRowAnchor.isTopAnchor` is not
-assembled.  What it would further take, at an actual rooted cover `(q, f)` of an occurrence `x`
-with tuple `s`: the stable offset of the transported cell `e` at `s` is that of `a` at `x`
-(`Realization.stableOffset_comap`, from exact consistency and covering, along the face `f` of
-`q`, whose restriction is the type of `x`); a cover anchor at `N` makes it below `N`.  No
-equivalence of the two readings of an anchor, of cover-hollowness with the absence of a row
-anchor, or any modelhood statement is claimed.
+**Use.**  The converse of `Realization.IsRowAnchor.isTopAnchor` at models, at the same bound,
+is assembled from this comparison in `VaughtConjecture.Continuation.ActualCoverConverse`
+(`Realization.IsTopAnchor.isRowAnchor`).  No equivalence of the two readings of an anchor, of
+cover-hollowness with the absence of a row anchor, or any modelhood statement is stated here.
 
 ## Placement
 
