@@ -394,8 +394,18 @@ and (R3) are presently formulated with cover-hollowness (`Realization.IsCoverHol
 is declared (`StableCappedReceiving`, assuming that the model is not cover-hollow) and is not
 proved; cover-hollowness is a
 separate named predicate whose stable-label fixedness holds for every realization at a block stage,
-with no hypothesis (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the equivalence of
-cover-hollowness with the original no-anchor predicate is still to be proved.
+with no hypothesis (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`).  For a model at a
+block stage, cover-hollowness is the absence of a row anchor
+(`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`, with
+`Realization.IsModel.hasRowAnchor_iff_hasTopAnchor`, `Continuation/ActualCoverConverse`, compiled
+in this repository (theorem named)); this holds only after existential quantification over the
+bound (under legal types a row anchor at `K` gives an anchor at the top at `K + 1`,
+`Realization.IsRowAnchor.isTopAnchor`; at a model an anchor at the top at `N` is a row anchor at
+`N`, `Realization.IsTopAnchor.isRowAnchor`), and no equivalence at one bound is proved.  The row
+anchor (`Realization.IsRowAnchor`) is a native reading of [Kni26, Definition 5.4.2], not shown to
+agree with the printed definition, and nothing identifies the models of this repository with the
+manuscript's strongly coded templates; so the equivalence of cover-hollowness with the original
+no-anchor predicate is still to be proved.
 
 **The finite lifting statements, organized around the attained least lift** (`README.md`, Layer 3,
 3.1, "The attained least lift" and "Least, not unique"; Layer 4, "Status", outputs 2 and 3 and the
@@ -4600,7 +4610,11 @@ argued, not formalized):
   the same carrier and extends the occurrence at `λ_δ`; agreement below `c` survives reduction
   (`Label.min_reduce_of_le`).  The first test of the route.
   Acceptance: the statement at every limit `δ`, with no hypothesis beyond the receiving of the
-  reductions.  Status: compiled in a separate open change, not yet reviewed; prospective here.
+  reductions.  Status: compiled in this repository (theorem named), in
+  `Realization/ReceivingLimit.lean`: from reductions above each cutoff
+  (`Realization.HasFiniteCutReceiving.of_forall_reduce`), and at a limit block stage
+  (`Realization.hasFiniteCutReceiving_of_forall_reduce_blockStage`, with its converse
+  `Realization.hasFiniteCutReceiving_iff_forall_reduce_blockStage`).
 - **8b. Reduction and uniqueness for `𝒞`.**  Reduction from item 2 above; next-block
   uniqueness of receiving expansions from item 3 with no receiving hypothesis on other models;
   the counterparts of `ModelExpansion.subsingleton` and `ModelExpansion.nonempty_of_forall_lt`
@@ -4612,7 +4626,8 @@ argued, not formalized):
   expansions existentially (only their proofs use `ModelExpansion.reduceBlock`), so a receiving
   version needs these steps restated with the reductions as outputs
   (`Expansion.exists_extend_covers_reduceBlock` and
-  `Expansion.exists_extend_covers_back_reduceBlock`, compiled in a separate open change).
+  `Expansion.exists_extend_covers_back_reduceBlock`, compiled in this repository (theorem named),
+  in `Expansion/ReceivingAgreement.lean`).
 - **8d. The receiving continuation criterion.**  A receiving model at `λ_ξ`, not cover-hollow,
   with top-grade supremum `⊤`, has a receiving successor; the conclusion gives receiving as well
   as modelhood.  Conditionally on (R4), the stable candidate has finite-cut receiving
@@ -4631,19 +4646,27 @@ argued, not formalized):
   unchanged.  Nonempty receiving losses need next-block uniqueness of receiving expansions (8b)
   and the top-free witnesses as receiving models; the losses theorem of the original domains,
   `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`, takes next-block uniqueness of all model
-  expansions (`hnext`), which the completion alone does not give, and is not used unchanged.  On
-  the separate open change the receiving losses are derived from forcing donors through
-  next-block uniqueness of receiving models and the receiving witnesses (compiled in a separate
-  open change, not yet reviewed; prospective here).
-  Status: a form of the main theorem through receiving models is compiled in a separate open
-  change, not yet reviewed, without (R1) as a hypothesis; its remaining hypotheses are the coatom
-  extension property with apex at every countable block stage and (R4), (R2) and (R3) for
-  receiving models (`Expansion.ReceivingStableCappedReceiving`,
-  `Realization.ReceivingResidualReceiving`, and `Realization.HollowReceiving` for
-  `Realization.IsReceivingCoverHollowAtBlock`); prospective here.
+  expansions (`hnext`), which the completion alone does not give, and is not used unchanged.  The
+  receiving losses are derived from forcing donors through next-block uniqueness of receiving
+  models (`Expansion.ReceivingNextBlockUniqueness.of_forcingDonors`) and the receiving witnesses
+  (`MainTheorem.receivingExpansionDomains_hasNonemptyLosses`, `MainTheorem/ReceivingRoute.lean`),
+  compiled in this repository (theorem named).
+  Status: a form of the main theorem through receiving models is compiled in this repository
+  (theorem named), without (R1) as a hypothesis
+  (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`,
+  `MainTheorem/ReceivingRoute.lean`); its hypotheses are the coatom extension property with apex
+  at every countable block stage and (R4), (R2) and (R3) for receiving models
+  (`Expansion.ReceivingStableCappedReceiving`, `Realization.ReceivingResidualReceiving`, and
+  `Realization.HollowReceiving` for `Realization.IsReceivingCoverHollowAtBlock`), each compiled
+  (`StageType.hasApexCoatomExtensions_blockStage`,
+  `Expansion.receivingStableCappedReceiving_levels`,
+  `Realization.receivingResidualReceiving_of_padded`, `Realization.hollowReceiving_levels`), and
+  the main theorem with no hypothesis is
+  `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`
+  (`MainTheorem/GrowthLevelRoute.lean`).
 
 **The three finite reading constructions** (open; the warnings for (R2)–(R4) below are compiled
-in separate open changes, not in the library).  Completion yields a lawful extension
+in this repository (theorem named)).  Completion yields a lawful extension
 (`Seed.nonempty_completionBelowFullGrade`); classification and continuation need a lawful
 extension whose rows read specified labels.  `StageType.ReadsAtLeast` (the same predicate as
 `PrescribedFullRows.ReadsAtLeast`) asks `x` of grade at most that of `s` and, at **every** cell
@@ -4656,7 +4679,8 @@ requirement is stated with its construction below.
 - (R2): extensions satisfying the per-top reading criterion for arbitrary relevant donors.  The
   version with one fixed **lost top** (an old top of the context read for every new top),
   `StageType.HasSeparatedPinnedExtensions`, is refuted at every stage
-  (`SeparationObstruction.not_hasSeparatedPinnedExtensions`, in a separate open change); the
+  (`SeparationObstruction.not_hasSeparatedPinnedExtensions`,
+  `Continuation/SourceGapSeparationObstruction.lean`); the
   replacement reads each new top through its own old reference top.  (R2) for receiving models is
   compiled by another construction, LOW displays
   (`Realization.receivingResidualReceiving_of_padded`, `MainTheorem/LowPaddedRoute`), so the
@@ -4668,14 +4692,16 @@ requirement is stated with its construction below.
   **leaf-and-marked layer** (a leaf cell for each catalogue entry, a marked cell for each chosen
   entry); the empty specification solves nothing.
 - (R4): extensions with the required cap readings: cap-reading extensions
-  (`StageType.IsCapReadingExtension`, in a separate open change; prospective here), whose cells
+  (`StageType.IsCapReadingExtension`, `Continuation/StableRecoveryFullCap.lean`), whose cells
   at `(univ, N)` read every new cell of the donor through the cap (`StageType.ReadsThroughCap`):
   a new cell labelled `μ + n` is read at a value `ω · c + n`, not at `⊥`, stronger than
   `StageType.ReadsAtLeast`.  The profile completion keeps at `(univ, N)` the cell of the constant
   entry `⊥`, whose row at the new cell is `⊥`, so it is not a cap-reading extension at a cap of
   grade 3 or 4, and neither is the leaf-and-marked completion
   (`TowerProfile.not_isCapReadingExtension_completion`,
-  `TowerProfile.not_isCapReadingExtension_markedCompletion`, in a separate open change); the
+  `TowerProfile.not_isCapReadingExtension_markedCompletion`, in
+  `Continuation/StableRecoveryProfileObstruction.lean` and
+  `Continuation/StableRecoveryMarkedGate.lean`); the
   completion theorem cannot be applied unchanged.
 
 No single universal reading theorem is required: the quantifiers of the three differ, and the
@@ -4792,12 +4818,13 @@ compatible with the faces over legal `t'` and `d` has a prescribed extension.  I
      not self-visible at the top grade `N`, and not `⊥` at a cell of grade `N`
      (`PrescribedFullRows.not_isFaceCompatible_block`, with
      `PrescribedFullRows.not_isAdmissibleRow_block`).  At the refuting context of the per-block
-     route, `CoupledGatedExtensionCounterexample.P α` (not on `main`), these hypotheses hold at
+     route, `CoupledGatedExtensionCounterexample.P α`
+     (`Extension/CoupledGatedExtensionCounterexample.lean`), these hypotheses hold at
      every stage `α > 1`: that module proves the context legal (`isLegal_P`), its cell `z₁` is
      labelled `1` and not self-visible at the grade `2`, and it has the lawful labelling
      `⊥, ⊥, ⊥, ω + 1, ω + 2` (`isLawful_lab_bot_omegaAdd`).  So the hypothesis of
      `hasBlockTightSaturations` fails at every `α > 1` (argued from those compiled pieces; the
-     joining lemma is to be compiled once that module lands), and the (R1) arrow is **not a
+     joining lemma is not compiled), and the (R1) arrow is **not a
      reduction**.  The cause is the domain of `Φ`: it names only known cells, while block-tightness
      accepts any cell with the label, new cells included.  Redesigning the prescription to read
      cells of the donor would have to be re-tested at this input.
@@ -4875,15 +4902,16 @@ reaches a coface on a prescribed scheme, which is why the core is stated on stag
 **Restatements.**  The (R4) condition is `main`'s own `StageType.ReadsThroughCap`
 (`Continuation/StableRecovery`), used directly.  `Extension/PrescribedFullRowsRoutes` states
 `ReadsAtLeast`, `IsReadingContext`, `ReadsInOwnBlock` and `HasBlockTightSaturations` in full.
-The (R2)/(R3) declarations now also occur in `Continuation/AvailableTopDetermination`; the
-per-block route is not on `main`.
+The (R2)/(R3) declarations now also occur in `Continuation/AvailableTopDetermination`; those of
+the per-block route are `StageType.ReadsInOwnBlock` (`Extension/GatedExtension.lean`) and
+`StageType.HasBlockTightSaturations` (`Realization/TightCap.lean`).
 `IsBlockTight` is new (the per-input body of `HasBlockTightSaturations`).  The four restatements
 were checked `rfl`-equal to the routes' own declarations at the heads of the routes' branches; that
 check is outside the repository.  Consolidation of the (R2)/(R3) interfaces remains:
 `ReadsAtLeast` and `IsReadingContext` are to quote that module's declarations (moving
 `exists_isFaceCompatible` and `forall_exists_le` beside them); `ReadsInOwnBlock` and
-`HasBlockTightSaturations` are to quote the per-block module's once it lands (keeping `IsBlockTight`
-beside them, and compiling the joining lemma of item 5).  The composition of `IsCapReadingScheme`
+`HasBlockTightSaturations` are to quote the per-block declarations (keeping `IsBlockTight` beside
+them, and compiling the joining lemma of item 5).  The composition of `IsCapReadingScheme`
 with the cap's
 label and the calibration to a stable recovery scheme
 (`StageType.IsStableRecoveryScheme.of_readsThroughCap`) is not compiled here.
@@ -5822,7 +5850,8 @@ witnesses).**
   Mathlib candidate, beside the supremum lemmas of `ENat`; `Label.ofOffset` with its laws concerns
   labels only and goes to `Label/`.
 - `Continuation/Normalization`, `Continuation/StableOffsetLeastLift`, `Continuation/Hollow`,
-  `Continuation/Terminal`,
+  `Continuation/ActualCoverTransport`, `Continuation/RowComparison`,
+  `Continuation/ActualCoverConverse`, `Continuation/Terminal`,
   `Continuation/ExactAge`, `Continuation/Comparison`, `Continuation/Classification`,
   `Continuation/Candidate`, `Continuation/CandidateCounterexamples`, and their examples modules:
   Layer 4, in place. `ContinuationCriterion`, the statement of output 3, is in
