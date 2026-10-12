@@ -218,8 +218,11 @@ Notes on the rows, each with its marker:
   the next block is compiled).  Still to be proved: (R4) for every model, for output 3 (its form
   for receiving models is compiled, `Expansion.receivingStableCappedReceiving_levels`); the
   equivalence of cover-hollowness (with which the compiled statements are formulated) and the
-  original no-anchor predicate (the meaning of "hollow", `SEMANTIC_CONTRACT.md`, item 8); the
-  exact-age Scott sentences.
+  original no-anchor predicate (the meaning of "hollow", `SEMANTIC_CONTRACT.md`, item 8; for a
+  model at a block stage, cover-hollowness is compiled to be the absence of a row anchor,
+  `Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`, for the native row reading
+  `Realization.IsRowAnchor`, which is not shown to agree with [Kni26, Definition 5.4.2]; research
+  front, item 6); the exact-age Scott sentences.
 - *Layers 5 and 6.*  Compiled conditionally on the hypotheses below, or on statements derived
   from them (next-block uniqueness; finite-extension receiving, from (R1)): uniqueness and limit
   existence (`ModelExpansion.subsingleton`, `ModelExpansion.nonempty_of_forall_lt`, under
@@ -848,8 +851,8 @@ compiled).
 
 Each item carries its own marker: item 1 is now compiled and kept with the history of its refuted
 designs, item 2 and item 4 (from item 1) are compiled, item 3 is refuted, and the attained least
-lift of item 6 is compiled; the rest is open or still to be proved.  None is assumed by a theorem
-of the library except as a named hypothesis.
+lift of item 6 and its row reading of an anchor at models are compiled; the rest is open or
+still to be proved.  None is assumed by a theorem of the library except as a named hypothesis.
 
 1. **Layer 3 at every `m`** (compiled in this repository (theorem named)): every seed has a
    completion below the full grade, at every arity `m`, with no hypothesis
@@ -1356,7 +1359,8 @@ of the library except as a named hypothesis.
    Status, each named statement separately: `HasCapRowExtensions ξ` open; RCC open;
    `HasCapReadingExtensions ξ` open; (R4) still to be proved; hypothesis 8 compiled.
 6. **The attained least lift and structural successor leastness** (the attained least lift
-   compiled, `Stage/LeastLift`; structural successor leastness prospective).  One lift of a legal
+   compiled, `Stage/LeastLift`; the row reading of an anchor at models compiled; structural
+   successor leastness prospective).  One lift of a legal
    stage type at a limit stage `β` to `β + ω`, least at every cell (compiled,
    `StageType.exists_isLeast_isLiftLabelling`; each minimum is also attained separately,
    `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read off that one
@@ -1371,7 +1375,22 @@ of the library except as a named hypothesis.
    The structural successors of a consistent realization `R` (the consistent realizations at the
    next block with reduct `R`) lie between the stable candidate, where it is lawful, the least
    (covering used), and literal weakening, the greatest; for a model the two are equal exactly
-   when it is cover-hollow (`Realization.IsCoverHollow`).  Least, not unique: literal weakening
+   when it is cover-hollow (`Realization.IsCoverHollow`).  The row reading of an anchor (compiled
+   in this repository (theorem named), `Continuation/ActualCoverTransport`,
+   `Continuation/RowComparison`, `Continuation/ActualCoverConverse`): under legal types a row anchor
+   at `K` gives an anchor at the top at `K + 1` (`Realization.IsRowAnchor.isTopAnchor`,
+   `Realization.HasRowAnchor.hasTopAnchor`, `Realization.IsCoverHollowAtBlock.not_hasRowAnchor`);
+   at a model an anchor at the top at `N` is a row anchor at the same bound `N`
+   (`Realization.IsTopAnchor.isRowAnchor`, through `Realization.stableOffset_eq_of_covers` and
+   `Realization.IsModel.rowAt_lt_visibilityReplace_of_stableOffset_lt`); so for a model at a block
+   stage a row anchor exists exactly when an anchor at the top does
+   (`Realization.IsModel.hasRowAnchor_iff_hasTopAnchor`), and the model is cover-hollow exactly
+   when it has no row anchor (`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`).
+   Existential quantification over the bound absorbs the shift; no equivalence at one bound is
+   proved.  `Realization.IsRowAnchor` is a native reading of [Kni26, Definition 5.4.2], not shown
+   to agree with the printed definition, and nothing identifies the models of this repository with
+   the manuscript's strongly coded templates (`README.md`, Layer 4, "Status", "Cover-hollowness
+   and the row reading of an anchor").  Least, not unique: literal weakening
    is the greatest lift, a pointwise minimum of lifts need not be lawful, and the twin-ordering
    hypothesis stays refuted.
    None of these makes the candidate a model (output 3, item 5 above), and none gives exact
