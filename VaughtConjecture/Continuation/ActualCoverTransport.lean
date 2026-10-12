@@ -38,8 +38,16 @@ tuple of `x`.  The literal root map is `f`, and the cell of `q` transported from
   `q.rowAt θ e ≤ visibilityReplace K K (q.rowAt θ σ)`, strictly when the grade of `θ` exceeds `K`.
   It is a native reading of [Kni26, Definition 5.4.2] (the anchor at infinity, "minimal at
   infinity"), stated over the definitions of this repository: the semantics `E(Θ)` there is read
-  as the row `q.rowAt θ`, and the bound `K'` there as `K`.  It is not shown to agree with the
-  printed definition.  A realization **has a row anchor**
+  as the row `q.rowAt θ`, and the bound `K'` there as `K`.  It is the rooted reading, over the
+  actual rooted covers of one occurrence.  The native global-cell rendering of the printed
+  inequality, `Realization.IsGlobalRowAnchor` (in `VaughtConjecture.Continuation.GlobalRowAnchor`),
+  with its cells quantified over the whole realization and the label `⊤` of the anchor an
+  explicit formalization adjustment (not an erratum confirmed by the author), agrees with it at a
+  model at the same bound (`Realization.IsModel.isGlobalRowAnchor_iff_isRowAnchor`).  Neither is
+  shown to agree with the printed definition: characteristic arity and the hypothesis
+  `0 < K ≤ ∞` have no counterpart, the coded domains are not reconstructed, and the models of
+  [Kni26, Definition 3.2.1] are not shown to correspond to the realizations satisfying
+  `Realization.IsModel`.  A realization **has a row anchor**
   (`Realization.HasRowAnchor`) when some occurrence, cell and bound form one.
 
 **The transport proved: rows to covers.**  Let `R` be at a block stage `λ_ξ` with legal types.
@@ -162,7 +170,9 @@ the type of `x` along `f`, with `e` the cell of `q` transported from `a`, every 
 labelled `⊤` of grade at least `K` and every cell `σ` labelled `⊤` below `θ`, with `e` below `θ`,
 satisfy `q.rowAt θ e ≤ visibilityReplace K K (q.rowAt θ σ)`, strictly when the grade of `θ`
 exceeds `K`.  A native reading, on the rows, of the anchor at infinity of
-[Kni26, Definition 5.4.2]; it is not shown to agree with the printed definition. -/
+[Kni26, Definition 5.4.2]; at a model it agrees at the same bound with the global row anchor
+`Realization.IsGlobalRowAnchor` (`Realization.IsModel.isGlobalRowAnchor_iff_isRowAnchor`), and
+neither is shown to agree with the printed definition. -/
 def IsRowAnchor (x : R.Occurrence) (a : Fin x.type.card) (K : ℕ) : Prop :=
   x.type.label a = ⊤ ∧ ∀ y : Σ m : ℕ, StageType.{u} α m × (Fin x.arity ↪ Fin m),
     R.ExtendsToCover x.tuple y → StageType.restrictFace y.2.2 y.2.1 = some x.type →

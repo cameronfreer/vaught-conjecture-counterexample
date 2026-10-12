@@ -220,8 +220,13 @@ Notes on the rows, each with its marker:
   equivalence of cover-hollowness (with which the compiled statements are formulated) and the
   original no-anchor predicate (the meaning of "hollow", `SEMANTIC_CONTRACT.md`, item 8; for a
   model at a block stage, cover-hollowness is compiled to be the absence of a row anchor,
-  `Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`, for the native row reading
-  `Realization.IsRowAnchor`, which is not shown to agree with [Kni26, Definition 5.4.2]; research
+  `Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`, for the native rooted reading
+  `Realization.IsRowAnchor`, and equally the absence of a global row anchor,
+  `Realization.IsModel.isCoverHollow_iff_not_hasGlobalRowAnchor`, for the native global-cell
+  rendering `Realization.IsGlobalRowAnchor`, which agrees with the rooted reading at a model at the
+  same bound and makes the top label of the anchor an explicit formalization adjustment; neither
+  is shown to agree with [Kni26, Definition 5.4.2]: characteristic arity, the coded domains and
+  the correspondence of the manuscript's models with `Realization.IsModel` remain open; research
   front, item 6); the exact-age Scott sentences.
 - *Layers 5 and 6.*  Compiled conditionally on the hypotheses below, or on statements derived
   from them (next-block uniqueness; finite-extension receiving, from (R1)): uniqueness and limit
@@ -1387,12 +1392,23 @@ still to be proved.  None is assumed by a theorem of the library except as a nam
    (`Realization.IsModel.hasRowAnchor_iff_hasTopAnchor`), and the model is cover-hollow exactly
    when it has no row anchor (`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`).
    Existential quantification over the bound absorbs the shift; no equivalence at one bound is
-   proved.  `Realization.IsRowAnchor` is a native reading of [Kni26, Definition 5.4.2], not shown
-   to agree with the printed definition, and nothing identifies the models of this repository with
-   the manuscript's strongly coded templates (`README.md`, Layer 4, "Status", "Cover-hollowness
-   and the row reading of an anchor").  Least, not unique: literal weakening
-   is the greatest lift, a pointwise minimum of lifts need not be lawful, and the twin-ordering
-   hypothesis stays refuted.
+   proved.  The global reading (compiled in this repository (theorem named),
+   `Continuation/GlobalRowAnchor`): the global row anchor `Realization.IsGlobalRowAnchor`, a native
+   global-cell rendering of the printed inequality over the cells of the whole realization up to
+   the same cell (`Realization.IsSameCell`), agrees at a model with the row anchor at the same
+   bound (`Realization.IsModel.isGlobalRowAnchor_iff_isRowAnchor`), so a model at a block stage is
+   cover-hollow exactly when it has no global row anchor
+   (`Realization.IsModel.isCoverHollow_iff_not_hasGlobalRowAnchor`).  Its top label is an explicit
+   formalization adjustment, supported by the compiled degeneracy of the inequality without it
+   (`Realization.isMinimalAtInfinity_of_label_ne_top`,
+   `Realization.IsModel.exists_isMinimalAtInfinity`), not an erratum confirmed by the author.
+   Neither reading is shown to agree with [Kni26, Definition 5.4.2]: characteristic arity and the
+   hypothesis `0 < K ≤ ∞` have no counterpart, the coded domains are not reconstructed, and
+   nothing identifies the models of [Kni26, Definition 3.2.1] (the manuscript's strongly coded
+   templates) with the realizations satisfying `Realization.IsModel` (`README.md`, Layer 4,
+   "Status", "Cover-hollowness and the row reading of an anchor").  Least, not unique: literal
+   weakening is the greatest lift, a pointwise minimum of lifts need not be lawful, and the
+   twin-ordering hypothesis stays refuted.
    None of these makes the candidate a model (output 3, item 5 above), and none gives exact
    lifting over a separately prescribed higher root.  Separate global routes: classical Fraïssé
    existence, Scott isolation with countable-limit existence, terminal presentations, and global
