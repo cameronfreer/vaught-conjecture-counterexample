@@ -1282,8 +1282,10 @@ definitions of §2 that it names and C for the language of templates, their diag
 (Definitions 4.17 and 4.18, Lemma 4.19), and row 1 is C with its truncation function P.  Rows 2–5
 and 43 are P, by the definition-level identifications of `VaughtConjecture/Correspondence` named
 in their notes.  Row 6 is S: `IsBountiful` is the printed definition required at every stage that
-is zero or a limit (note 6), and at `ω₁` only the implication from `IsBountiful` is proved.  The
-other rows whose declaration carries the manuscript's number but whose clauses have not been
+is zero or a limit (note 6), and at `ω₁` only the implication from `IsBountiful` is proved.  Row
+57 is S: native cell coherence is compiled, the coded domains are not reconstructed (note 57).  Row
+58 is C: the top label of the anchor made explicit, supported by a compiled degeneracy (note 58).
+The other rows whose declaration carries the manuscript's number but whose clauses have not been
 compared are S, with the compiled declarations listed in the notes.  A line with the first two
 cells empty continues the row above it: a further notion of the same row, with its own status.
 Rows 41–47 concern the legal templates of the current draft of [AFK26] and cite its numbering
@@ -1380,6 +1382,8 @@ repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstring
 | 54 | [AFK26] | the `β`-Fraïssé limit, Lemma 4.33 | S |
 | 55 | [AFK26] | Boundedness, Reconstruction and Limits, Proposition 4.34 | S |
 | 56 | [AFK26] | countably many maximal structures at each level, Proposition 4.35 | S |
+| 57 | [Kni26] | the value of an element allotted by a model, Definition 3.2.5, Lemma 3.2.6 | S |
+| 58 | [Kni26] | hollowness and the anchor at infinity, Definition 5.4.2 | C |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -2417,6 +2421,59 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     stage-dependent meaning of the top that `README.md` flags ("Reduction to full
     presentations").  A theorem relating "maximal at `β`" to "terminal at `β`, or lying in some
     `K_{β′}` with `β′ > β`" is still to be proved (informal; not compiled).
+
+57. [Kni26, Definition 3.2.5 and Lemma 3.2.6]: the value `𝔐(Σ)` of an element `Σ` of the domain of a
+    type of a model, allotted by the model as a whole and well defined by consistency.  Here the
+    codes of the cells are forgotten (note 7), so the identity of an element across the domains of
+    different types is not primitive.  Native cell coherence is compiled in this repository (theorem
+    named), in `Continuation/GlobalRowAnchor`: `Realization.IsSameCell` (two cells of the types of
+    two occurrences are the same cell when they are the cells at the position of one cell of a
+    common face occurrence) is an equivalence under exact consistency
+    (`Realization.isSameCell_equivalence`; `Realization.IsSameCell.refl` and
+    `Realization.IsSameCell.symm` with no hypothesis, `Realization.IsSameCell.trans` under exact
+    consistency); it keeps distinct cells distinct (`Realization.IsSameCell.eq`,
+    `Realization.isSameCell_self_iff`: cells with equal scope and grade are not identified); under
+    exact consistency the same cell has the same label (the counterpart of Lemma 3.2.6,
+    `Realization.IsSameCell.label_eq`), grade (`Realization.IsSameCell.grade_eq`) and scope as a set
+    of points of the carrier (`Realization.IsSameCell.scope_map_eq`), and below-domains and rows
+    transport (`Realization.IsSameCell.mem_below_iff`, `Realization.IsSameCell.rowAt_eq`);
+    refinement along a face is `Realization.isSameCell_of_trans_eq`.  Status S: this is coherence of
+    the positional cells of this repository, not a reconstruction of the coded domains of [Kni26,
+    Definition 2.6.1], whose elements carry their codes, and not a correspondence between the models
+    of [Kni26, Definition 3.2.1] and the models here under which the elements of the printed domains
+    would be the classes of `Realization.IsSameCell` (row 11 compares the clauses of a model on
+    positional stage types only).  The reconstruction and the correspondence of model classes remain
+    open.
+58. [Kni26, Definition 5.4.2]: a model is hollow when it has no anchor at infinity, an element `⚓∞`
+    of the domain of a type of the model with a bound `K'` such that `ℰ(Θ)(Σ) ⌊+⌋^{K'} K' ≥
+    ℰ(Θ)(⚓∞)` whenever `Θ` has arity at least `K'` and `𝔐(Θ) = 𝔐(Σ) = ∞`, strictly when the arity of
+    `Θ` exceeds `K'`.  Corrected (C): the printed definition does not require `𝔐(⚓∞) = ∞`, and
+    without it the inequality degenerates.  `Realization.IsMinimalAtInfinity`
+    (`Continuation/GlobalRowAnchor`) is a native global-cell rendering of the printed inequality,
+    its cells quantified over the whole realization through `Realization.IsSameCell` (row 57), the
+    semantics `ℰ(Θ)` read as the row of `θ` and `⌊+⌋^{K'} K'` as `visibilityReplace K K` (row 2);
+    `Realization.IsGlobalRowAnchor` adds the label `⊤` of the anchor as an explicit conjunct, and
+    `Realization.HasGlobalRowAnchor` is its existential form.  The correction is supported by
+    theorems compiled in this repository (theorem named): under exact consistency every cell not
+    labelled `⊤` satisfies the inequality, strictly, at every bound
+    (`Realization.isMinimalAtInfinity_of_label_ne_top`), and every model at a positive stage has
+    such a cell (`Realization.IsModel.exists_isMinimalAtInfinity`), so without the label no model
+    would be hollow; the proof of [Kni26, Lemma 5.5.1] uses the label.  The compiled degeneracy
+    supports making the top-label requirement explicit; the correction is a formalization
+    adjustment, not an erratum confirmed by the author.  Theorem about the corrected notion: at a
+    model at a block stage, cover-hollowness is the absence of a global row anchor
+    (`Realization.IsModel.isCoverHollow_iff_not_hasGlobalRowAnchor`), through the comparison at one
+    bound with the row anchor (`Realization.IsModel.isGlobalRowAnchor_iff_isRowAnchor`; the global
+    form gives the rooted one with no hypothesis, `Realization.IsGlobalRowAnchor.isRowAnchor`, and
+    the converse holds under exact consistency and covering,
+    `Realization.IsRowAnchor.isGlobalRowAnchor`).  That comparison does not remove the distinction
+    of bounds between row anchors and anchors at the top: under legal types a row anchor at `K`
+    gives an anchor at the top at `K + 1` (`Realization.IsRowAnchor.isTopAnchor`), and at a model an
+    anchor at the top at `N` is a row anchor at `N` (`Realization.IsTopAnchor.isRowAnchor`).  Still
+    open: characteristic arity ([Kni26, Definition 5.4.1]; no counterpart here, note 21) and the
+    hypothesis `0 < K ≤ ∞` under which the definition is made; the reconstruction of the coded
+    domains (row 57); and the correspondence of model classes.  So the theorems concern the models
+    of this repository, not a correspondence with the models of [Kni26].
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
