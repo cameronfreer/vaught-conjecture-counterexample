@@ -2804,7 +2804,7 @@ named (`README.md`, Layer 0):
 
 - **InfinitaryLogic**: the current pin is `eb9f12d` (infinitary-logic's release v6.1.0, the merge
   of its pull request #172), reached from `e460cb6` (the merge of its pull request #162) by this
-  repository's pull request #208, with the toolchain and Mathlib unchanged; `e460cb6` was reached
+  repository's pull request #209, with the toolchain and Mathlib unchanged; `e460cb6` was reached
   from `cf80917` (the merge of its pull request #156) by this repository's pull request #97;
   `cf80917` was reached from `def5cc0` (the merge of its pull request #152) by this repository's
   pull request #63;
@@ -4004,7 +4004,7 @@ Each checkpoint needs both its abstract API and a concrete application:
 
 **A repin, outside the order 1–8.**  The repin of InfinitaryLogic to a revision containing
 `2cd44c3`, listed here before as a possible checkpoint, is made: this repository's pull request
-#208 moves the pin from `e460cb6` to `eb9f12d`, infinitary-logic's release v6.1.0, as a separate
+#209 moves the pin from `e460cb6` to `eb9f12d`, infinitary-logic's release v6.1.0, as a separate
 checkpoint before the first application of the greatest-stage theorem or of Scott separation, in
 the manner of the move to `e460cb6` (this repository's pull request #97): the revisions in
 `lakefile.toml` and `lake-manifest.json` edited by hand, with the `lakefile.toml` comment and its
