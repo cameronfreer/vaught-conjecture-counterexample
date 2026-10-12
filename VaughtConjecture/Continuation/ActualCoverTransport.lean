@@ -36,10 +36,10 @@ tuple of `x`.  The literal root map is `f`, and the cell of `q` transported from
   `e` the cell transported from `a`, for every cell `θ` of `q` labelled `⊤` of grade at least `K`
   and every cell `σ` labelled `⊤` below `θ`, with `e` below `θ`,
   `q.rowAt θ e ≤ visibilityReplace K K (q.rowAt θ σ)`, strictly when the grade of `θ` exceeds `K`.
-  This is a statement over the definitions of this repository of the anchor at infinity, "minimal
-  at infinity", of [Kni26, Definition 5.4.2]: the semantics `E(Θ)` there is read as the row
-  `q.rowAt θ`, and the bound `K'` there as `K`.  The comparison with the printed definition is
-  this reading only; no further check of it is made here.  A realization **has a row anchor**
+  It is a native reading of [Kni26, Definition 5.4.2] (the anchor at infinity, "minimal at
+  infinity"), stated over the definitions of this repository: the semantics `E(Θ)` there is read
+  as the row `q.rowAt θ`, and the bound `K'` there as `K`.  It is not shown to agree with the
+  printed definition.  A realization **has a row anchor**
   (`Realization.HasRowAnchor`) when some occurrence, cell and bound form one.
 
 **The transport proved: rows to covers.**  Let `R` be at a block stage `λ_ξ` with legal types.
@@ -56,7 +56,8 @@ tuple of `x`.  The literal root map is `f`, and the cell of `q` transported from
   stable offset (`Realization.IsRowAnchor.stableOffset_le`): a row anchor `(x, a, K)` bounds the
   provisional offset of `a` at every actual rooted cover of `x`, and hence the stable offset, by
   `K`.
-* Hence a row anchor at `K` is a cover anchor at `K + 1` (`Realization.IsRowAnchor.isTopAnchor`),
+* Hence a row anchor at `K` gives a cover anchor at `K + 1`
+  (`Realization.IsRowAnchor.isTopAnchor`),
   and a realization with legal types and a row anchor has an anchor at the top
   (`Realization.HasRowAnchor.hasTopAnchor`).
 
@@ -81,7 +82,13 @@ ordinal `μ + j`.  No exact consistency, covering or receiving of `R` is used.
 bound, is not proved.  At one cover the least-lift characterization
 (`StageType.IsMarker.forcesThreshold_iff_le_grade_and_visibilityReplace_rowAt_le`) gives the row
 inequality only for `θ` a top cap and `σ` a marker of it; the row reading asks it at every cell
-`θ` labelled `⊤` of grade at least the bound and every `σ` labelled `⊤` below `θ`.  No equivalence
+`θ` labelled `⊤` of grade at least the bound and every `σ` labelled `⊤` below `θ`.  One sufficient
+route, not a requirement: at a legal stage type at a limit, for a top cap `c` with a marker `r`,
+cells `θ`, `σ`, `e` labelled `⊤` with `σ` and `e` below `θ`, and `K` at most the grade of `θ`, if
+`q.rowAt c e < visibilityReplace K K (q.rowAt c r)` then the row clause holds at `θ`, `σ`, `e`
+(weakly, and strictly when the grade of `θ` exceeds `K`).  With legal types this statement gives
+the converse at the bound `N` of a cover anchor; it is not proved, and refuting it would not
+refute the converse, which may be reached through several covers instead.  No equivalence
 of the two readings, of cover-hollowness with the absence of a row anchor, or any modelhood
 statement is claimed, and `Realization.stableOffset` and the normalization of
 `VaughtConjecture.Continuation.Normalization` are unchanged.
@@ -92,8 +99,8 @@ This file belongs to Layer 4 of `roadmap/README.md` (research).
 
 ## References
 
-The anchor at infinity and hollowness are [Kni26, Definition 5.4.2]; the provisional values are
-[Kni26, Definition 5.3.1].
+The row reading is a reading of the anchor at infinity of [Kni26, Definition 5.4.2]; the
+provisional values are [Kni26, Definition 5.3.1].
 -/
 
 universe u v w
@@ -160,7 +167,8 @@ actual rooted cover `y = (m, q, f)` of `x` (`R.ExtendsToCover x.tuple y`) whose 
 the type of `x` along `f`, with `e` the cell of `q` transported from `a`, every cell `θ` of `q`
 labelled `⊤` of grade at least `K` and every cell `σ` labelled `⊤` below `θ`, with `e` below `θ`,
 satisfy `q.rowAt θ e ≤ visibilityReplace K K (q.rowAt θ σ)`, strictly when the grade of `θ`
-exceeds `K`.  A reading of the anchor at infinity of [Kni26, Definition 5.4.2] on the rows. -/
+exceeds `K`.  A native reading, on the rows, of the anchor at infinity of
+[Kni26, Definition 5.4.2]; it is not shown to agree with the printed definition. -/
 def IsRowAnchor (x : R.Occurrence) (a : Fin x.type.card) (K : ℕ) : Prop :=
   x.type.label a = ⊤ ∧ ∀ y : Σ m : ℕ, StageType.{u} α m × (Fin x.arity ↪ Fin m),
     R.ExtendsToCover x.tuple y → StageType.restrictFace y.2.2 y.2.1 = some x.type →
