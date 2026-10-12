@@ -160,19 +160,6 @@ theorem cellMap_refl_val (i : Fin (S.comap (Function.Embedding.refl (Fin n))).ca
   rw [← key]
   rfl
 
-/-- Rows along a restriction: the row of a cell of the restriction at a cell is the row of the
-corresponding cells.  (The same statement as `Scheme.rowAt_comap` of
-`VaughtConjecture.MainTheorem.GrowthRelabelLadder`, which is not imported here.) -/
-theorem rowAt_cellMap (f : Fin m ↪ Fin n) (i j : Fin (S.comap f).card) :
-    S.rowAt (S.cellMap f i) (S.cellMap f j) = (S.comap f).rowAt i j := by
-  have hle := S.isLowerEmbedding_comap f
-  unfold Scheme.rowAt
-  split_ifs with h1 h2 h2
-  · rfl
-  · exact absurd ((hle.le_iff j i).mp h1) h2
-  · exact absurd ((hle.le_iff j i).mpr h2) h1
-  · rfl
-
 end Scheme
 
 namespace StageType
@@ -317,7 +304,7 @@ theorem rowAt_eq_of_isFaceCell (ha : x.type.IsFaceCell h c a) (ha' : x.type.IsFa
     x.type.rowAt a a' = w.type.rowAt c c' := by
   obtain ⟨i, hi, rfl⟩ := ha
   obtain ⟨i', hi', rfl⟩ := ha'
-  rw [Scheme.rowAt_cellMap]
+  rw [← Scheme.rowAt_comap]
   exact Scheme.rowAt_congr (comap_toScheme_eq_of_trans_eq hR hh) hi hi'
 
 /-- A position of a face at which some cell of `x` lies is a position of a cell of `w`. -/

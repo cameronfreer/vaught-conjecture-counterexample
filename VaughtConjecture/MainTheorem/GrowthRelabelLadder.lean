@@ -48,18 +48,6 @@ namespace Scheme
 
 variable {N m : ℕ} (S : Scheme.{u} N)
 
-/-- **Rows along a restriction**: the row of a cell of the restriction at a cell is the row of
-the corresponding cells. -/
-theorem rowAt_comap (f : Fin m ↪ Fin N) (i j : Fin (S.comap f).card) :
-    (S.comap f).rowAt i j = S.rowAt (S.cellMap f i) (S.cellMap f j) := by
-  have hle := S.isLowerEmbedding_comap f
-  unfold Scheme.rowAt
-  split_ifs with h1 h2 h2
-  · rfl
-  · exact absurd ((hle.le_iff j i).mpr h1) h2
-  · exact absurd ((hle.le_iff j i).mp h2) h1
-  · rfl
-
 /-- **Cells of full scope along a permutation**: a cell of the reindexed scheme has graded index
 `(univ, k)` exactly when its cell does. -/
 theorem gradedIndex_comap_perm_eq_univ_iff (σ : Equiv.Perm (Fin N))
