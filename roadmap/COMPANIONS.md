@@ -770,7 +770,7 @@ is compiled conditionally on block determination (below).  None is an input to t
   route to maximal presentations (`README.md`, item 5; its steps 1–5 compiled conditionally in
   the raw base encoding, positive niceness prospective), whose strict bound on
   serving stages is eventual departure (1 above) read for one class, followed by greatest-stage
-  attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there; intended quotation
+  attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there; upstream counterpart
   `exists_greatest_stage_lt_omega1`, `OrdinalUtil`, available at the pin `eb9f12d`,
   signatures checked; `IMPLEMENTATION.md`, "Dependency pins": a stage predicate holding at `0`,
   closed downward and under countable limits, and bounded by a countable stage has a greatest
@@ -781,9 +781,10 @@ is compiled conditionally on block determination (below).  None is an input to t
   `expansionDomain_nontrivial` and `expansionDomain_subsingleton_of_isolates`, which specialize
   the upstream `notMem_of_isolating_of_uniform`, and the attainment by
   `MainTheorem.exists_isGreatest_servingIndex_of_le`, through `exists_isGreatest_of_closed`
-  (`Counting/OrdinalAttainment`).  In a later change (the pin `eb9f12d` contains `c16de09` and
-  `2cd44c3`), the upstream quotations replace them: `exists_isGreatest_of_closed` by the
-  greatest-stage statement, and the local two-class argument by Scott separation
+  (`Counting/OrdinalAttainment`).  Although the pin `eb9f12d` contains `c16de09` and `2cd44c3`,
+  both are deliberately retained, not replaced by the upstream quotations:
+  `exists_isGreatest_of_closed` keeps its Mathlib-only dependencies, and the local two-class
+  argument is not given a coded-model translation merely to shorten a proof
   (`IMPLEMENTATION.md`, "Placement record").  For
   one literal base that is a model, a bound of this kind over all its model presentations is
   equivalent to a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
