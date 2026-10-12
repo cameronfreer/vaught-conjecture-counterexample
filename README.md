@@ -19,7 +19,7 @@ templates.
 The main theorem is proved, with no hypotheses:
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels : HasThinAlephOneSpectrum baseLanguage.densitySentence`.
 Axioms: `propext`, `Classical.choice`, `Quot.sound` (audited in CI).  Pinned: Lean
-`v4.35.0-rc3`, [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) `e460cb6`,
+`v4.35.0-rc3`, [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) `eb9f12d`,
 [ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory) `a1fe761`.
 Not covered: the first-order Vaught conjecture.  Statements the proof does not use, among them
 (R1) and (R2) for every model, remain open; see [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md).

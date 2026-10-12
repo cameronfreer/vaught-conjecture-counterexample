@@ -46,7 +46,11 @@ manifest (a `cameronfreer/mathlib4` fork commit), and the toolchain must equal I
 (`scripts/check.sh` checks this).
 
 To bump InfinitaryLogic: change its `rev` in `lakefile.toml`, run `lake update InfinitaryLogic`,
-copy InfinitaryLogic's `lean-toolchain`, and commit the manifest.  To bump ComputableModelTheory:
+copy InfinitaryLogic's `lean-toolchain`, and commit the manifest.  When the new revision's
+`lean-toolchain` and Mathlib revision (in its `lake-manifest.json`) equal ours, the `rev` and
+`inputRev` of InfinitaryLogic in `lake-manifest.json` may instead be edited by hand, with no
+`lake update` (pull requests #97 and #208 did so); a revision that needs another toolchain or
+Mathlib is a separate decision.  To bump ComputableModelTheory:
 change its `rev`, run `lake update ComputableModelTheory`, and commit the manifest (its own
 manifest's InfinitaryLogic revision does not govern; ours does).  Record the new pin in the comment
 above the `rev` in `lakefile.toml` and in [`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md),
