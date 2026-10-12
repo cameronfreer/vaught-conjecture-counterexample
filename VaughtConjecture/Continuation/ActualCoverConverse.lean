@@ -50,8 +50,16 @@ types).  The stable candidate is not assumed to be a model.
   at `K + 1`;
 * `Realization.IsTopAnchor.isRowAnchor` (models): a cover anchor at `N` gives a row anchor at `N`.
 
-So no statement `IsRowAnchor x a K ↔ IsTopAnchor x a K` at one bound is proved, and no
-equivalence is stated here.  Both transports concern the native definitions
+So no statement `IsRowAnchor x a K ↔ IsTopAnchor x a K` at one bound is proved.
+
+**The existential forms at a model** (`Realization.HasTopAnchor.hasRowAnchor`,
+`Realization.IsModel.hasRowAnchor_iff_hasTopAnchor`,
+`Realization.IsModel.isCoverHollow_iff_not_hasRowAnchor`).  At a model at a block stage, a row
+anchor exists exactly when an anchor at the top exists, and the model is cover-hollow exactly when
+it has no row anchor.  Existential quantification over the bound absorbs the shift of the bound;
+these are not equivalences at one bound.
+
+Both transports and their existential forms concern the native definitions
 `Realization.IsTopAnchor` and `Realization.IsRowAnchor` of this repository;
 `Realization.IsRowAnchor` is a reading of [Kni26, Definition 5.4.2] that is not shown to agree
 with the printed definition, so nothing here is a statement about the manuscript's definition.
@@ -125,6 +133,34 @@ theorem IsTopAnchor.isRowAnchor (hR : R.IsModel) (h : R.IsTopAnchor x a N) :
   have hlt := hR.rowAt_lt_visibilityReplace_of_stableOffset_lt (u := ⟨s, hs.injective⟩)
     hs.eval_eq hθ hσ hel hσθ heθ hK (heq.trans_lt hoff)
   exact ⟨hlt.le, fun _ ↦ hlt⟩
+
+/-- **A model with an anchor at the top has a row anchor**, for `R` a model at `λ_ξ`.
+Existential quantification absorbs the bound: a cover anchor at `N` gives a row anchor at `N`
+at models, while a row anchor at `K` gives a cover anchor at `K + 1`.  This is not an equivalence
+at one bound, and the native row reading is not identified with the definition of
+[Kni26, Definition 5.4.2]. -/
+theorem HasTopAnchor.hasRowAnchor (hR : R.IsModel) (h : R.HasTopAnchor) : R.HasRowAnchor :=
+  let ⟨x, a, N, hx⟩ := h
+  ⟨x, a, N, hx.isRowAnchor hR⟩
+
+/-- **At a model, a row anchor exists exactly when an anchor at the top exists**, for `R` a model
+at `λ_ξ`.  Existential quantification absorbs the bound shift: a row anchor at `K` gives a cover
+anchor at `K + 1` (`Realization.IsRowAnchor.isTopAnchor`), and a cover anchor at `N` gives a row
+anchor at `N` at models (`Realization.IsTopAnchor.isRowAnchor`).  This is not an equivalence at
+one bound, and it concerns the native `Realization.IsRowAnchor`, which is not identified with the
+definition of [Kni26, Definition 5.4.2]. -/
+theorem IsModel.hasRowAnchor_iff_hasTopAnchor (hR : R.IsModel) :
+    R.HasRowAnchor ↔ R.HasTopAnchor :=
+  ⟨fun h ↦ h.hasTopAnchor hR.hasLegalTypes, fun h ↦ h.hasRowAnchor hR⟩
+
+/-- **At a model, cover-hollowness is the absence of a row anchor**, for `R` a model at `λ_ξ`.
+Existential quantification absorbs the bound shift (a row anchor at `K` gives a cover anchor at
+`K + 1`; a cover anchor at `N` gives a row anchor at `N` at models).  This is not an equivalence
+at one bound, and it concerns the native `Realization.HasRowAnchor`, which is not identified with
+the anchor of [Kni26, Definition 5.4.2]. -/
+theorem IsModel.isCoverHollow_iff_not_hasRowAnchor (hR : R.IsModel) :
+    R.IsCoverHollow ↔ ¬ R.HasRowAnchor :=
+  not_congr hR.hasRowAnchor_iff_hasTopAnchor.symm
 
 end Realization
 
