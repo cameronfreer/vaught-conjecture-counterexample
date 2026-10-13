@@ -2396,20 +2396,54 @@ zero or a limit (`StageType.hasCoatomExtensions`).
 55. [AFK26, Proposition 4.34], stated without proof, for every `β` and every model `M` of
     `σ[L]`: Boundedness (the ranks of the lifts of `M` in `K` form a countable set),
     Reconstruction (two lifts of `M` in `K_β` are equal), and Limits (at a limit `β`, lifts at
-    every `α < β` give a lift at `β`).  Counterparts here, compiled in this repository (theorem
-    named) and conditional, all on hypotheses 2 and 8 of `DASHBOARD.md` through compiled
-    derivations: Reconstruction, `ModelExpansion.subsingleton` (`Expansion/Uniqueness`), and
-    Limits, `ModelExpansion.nonempty_of_forall_lt`, both conditional on
+    every `α < β` give a lift at `β`).  Counterparts here, in two groups, both stated for model
+    expansions in the raw base encoding and not for the density classes `K_β` of row 51 (the end
+    of this note); the status S is unchanged.
+    *Receiving models: compiled in this repository (theorem named), each hypothesis proved.*
+    Reconstruction, `ModelExpansion.eq_of_hasFiniteCutReceiving` (`Expansion/ReceivingModels`: two
+    model expansions of a base structure to `λ_ξ`, `ξ < ω₁`, with the finite-cut receiving
+    property are equal), and Limits, `ModelExpansion.exists_hasFiniteCutReceiving_of_forall_lt`
+    (`MainTheorem/ReceivingDomains`: at a nonzero limit `δ < ω₁`, receiving model expansions to
+    every `λ_ξ`, `ξ < δ`, give one to `λ_δ`).  Both take next-block uniqueness of receiving
+    models, `Expansion.ReceivingNextBlockUniqueness`, as their hypothesis, and it is proved for
+    the carriers in the universe `0`: `MainTheorem.receivingNextBlockUniqueness`
+    (`MainTheorem/ReceivingLastStage`), by `Expansion.ReceivingNextBlockUniqueness.of_forcingDonors`
+    from forcing donors at every block index (`forcingDonors_blockStage`,
+    `MainTheorem/CoatomExtensionTheorem`); (R1) is not used.  The count of row 56 for receiving
+    models, `MainTheorem.countable_receivingTerminalClasses` (`MainTheorem/ReceivingDomains`:
+    countably many receiving-terminal classes at each `β < ω₁`), has three hypotheses, each
+    proved: the continuation criterion for receiving models,
+    `Expansion.ReceivingContinuationCriterion.of_receivingStableCappedReceiving` applied to
+    `Expansion.receivingStableCappedReceiving_levels` ((R4) for receiving models,
+    `MainTheorem/GrowthLevelRoute`) and `MainTheorem.hasNonemptyCofaceInstances_blockStage_add_one`
+    (`MainTheorem/ReceivingRoute`); (R2) for receiving models,
+    `Realization.receivingResidualReceiving_of_padded` (`MainTheorem/LowPaddedRoute`); and (R3) for
+    receiving models, `Realization.hollowReceiving_levels` (`MainTheorem/GrowthLevelRoute`).  No
+    declaration states the count with the three instantiated.  A native bound, with no
+    hypothesis ((R1) is not used): for a model `c` of the density sentence coded on `ℕ`, a
+    receiving model expansion of `c` to `λ_β` exists exactly when `β` is at most the last
+    receiving stage of its class (`MainTheorem.exists_receivingExpansion_iff_le_receivingLastStage`,
+    `MainTheorem/ReceivingLastStage`), and that stage is countable
+    (`MainTheorem.receivingLastStage_lt_omega_one`).  This bounds the receiving expansion index of
+    `ℕ`-coded models; it is not the Boundedness clause of Proposition 4.34, which concerns the set
+    of ranks of the lifts of `M` in `K`, and the translation of that clause into the native
+    setting is still to be proved.
+    *All models: compiled in this repository (theorem named), still conditional.*
+    Reconstruction, `ModelExpansion.subsingleton` (`Expansion/Uniqueness`), and Limits,
+    `ModelExpansion.nonempty_of_forall_lt`, both conditional on next-block uniqueness of models,
     `Expansion.NextBlockUniqueness`, which is derived from (R1) and forcing donors
-    (`Expansion.NextBlockUniqueness.of_forcingDonors`), forcing donors being derived from
-    hypothesis 8 (`forcingDonors_of_forall_hasApexCoatomExtensions`); Boundedness, the last
-    clause of `MainTheorem.exists_maximalRefinement` (`MainTheorem/MaximalRefinement`: every
-    model expansion of the base of a model has stage at most `ρ < ω₁`), conditional on (R1),
-    next-block uniqueness and hypothesis 8.  They are stated for model expansions in the raw base
-    encoding, not for the density classes `K_β` of row 51; for those, finite-cut receiving is
-    part of the definition, and in that reading Reconstruction would need forcing donors but not
-    (R1) (informal; not compiled).  Boundedness is more than the expansion-domain route uses
-    (`README.md`, "The persistent core").
+    (`Expansion.NextBlockUniqueness.of_forcingDonors`); Boundedness, the last clause of
+    `MainTheorem.exists_maximalRefinement` (`MainTheorem/MaximalRefinement`: every model expansion
+    of the base of a model has stage at most `ρ < ω₁`), conditional on (R1), next-block
+    uniqueness of models, and the coatom extension property with apex at every countable block
+    stage.  Of these hypotheses, forcing donors (hypothesis 3 of `DASHBOARD.md`,
+    `forcingDonors_blockStage`) and the coatom extension property with apex (hypothesis 8,
+    `StageType.hasApexCoatomExtensions_blockStage`) are compiled in this repository (theorem
+    named); (R1) for every model (`Expansion.FiniteCutReceiving`, hypothesis 2) is still to be
+    proved, so these three results stay conditional on it.  *The density classes.*  For `K_β`,
+    the printed density axioms are part of the definition; their correspondence with native
+    finite-cut receiving, the hypothesis of the first group, is still to be proved.  Boundedness
+    is more than the expansion-domain route uses (`README.md`, "The persistent core").
 56. [AFK26, Proposition 4.35], stated without proof: for each `β`, only countably many structures
     up to isomorphism are maximal at `β` (Definition 2.20).  Counterpart here:
     `MainTheorem.countable_isoClasses_terminalAt` (`MainTheorem/TerminalClasses`), compiled in

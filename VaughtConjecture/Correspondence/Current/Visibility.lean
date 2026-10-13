@@ -9,10 +9,10 @@ import VaughtConjecture.Correspondence.Visibility
 /-!
 # Correspondence with the legal templates of [AFK26]: visibility maps and self-visibility
 
-Roadmap, "Manuscript concordance", row 41.  [AFK26, Definition 4.24] defines, for `k ∈ ℕ`, the
-visibility map `visible<k>[i]` of the labels `{-∞} ∪ ω₁ ∪ {∞}` to themselves, and calls a label
-`x` *self-visible at `k`* when `visible<k>[k](x) = x`.  The clauses are compared with
-`Label.visibilityReplace` and `Label.IsSelfVisible`.
+Roadmap, "Manuscript concordance", row 41.  [AFK26, Definition 4.24] (version of 5 October 2026)
+defines, for `k ∈ ℕ`, the visibility map `visible<k>[i]` of the labels `{-∞} ∪ ω₁ ∪ {∞}` to
+themselves, and calls a label `x` *self-visible at `k`* when `visible<k>[k](x) = x`.  The clauses
+are compared with `Label.visibilityReplace` and `Label.IsSelfVisible`.
 
 The printed labels are those at stage `ω₁`.  The clauses are stated here at a stage `θ`, for the
 ordinals `ω · α + n < θ` (`Label.PrintedVisibilityMap θ k i f`); at `ω₁` these are the pairs
@@ -29,15 +29,20 @@ number `i` or `n`, forgetting its block `[ω · α, ω · α + ω)`.  Read liter
 ordinal is a natural number (`Label.PrintedVisibilityMap.apply_coe_lt_omega0`), no ordinal `≥ ω`
 is self-visible at any threshold (`Label.PrintedVisibilityMap.apply_ne_self`), and the map is not
 visibility replacement (`Label.PrintedVisibilityMap.ne_visibilityReplace`).  Every label `ω · n + i`
-of the range clause of [AFK26, Definition 4.27] with `n ≥ 1` would then fail the orderliness clause
-of [AFK26, Definition 4.26].  The corrected clause keeps the block: `ω · α + n` is sent to
-`ω · α + i` if `n < k`, and kept otherwise, which is the operation of
-[Kni26, Definition 2.2.3] (row 2).
+of the range clause of [AFK26, Definition 4.27] (version of 5 October 2026) with `n ≥ 1` would
+then fail the orderliness clause of [AFK26, Definition 4.26] (version of 5 October 2026).  The
+corrected clause keeps the block: `ω · α + n` is sent to `ω · α + i` if `n < k`, and kept
+otherwise, which is the operation of [Kni26, Definition 2.2.3] (row 2).
+
+**The current draft.**  This module formalizes Definition 4.24 of the version of 5 October 2026,
+and its citations are to that version.  Definition 4.26 of the current draft of [AFK26] states the
+corrected clause, for `i, k ∈ ω`; `Label.PrintedVisibilityMap` describes the earlier text, and no
+theorem here compares Definition 4.26 with `Label.CorrectedVisibilityMap` (concordance note 41).
 
 **The corrected clauses.**  `Label.correctedVisibilityMap_iff`: a map satisfies the corrected
 clauses at stage `θ` exactly when it agrees with `Label.visibilityReplace k i` on the labels at
 stage `θ`; at `ω₁` this is `Label.correctedVisibilityMap_omega_one_iff`.  Self-visibility in the
-sense of Definition 4.24 is then `Label.IsSelfVisible`
+sense of that Definition 4.24 is then `Label.IsSelfVisible`
 (`Label.CorrectedVisibilityMap.apply_eq_self_iff`).
 
 **The two printed definitions.**  [Kni26, Definition 2.2.3] (`Label.PrintedVisibilityReplace`)
@@ -61,7 +66,7 @@ open Ordinal
 variable {θ : Ordinal.{u}} {k i : ℕ} {f : Label.{u} → Label.{u}} {x : Label.{u}}
 
 /-- The ordinals `ω · α + n` below `ω₁` are those with `α < ω₁`: at `ω₁` the clauses below range
-over the pairs `α ∈ ω₁`, `n ∈ ℕ` of [AFK26, Definition 4.24]. -/
+over the pairs `α ∈ ω₁`, `n ∈ ℕ` of [AFK26, Definition 4.24] (version of 5 October 2026). -/
 theorem omega0_mul_add_natCast_lt_omega_one_iff (α : Ordinal.{u}) (n : ℕ) :
     ω * α + n < ω₁ ↔ α < ω₁ := by
   have key (o : Ordinal.{u}) : o < ω₁ ↔ o.card ≤ Cardinal.aleph0 := by
@@ -85,31 +90,35 @@ theorem visibilityReplace_omega0_mul_add (k i : ℕ) (α : Ordinal.{u}) (n : ℕ
 
 /-! ### The printed clauses -/
 
-/-- **The clauses of [AFK26, Definition 4.24] as printed**, for a map `f` of labels at threshold
-`k` with value `i`, on the labels at stage `θ` ([AFK26] takes `θ = ω₁`).  Clause 2 sends
-`ω · α + n` to a natural number; the corrected clauses are `CorrectedVisibilityMap`. -/
+/-- **The clauses of [AFK26, Definition 4.24] (version of 5 October 2026) as printed**, for a map
+`f` of labels at threshold `k` with value `i`, on the labels at stage `θ` ([AFK26] takes
+`θ = ω₁`).  Clause 2 sends `ω · α + n` to a natural number; the corrected clauses are
+`CorrectedVisibilityMap`.  Historical: the current draft's Definition 4.26 states the corrected
+clause 2 (concordance note 41). -/
 structure PrintedVisibilityMap (θ : Ordinal.{u}) (k i : ℕ) (f : Label.{u} → Label.{u}) :
     Prop where
-  /-- Clause 1 of [AFK26, Definition 4.24]: `visible<k>[i](-∞) = -∞`. -/
+  /-- Clause 1 of [AFK26, Definition 4.24] (version of 5 October 2026): `visible<k>[i](-∞) = -∞`. -/
   bot : f ⊥ = ⊥
-  /-- Clause 1 of [AFK26, Definition 4.24]: `visible<k>[i](∞) = ∞`. -/
+  /-- Clause 1 of [AFK26, Definition 4.24] (version of 5 October 2026): `visible<k>[i](∞) = ∞`. -/
   top : f ⊤ = ⊤
-  /-- Clause 2 of [AFK26, Definition 4.24], as printed: for `ω · α + n` at stage `θ`,
-  `visible<k>[i](ω · α + n)` is `i` if `n < k`, and `n` otherwise. -/
+  /-- Clause 2 of [AFK26, Definition 4.24] (version of 5 October 2026), as printed: for
+  `ω · α + n` at stage `θ`, `visible<k>[i](ω · α + n)` is `i` if `n < k`, and `n` otherwise. -/
   ordinal : ∀ (α : Ordinal.{u}) (n : ℕ), ω * α + n < θ →
     f ((ω * α + n : Ordinal.{u}) : Label.{u}) = if n < k then (i : Label.{u}) else (n : Label.{u})
 
-/-- **The corrected clauses of [AFK26, Definition 4.24]**, for a map `f` of labels at threshold
-`k` with value `i`, on the labels at stage `θ`: clause 2 keeps the block
-`[ω · α, ω · α + ω)`. -/
+/-- **The corrected clauses of [AFK26, Definition 4.24] (version of 5 October 2026)**, for a map
+`f` of labels at threshold `k` with value `i`, on the labels at stage `θ`: clause 2 keeps the block
+`[ω · α, ω · α + ω)`.  The current draft's Definition 4.26 states this clause (concordance
+note 41; no theorem here compares the two). -/
 structure CorrectedVisibilityMap (θ : Ordinal.{u}) (k i : ℕ) (f : Label.{u} → Label.{u}) :
     Prop where
-  /-- Clause 1 of [AFK26, Definition 4.24]: `visible<k>[i](-∞) = -∞`. -/
+  /-- Clause 1 of [AFK26, Definition 4.24] (version of 5 October 2026): `visible<k>[i](-∞) = -∞`. -/
   bot : f ⊥ = ⊥
-  /-- Clause 1 of [AFK26, Definition 4.24]: `visible<k>[i](∞) = ∞`. -/
+  /-- Clause 1 of [AFK26, Definition 4.24] (version of 5 October 2026): `visible<k>[i](∞) = ∞`. -/
   top : f ⊤ = ⊤
-  /-- Clause 2 of [AFK26, Definition 4.24], corrected: for `ω · α + n` at stage `θ`,
-  `visible<k>[i](ω · α + n)` is `ω · α + i` if `n < k`, and `ω · α + n` otherwise. -/
+  /-- Clause 2 of [AFK26, Definition 4.24] (version of 5 October 2026), corrected: for
+  `ω · α + n` at stage `θ`, `visible<k>[i](ω · α + n)` is `ω · α + i` if `n < k`, and `ω · α + n`
+  otherwise. -/
   ordinal : ∀ (α : Ordinal.{u}) (n : ℕ), ω * α + n < θ →
     f ((ω * α + n : Ordinal.{u}) : Label.{u}) =
       if n < k then ((ω * α + i : Ordinal.{u}) : Label.{u})
@@ -147,15 +156,16 @@ theorem PrintedVisibilityMap.apply_ne_visibilityReplace (hf : PrintedVisibilityM
   exact (not_lt.mpr hωo) (WithTop.coe_lt_coe.mp (WithBot.coe_lt_coe.mp this))
 
 /-- **The printed clauses do not define visibility replacement**: at a stage above `ω`, no map
-satisfying the printed clauses of [AFK26, Definition 4.24] is `Label.visibilityReplace k i`. -/
+satisfying the printed clauses of [AFK26, Definition 4.24] (version of 5 October 2026) is
+`Label.visibilityReplace k i`. -/
 theorem PrintedVisibilityMap.ne_visibilityReplace (hf : PrintedVisibilityMap θ k i f)
     (hθ : ω < θ) : f ≠ visibilityReplace k i := fun h ↦
   hf.apply_ne_visibilityReplace le_rfl hθ (congrFun h _)
 
 /-! ### The corrected clauses -/
 
-/-- **The corrected visibility map is visibility replacement** [AFK26, Definition 4.24]: a map
-satisfies the corrected clauses at stage `θ` exactly when it agrees with
+/-- **The corrected visibility map is visibility replacement** [AFK26, Definition 4.24] (version
+of 5 October 2026): a map satisfies the corrected clauses at stage `θ` exactly when it agrees with
 `Label.visibilityReplace k i` on the labels at stage `θ`. -/
 theorem correctedVisibilityMap_iff :
     CorrectedVisibilityMap θ k i f ↔ ∀ x, AtStage θ x → f x = visibilityReplace k i x := by
@@ -169,22 +179,22 @@ theorem correctedVisibilityMap_iff :
     obtain ⟨α, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
     rw [hf.ordinal α n (atStage_coe.mp hx), visibilityReplace_omega0_mul_add]
 
-/-- Visibility replacement satisfies the corrected clauses of [AFK26, Definition 4.24] at every
-stage. -/
+/-- Visibility replacement satisfies the corrected clauses of [AFK26, Definition 4.24] (version of
+5 October 2026) at every stage. -/
 theorem correctedVisibilityMap_visibilityReplace (θ : Ordinal.{u}) (k i : ℕ) :
     CorrectedVisibilityMap θ k i (visibilityReplace.{u} k i) :=
   correctedVisibilityMap_iff.mpr fun _ _ ↦ rfl
 
-/-- **The corrected visibility map of [AFK26, Definition 4.24]** on the printed labels
-`{-∞} ∪ ω₁ ∪ {∞}`: a map satisfies the corrected clauses at `ω₁` exactly when it agrees with
-`Label.visibilityReplace k i` there. -/
+/-- **The corrected visibility map of [AFK26, Definition 4.24] (version of 5 October 2026)** on the
+printed labels `{-∞} ∪ ω₁ ∪ {∞}`: a map satisfies the corrected clauses at `ω₁` exactly when it
+agrees with `Label.visibilityReplace k i` there. -/
 theorem correctedVisibilityMap_omega_one_iff :
     CorrectedVisibilityMap ω₁ k i f ↔ ∀ x, AtStage ω₁ x → f x = visibilityReplace k i x :=
   correctedVisibilityMap_iff
 
-/-- **Self-visibility** [AFK26, Definition 4.24]: for a map satisfying the corrected clauses at
-threshold `k` with value `k`, a label `x` at stage `θ` has `visible<k>[k](x) = x` exactly when it
-is self-visible at `k`. -/
+/-- **Self-visibility** [AFK26, Definition 4.24] (version of 5 October 2026): for a map
+satisfying the corrected clauses at threshold `k` with value `k`, a label `x` at stage `θ` has
+`visible<k>[k](x) = x` exactly when it is self-visible at `k`. -/
 theorem CorrectedVisibilityMap.apply_eq_self_iff (hf : CorrectedVisibilityMap θ k k f)
     (hx : AtStage θ x) : f x = x ↔ IsSelfVisible k x := by
   rw [correctedVisibilityMap_iff.mp hf x hx]
@@ -192,7 +202,7 @@ theorem CorrectedVisibilityMap.apply_eq_self_iff (hf : CorrectedVisibilityMap θ
 
 /-- **The two printed definitions of visibility replacement**: a map satisfies the clauses of
 [Kni26, Definition 2.2.3] exactly when it satisfies the corrected clauses of
-[AFK26, Definition 4.24] at every stage. -/
+[AFK26, Definition 4.24] (version of 5 October 2026) at every stage. -/
 theorem printedVisibilityReplace_iff_forall_correctedVisibilityMap :
     PrintedVisibilityReplace k i f ↔ ∀ θ : Ordinal.{u}, CorrectedVisibilityMap θ k i f := by
   rw [printedVisibilityReplace_iff]
