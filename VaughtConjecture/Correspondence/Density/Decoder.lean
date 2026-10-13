@@ -34,9 +34,9 @@ structure fixed by `τ_β`, at every `β`, its structure is the given one, every
 **Target B.T5** (`decoderRoundTrip`): for `β < ω₁`, `DecoderRoundTrip β M`, with the premises
 `IsTemplateCompatible G` and `projectStructure β G = G` in the first half and
 `R.IsWellFormed` in the second.  The first half holds at every `β`; `β < ω₁` is used in the
-second (`ClassRealization.projectStructure_toStructure`, `decode_toStructure`).  The proof uses
-the two clauses of [AFK26, Definition 2.5] only (not the third clause of [AFK26, Definition
-2.4]), and no positional presentation of class data.
+second (`ClassRealization.projectStructure_toStructure`, `decode_toStructure`).
+Uses compatibility — structured geometry and pair satisfaction — but not Definition 2.4(c), nor a
+positional presentation.
 -/
 
 universe u v

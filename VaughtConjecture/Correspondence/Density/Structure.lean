@@ -39,9 +39,9 @@ the three clauses of [AFK26, Definition 2.4] (`mem_pairs`, `exactlyOne`, `realiz
 `InvarianceDiagram` for `templateSignature`, and compatibility with it is `IsTemplateCompatible`
 (`isCompatible_templateDiagram_iff`).
 
-The targets B.T5 and B.T6 use only the pairs, through `IsTemplateCompatible` (the two clauses of
-[AFK26, Definition 2.5]); none of their statements or proofs uses the third clause of
-[AFK26, Definition 2.4].
+**B.T5 and B.T6** (`decoderRoundTrip`, `densityDecoderEquivalence`).
+Uses compatibility — structured geometry and pair satisfaction — but not Definition 2.4(c), nor a
+positional presentation.
 -/
 
 universe u v
