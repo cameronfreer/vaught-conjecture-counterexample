@@ -1283,7 +1283,10 @@ becomes C only when the correction is recorded.  Row 29 is P, row 14 is P for th
 definitions of §2 that it names and C for the language of templates, their diagram, and its lemma
 (Definitions 4.17 and 4.18, Lemma 4.19), and row 1 is C with its truncation function P.  Rows 2–5
 and 43 are P, by the definition-level identifications of `VaughtConjecture/Correspondence` named
-in their notes.  Row 6 is S: `IsBountiful` is the printed definition required at every stage that
+in their notes.  The second lines of rows 44, 45 and 53, the third line of row 53, and rows 59–61
+are P, by the comparisons of `VaughtConjecture/Correspondence/Charts` named in notes 44, 45, 53
+and 59–61; the first lines of rows 44, 45 and 53 record the earlier comparisons and keep their
+status.  Row 6 is S: `IsBountiful` is the printed definition required at every stage that
 is zero or a limit (note 6), and at `ω₁` only the implication from `IsBountiful` is proved.  Row
 57 is S: native cell coherence is compiled, the coded domains are not reconstructed (note 57).  Row
 58 is C: the top label of the anchor made explicit, supported by a compiled degeneracy (note 58).
@@ -1316,7 +1319,12 @@ hypotheses derived from them; on the receiving-models route, (R4) and (R3) for r
 each still to be proved ((R2) for receiving models is compiled,
 `Realization.receivingResidualReceiving_of_padded`); hypothesis 8 is compiled in this
 repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstrings of
-`VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026.
+`VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026, with two
+exceptions: the two citation groups of statements unchanged since, lawful local labellings
+(Definition 4.28 of the current draft) and the cells `D↓U` below a graded face (Definition 4.3 of
+the current draft), which are marked "(current draft)"; and the modules of
+`Correspondence/Charts`, which cite the current draft throughout (their clauses were compared
+with the text of the draft of 10 October 2026, which has the same numbers).
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
@@ -1370,7 +1378,9 @@ repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstring
 | 42 | [AFK26] | the relation `u ⇒ v` on labellings of a frame, Definition 4.27 | C (adopted) |
 | 43 | [AFK26] | lawful local labellings, Definition 4.28 | P |
 | 44 | [AFK26] | the balls `B_γ(q)` and bountiful rows, Definition 4.28 | S (cap `-∞` adopted) |
+| | | the same, current draft, at one stage `θ ≥ ω ^ 2` (`CellScheme.Rows.TemplateBountiful`) | P (finitely many cells) |
 | 45 | [AFK26] | legal templates, Definition 4.29 | S; clause 1: C (adopted) |
+| | | the same, current draft, as `StageType.IsLegalTemplate` (fixed rows) | P (strongly coded legal stage types) |
 | 46 | [AFK26] | a template system of legal templates, Proposition 4.30 (statement) | S |
 | | | its proof in [AFK26] (clauses (d) and (g) of Definition 4.11) | S |
 | 47 | [AFK26] | the counterexample, Theorem 4.36 (statement) | S |
@@ -1381,11 +1391,17 @@ repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstring
 | 51 | [AFK26] | the classes `K_β` as density classes, Definitions 4.20 and 4.21 | S |
 | 52 | [AFK26] | `K[T]` a weak Knight system over `σ[T]`, Theorem 4.23 and Claim 4.24 | S |
 | 53 | [AFK26] | charts and `C_β[L]`, Definition 4.31; HP, JEP and AP, Proposition 4.32 | S |
+| | | charts and their embeddings, Definition 4.31, as `IsTemplateChart` and `StageType.embeddingEquivFace` | P |
+| | | HP, JEP and AP, Proposition 4.32, as `IsTemplateChart.hereditary`, `.jointEmbedding`, `.amalgamation` | P (JEP, AP: `β < ω₁`) |
 | 54 | [AFK26] | the `β`-Fraïssé limit, Lemma 4.33 | S |
 | 55 | [AFK26] | Boundedness, Reconstruction and Limits, Proposition 4.34 | S |
 | 56 | [AFK26] | countably many maximal structures at each level, Proposition 4.35 | S |
 | 57 | [Kni26] | the value of an element allotted by a model, Definition 3.2.5, Lemma 3.2.6 | S |
 | 58 | [Kni26] | hollowness and the anchor at infinity, Definition 5.4.2 | C |
+| 59 | [AFK26] | plans, Definition 4.1 | P (nonempty ground set) |
+| 60 | [AFK26] | templates, Definitions 4.1–4.5, and positional stage types | P (finite lawful templates) |
+| 61 | [AFK26] | cell renaming, Definition 4.6 | P |
+| | | classes fixed by the projection `τ_γ`, Definition 4.16 | P (`γ ≤ ω₁`) |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -2176,8 +2192,21 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     in this repository (theorem named).  Adopted in [AFK26] of 7 October: Definition 4.28 defines
     `B_γ(q)` for every label `γ` and lets bountifulness quantify over
     `γ ∈ {-∞} ∪ ω₁ ∪ {∞}`, so the cap `-∞` (and the cap `∞`) is included, and the graded faces of
-    Definition 4.2 have positive grade.  The open point is then the converse at a single stage; no
-    theorem here states Definition 4.28 of 7 October.  The status S is unchanged.
+    Definition 4.2 have positive grade.  The status S of the first line, for the version of
+    5 October, is unchanged.  *Current draft (second line, P).*  Definition 4.28 is stated clause
+    by clause at a stage `θ` (`CellScheme.Rows.TemplateBountiful`, with the lawful local
+    labellings `CellScheme.Rows.TemplateLawfulLocal` and the balls `CellScheme.Rows.templateBall`,
+    `Correspondence/Charts/LegalTemplate`; [AFK26] takes `θ = ω₁`).  Compiled in this repository
+    (theorem named): for finitely many cells, at a stage `θ ≥ ω ^ 2` that is zero or a limit and
+    carries the values of the rows, `CellScheme.Rows.templateBountiful_iff`:
+    `TemplateBountiful θ ↔ IsBountiful`.  The direction to `IsBountiful` is the converse at a
+    single stage, by block compression of the labellings and the cap
+    (`CellScheme.Rows.isBountiful_of_forall_atStage`, `Extension/BountifulCompression`).
+    *The earlier definition at one stage.*  Separately, and still with the extension of lawful
+    labellings (the cap `-∞`) as a premise, which that definition does not state: the printed
+    definition of 5 October 2026 at a single stage `θ ≥ ω ^ 2`, with that premise, gives
+    `IsBountiful` (`CellScheme.Rows.isBountiful_of_printedBountifulRows`, compiled in this
+    repository (theorem named)); this does not change the first line.
 45. `Scheme.IsLegal` with `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`; row 7); the printed
     definition of the version of 5 October 2026 (its Definition 4.27, four clauses)
     `CellScheme.Rows.PrintedLegal`, the corrected one `CellScheme.Rows.CorrectedLegal`
@@ -2229,7 +2258,19 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     Layer 3, "legal scheme"), and the legal scheme `CodingExamples.pointRow 3` is not strongly
     coded (compiled examples, `Extension/CodingExamples`); in the reading of note 43 the legal
     templates of 7 October are expected to be the legal stage types whose rows are strongly coded
-    (informal; not compiled).  The status (S; clause 1: C) is unchanged.
+    (informal; not compiled).  The status (S; clause 1: C) of the first line is unchanged.
+    *Current draft (second line, P).*  `StageType.IsLegalTemplate θ`
+    (`Correspondence/Charts/LegalTemplate`) states the five clauses of Definition 4.29 on the data
+    of a stage type, with
+    the labels in `{-∞} ∪ θ ∪ {∞}` ([AFK26] takes `θ = ω₁`), the relation `⇒` of Definition 4.27
+    (`Label.TemplateTransformsTo`), the lawful labellings of Definition 4.28, and the bountiful
+    rows of note 44.  Compiled in this repository (theorem named): at a stage `θ ≥ ω ^ 2` that is
+    zero or a limit, `StageType.isLegalTemplate_iff` (a legal template exactly when strongly coded
+    legal with labels at stage `θ`); at `ω₁`, `StageType.isLegalTemplate_omega_one_iff`; at a stage
+    at most `ω₁`, `StageType.isLegalTemplate_omega_one_iff_of_le`, in particular at the block
+    stages of countable index (`StageType.isLegalTemplate_blockStage_iff`).  Scope: the fixed-rows
+    reading of note 43, on the data of stage types (positional cells); the template data and the
+    passage from a template with arbitrary cells are rows 59–61.
 46. Statement: [AFK26, Proposition 4.30], a template system `L` whose templates are finite legal
     templates and which represents every finite legal template up to isomorphism and relabelling.
     A proof is given in [AFK26] of 7 October (in the version of 5 October 2026 it was Lemma 4.28,
@@ -2378,7 +2419,31 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     (`StageType.HasApexCoatomExtensions.hasCoatomExtensions`), and, for `isFraisse_legalAge`,
     on the countability `(Set.Iio α).Countable` of the stage; still to be proved (Layer 3, 3.1,
     (R6); `DASHBOARD.md`, the research front, item 1).  [AFK26] gives no argument for
-    amalgamation.
+    amalgamation.  The status S of the first line is unchanged.  *Current draft (second and third
+    lines, P), `Correspondence/Charts/Chart`.*  The language `L_b[L] ∪ L_c[L]` is
+    `templateLanguage`: relational, in each arity `n ≥ 1` the symbol `P_n`, one symbol `Q_c` for each
+    class `c` under cell renaming of strongly coded legal stage types at `ω₁` (the templates of `L`,
+    one per class, rows 45 and 61), and one symbol `R_c` for each such class fixed by `τ₀`.  The
+    chart of a stage type (`StageType.Holds`, `StageType.TemplateChart`) is the structure of
+    [AFK26, Definition 4.18] on its points; `IsTemplateChart β G` is Definition 4.31 (an
+    enumeration of the points of `G` by a legal template at the block stage `ω + ω · β`, on `n ≥ 1`
+    points, carrying every relation).  Embeddings: `StageType.embeddingEquivFace`, at a stage at
+    most `ω₁`, the embeddings of charts are the maps of points along which the class has the face
+    class, with the same point map; cells are identified only up to renaming.  Proposition 4.32:
+    `IsTemplateChart.hereditary` (nonempty closed sets, every `β`),
+    `IsTemplateChart.jointEmbedding` and `IsTemplateChart.amalgamation` (for `β < ω₁`, the printed
+    range), all compiled in this repository (theorem named), with no hypothesis on coatom
+    extensions.  They rest, through this dictionary (legal templates as strongly coded legal stage
+    types, charts as charts of stage types, embeddings as face maps up to renaming), on
+    `StageType.IsLegal.restrictFace` and `StageType.isStronglyCoded_of_restrictFace` (HP),
+    `StageType.exists_stronglyCoded_jointEmbedding_of_isSuccPrelimit` (JEP), and
+    `StageType.exists_stronglyCoded_amalgam_of_isSuccPrelimit` (AP) at the block stage, which is
+    zero or a limit; these need no countability of the stage.  The hypothesis `β < ω₁` puts the
+    labels of the amalgam in `{-∞} ∪ ω₁ ∪ {∞}` and identifies classes at `ω₁` with classes at the
+    block stage (`StageType.globalClass_eq_iff`).  For AP the two faces of the common chart are
+    renamings of each other and are aligned first (`StageType.exists_restrictFace_renameCells`).
+    Not done here: the Fraïssé limit (row 54), and the sublanguage `L_c[L]` with the reduct to it
+    (deferred).
 54. [AFK26, Lemma 4.33], with a sketched proof (two sentences, from Proposition 4.32 and the
     countability of `C_β[L]`): for each `β` a structure `F_β ∈ K_β` into which every chart of
     `C_β[L]` embeds, with exact extension between invariants fixed at `β`.  Not argued there: the
@@ -2543,6 +2608,44 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     block stage; the reconstruction of the coded domains (row 57); and the correspondence of model
     classes.  So the theorems concern the models of this repository, not a correspondence with the
     models of [Kni26].
+59. [AFK26, Definition 4.1]: a plan on a nonempty set `A` is a finitary convex geometry with two
+    extreme points on every closed set of size at least `2`, with the clauses listed there.
+    `Geometry.IsTemplatePlan A P` (`Correspondence/Charts/Plan`) states them for a finite `A`, the
+    closure being `Geometry.hull`.  Compiled in this repository (theorem named):
+    `Geometry.isTemplatePlan_iff`, `IsTemplatePlan A P ↔ IsPlan A P ∧ A.Nonempty`.  The only
+    difference is the empty ground set: `IsPlan` has the plan `{∅}` on `∅`, which Definition 4.1
+    excludes.
+60. [AFK26, Definitions 4.1–4.5]: a template `(c, Σ, p)` over a plan.  `CellScheme.Rows.IsTemplate`
+    (`Correspondence/Charts/Template`) states the laws for a cell scheme `D` with cells of any type
+    (plan as in row 59, frame, row system in `{-∞} ∪ ω ^ 2`, labels at stage `θ`), and
+    `CellScheme.Rows.IsLegalTemplate` the clauses of Definition 4.29 for such data
+    (`StageType.isLegalTemplate_iff_rows`; `CellScheme.Rows.isLegalTemplate_iff`, for finitely many
+    cells at a stage `θ ≥ ω ^ 2` that is zero or a limit).  Compiled in this repository (theorem
+    named): a finite lawful template on the points `Fin n` with labels at a stage `α` and a
+    numbering of its cells gives a stage type, the renaming along the numbering
+    (`CellScheme.Rows.toStageType`), a legal template exactly when the template is
+    (`CellScheme.Rows.isLegalTemplate_toStageType_iff`); two numberings give cell renamings of each
+    other (`CellScheme.Rows.isCellRenaming_toStageType`); the data of a stage type on `n ≥ 1` points
+    form a template (`StageType.isTemplate`), and numbering its cells by the identity gives it back
+    (`StageType.toStageType_refl`).  For a legal template the lawfulness and the stage bound are
+    derived from the printed clauses (`CellScheme.Rows.toStageTypeOfLegal`,
+    `CellScheme.Rows.isLegalTemplate_toStageTypeOfLegal`).  Scope: finite templates on `Fin n`;
+    charts on arbitrary finite carriers are row 53.
+61. [AFK26, Definition 4.6]: the renaming of a template along a bijection of cells.
+    `StageType.renameCells` (`Correspondence/Charts/Template`), with `StageType.IsCellRenaming`,
+    `StageType.renamingSetoid` and `StageType.Renaming`; generically the renaming along `e : κ ≃ ι`
+    is `(D.reindex e, R.comap (IsLowerEmbedding.reindex D e), p ∘ e)`.  Compiled in this repository
+    (theorem named): renaming keeps the points, the plan, the graded faces carrying a cell, the
+    labels and rows read through the bijection, and the template laws, legality, strong coding,
+    and the legal templates (`CellScheme.Rows.isTemplate_comap_reindex_iff`,
+    `CellScheme.Rows.isLegalTemplate_comap_reindex_iff`, `StageType.isLegal_renameCells_iff`,
+    `StageType.isLegalTemplate_renameCells_iff`), and commutes with stage reduction
+    (`StageType.reduce_renameCells`).  `TemplateClass α n` is the type of classes; the face map,
+    stage reduction, reading at a larger stage and the projection descend to it
+    (`Correspondence/Charts/TemplateClass`).  *Definition 4.16* (second line): the classes at `ω₁`
+    fixed by the projection to a stage `γ ≤ ω₁` that is zero or a limit are those whose labels lie
+    at stage `γ` (`TemplateClass.project_toClass_eq_iff`, compiled in this repository (theorem
+    named)).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -2768,10 +2871,17 @@ correspondence (required)", item 1).  Three targets follow, in this order.
    strong coding (offset at most the grade plus one), while `Scheme.IsLegal` bounds no offset
    beyond `Scheme.IsCoded`, so the two classes still differ: a proof that the strongly coded class
    suffices remains prospective (notes 45 and 46); (5) Definition 4.28 includes both the bottom
-   and top caps, while the converse at a single stage remains open (note 44).  Remaining targets
-   retain their status: (6) legal templates are not required to be finite,
-   and the invariance of legality under renaming and isomorphism is not stated (partly corrected:
-   renaming carries the label, and the templates of the system are finite); (7) truncation itself
+   and top caps, and for it the converse at a single stage is compiled: for finitely many cells,
+   at a stage `θ ≥ ω ^ 2` that is zero or a limit and carries the values of the rows, bountifulness
+   as in Definition 4.28 at the single stage `θ` is `IsBountiful`
+   (`CellScheme.Rows.templateBountiful_iff`, note 44, second line of row 44); for the definition of
+   the version of 5 October 2026 (ordinal caps only) the single-stage result
+   `CellScheme.Rows.isBountiful_of_printedBountifulRows` keeps the extension of lawful labellings
+   as a premise, and the first line of row 44 keeps its status.  Remaining targets retain their
+   status: (6) legal templates are not required to be finite, and the invariance of legality under
+   isomorphism is not stated (partly corrected: renaming carries the label, the templates of the
+   system are finite, and the invariance of legality under renaming is compiled, note 61); (7)
+   truncation itself
    is defined at every countable stage, successors included (Definition 4.10), while the template
    system's closure and the projections are at block stages (Definitions 4.11 and 4.16), and the
    density cutoffs range below those blocks (Definitions 4.20 and 4.21).  Stage reduction here is
