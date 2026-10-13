@@ -2496,7 +2496,8 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     the printed quantifiers give; it adds no restriction `K' ≤ K` (the motivation on p. 56 bounds
     its `K₁` by `K`, the definition does not), and it is not an erratum confirmed by the author.
     Characteristic arity `0` (no cell with value `∞`; top-grade supremum `0`) is excluded from the
-    claim: the printed definition is not made there, and natively no cell is labelled `⊤`.  A
+    claim: the printed hollowness definition ([Kni26, Definition 5.4.2]) excludes characteristic
+    arity zero, and natively no cell is labelled `⊤`.  A
     native stable-section characterization of the top-grade supremum is compiled
     (`Realization.IsModel.isLUB_stableSection_iff`: at a model at a block stage, `λ_ξ + K` is the
     least upper bound of the values of the stable section exactly when `R.topGradeSup = K`;
