@@ -2472,11 +2472,42 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     `Realization.IsRowAnchor.isGlobalRowAnchor`).  That comparison does not remove the distinction
     of bounds between row anchors and anchors at the top: under legal types a row anchor at `K`
     gives an anchor at the top at `K + 1` (`Realization.IsRowAnchor.isTopAnchor`), and at a model an
-    anchor at the top at `N` is a row anchor at `N` (`Realization.IsTopAnchor.isRowAnchor`).  Still
-    open: characteristic arity ([Kni26, Definition 5.4.1]; no counterpart here, note 21) and the
-    hypothesis `0 < K ≤ ∞` under which the definition is made; the reconstruction of the coded
-    domains (row 57); and the correspondence of model classes.  So the theorems concern the models
-    of this repository, not a correspondence with the models of [Kni26].
+    anchor at the top at `N` is a row anchor at `N` (`Realization.IsTopAnchor.isRowAnchor`).
+    *The printed quantifiers above the characteristic arity.*  Two bounds are distinct: the
+    characteristic arity `K` of [Kni26, Definition 5.4.1, p. 54], under which the definition is
+    made (`0 < K ≤ ∞`), and the anchor bound `K'`, quantified existentially in the definition; the
+    definition states no relation between them.  Compiled in this repository (theorem named),
+    with no modelhood assumed (`Continuation/CharacteristicArity`): if every cell labelled `⊤` has
+    grade at most `K` (`R.topGradeSup ≤ K`), then at the anchor bound `K' = K + 1` no cell labelled
+    `⊤` has grade at least `K'`, the inequality has no instance to test, and every cell is minimal
+    at infinity (`Realization.isMinimalAtInfinity_add_one_of_topGradeSup_le`); every cell labelled
+    `⊤` is then a global row anchor and a row anchor at `K + 1`
+    (`Realization.isGlobalRowAnchor_add_one_of_topGradeSup_le`,
+    `Realization.isRowAnchor_add_one_of_topGradeSup_le`); with top-grade supremum `K > 0` a global
+    row anchor exists (`Realization.hasGlobalRowAnchor_of_topGradeSup_eq`), and at a block stage the
+    realization is not cover-hollow (`Realization.not_isCoverHollow_of_topGradeSup_eq`).
+    Conditional on the dictionary of this note (a cell with value `∞` read as a cell labelled `⊤`,
+    its arity as its grade) and on reading a finite positive characteristic arity `K` as the
+    largest arity of a cell with value `∞` (derived from [Kni26, Definitions 5.3.1, 5.3.9 and 5.4.1
+    and Lemma 5.3.10]; not compiled), the printed quantifiers have the same consequence: at
+    `K' = K + 1` the condition on `Θ` is vacuous, every element with value `∞` is an anchor at
+    infinity, and no model of finite positive characteristic arity is hollow, although
+    [Kni26, §6.6, p. 62] speaks of hollow models of finite characteristic arity.  This records what
+    the printed quantifiers give; it adds no restriction `K' ≤ K` (the motivation on p. 56 bounds
+    its `K₁` by `K`, the definition does not), and it is not an erratum confirmed by the author.
+    Characteristic arity `0` (no cell with value `∞`; top-grade supremum `0`) is excluded from the
+    claim: the printed definition is not made there, and natively no cell is labelled `⊤`.  A
+    native stable-section characterization of the top-grade supremum is compiled
+    (`Realization.IsModel.isLUB_stableSection_iff`: at a model at a block stage, `λ_ξ + K` is the
+    least upper bound of the values of the stable section exactly when `R.topGradeSup = K`;
+    `Realization.IsModel.forall_not_isLUB_stableSection_iff` for `⊤`); it reads the wording of
+    Definition 5.4.1 with the stable section in the role of `𝔐⁺`, and is not a completion of the
+    correspondence of that definition.  Still open: the correspondence of characteristic arity
+    ([Kni26, Definition 5.4.1]), since `𝔐⁺` ([Kni26, Definitions 5.3.1 and 5.3.9]) is not compared
+    with the stable section, and the stage `α = 0` that the printed definition allows is not a
+    block stage; the reconstruction of the coded domains (row 57); and the correspondence of model
+    classes.  So the theorems concern the models of this repository, not a correspondence with the
+    models of [Kni26].
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -6008,11 +6039,15 @@ witnesses).**
 **Statements not yet in any module.**
 
 - The bound of the provisional offset by the top grade, the optional bound (d) of the
-  normalization (prospective), stated with `StageType.provisionalOffset`.  Its forcing form is
-  compiled: if every grade of `q` is at most `K` and `β + K < α`, then `(q, f)` does not force
-  `K + 1` at a cell labelled the formal top (`StageType.not_forcesThreshold_of_grade_le`,
-  `Stage/Threshold`).  The bound itself waits for `StageType.topGrade` (`Continuation/Terminal`) to
-  move to `Stage/`.
+  normalization (prospective), stated with `StageType.provisionalOffset` and `StageType.topGrade`.
+  Its forcing form is compiled: if every cell of `q` labelled the formal top has grade at most `K`
+  and `β + K < α`, then `(q, f)` does not force `K + 1` at a cell labelled the formal top
+  (`StageType.not_forcesThreshold_of_topGrade_le`, `Stage/Threshold`; its case with every grade
+  bounded is `StageType.not_forcesThreshold_of_grade_le`), and so is its form over the rooted
+  covers of a realization: with top-grade supremum `K`, every stable offset at a cell labelled the
+  formal top is at most `K` (`Realization.stableOffset_le_of_topGradeSup_eq`,
+  `Continuation/CharacteristicArity`).  The per-type bound itself waits for `StageType.topGrade`
+  (`Continuation/Terminal`) to move to `Stage/`.
 - `TiedLayer` (prospective; recorded in `Extension/ForcingDonors`): a completion below the full
   grade with one prescribed tie at an intermediate grade.  It is not needed for forcing donors:
   unconditionally for two-point inputs (`exists_forcingDonor_twoPoint_le_two`), and in general
