@@ -1319,9 +1319,12 @@ hypotheses derived from them; on the receiving-models route, (R4) and (R3) for r
 each still to be proved ((R2) for receiving models is compiled,
 `Realization.receivingResidualReceiving_of_padded`); hypothesis 8 is compiled in this
 repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstrings of
-`VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026, except
-those of `Correspondence/Charts`, which cite the current draft (their clauses were compared with
-the text of the draft of 10 October 2026, which has the same numbers).
+`VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026, with two
+exceptions: the two citation groups of statements unchanged since, lawful local labellings
+(Definition 4.28 of the current draft) and the cells `D↓U` below a graded face (Definition 4.3 of
+the current draft), which are marked "(current draft)"; and the modules of
+`Correspondence/Charts`, which cite the current draft throughout (their clauses were compared
+with the text of the draft of 10 October 2026, which has the same numbers).
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
@@ -2868,10 +2871,17 @@ correspondence (required)", item 1).  Three targets follow, in this order.
    strong coding (offset at most the grade plus one), while `Scheme.IsLegal` bounds no offset
    beyond `Scheme.IsCoded`, so the two classes still differ: a proof that the strongly coded class
    suffices remains prospective (notes 45 and 46); (5) Definition 4.28 includes both the bottom
-   and top caps, while the converse at a single stage remains open (note 44).  Remaining targets
-   retain their status: (6) legal templates are not required to be finite,
-   and the invariance of legality under renaming and isomorphism is not stated (partly corrected:
-   renaming carries the label, and the templates of the system are finite); (7) truncation itself
+   and top caps, and for it the converse at a single stage is compiled: for finitely many cells,
+   at a stage `θ ≥ ω ^ 2` that is zero or a limit and carries the values of the rows, bountifulness
+   as in Definition 4.28 at the single stage `θ` is `IsBountiful`
+   (`CellScheme.Rows.templateBountiful_iff`, note 44, second line of row 44); for the definition of
+   the version of 5 October 2026 (ordinal caps only) the single-stage result
+   `CellScheme.Rows.isBountiful_of_printedBountifulRows` keeps the extension of lawful labellings
+   as a premise, and the first line of row 44 keeps its status.  Remaining targets retain their
+   status: (6) legal templates are not required to be finite, and the invariance of legality under
+   isomorphism is not stated (partly corrected: renaming carries the label, the templates of the
+   system are finite, and the invariance of legality under renaming is compiled, note 61); (7)
+   truncation itself
    is defined at every countable stage, successors included (Definition 4.10), while the template
    system's closure and the projections are at block stages (Definitions 4.11 and 4.16), and the
    density cutoffs range below those blocks (Definitions 4.20 and 4.21).  Stage reduction here is
