@@ -21,7 +21,8 @@ import VaughtConjecture.Realization.Expansion
 4. the rows of `(ℓ_d)_{d ∈ D}` are bountiful;
 5. for each `d`, `range(ℓ_d) ⊆ {-∞} ∪ {ω · n + i : n ∈ ω, i ≤ g(d) + 1}`.
 
-The numbering is that of the draft of [AFK26] dated 10 October 2026: Definition 4.2 (graded
+The numbering is that of the current draft of [AFK26] (the clauses were compared with the text
+of the draft of 10 October 2026, which has the same numbers): Definition 4.2 (graded
 faces), 4.4 (labels, row systems), 4.5 (templates), 4.26 (visibility maps, self-visibility), 4.27
 (the relation `u ⇒ v`), 4.28 (lawful local labellings, the balls `B_γ(q)`, bountiful rows), 4.29
 (legal templates).  This file states these definitions on their own

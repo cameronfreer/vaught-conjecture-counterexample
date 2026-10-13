@@ -8,7 +8,8 @@ import VaughtConjecture.Geometry.Plan
 /-!
 # The plans of [AFK26, Definition 4.1]
 
-[AFK26, Definition 4.1] (numbered as in the draft of 10 October 2026): "A *plan* on a non-empty
+[AFK26, Definition 4.1] (numbered as in the current draft; the clauses were compared with the
+text of the draft of 10 October 2026, which has the same numbers): "A *plan* on a non-empty
 set `A` is a finitary convex geometry `P ⊆ P_fin(A)` in which every closed set of size at least
 `2` has precisely two extreme points.  In other words: `∅ ∈ P`, we have `⋃ P = A`, the geometry
 `P` is closed under intersections, every finite set is contained in some closed set, and its

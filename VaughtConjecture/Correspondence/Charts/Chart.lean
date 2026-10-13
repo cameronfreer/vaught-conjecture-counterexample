@@ -10,7 +10,8 @@ import VaughtConjecture.Realization.Expansion
 /-!
 # The charts of [AFK26] as relational structures
 
-Numbering as in the draft of [AFK26] dated 10 October 2026.
+Numbering as in the current draft of [AFK26]; the clauses were compared with the text of the
+draft of 10 October 2026, which has the same numbers.
 
 **The language** (`templateLanguage`, `TemplateSymbol`).  [AFK26, Definitions 4.12, 4.15 and
 4.17]: `L_a = {P_n}_{n ≥ 1}`, `L_b[L] = {Q_t}_{t ∈ L}` with `Q_t` of arity `n` for `t` on `[n]`, and
@@ -65,6 +66,10 @@ that are cell renamings of each other; one outer type is renamed so that the fac
 (`StageType.exists_restrictFace_renameCells`) before the native amalgamation, and renaming does not
 change the chart.  JEP passes through the face on no points internally; no chart on no points is
 formed.
+
+**Deferred.**  The sublanguage `L_c[L]` of `templateLanguage` (the symbols `P_n` and `R_t`) and
+the reduct of a structure to it, the interface that the later comparison of the sentence `σ[L]`
+uses, are not defined here.
 
 **Not treated here.**  The Fraïssé limit of `C_β[L]`, the density sentence and the models of
 [AFK26, §4], and [AFK26, Propositions 4.34 and 4.35].  The hull language of

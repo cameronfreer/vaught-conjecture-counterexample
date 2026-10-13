@@ -9,7 +9,8 @@ import VaughtConjecture.Correspondence.Charts.Plan
 /-!
 # Templates of [AFK26], cell renaming, and positional stage types
 
-Numbering as in the draft of [AFK26] dated 10 October 2026.
+Numbering as in the current draft of [AFK26]; the clauses were compared with the text of the
+draft of 10 October 2026, which has the same numbers.
 
 **Templates.**  [AFK26, Definitions 4.1–4.5]: a template `t = (c, Σ, p)` over a plan `(A, P)` is a
 frame `c : D → GradedFace[P]`, a row system `Σ = (ℓ_d)_{d ∈ D}` with
