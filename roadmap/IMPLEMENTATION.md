@@ -2419,8 +2419,15 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     (`MainTheorem/ReceivingRoute`); (R2) for receiving models,
     `Realization.receivingResidualReceiving_of_padded` (`MainTheorem/LowPaddedRoute`); and (R3) for
     receiving models, `Realization.hollowReceiving_levels` (`MainTheorem/GrowthLevelRoute`).  No
-    declaration states the count with the three instantiated.  Boundedness has no receiving
-    counterpart named here.
+    declaration states the count with the three instantiated.  A native bound, with no
+    hypothesis ((R1) is not used): for a model `c` of the density sentence coded on `ℕ`, a
+    receiving model expansion of `c` to `λ_β` exists exactly when `β` is at most the last
+    receiving stage of its class (`MainTheorem.exists_receivingExpansion_iff_le_receivingLastStage`,
+    `MainTheorem/ReceivingLastStage`), and that stage is countable
+    (`MainTheorem.receivingLastStage_lt_omega_one`).  This bounds the receiving expansion index of
+    `ℕ`-coded models; it is not the Boundedness clause of Proposition 4.34, which concerns the set
+    of ranks of the lifts of `M` in `K`, and the translation of that clause into the native
+    setting is still to be proved.
     *All models: compiled in this repository (theorem named), still conditional.*
     Reconstruction, `ModelExpansion.subsingleton` (`Expansion/Uniqueness`), and Limits,
     `ModelExpansion.nonempty_of_forall_lt`, both conditional on next-block uniqueness of models,
@@ -2434,8 +2441,8 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     `StageType.hasApexCoatomExtensions_blockStage`) are compiled in this repository (theorem
     named); (R1) for every model (`Expansion.FiniteCutReceiving`, hypothesis 2) is still to be
     proved, so these three results stay conditional on it.  *The density classes.*  For `K_β`,
-    finite-cut receiving is part of the definition, which is the hypothesis of the first group;
-    their identification with the receiving models is informal and not compiled.  Boundedness
+    the printed density axioms are part of the definition; their correspondence with native
+    finite-cut receiving, the hypothesis of the first group, is still to be proved.  Boundedness
     is more than the expansion-domain route uses (`README.md`, "The persistent core").
 56. [AFK26, Proposition 4.35], stated without proof: for each `β`, only countably many structures
     up to isomorphism are maximal at `β` (Definition 2.20).  Counterpart here:
