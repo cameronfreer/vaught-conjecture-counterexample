@@ -36,7 +36,8 @@ renaming" used in the proof of [AFK26, Proposition 4.30].
 **Positional stage types.**  A stage type has cells `Fin card`, numbered.  The renaming of its
 cells along `σ : Fin k ≃ Fin t.card` is the stage type `StageType.renameCells t σ`, the generic
 renaming above; `StageType.IsCellRenaming t t'` (`t'` is a renaming of `t`) is an equivalence
-relation (`StageType.cellRenamingSetoid`).  Renaming keeps the points, the plan
+relation (`StageType.renamingSetoid`); a renaming with its bijection is `StageType.Renaming`.
+Renaming keeps the points, the plan
 (`renameCells_faces`), the graded faces carrying a cell (`range_gradedIndex_renameCells`), the
 labels up to the bijection (`renameCells_label`), the rows read through the bijection
 (`renameCells_row`), legality, strong coding, and the legal templates
@@ -347,9 +348,48 @@ theorem IsCellRenaming.trans {t t' t'' : StageType.{u} α n} (h : t.IsCellRenami
 
 variable (α n) in
 /-- Cell renaming as a setoid on the stage types at stage `α` on `n` points. -/
-def cellRenamingSetoid : Setoid (StageType.{u} α n) where
+def renamingSetoid : Setoid (StageType.{u} α n) where
   r := IsCellRenaming
   iseqv := ⟨IsCellRenaming.refl, IsCellRenaming.symm, IsCellRenaming.trans⟩
+
+/-- **A renaming of cells** [AFK26, Definition 4.6], with its bijection: `q` is the renaming of
+`p` along `toEquiv`.  The cell `i` of `q` has the graded index, the label, and the row (read
+through the bijection) of the cell `toEquiv i` of `p` (`Renaming.gradedIndex_eq`,
+`Renaming.label_eq`); the points and the plan are those of `p`. -/
+structure Renaming (p q : StageType.{u} α n) : Type where
+  /-- The bijection of cells, from the cells of `q` to those of `p`. -/
+  toEquiv : Fin q.card ≃ Fin p.card
+  /-- `q` is the renaming of `p` along the bijection. -/
+  renameCells_eq : p.renameCells toEquiv = q
+
+/-- Cell renaming is the existence of a renaming. -/
+theorem isCellRenaming_iff_nonempty_renaming {p q : StageType.{u} α n} :
+    p.IsCellRenaming q ↔ Nonempty (p.Renaming q) := by
+  refine ⟨fun ⟨k, σ, h⟩ ↦ ?_, fun ⟨r⟩ ↦ ⟨_, r.toEquiv, r.renameCells_eq⟩⟩
+  subst h
+  exact ⟨⟨σ, rfl⟩⟩
+
+/-- A renaming keeps the graded index of every cell. -/
+theorem Renaming.gradedIndex_eq {p q : StageType.{u} α n} (r : p.Renaming q) (i : Fin q.card) :
+    q.toCellScheme.gradedIndex i = p.toCellScheme.gradedIndex (r.toEquiv i) := by
+  have key {k : ℕ} (τ : Fin k ≃ Fin p.card) (q' : StageType.{u} α n) (h : p.renameCells τ = q')
+      (j : Fin k) (j' : Fin q'.card) (hj : (j : ℕ) = j') :
+      q'.toCellScheme.gradedIndex j' = p.toCellScheme.gradedIndex (τ j) := by
+    subst h
+    obtain rfl := Fin.ext hj
+    rfl
+  exact key r.toEquiv q r.renameCells_eq i i rfl
+
+/-- A renaming keeps the label of every cell. -/
+theorem Renaming.label_eq {p q : StageType.{u} α n} (r : p.Renaming q) (i : Fin q.card) :
+    q.label i = p.label (r.toEquiv i) :=
+  (label_congr r.renameCells_eq rfl).symm
+
+/-- A renaming keeps the plan. -/
+theorem Renaming.faces_eq {p q : StageType.{u} α n} (r : p.Renaming q) :
+    q.toCellScheme.faces = p.toCellScheme.faces := by
+  rw [← r.renameCells_eq]
+  rfl
 
 /-- Renamings have the same number of cells. -/
 theorem IsCellRenaming.card_eq {t t' : StageType.{u} α n} (h : t.IsCellRenaming t') :

@@ -3,8 +3,8 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import Mathlib.ModelTheory.Substructures
-import VaughtConjecture.Correspondence.Charts.RenamingFaces
+import Mathlib.ModelTheory.Basic
+import VaughtConjecture.Correspondence.Charts.TemplateClass
 import VaughtConjecture.Realization.Expansion
 
 /-!
@@ -12,55 +12,59 @@ import VaughtConjecture.Realization.Expansion
 
 Numbering as in the draft of [AFK26] dated 10 October 2026.
 
-**The language.**  [AFK26, Definitions 4.12, 4.15 and 4.17]: `L_a = {P_n}_{n ≥ 1}`,
-`L_b[L] = {Q_t}_{t ∈ L}` with `Q_t` of arity `n` for `t` on `[n]`, and
-`L_c[L] = L_a ∪ {R_t : t ∈ L, τ₀(Q_t) = Q_t}`.  The template system `L` has exactly one template
-in each cell-renaming class of finite legal templates on `[n]` ([AFK26, Proposition 4.30] and
-Definition 4.11); by `StageType.isLegalTemplate_omega_one_iff_of_le` and the construction of
-`VaughtConjecture.Correspondence.Charts.Template`, these classes are the classes, under
-`StageType.IsCellRenaming`, of the strongly coded legal stage types at stage `ω₁` on `n ≥ 1`
-points (`TemplateClass n`, `TemplateClass.IsLegal`).  So `templateChartLanguage` has, in each
-arity `k ≥ 1`, one symbol `P_k` (`TemplateSymbol.plan`), one symbol `Q_c` for each legal class `c`
-(`TemplateSymbol.base`), and one symbol `R_c` for each legal class `c` fixed by the truncation at
-`ω`, that is, with labels at stage `ω` (`TemplateSymbol.cap`); there are no function symbols and no
-symbols of arity `0`.  The symbols are indexed by the classes themselves, not by chosen
-representatives; choosing the representatives is choosing `L`.
+**The language** (`templateLanguage`, `TemplateSymbol`).  [AFK26, Definitions 4.12, 4.15 and
+4.17]: `L_a = {P_n}_{n ≥ 1}`, `L_b[L] = {Q_t}_{t ∈ L}` with `Q_t` of arity `n` for `t` on `[n]`, and
+`L_c[L] = L_a ∪ {R_t : t ∈ L, τ₀(Q_t) = Q_t}`.  The template system `L` keeps exactly one template
+in each cell-renaming class of finite legal templates on `[n]` ([AFK26, Definition 4.11 and
+Proposition 4.30]); by `TemplateClass.isStronglyCodedLegal_toClass_iff_isLegalTemplate` and the
+construction of `VaughtConjecture.Correspondence.Charts.Template`, these are the strongly coded
+legal classes at stage `ω₁` on `n ≥ 1` points (`LegalClass n`).  So `templateLanguage` has, in each
+arity `n ≥ 1`, the symbol `P_n` (`TemplateSymbol.closed`), one symbol `Q_c` for each legal class
+`c` (`TemplateSymbol.invariant`), and one symbol `R_c` for each legal class with `τ₀(c) = c`, the
+projection to `ω + ω · 0 = ω` (`TemplateSymbol.base`); there are no function symbols and no symbols
+of arity `0`.  One alphabet serves every rank.  The symbols are indexed by the classes themselves;
+choosing a representative in each class is choosing `L`.
 
-**The chart of a stage type.**  [AFK26, Definition 4.18] determines the structure on the points of
-a template `t`: `P_k` holds of distinct points spanning a closed set, `Q_{t*}` of a tuple `x` when
-`t*` is the class of the restriction of `t` to the points of `x`, transported along `x`, and
-`R_{t⁻}` when moreover `t⁻` is the class of its truncation at `ω`.  For a stage type `t` this
-restriction is the face map `StageType.restrictFace x t` (defined exactly at the closed faces), so
-on the points `Fin n` of `t` the relation of a symbol holds of a tuple `x` exactly when `x` is
-injective, its face is defined, and the symbol reads the class of the face
-(`TemplateSymbol.Reads`).  This is `StageType.TemplateChart t` (`StageType.relMap_templateChart`).
-It depends only on the class of `t` (`StageType.templateChartEquivRename`).
+**The chart of a stage type** (`StageType.Holds`, `StageType.TemplateChart`).  [AFK26,
+Definition 4.18] determines the structure on the points of a template `t`: `P_k` holds of
+distinct points spanning a closed set, `Q_{t*}` of a tuple `x` when `t*` is the class of the
+restriction of `t` to the points of `x`, transported along `x`, and `R_{t⁻}` when moreover `t⁻` is
+the class of its truncation at `ω`.  For a stage type the restriction is the face map
+`StageType.restrictFace x t`, defined exactly at the closed faces; its class is read at `ω₁`
+(`StageType.globalClass`).  So a symbol holds of a tuple exactly when the tuple is injective, its
+face is defined, and the symbol reads the class of the face (`TemplateSymbol.Reads`).  The chart
+depends only on the class of `t` (`StageType.templateChartEquivRename`).
 
-**Charts and the category `C_β[L]`.**  [AFK26, Definition 4.31]: a chart on `t` is a finite
-structure `M` with an enumeration `a : [n] → M` such that every relation holds of `a ∘ x` exactly
-when the diagram of `t` says so (`IsChartOn t M a`); `C_β[L]` consists of the charts on templates
-`t` with `trunc_{ω + ω · β}(t) = t`, that is, `Label.reduce (blockStage β)` fixes every label
-(`IsTemplateChart β M`).  Such charts are nonempty: the templates of [AFK26] have nonempty
-underlying sets.
+**Charts and `C_β[L]`** (`IsTemplateChart β G`).  [AFK26, Definition 4.31]: a chart is a finite
+structure `G` on `M` with an enumeration `e : Fin n ≃ M` of its points by a template `t ∈ L` such
+that every symbol holds of `e ∘ xs` exactly when it holds of `xs` in the chart of `t`; `C_β[L]`
+takes the templates with `trunc_{ω + ω · β}(t) = t`.  Here `t` is a stage type at the block stage
+`ω + ω · β` that is a legal template with labels in `{-∞} ∪ ω₁ ∪ {∞}` (`IsLegalTemplate ω₁`), on
+`n ≥ 1` points: the templates of [AFK26] have nonempty underlying sets.
 
-**Embeddings** (`StageType.templateChartEmbedding`, `StageType.exists_restrictFace_of_embedding`).
-A map of points `f : Fin m ↪ Fin n` is an embedding of the chart of `s` into the chart of `t`
-exactly when the face of `t` along `f` is defined and is a cell renaming of `s`.  The point map is
-`f` itself; only the cells of the face are identified with those of `s` up to renaming, and this
-is the only place where renaming enters.  No global numbering of the cells of charts is chosen.
+**Embeddings** (`StageType.embeddingEquivFace`): at a stage at most `ω₁`, the embeddings of the
+chart of a strongly coded legal `s` into the chart of `t` are exactly the maps of points `f` along
+which the class of `t` has the face class of `s`, with the same point map.  Only the cells of the
+face are identified with those of `s`, up to renaming; no global numbering of cells is chosen.
 
-**HP, JEP, AP** ([AFK26, Proposition 4.32], `IsTemplateChart.hereditary`,
-`IsTemplateChart.jointEmbedding`, `IsTemplateChart.amalgamation`), at every `β < ω₁`, with no
-hypothesis on coatom extensions: the native constructions are
-`StageType.exists_stronglyCoded_jointEmbedding_of_isSuccPrelimit` and
-`StageType.exists_stronglyCoded_amalgam_of_isSuccPrelimit` at the block stage `ω + ω · β`, which
-is zero or a limit (`isSuccPrelimit_blockStage`); they need no countability of the stage.  The
-hypothesis `β < ω₁` places the block stage below the label universe `ω₁` of the language, where
-the amalgam is read (`StageType.castLE`).  For AP, the two embeddings of the common chart give two
-faces that are cell renamings of each other; one of the two outer types is renamed so that the
-faces are equal (`StageType.exists_restrictFace_renameCells`) before the native amalgamation, and
-renaming does not change the chart.  The joint embedding passes through the face on no points
-internally; no chart on no points is formed.
+**HP, JEP, AP** [AFK26, Proposition 4.32] (`IsTemplateChart.hereditary`,
+`IsTemplateChart.jointEmbedding`, `IsTemplateChart.amalgamation`), with no hypothesis on coatom
+extensions.  They rest on the native theorems `StageType.IsLegal.restrictFace` with
+`StageType.isStronglyCoded_of_restrictFace` (HP),
+`StageType.exists_stronglyCoded_jointEmbedding_of_isSuccPrelimit` (JEP) and
+`StageType.exists_stronglyCoded_amalgam_of_isSuccPrelimit` (AP) at the block stage `ω + ω · β`,
+which is zero or a limit (`isSuccPrelimit_blockStage`); those need no countability of the stage.
+The dictionary is: the legal templates are the strongly coded legal stage types
+(`StageType.isLegalTemplate_omega_one_iff`), the charts are the charts of stage types
+(`IsTemplateChart`), and embeddings are face maps up to renaming (`StageType.embeddingEquivFace`).
+HP holds at every `β`.  For JEP and AP the hypothesis `β < ω₁` (the printed range `β ∈ ω₁`) puts
+the labels of the amalgam, at the block stage, in the label universe `{-∞} ∪ ω₁ ∪ {∞}` of the
+legal templates, and identifies classes at `ω₁` with classes at the block stage
+(`StageType.globalClass_eq_iff`).  For AP the two embeddings of the common chart give two faces
+that are cell renamings of each other; one outer type is renamed so that the faces are equal
+(`StageType.exists_restrictFace_renameCells`) before the native amalgamation, and renaming does not
+change the chart.  JEP passes through the face on no points internally; no chart on no points is
+formed.
 
 **Not treated here.**  The Fraïssé limit of `C_β[L]`, the density sentence and the models of
 [AFK26, §4], and [AFK26, Propositions 4.34 and 4.35].  The hull language of
@@ -75,172 +79,79 @@ open FirstOrder Language Structure Finset Ordinal
 
 noncomputable section
 
-/-! ### Classes of templates and the language -/
+/-! ### The language -/
 
-/-- The stage types at stage `ω₁` on `k` points up to cell renaming: the templates of [AFK26] on
-`[k]` with labels in `{-∞} ∪ ω₁ ∪ {∞}`, up to renaming. -/
-abbrev TemplateClass (k : ℕ) : Type (u + 1) :=
-  Quotient (StageType.cellRenamingSetoid.{u} ω₁ k)
+/-- **The legal classes** on `n` points: the classes at stage `ω₁` of the strongly coded legal stage
+types, which are the classes of the legal templates of [AFK26, Definition 4.29] with labels in
+`{-∞} ∪ ω₁ ∪ {∞}`. -/
+abbrev LegalClass (n : ℕ) : Type (u + 1) :=
+  {c : TemplateClass.{u} ω₁ n // c.IsStronglyCodedLegal}
 
-/-- The class of a stage type. -/
-abbrev StageType.toClass {k : ℕ} (t : StageType.{u} ω₁ k) : TemplateClass.{u} k :=
-  Quotient.mk _ t
-
-/-- Renamings have the same class. -/
-theorem StageType.toClass_eq_toClass_iff {k : ℕ} {s t : StageType.{u} ω₁ k} :
-    s.toClass = t.toClass ↔ s.IsCellRenaming t :=
-  Quotient.eq (r := StageType.cellRenamingSetoid.{u} ω₁ k)
-
-namespace TemplateClass
-
-variable {k : ℕ}
-
-/-- A class is **legal** when its stage types are strongly coded legal: these are the classes of
-the legal templates of [AFK26, Definition 4.29]
-(`StageType.isLegalTemplate_omega_one_iff_of_le`). -/
-def IsLegal (c : TemplateClass.{u} k) : Prop :=
-  Quotient.lift (fun t : StageType.{u} ω₁ k ↦ t.IsStronglyCodedLegal) (fun a b h ↦ by
-    obtain ⟨_, σ, rfl⟩ := h
-    exact propext (StageType.isStronglyCodedLegal_renameCells_iff a σ).symm) c
-
-@[simp] theorem isLegal_toClass (t : StageType.{u} ω₁ k) :
-    t.toClass.IsLegal ↔ t.IsStronglyCodedLegal :=
-  Iff.rfl
-
-/-- A class is **fixed by `τ₀`** when the labels of its stage types are at stage `ω`; this is
-`trunc_ω(t) ≅_ren t` of [AFK26, Definition 4.17] (`TemplateClass.isBase_iff_truncOmega_eq`). -/
-def IsBase (c : TemplateClass.{u} k) : Prop :=
-  Quotient.lift (fun t : StageType.{u} ω₁ k ↦ ∀ d, Label.AtStage ω (t.label d)) (fun a b h ↦ by
-    obtain ⟨_, σ, rfl⟩ := h
-    exact propext ⟨fun h d ↦ h (σ d), fun h d ↦ by simpa using h (σ.symm d)⟩) c
-
-/-- The truncation at `ω` of a stage type at `ω₁`, read at `ω₁` ([AFK26, Definition 4.10]). -/
-noncomputable def _root_.VaughtConjecture.StageType.truncOmega {k : ℕ}
-    (t : StageType.{u} ω₁ k) : StageType.{u} ω₁ k :=
-  (t.reduce isSuccLimit_omega0.isSuccPrelimit).castLE omega0_lt_omega_one.le
-
-/-- **The truncation at `ω` of a class** ([AFK26, Definition 4.10]): truncation commutes with
-renaming. -/
-noncomputable def truncOmega (c : TemplateClass.{u} k) : TemplateClass.{u} k :=
-  Quotient.map StageType.truncOmega (fun a b h ↦ by
-    obtain ⟨_, σ, rfl⟩ := h
-    exact ⟨_, σ, rfl⟩) c
-
-@[simp] theorem truncOmega_toClass (t : StageType.{u} ω₁ k) :
-    t.toClass.truncOmega = t.truncOmega.toClass :=
-  rfl
-
-/-- **The classes fixed by `τ₀` are the classes with labels at stage `ω`**
-([AFK26, Definitions 4.16 and 4.17]: `τ₀(Q_t) = Q_t` exactly when `trunc_ω(t) ≅_ren t`).  A
-renaming keeps the number of labels `∞`, and the truncation at `ω` adds one for every label in
-`[ω, ∞)`. -/
-theorem isBase_iff_truncOmega_eq (c : TemplateClass.{u} k) : c.IsBase ↔ c.truncOmega = c := by
-  classical
-  induction c using Quotient.inductionOn with | h t => ?_
-  change (∀ d, Label.AtStage ω (t.label d)) ↔ t.truncOmega.toClass = t.toClass
-  rw [StageType.toClass_eq_toClass_iff]
-  constructor
-  · intro ht
-    have : t.truncOmega = t :=
-      StageType.castLE_reduce_of_atStage t isSuccLimit_omega0.isSuccPrelimit _ ht
-    rw [this]
-    exact StageType.IsCellRenaming.refl t
-  · intro h
-    obtain ⟨c, σ, hσ⟩ := h.symm
-    have hc : c = t.card := congrArg (fun s : StageType.{u} ω₁ k ↦ s.card) hσ
-    subst hc
-    have hl (d : Fin t.card) : t.label (σ d) = Label.reduce ω (t.label d) :=
-      StageType.label_congr hσ rfl
-    set A := univ.filter fun d ↦ t.label d = ⊤
-    set B := univ.filter fun d ↦ Label.reduce ω (t.label d) = ⊤
-    have hAB : A ⊆ B := fun d hd ↦ by
-      rw [mem_filter] at hd ⊢
-      rw [hd.2]
-      exact ⟨hd.1, Label.reduce_top⟩
-    have hcard : #B ≤ #A := by
-      refine Finset.card_le_card_of_injOn σ (fun d hd ↦ ?_) σ.injective.injOn
-      rw [mem_coe, mem_filter] at hd ⊢
-      exact ⟨mem_univ _, (hl d).trans hd.2⟩
-    have hBA : B = A := (Finset.eq_of_subset_of_card_le hAB hcard).symm
-    intro d
-    by_contra hd
-    rw [Label.AtStage, not_or, not_lt] at hd
-    have hdB : d ∈ B := mem_filter.mpr ⟨mem_univ _, Label.reduce_eq_top_iff.mpr hd.1⟩
-    rw [hBA, mem_filter] at hdB
-    exact hd.2 hdB.2
-
-end TemplateClass
-
-/-- **The relation symbols of arity `k`** of `L_b[L] ∪ L_c[L]` ([AFK26, Definitions 4.12, 4.15 and
-4.17]), for `k ≥ 1`. -/
-inductive TemplateSymbol (k : ℕ) : Type (u + 1)
-  /-- `P_k ∈ L_a`. -/
-  | plan (hk : 0 < k)
+/-- **The relation symbols** of `L_b[L] ∪ L_c[L]` ([AFK26, Definitions 4.12, 4.15 and 4.17]). -/
+inductive TemplateSymbol : ℕ → Type (u + 1)
+  /-- `P_n ∈ L_a`. -/
+  | closed {n : ℕ} (hn : 0 < n) : TemplateSymbol n
   /-- `Q_t ∈ L_b[L]`, for the legal class `c` of `t`. -/
-  | base (c : TemplateClass.{u} k) (hk : 0 < k) (hc : c.IsLegal)
-  /-- `R_t ∈ L_c[L]`, for the legal class `c` of `t`, fixed by `τ₀`. -/
-  | cap (c : TemplateClass.{u} k) (hk : 0 < k) (hc : c.IsLegal) (hb : c.IsBase)
+  | invariant {n : ℕ} (c : LegalClass.{u} n) (hn : 0 < n) : TemplateSymbol n
+  /-- `R_t ∈ L_c[L]`, for the legal class `c` of `t` with `τ₀(Q_t) = Q_t`. -/
+  | base {n : ℕ} (c : LegalClass.{u} n) (h0 : c.1.project (isSuccPrelimit_blockStage 0) = c.1)
+      (hn : 0 < n) : TemplateSymbol n
 
 /-- **The language `L_b[L] ∪ L_c[L]`** of [AFK26, Definitions 4.12, 4.15 and 4.17]: relational,
 with the symbols `TemplateSymbol`. -/
-def templateChartLanguage : Language.{0, u + 1} where
+def templateLanguage : Language.{0, u + 1} where
   Functions _ := Empty
   Relations := TemplateSymbol.{u}
 
-instance : templateChartLanguage.{u}.IsRelational := fun _ ↦ inferInstanceAs (IsEmpty Empty)
-
-namespace TemplateSymbol
-
-variable {k : ℕ}
+instance : templateLanguage.{u}.IsRelational := fun _ ↦ inferInstanceAs (IsEmpty Empty)
 
 /-- **The reading of a symbol on the class of a face** ([AFK26, Definition 4.18]): `P_k` reads
-every face, `Q_c` the faces of class `c`, `R_c` the faces whose truncation at `ω` has class `c`. -/
-def Reads : TemplateSymbol.{u} k → TemplateClass.{u} k → Prop
-  | plan _, _ => True
-  | base c _ _, x => x = c
-  | cap c _ _ _, x => x.truncOmega = c
-
-end TemplateSymbol
+every face, `Q_c` the faces of class `c`, and `R_c` the faces whose truncation at `ω` has class
+`c`. -/
+def TemplateSymbol.Reads {k : ℕ} : TemplateSymbol.{u} k → TemplateClass.{u} ω₁ k → Prop
+  | closed _, _ => True
+  | invariant c _, x => x = c.1
+  | base c _ _, x => x.project (isSuccPrelimit_blockStage 0) = c.1
 
 /-! ### The chart of a stage type -/
 
 namespace StageType
 
-variable {n m k : ℕ}
+variable {α : Ordinal.{u}} {n m k : ℕ}
 
-/-- **The chart of a stage type** at stage `ω₁` on `n` points: its points `Fin n`, as a structure
-of `templateChartLanguage`.  A type synonym of `Fin n`, so that the structure is not an instance
-on `Fin n`. -/
+/-- **The relations of the chart of `t`** ([AFK26, Definition 4.18]): a symbol holds of a tuple
+when the tuple is injective, its face is defined, and the symbol reads the class at `ω₁` of the
+face. -/
+def Holds (t : StageType.{u} α n) (r : TemplateSymbol.{u} k) (xs : Fin k → Fin n) : Prop :=
+  ∃ h : Function.Injective xs, ∃ s, restrictFace ⟨xs, h⟩ t = some s ∧ r.Reads s.globalClass
+
+/-- **The chart of a stage type**: its points `Fin n`, a structure of `templateLanguage` with the
+relations `Holds`.  A type synonym of `Fin n`, so that the structure is not an instance on
+`Fin n`. -/
 @[nolint unusedArguments]
-def TemplateChart (_t : StageType.{u} ω₁ n) : Type :=
+def TemplateChart (_t : StageType.{u} α n) : Type :=
   Fin n
 
-variable (t : StageType.{u} ω₁ n)
+variable (t : StageType.{u} α n)
 
 instance : Fintype t.TemplateChart := inferInstanceAs (Fintype (Fin n))
 
 instance : DecidableEq t.TemplateChart := inferInstanceAs (DecidableEq (Fin n))
 
-/-- The structure of the chart ([AFK26, Definition 4.18]): a symbol holds of a tuple when the
-tuple is injective, its face is defined, and the symbol reads the class of the face. -/
-instance : templateChartLanguage.{u}.Structure t.TemplateChart where
+instance : templateLanguage.{u}.Structure t.TemplateChart where
   funMap f := Empty.elim f
-  RelMap r xs := ∃ h : Function.Injective xs, ∃ s,
-    restrictFace ⟨xs, h⟩ t = some s ∧ TemplateSymbol.Reads r s.toClass
+  RelMap r xs := t.Holds r xs
 
-/-- The relations of the chart of `t`. -/
+/-- The relations of the chart of `t` are `Holds`. -/
 theorem relMap_templateChart (r : TemplateSymbol.{u} k) (xs : Fin k → t.TemplateChart) :
-    RelMap (L := templateChartLanguage.{u}) r xs ↔ ∃ h : Function.Injective xs, ∃ s,
-      restrictFace ⟨xs, h⟩ t = some s ∧ TemplateSymbol.Reads r s.toClass :=
+    RelMap (L := templateLanguage.{u}) r xs ↔ t.Holds r xs :=
   Iff.rfl
 
-/-! ### Faces of renamings and the chart -/
-
 /-- **The faces of renamings have the same classes.** -/
-theorem exists_restrictFace_iff_of_isCellRenaming {s s' : StageType.{u} ω₁ m}
-    (hss : s.IsCellRenaming s') (g : Fin k ↪ Fin m) (P : TemplateClass.{u} k → Prop) :
-    (∃ x, restrictFace g s' = some x ∧ P x.toClass) ↔
-      ∃ x, restrictFace g s = some x ∧ P x.toClass := by
+theorem exists_restrictFace_iff_of_isCellRenaming {s s' : StageType.{u} α m}
+    (hss : s.IsCellRenaming s') (g : Fin k ↪ Fin m) (P : TemplateClass.{u} ω₁ k → Prop) :
+    (∃ x, restrictFace g s' = some x ∧ P x.globalClass) ↔
+      ∃ x, restrictFace g s = some x ∧ P x.globalClass := by
   obtain ⟨_, π, rfl⟩ := hss
   constructor
   · rintro ⟨x', hx', hP⟩
@@ -249,24 +160,20 @@ theorem exists_restrictFace_iff_of_isCellRenaming {s s' : StageType.{u} ω₁ m}
       rw [← restrictFace_renameCells_eq_none_iff s π g, hx'] at hx
       exact absurd hx (by simp)
     | some x =>
-      obtain ⟨x'', hx'', hxx''⟩ := restrictFace_renameCells s π g hx
+      obtain ⟨x'', hx'', ⟨_, σ, rfl⟩⟩ := restrictFace_renameCells s π g hx
       rw [hx', Option.some_inj] at hx''
       subst hx''
-      exact ⟨x, rfl, (toClass_eq_toClass_iff.mpr hxx'') ▸ hP⟩
+      exact ⟨x, rfl, (globalClass_renameCells x σ) ▸ hP⟩
   · rintro ⟨x, hx, hP⟩
-    obtain ⟨x', hx', hxx'⟩ := restrictFace_renameCells s π g hx
-    exact ⟨x', hx', (toClass_eq_toClass_iff.mpr hxx') ▸ hP⟩
+    obtain ⟨x', hx', ⟨_, σ, rfl⟩⟩ := restrictFace_renameCells s π g hx
+    exact ⟨_, hx', (globalClass_renameCells x σ).symm ▸ hP⟩
 
-/-- **Relations along a face map**: if the face of `t` along `f` is a renaming of `s`, a symbol
-holds of `f ∘ xs` in the chart of `t` exactly when it holds of `xs` in the chart of `s`. -/
-theorem relMap_comp_iff {s s' : StageType.{u} ω₁ m} {f : Fin m ↪ Fin n}
+/-- **Relations along a face map up to renaming**: if the face of `t` along `f` is a renaming of
+`s`, a symbol holds of `f ∘ xs` in the chart of `t` exactly when it holds of `xs` in the chart of
+`s`. -/
+theorem holds_comp_iff {s s' : StageType.{u} α m} {f : Fin m ↪ Fin n}
     (hf : restrictFace f t = some s') (hss : s.IsCellRenaming s') (r : TemplateSymbol.{u} k)
-    (xs : Fin k → Fin m) :
-    RelMap (L := templateChartLanguage.{u}) (M := t.TemplateChart) r (f ∘ xs) ↔
-      RelMap (L := templateChartLanguage.{u}) (M := s.TemplateChart) r xs := by
-  change (∃ h : Function.Injective (f ∘ xs), ∃ s₀, restrictFace ⟨f ∘ xs, h⟩ t = some s₀ ∧
-      TemplateSymbol.Reads r s₀.toClass) ↔ ∃ h : Function.Injective xs, ∃ s₀,
-      restrictFace ⟨xs, h⟩ s = some s₀ ∧ TemplateSymbol.Reads r s₀.toClass
+    (xs : Fin k → Fin m) : t.Holds r (f ∘ xs) ↔ s.Holds r xs := by
   constructor
   · rintro ⟨h, hx⟩
     have hxs : Function.Injective xs := h.of_comp
@@ -280,16 +187,16 @@ theorem relMap_comp_iff {s s' : StageType.{u} ω₁ m} {f : Fin m ↪ Fin n}
       (restrictFace_trans t f ⟨xs, h⟩ hf).symm
     exact ⟨hfx, heq ▸ (exists_restrictFace_iff_of_isCellRenaming hss _ _).mpr hx⟩
 
-/-- **The chart embedding of a face map up to renaming**: if the face of `t` along `f` is a cell
-renaming of `s`, the map `f` is an embedding of the chart of `s` into the chart of `t`. -/
-def templateChartEmbedding {s s' : StageType.{u} ω₁ m} {f : Fin m ↪ Fin n}
+/-- **The embedding of charts of a face map up to renaming**: if the face of `t` along `f` is a
+cell renaming of `s`, the map `f` is an embedding of the chart of `s` into the chart of `t`. -/
+def templateChartEmbedding {s s' : StageType.{u} α m} {f : Fin m ↪ Fin n}
     (hf : restrictFace f t = some s') (hss : s.IsCellRenaming s') :
-    s.TemplateChart ↪[templateChartLanguage.{u}] t.TemplateChart where
+    s.TemplateChart ↪[templateLanguage.{u}] t.TemplateChart where
   toEmbedding := f
   map_fun' g := Empty.elim g
-  map_rel' r xs := relMap_comp_iff t hf hss r xs
+  map_rel' r xs := t.holds_comp_iff hf hss r xs
 
-@[simp] theorem templateChartEmbedding_apply {s s' : StageType.{u} ω₁ m} {f : Fin m ↪ Fin n}
+@[simp] theorem templateChartEmbedding_apply {s s' : StageType.{u} α m} {f : Fin m ↪ Fin n}
     (hf : restrictFace f t = some s') (hss : s.IsCellRenaming s') (y : s.TemplateChart) :
     t.templateChartEmbedding hf hss y = f y :=
   rfl
@@ -297,226 +204,215 @@ def templateChartEmbedding {s s' : StageType.{u} ω₁ m} {f : Fin m ↪ Fin n}
 /-- **The chart depends only on the class**: the chart of a renaming is the chart of the type, by
 the identity of the points. -/
 def templateChartEquivRename {k' : ℕ} (π : Fin k' ≃ Fin t.card) :
-    (t.renameCells π).TemplateChart ≃[templateChartLanguage.{u}] t.TemplateChart where
+    (t.renameCells π).TemplateChart ≃[templateLanguage.{u}] t.TemplateChart where
   toEquiv := Equiv.refl _
   map_fun' g := Empty.elim g
-  map_rel' r xs := by
-    change (∃ h : Function.Injective xs, ∃ s₀, restrictFace ⟨xs, h⟩ t = some s₀ ∧
-      TemplateSymbol.Reads r s₀.toClass) ↔ ∃ h : Function.Injective xs, ∃ s₀,
-      restrictFace ⟨xs, h⟩ (t.renameCells π) = some s₀ ∧ TemplateSymbol.Reads r s₀.toClass
-    exact exists_congr fun _ ↦
-      (exists_restrictFace_iff_of_isCellRenaming ⟨_, π, rfl⟩ _ _).symm
+  map_rel' _ _ := exists_congr fun _ ↦
+    (exists_restrictFace_iff_of_isCellRenaming ⟨_, π, rfl⟩ _ _).symm
 
-/-- **Embeddings of charts are face maps up to renaming** ([AFK26, Definition 4.31], morphisms of
-`C_β[L]`): an embedding of the chart of a strongly coded legal `s` into the chart of `t` has as
-its point map a face map of `t` whose face is a cell renaming of `s`. -/
-theorem exists_restrictFace_of_embedding {s : StageType.{u} ω₁ m} (hs : s.IsStronglyCodedLegal)
-    (φ : s.TemplateChart ↪[templateChartLanguage.{u}] t.TemplateChart) :
-    ∃ s', restrictFace φ.toEmbedding t = some s' ∧ s.IsCellRenaming s' := by
+/-- **The point map of an embedding of charts is a face map up to renaming**: an embedding of the
+chart of a strongly coded legal `s` into the chart of `t` has a face of `t` with the class of `s`
+at `ω₁` along its point map. -/
+theorem exists_restrictFace_of_embedding {s : StageType.{u} α m} (hs : s.IsStronglyCodedLegal)
+    (φ : s.TemplateChart ↪[templateLanguage.{u}] t.TemplateChart) :
+    ∃ s', restrictFace φ.toEmbedding t = some s' ∧ s'.globalClass = s.globalClass := by
   rcases Nat.eq_zero_or_pos m with rfl | hm
   · obtain ⟨s', hs'⟩ := Option.isSome_iff_exists.mp (t.isSome_restrictFace_of_zero φ.toEmbedding)
-    exact ⟨s', hs', eq_of_zero s s' ▸ IsCellRenaming.refl s⟩
-  · have hrel := (φ.map_rel (TemplateSymbol.base s.toClass hm hs) id).mpr
+    exact ⟨s', hs', by rw [eq_of_zero s s']⟩
+  · have hrel := (φ.map_rel (TemplateSymbol.invariant ⟨s.globalClass, hs⟩ hm) id).mpr
       ⟨Function.injective_id, s, restrictFace_refl s, rfl⟩
     obtain ⟨_, s', hs', hc⟩ := hrel
-    exact ⟨s', hs', (toClass_eq_toClass_iff.mp hc.symm)⟩
+    exact ⟨s', hs', hc⟩
+
+/-- **Embeddings of charts are the face maps up to renaming, with the same point map** ([AFK26,
+Definition 4.31], the morphisms of `C_β[L]`): at a stage at most `ω₁`, for a strongly coded legal
+`s`, the embeddings of the chart of `s` into the chart of `t` correspond, by their point maps, to
+the maps of points along which the class of `t` has the face class of `s`. -/
+def embeddingEquivFace (hα : α ≤ ω₁) {s : StageType.{u} α m} (hs : s.IsStronglyCodedLegal) :
+    (s.TemplateChart ↪[templateLanguage.{u}] t.TemplateChart) ≃
+      {f : Fin m ↪ Fin n // t.toClass.restrictFace f = some s.toClass} where
+  toFun φ := ⟨φ.toEmbedding, by
+    obtain ⟨s', hs', hc⟩ := t.exists_restrictFace_of_embedding hs φ
+    have hs'' : restrictFace (φ.toEmbedding : Fin m ↪ Fin n) t = some s' := hs'
+    change (restrictFace (φ.toEmbedding : Fin m ↪ Fin n) t).map toClass = some s.toClass
+    rw [hs'', Option.map_some, toClass_eq_toClass_iff.mpr ((globalClass_eq_iff hα).mp hc)]⟩
+  invFun f := t.templateChartEmbedding
+    (Option.map_eq_some_iff.mp f.2).choose_spec.1
+    (toClass_eq_toClass_iff.mp (Option.map_eq_some_iff.mp f.2).choose_spec.2).symm
+  left_inv φ := Embedding.ext fun _ ↦ rfl
+  right_inv f := rfl
+
+@[simp] theorem embeddingEquivFace_apply_coe (hα : α ≤ ω₁) {s : StageType.{u} α m}
+    (hs : s.IsStronglyCodedLegal) (φ : s.TemplateChart ↪[templateLanguage.{u}] t.TemplateChart) :
+    ((t.embeddingEquivFace hα hs φ) : Fin m ↪ Fin n) = φ.toEmbedding :=
+  rfl
 
 end StageType
 
-/-! ### Charts on templates and the category `C_β[L]` -/
+/-! ### Charts and the category `C_β[L]` -/
 
 section Charts
 
 open StageType
 
-variable {n m : ℕ} {M : Type v} [templateChartLanguage.{u}.Structure M]
-  {N : Type w} [templateChartLanguage.{u}.Structure N]
-  {R : Type x} [templateChartLanguage.{u}.Structure R]
+variable {M : Type v} {N : Type w} {R : Type x}
 
-/-- **A chart on `t`** [AFK26, Definition 4.31]: the enumeration `a` of `M` by the points of `t`
-carries every relation of the chart of `t` to `M` and back. -/
-def IsChartOn (t : StageType.{u} ω₁ n) (M : Type v) [templateChartLanguage.{u}.Structure M]
-    (a : Fin n ≃ M) : Prop :=
-  ∀ {k} (r : TemplateSymbol.{u} k) (xs : Fin k → Fin n),
-    RelMap (L := templateChartLanguage.{u}) r (a ∘ xs) ↔
-      RelMap (L := templateChartLanguage.{u}) (M := t.TemplateChart) r xs
+/-- **The category `C_β[L]`** [AFK26, Definition 4.31], as a class of structures: `G` is a chart on
+a legal template `t` with `trunc_{ω + ω · β}(t) = t`.  Here `t` is a stage type at the block stage
+`ω + ω · β` on `n ≥ 1` points that is a legal template with labels in `{-∞} ∪ ω₁ ∪ {∞}`, and the
+enumeration `e` carries every relation of the chart of `t` (every symbol, every tuple, repetitions
+allowed) to `G` and back.  `M` is finite, by the enumeration. -/
+def IsTemplateChart (β : Ordinal.{u}) (G : templateLanguage.{u}.Structure M) : Prop :=
+  ∃ (n : ℕ) (t : StageType.{u} (blockStage β) n) (e : Fin n ≃ M), 0 < n ∧
+    t.IsLegalTemplate ω₁ ∧ ∀ {k : ℕ} (r : TemplateSymbol.{u} k) (xs : Fin k → Fin n),
+      RelMap (L := templateLanguage.{u}) (self := G) r (e ∘ xs) ↔ t.Holds r xs
 
-/-- **The category `C_β[L]`** [AFK26, Definition 4.31], as a class of structures: the charts on
-strongly coded legal stage types (the legal templates) at stage `ω₁` on `n ≥ 1` points whose
-labels are fixed by the truncation at `ω + ω · β`. -/
-def IsTemplateChart (β : Ordinal.{u}) (M : Type v) [templateChartLanguage.{u}.Structure M] :
-    Prop :=
-  ∃ (n : ℕ) (t : StageType.{u} ω₁ n), 0 < n ∧ t.IsStronglyCodedLegal ∧
-    (∀ d, Label.reduce (blockStage β) (t.label d) = t.label d) ∧ ∃ a : Fin n ≃ M, IsChartOn t M a
+/-- The structure induced on a set of points ([AFK26, Proposition 4.32]: `M↾M₀`): the relations of
+`G` on tuples of the set. -/
+@[instance_reducible] def inducedOn (G : templateLanguage.{u}.Structure M) (s : Set M) :
+    templateLanguage.{u}.Structure s where
+  funMap f := Empty.elim f
+  RelMap r xs := RelMap (L := templateLanguage.{u}) (self := G) r (Subtype.val ∘ xs)
 
-/-- The chart of a stage type is a chart on it, by the identity. -/
-theorem isChartOn_templateChart (t : StageType.{u} ω₁ n) :
-    IsChartOn t t.TemplateChart (Equiv.refl _) :=
-  fun _ _ ↦ Iff.rfl
+/-- A set of points is **closed** in `G` ([AFK26, Definition 4.12]): it is empty, or enumerated by a
+tuple satisfying `P_k`. -/
+def IsClosedIn (G : templateLanguage.{u}.Structure M) (s : Set M) : Prop :=
+  s = ∅ ∨ ∃ (k : ℕ) (hk : 0 < k) (xs : Fin k → M),
+    RelMap (L := templateLanguage.{u}) (self := G) (TemplateSymbol.closed hk) xs ∧
+      Set.range xs = s
 
-/-- A chart on `t` is isomorphic to the chart of `t`, by its enumeration. -/
-def IsChartOn.equiv {t : StageType.{u} ω₁ n} {a : Fin n ≃ M} (h : IsChartOn t M a) :
-    t.TemplateChart ≃[templateChartLanguage.{u}] M where
-  toEquiv := a
+/-- The chart of a stage type at a block stage is in `C_β[L]` when the stage type is a legal
+template with labels in `{-∞} ∪ ω₁ ∪ {∞}` on `n ≥ 1` points. -/
+theorem isTemplateChart_templateChart {β : Ordinal.{u}} {n : ℕ}
+    {t : StageType.{u} (blockStage β) n} (hn : 0 < n) (ht : t.IsLegalTemplate ω₁) :
+    IsTemplateChart β (inferInstance : templateLanguage.{u}.Structure t.TemplateChart) :=
+  ⟨n, t, Equiv.refl _, hn, ht, fun _ _ ↦ Iff.rfl⟩
+
+/-- A chart is isomorphic to the chart of its template, by its enumeration. -/
+private def chartEquiv {α : Ordinal.{u}} {n : ℕ} {t : StageType.{u} α n} {e : Fin n ≃ M}
+    (G : templateLanguage.{u}.Structure M)
+    (h : ∀ {k : ℕ} (r : TemplateSymbol.{u} k) (xs : Fin k → Fin n),
+      RelMap (L := templateLanguage.{u}) (self := G) r (e ∘ xs) ↔ t.Holds r xs) :
+    @Language.Equiv templateLanguage.{u} t.TemplateChart M _ G where
+  toEquiv := e
   map_fun' g := Empty.elim g
   map_rel' r xs := h r xs
 
-@[simp] theorem IsChartOn.equiv_apply {t : StageType.{u} ω₁ n} {a : Fin n ≃ M}
-    (h : IsChartOn t M a) (y : Fin n) : h.equiv y = a y :=
-  rfl
-
-/-- The chart of a strongly coded legal stage type on `n ≥ 1` points with labels fixed by the
-truncation at `ω + ω · β` is in `C_β[L]`. -/
-theorem isTemplateChart_templateChart {β : Ordinal.{u}} {t : StageType.{u} ω₁ n} (hn : 0 < n)
-    (ht : t.IsStronglyCodedLegal) (hβ : ∀ d, Label.reduce (blockStage β) (t.label d) = t.label d) :
-    IsTemplateChart β t.TemplateChart :=
-  ⟨n, t, hn, ht, hβ, _, isChartOn_templateChart t⟩
-
-/-! ### The hereditary property -/
-
-/-- A set of points of `M` is **closed** ([AFK26, Definition 4.12]) when it is enumerated by a
-tuple satisfying `P_k`; the empty set is not considered here. -/
-def IsClosedNonempty (A : Set M) : Prop :=
-  ∃ (k : ℕ) (hk : 0 < k) (xs : Fin k → M),
-    RelMap (L := templateChartLanguage.{u}) (TemplateSymbol.plan hk) xs ∧ Set.range xs = A
-
 /-- **The hereditary property** [AFK26, Proposition 4.32]: the restriction of a chart in
-`C_β[L]` to a nonempty closed set of its points is in `C_β[L]`.  No hypothesis on `β`. -/
-theorem IsTemplateChart.hereditary {β : Ordinal.{u}} (hM : IsTemplateChart β M)
-    (S : templateChartLanguage.{u}.Substructure M) (hS : IsClosedNonempty (S : Set M)) :
-    IsTemplateChart β S := by
-  obtain ⟨n, t, -, ht, hβ, a, hta⟩ := hM
-  obtain ⟨k, hk, xs, hxs, hrange⟩ := hS
+`C_β[L]` to a nonempty closed set of its points is in `C_β[L]`.  No hypothesis on `β`.  Native
+theorem: faces of strongly coded legal stage types are strongly coded legal
+(`StageType.IsLegal.restrictFace`, `StageType.isStronglyCoded_of_restrictFace`). -/
+theorem IsTemplateChart.hereditary {β : Ordinal.{u}} {G : templateLanguage.{u}.Structure M}
+    (hG : IsTemplateChart β G) {s : Set M} (hs : s.Nonempty) (hcl : IsClosedIn G s) :
+    IsTemplateChart β (inducedOn G s) := by
+  obtain ⟨n, t, e, -, ht, hte⟩ := hG
+  obtain ⟨hlt, hθ⟩ := isLegalTemplate_omega_one_iff.mp ht
+  obtain hs0 | ⟨k, hk, xs, hxs, hrange⟩ := hcl
+  · exact absurd hs0 hs.ne_empty
   -- the tuple, read in the chart of `t`
-  have hP := (hta (TemplateSymbol.plan hk) (a.symm ∘ xs)).mp (by
+  have hP := (hte (TemplateSymbol.closed hk) (e.symm ∘ xs)).mp (by
     simpa [Function.comp_def] using hxs)
-  obtain ⟨hinj, s, hs, -⟩ := hP
-  set g : Fin k ↪ Fin n := ⟨a.symm ∘ xs, hinj⟩
-  have hxinj : Function.Injective xs := fun i j hij ↦ hinj (congrArg a.symm hij)
-  have hmem (i : Fin k) : xs i ∈ S := by
-    rw [← SetLike.mem_coe, ← hrange]
+  obtain ⟨hinj, p, hp, -⟩ := hP
+  set g : Fin k ↪ Fin n := ⟨e.symm ∘ xs, hinj⟩
+  have hxinj : Function.Injective xs := fun i j hij ↦ hinj (congrArg e.symm hij)
+  have hmem (i : Fin k) : xs i ∈ s := by
+    rw [← hrange]
     exact ⟨i, rfl⟩
-  let b : Fin k ≃ S := Equiv.ofBijective (fun i ↦ ⟨xs i, hmem i⟩)
+  let b : Fin k ≃ s := Equiv.ofBijective (fun i ↦ ⟨xs i, hmem i⟩)
     ⟨fun i j hij ↦ hxinj (congrArg Subtype.val hij), fun y ↦ by
       obtain ⟨i, hi⟩ : (y : M) ∈ Set.range xs := by rw [hrange]; exact y.2
       exact ⟨i, Subtype.ext hi⟩⟩
-  refine ⟨k, s, hk, ⟨ht.1.restrictFace g hs, isStronglyCoded_of_restrictFace hs ht.2⟩,
-    fun d ↦ ?_, b, fun r ys ↦ ?_⟩
-  · obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff t g).mp hs
-    exact hβ _
-  · have h1 := hta r (g ∘ ys)
-    have h2 := t.relMap_comp_iff hs (IsCellRenaming.refl s) r ys
-    refine Iff.trans ?_ (h1.trans h2)
-    change RelMap (L := templateChartLanguage.{u}) (M := M) r (fun i ↦ ((b (ys i) : S) : M)) ↔
-      RelMap (L := templateChartLanguage.{u}) (M := M) r (a ∘ (g ∘ ys))
-    have : (fun i ↦ ((b (ys i) : S) : M)) = a ∘ (g ∘ ys) := funext fun i ↦ by
-      change xs (ys i) = a (a.symm (xs (ys i)))
-      exact (a.apply_symm_apply _).symm
-    rw [this]
+  have hpθ : ∀ d, Label.AtStage ω₁ (p.label d) := by
+    obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff t g).mp hp
+    exact fun d ↦ hθ _
+  refine ⟨k, p, b, hk, isLegalTemplate_omega_one_iff.mpr
+    ⟨⟨hlt.1.restrictFace g hp, isStronglyCoded_of_restrictFace hp hlt.2⟩, hpθ⟩,
+    fun r ys ↦ ?_⟩
+  have h1 := hte r (g ∘ ys)
+  have h2 := t.holds_comp_iff hp (IsCellRenaming.refl p) r ys
+  refine Iff.trans ?_ (h1.trans h2)
+  change RelMap (L := templateLanguage.{u}) (self := G) r (fun i ↦ ((b (ys i) : s) : M)) ↔
+    RelMap (L := templateLanguage.{u}) (self := G) r (e ∘ (g ∘ ys))
+  have : (fun i ↦ ((b (ys i) : s) : M)) = e ∘ (g ∘ ys) := funext fun i ↦ by
+    change xs (ys i) = e (e.symm (xs (ys i)))
+    exact (e.apply_symm_apply _).symm
+  rw [this]
 
-/-! ### Joint embedding and amalgamation -/
-
-/-- The block stage of a countable index is at most `ω₁`. -/
-private theorem blockStage_le_omega_one {β : Ordinal.{u}} (hβ : β < ω₁) : blockStage β ≤ ω₁ :=
-  (blockStage_lt_omega_one hβ).le
-
-/-- A stage type at stage `ω₁` with labels fixed by the truncation at `ω + ω · β`, reduced to
-that stage. -/
-private noncomputable def toBlock {β : Ordinal.{u}} {n : ℕ} (t : StageType.{u} ω₁ n) :
-    StageType.{u} (blockStage β) n :=
-  t.reduce (isSuccPrelimit_blockStage β)
-
-private theorem castLE_toBlock {β : Ordinal.{u}} (hβ : β < ω₁) {n : ℕ} (t : StageType.{u} ω₁ n)
-    (ht : ∀ d, Label.reduce (blockStage β) (t.label d) = t.label d) :
-    (toBlock (β := β) t).castLE (blockStage_le_omega_one hβ) = t :=
-  StageType.castLE_reduce_of_atStage t _ _ fun d ↦ Label.reduce_eq_self_iff.mp (ht d)
-
-private theorem isStronglyCodedLegal_toBlock {β : Ordinal.{u}} {n : ℕ} {t : StageType.{u} ω₁ n}
-    (ht : t.IsStronglyCodedLegal) : (toBlock (β := β) t).IsStronglyCodedLegal :=
-  ht
-
-/-- **A chart into the chart of a stage type read at `ω₁`** after an amalgamation at the block
-stage: the face of the cast type is the cast face. -/
-private theorem restrictFace_castLE_toBlock {β : Ordinal.{u}} (hβ : β < ω₁) {n N : ℕ}
-    {Q : StageType.{u} (blockStage β) N} {P : StageType.{u} ω₁ n} {i : Fin n ↪ Fin N}
-    (hP : ∀ d, Label.reduce (blockStage β) (P.label d) = P.label d)
-    (hi : restrictFace i Q = some (toBlock P)) :
-    restrictFace i (Q.castLE (blockStage_le_omega_one hβ)) = some P := by
-  rw [StageType.restrictFace_castLE, hi, Option.map_some, castLE_toBlock hβ P hP]
-
-/-- **Joint embedding** [AFK26, Proposition 4.32]: any two charts in `C_β[L]` embed into the
-chart of one strongly coded legal stage type, which is in `C_β[L]`.  The native joint embedding
-is at the block stage `ω + ω · β`, which is zero or a limit; the hypothesis `β < ω₁` places it
-below `ω₁`. -/
-theorem IsTemplateChart.jointEmbedding {β : Ordinal.{u}} (hβ : β < ω₁) (hM : IsTemplateChart β M)
-    (hN : IsTemplateChart β N) :
-    ∃ (K : ℕ) (Q : StageType.{u} ω₁ K), IsTemplateChart β Q.TemplateChart ∧
-      Nonempty (M ↪[templateChartLanguage.{u}] Q.TemplateChart) ∧
-      Nonempty (N ↪[templateChartLanguage.{u}] Q.TemplateChart) := by
-  obtain ⟨n, P, hn, hP, hPβ, a, hPa⟩ := hM
-  obtain ⟨m, T, -, hT, hTβ, b, hTb⟩ := hN
+/-- **Joint embedding** [AFK26, Proposition 4.32]: any two charts in `C_β[L]` embed into one chart
+in `C_β[L]`, for `β < ω₁`.  Native theorem:
+`StageType.exists_stronglyCoded_jointEmbedding_of_isSuccPrelimit` at the block stage, through the
+dictionary of `IsTemplateChart` and `StageType.templateChartEmbedding`. -/
+theorem IsTemplateChart.jointEmbedding {β : Ordinal.{u}} (hβ : β < ω₁)
+    [G : templateLanguage.{u}.Structure M] [H : templateLanguage.{u}.Structure N]
+    (hG : IsTemplateChart β G) (hH : IsTemplateChart β H) :
+    ∃ (P : Type) (I : templateLanguage.{u}.Structure P), IsTemplateChart β I ∧
+      Nonempty (@Language.Embedding templateLanguage.{u} M P G I) ∧
+      Nonempty (@Language.Embedding templateLanguage.{u} N P H I) := by
+  obtain ⟨n, P, a, hn, hP, hPa⟩ := hG
+  obtain ⟨m, T, b, -, hT, hTb⟩ := hH
+  have hβω := (blockStage_lt_omega_one hβ).le
   obtain ⟨K, Q, i, j, hQ, hQP, hQT⟩ :=
     StageType.exists_stronglyCoded_jointEmbedding_of_isSuccPrelimit (isSuccPrelimit_blockStage β)
-      (isStronglyCodedLegal_toBlock (β := β) hP) (isStronglyCodedLegal_toBlock (β := β) hT)
-  set Q' := Q.castLE (blockStage_le_omega_one hβ)
-  have hQ'P := restrictFace_castLE_toBlock hβ hPβ hQP
-  have hQ'T := restrictFace_castLE_toBlock hβ hTβ hQT
+      ((isLegalTemplate_omega_one_iff_of_le hβω).mp hP)
+      ((isLegalTemplate_omega_one_iff_of_le hβω).mp hT)
   have hK : 0 < K := hn.trans_le (by simpa using Fintype.card_le_of_embedding i)
-  refine ⟨K, Q', isTemplateChart_templateChart hK hQ (fun d ↦ ?_),
-    ⟨(Q'.templateChartEmbedding hQ'P (IsCellRenaming.refl P)).comp hPa.equiv.symm.toEmbedding⟩,
-    ⟨(Q'.templateChartEmbedding hQ'T (IsCellRenaming.refl T)).comp hTb.equiv.symm.toEmbedding⟩⟩
-  exact (Q.atStage d).reduce_eq
+  exact ⟨Q.TemplateChart, inferInstance,
+    isTemplateChart_templateChart hK ((isLegalTemplate_omega_one_iff_of_le hβω).mpr hQ),
+    ⟨(Q.templateChartEmbedding hQP (IsCellRenaming.refl P)).comp
+      (chartEquiv G hPa).symm.toEmbedding⟩,
+    ⟨(Q.templateChartEmbedding hQT (IsCellRenaming.refl T)).comp
+      (chartEquiv H hTb).symm.toEmbedding⟩⟩
 
-/-- **Amalgamation** [AFK26, Proposition 4.32]: two embeddings of a chart in `C_β[L]` into charts
-in `C_β[L]` are amalgamated, with commuting embeddings, in the chart of one strongly coded legal
-stage type, which is in `C_β[L]`.  The point maps are composed literally; the two faces of the
-common chart are cell renamings of each other, and one outer type is renamed before the native
-amalgamation at the block stage `ω + ω · β`. -/
-theorem IsTemplateChart.amalgamation {β : Ordinal.{u}} (hβ : β < ω₁) (hM : IsTemplateChart β M)
-    (hN : IsTemplateChart β N) (hR : IsTemplateChart β R)
-    (f : M ↪[templateChartLanguage.{u}] N) (g : M ↪[templateChartLanguage.{u}] R) :
-    ∃ (K : ℕ) (Q : StageType.{u} ω₁ K), IsTemplateChart β Q.TemplateChart ∧
-      ∃ (i : N ↪[templateChartLanguage.{u}] Q.TemplateChart)
-        (j : R ↪[templateChartLanguage.{u}] Q.TemplateChart), i.comp f = j.comp g := by
-  obtain ⟨k, p, -, hp, -, a, hpa⟩ := hM
-  obtain ⟨n, P, hn, hP, hPβ, b, hPb⟩ := hN
-  obtain ⟨m, T, -, hT, hTβ, c, hTc⟩ := hR
+/-- **Amalgamation** [AFK26, Proposition 4.32]: two embeddings `e : G ↪ H` and `f : G ↪ I` of
+charts in `C_β[L]` are amalgamated by embeddings `i`, `j` into one chart in `C_β[L]` with
+`i ∘ e = j ∘ f`, for `β < ω₁`.  Native theorem:
+`StageType.exists_stronglyCoded_amalgam_of_isSuccPrelimit` at the block stage, through the
+dictionary of `IsTemplateChart` and `StageType.embeddingEquivFace`; the two faces of the common
+chart, renamings of each other, are aligned first (`StageType.exists_restrictFace_renameCells`). -/
+theorem IsTemplateChart.amalgamation {β : Ordinal.{u}} (hβ : β < ω₁)
+    [G : templateLanguage.{u}.Structure M] [H : templateLanguage.{u}.Structure N]
+    [I : templateLanguage.{u}.Structure R]
+    (hG : IsTemplateChart β G) (hH : IsTemplateChart β H) (hI : IsTemplateChart β I)
+    (e : M ↪[templateLanguage.{u}] N) (f : M ↪[templateLanguage.{u}] R) :
+    ∃ (P : Type) (J : templateLanguage.{u}.Structure P), IsTemplateChart β J ∧
+      ∃ (i : @Language.Embedding templateLanguage.{u} N P H J)
+        (j : @Language.Embedding templateLanguage.{u} R P I J),
+        letI := J; i.comp e = j.comp f := by
+  obtain ⟨k, p, a, -, hp, hpa⟩ := hG
+  obtain ⟨n, P, b, hn, hP, hPb⟩ := hH
+  obtain ⟨m, T, c, -, hT, hTc⟩ := hI
+  have hβω := (blockStage_lt_omega_one hβ).le
+  have hp' := (isLegalTemplate_omega_one_iff_of_le hβω).mp hp
+  have hP' := (isLegalTemplate_omega_one_iff_of_le hβω).mp hP
+  have hT' := (isLegalTemplate_omega_one_iff_of_le hβω).mp hT
   -- the two point maps, as embeddings of charts of stage types
-  let φ := hPb.equiv.symm.toEmbedding.comp (f.comp hpa.equiv.toEmbedding)
-  let ψ := hTc.equiv.symm.toEmbedding.comp (g.comp hpa.equiv.toEmbedding)
+  let φ := (chartEquiv H hPb).symm.toEmbedding.comp (e.comp (chartEquiv G hpa).toEmbedding)
+  let ψ := (chartEquiv I hTc).symm.toEmbedding.comp (f.comp (chartEquiv G hpa).toEmbedding)
   let φ' : Fin k ↪ Fin n := φ.toEmbedding
   let ψ' : Fin k ↪ Fin m := ψ.toEmbedding
-  obtain ⟨p₁, hp₁, hpp₁⟩ := P.exists_restrictFace_of_embedding hp φ
-  obtain ⟨p₂, hp₂, hpp₂⟩ := T.exists_restrictFace_of_embedding hp ψ
+  obtain ⟨p₁, hp₁, hpp₁⟩ := P.exists_restrictFace_of_embedding hp' φ
+  obtain ⟨p₂, hp₂, hpp₂⟩ := T.exists_restrictFace_of_embedding hp' ψ
   have hp₁' : restrictFace φ' P = some p₁ := hp₁
   have hp₂' : restrictFace ψ' T = some p₂ := hp₂
+  have h₁₂ : p₂.IsCellRenaming p₁ := (globalClass_eq_iff hβω).mp (hpp₂.trans hpp₁.symm)
   -- rename `T` so that its face is `p₁`
-  obtain ⟨π, hπ⟩ := T.exists_restrictFace_renameCells ψ' hp₂' (hpp₂.symm.trans hpp₁)
-  set T' := T.renameCells π
-  have hT' : T'.IsStronglyCodedLegal := (T.isStronglyCodedLegal_renameCells_iff π).mpr hT
-  have hT'β : ∀ d, Label.reduce (blockStage β) (T'.label d) = T'.label d := fun d ↦ hTβ (π d)
+  obtain ⟨π, hπ⟩ := T.exists_restrictFace_renameCells ψ' hp₂' h₁₂
+  have hT'' : (T.renameCells π).IsStronglyCodedLegal :=
+    (T.isStronglyCodedLegal_renameCells_iff π).mpr hT'
   -- the native amalgamation at the block stage
-  have hp₁β : restrictFace φ' (toBlock (β := β) P) = some (toBlock p₁) := by
-    rw [toBlock, StageType.restrictFace_reduce, hp₁', Option.map_some]
-    rfl
-  have hp₂β : restrictFace ψ' (toBlock (β := β) T') = some (toBlock p₁) := by
-    rw [toBlock, StageType.restrictFace_reduce, hπ, Option.map_some]
-    rfl
   obtain ⟨K, Q, i, j, hQ, hQP, hQT, hcomm⟩ :=
     StageType.exists_stronglyCoded_amalgam_of_isSuccPrelimit (isSuccPrelimit_blockStage β)
-      (isStronglyCodedLegal_toBlock (β := β) hP) (isStronglyCodedLegal_toBlock (β := β) hT')
-      hp₁β hp₂β
-  set Q' := Q.castLE (blockStage_le_omega_one hβ)
-  have hQ'P := restrictFace_castLE_toBlock hβ hPβ hQP
-  have hQ'T := restrictFace_castLE_toBlock hβ hT'β hQT
+      hP' hT'' hp₁' hπ
   have hK : 0 < K := hn.trans_le (by simpa using Fintype.card_le_of_embedding i)
-  refine ⟨K, Q', isTemplateChart_templateChart hK hQ (fun d ↦ (Q.atStage d).reduce_eq),
-    (Q'.templateChartEmbedding hQ'P (IsCellRenaming.refl P)).comp hPb.equiv.symm.toEmbedding,
-    ((Q'.templateChartEmbedding hQ'T (IsCellRenaming.refl T')).comp
-      (T.templateChartEquivRename π).symm.toEmbedding).comp hTc.equiv.symm.toEmbedding, ?_⟩
-  ext y
-  obtain ⟨z, rfl⟩ := hpa.equiv.surjective y
-  exact congrArg (fun e : Fin k ↪ Fin K ↦ e z) hcomm
+  refine ⟨Q.TemplateChart, inferInstance,
+    isTemplateChart_templateChart hK ((isLegalTemplate_omega_one_iff_of_le hβω).mpr hQ),
+    (Q.templateChartEmbedding hQP (IsCellRenaming.refl P)).comp
+      (chartEquiv H hPb).symm.toEmbedding,
+    ((Q.templateChartEmbedding hQT (IsCellRenaming.refl _)).comp
+      (T.templateChartEquivRename π).symm.toEmbedding).comp
+      (chartEquiv I hTc).symm.toEmbedding, Embedding.ext fun y ↦ ?_⟩
+  obtain ⟨z, rfl⟩ := (chartEquiv G hpa).surjective y
+  exact congrArg (fun g : Fin k ↪ Fin K ↦ g z) hcomm
 
 end Charts
 
