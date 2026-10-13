@@ -70,10 +70,10 @@ this is why the receiving forms assume a positive stage.
 **The incompatibility** [printed correspondence].  Let `M` satisfy the density sentence and let
 the printed symbols be read so as to present strongly coded templates.  Then there is no reading
 `P` of `P_1` with both `∀ x, P x` (Singletons) and `∀ x, P x ↔ ⋁_s R_s(x)` (the first clause of
-(b) at arity `1`) (`baseLanguage.not_singletons_and_typing_of_realize_densitySentence`); each of
-the two may hold separately.  Only for the particular reading of `P_n` as "typed" does the first
-clause of (b) fail by itself (`baseLanguage.not_typing_of_realize_densitySentence`).  The template presented at the offending
-point fails clause (5) in every cell renaming
+(b) at arity `1`) (`baseLanguage.not_singletons_and_typing_of_realize_densitySentence`); it is not
+claimed that either fails alone.  Only for the particular reading of `P_n` as "typed" does the
+first clause of (b) fail by itself (`baseLanguage.not_typing_of_realize_densitySentence`).  The
+template presented at the offending point fails clause (5) in every cell renaming
 (`baseLanguage.exists_not_isStronglyCoded_isCellRenaming_of_realize_densitySentence`).
 
 **What the sentence comparison still needs.**  To conclude that no model of the density sentence
