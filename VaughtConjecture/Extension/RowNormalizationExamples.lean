@@ -19,8 +19,8 @@ A conversion of legal schemes into strongly coded ones (`CellScheme.Rows.IsStron
 range clause of [AFK26, Definition "legal"]) that keeps the lawful labellings would be immediate if
 every row could be replaced, one at a time, by a strongly coded row with the same targets: the
 locality of a labelling at a cell asks only that the capped labelling be a target of the row of
-the cell.  This is the reading of the offset bound of [Kni26, Lemma 2.5.13] as a normalization.
-It fails.
+the cell, as in the reading of the offset bound of [Kni26, Lemma 2.5.13] as a normalization.  Such
+a row-by-row conversion does not exist in general.
 
 **The row `(1, 2, 3)`** (`row123`), on three cells of grade `1`, is coded and not strongly coded
 at `1`.  For every row `ℓ` on the same cells whose values are strongly coded at `1`, some labelling
@@ -44,6 +44,11 @@ replacing the last row by `(1, ω + 1, ω + 2)` keeps the lawful labellings, the
 carrying the constraint that `(1, 2, 3)` carried alone (a hand computation, not compiled).  The
 strongly coded legal stage types are instead closed under the extension and amalgamation
 constructions themselves (`VaughtConjecture.Extension.StronglyCodedAmalgamation`).
+
+## Placement
+
+A module of examples: no module of the library imports it, and nothing in the construction or in
+the main theorem depends on it.
 
 ## References
 
