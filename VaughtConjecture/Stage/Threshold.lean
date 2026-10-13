@@ -49,10 +49,11 @@ stage types at `α`: no realization, and no legality (legality depends only on t
   and `K` at least the grade of every cell of `q` labelled the formal top, the labels of `q`
   capped at `β + K` form a lift of `q` to `α`; they are lawful because `β + K` is self-visible at
   the grade of each such cell ([Kni26, Lemma 2.5.8]).
-* **No forcing above the top grade** (`not_forcesThreshold_of_grade_le`): if every grade of `q` is
-  at most `K` and `β + K < α`, then `(q, f)` does not force `K + 1` at a cell labelled the formal
-  top, since the capped lift has the label `β + K` there.  A pair forcing `n` (with
-  `β + (n - 1) < α`) thus has a cell of grade at least `n`, by whatever mechanism it forces.
+* **No forcing above the top grade** (`not_forcesThreshold_of_topGrade_le`): if every cell of `q`
+  labelled the formal top has grade at most `K` and `β + K < α`, then `(q, f)` does not force
+  `K + 1` at a cell labelled the formal top, since the capped lift has the label `β + K` there.
+  Its case with every grade of `q` at most `K` is `not_forcesThreshold_of_grade_le`: a pair forcing
+  `n` (with `β + (n - 1) < α`) has a cell of grade at least `n`, by whatever mechanism it forces.
 
 **The provisional offset** of `d` at `(q, f)` (`StageType.provisionalOffset`) is the supremum in
 `ℕ∞` of the thresholds forced at `d`.  When `q` restricts to `p` along `f` and `d` reduces to the
@@ -349,17 +350,17 @@ theorem capLiftOfLt_reduce (q : StageType.{u} β m) (K : ℕ) (hα : β + K < α
     · rw [h, min_eq_right le_top]
       exact Label.reduce_of_le (Label.coe_le_coe_add β K)
 
-/-- **No forcing above the top grade.**  If every cell of `q` has grade at most `K` and `β + K`
-lies below `α`, then `(q, f)` does not force `K + 1` at a cell `d` of `p` labelled the formal top:
-capping the labels of `q` at `β + K` (self-visible at `K`) gives a stage type at `α` reducing to
-`q` whose label at the position of `d` is `β + K`.  So when `β + (n - 1) < α`, a pair forcing `n`
-at such a cell has a cell of grade at least `n`, hence at least `n` points, whatever the mechanism
-of the forcing. -/
-theorem not_forcesThreshold_of_grade_le {K : ℕ} (hα : β + K < α)
-    (hK : ∀ c, q.toCellScheme.grade c ≤ K) (hfp : restrictFace f q = some p)
+/-- **No forcing above the top grade.**  If every cell of `q` labelled the formal top has grade at
+most `K` and `β + K` lies below `α`, then `(q, f)` does not force `K + 1` at a cell `d` of `p`
+labelled the formal top: capping the labels of `q` at `β + K` (self-visible at the grade of every
+cell labelled the formal top) gives a stage type at `α` reducing to `q` whose label at the
+position of `d` is `β + K`.  Only the cells labelled the formal top are bounded; the other cells
+of `q` may have any grade. -/
+theorem not_forcesThreshold_of_topGrade_le {K : ℕ} (hα : β + K < α)
+    (hK : ∀ c, q.label c = ⊤ → q.toCellScheme.grade c ≤ K) (hfp : restrictFace f q = some p)
     (hd : p.label d = ⊤) : ¬ ForcesThreshold α hβ q f p d (K + 1) := by
   set c : Label.{u} := ((β + K : Ordinal.{u}) : Label.{u})
-  set Q := capLiftOfLt hβ q K hα fun e _ ↦ hK e
+  set Q := capLiftOfLt hβ q K hα hK
   have hQ : Q.reduce hβ = q := capLiftOfLt_reduce hβ q K hα _
   obtain ⟨hf, hcomap⟩ := (restrictFace_eq_some_iff q f).mp hfp
   intro h
@@ -378,6 +379,16 @@ theorem not_forcesThreshold_of_grade_le {K : ℕ} (hα : β + K < α)
     rw [hqd, min_top_left]
   rw [hP, Nat.cast_add_one, ← add_assoc] at hle
   exact (lt_add_one (β + K)).not_ge (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hle))
+
+/-- **No forcing above the grades.**  If every cell of `q` has grade at most `K` and `β + K` lies
+below `α`, then `(q, f)` does not force `K + 1` at a cell `d` of `p` labelled the formal top; the
+case of `not_forcesThreshold_of_topGrade_le` in which every grade is bounded.  So when
+`β + (n - 1) < α`, a pair forcing `n` at such a cell has a cell of grade at least `n`, hence at
+least `n` points, whatever the mechanism of the forcing. -/
+theorem not_forcesThreshold_of_grade_le {K : ℕ} (hα : β + K < α)
+    (hK : ∀ c, q.toCellScheme.grade c ≤ K) (hfp : restrictFace f q = some p)
+    (hd : p.label d = ⊤) : ¬ ForcesThreshold α hβ q f p d (K + 1) :=
+  not_forcesThreshold_of_topGrade_le hα (fun c _ ↦ hK c) hfp hd
 
 /-! ### The provisional offset -/
 
