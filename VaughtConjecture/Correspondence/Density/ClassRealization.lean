@@ -108,12 +108,13 @@ statements that need a positional presentation are targets of the presentation c
   Here the positional consistency of `R` is the coherence that tuplewise renaming lacks.
 * **B.T8, coherent renaming**: for `[Countable M]`, two such presentations of one class
   realization are related by a coherent cell renaming (bijections of cells natural along faces).
-* **Unification with the receiving core**: the class reading of a realization with receiving
-  restricted to strongly coded donors (`HasFiniteExtensionReceivingIn`, not on the main branch
-  when this was written) has donor density, as
-  `Realization.HasFiniteExtensionReceiving.hasDonorDensity_classReading` does for receiving with
-  every legal donor.  This direction reads a given positional realization and needs no
-  presentation.
+
+The opposite direction, from a given positional realization to its class reading, needs no
+presentation: receiving restricted to strongly coded donors gives donor density of the class
+reading (`Realization.HasFiniteExtensionReceivingIn.hasDonorDensity_classReading`, in
+`VaughtConjecture.Correspondence.Density.ReceivingIn`), as
+`Realization.HasFiniteExtensionReceiving.hasDonorDensity_classReading` does for receiving with
+every legal donor.
 -/
 
 universe u v
