@@ -141,10 +141,11 @@ on `m + 1` points with the same face along `Fin.castSuccEmb`, a closed face, are
 legal stage type on `m + 2` points along the coatom omitting the last point (`Fin.castSuccEmb`)
 and the coatom omitting the point `m` (`extendByLast Fin.castSuccEmb`).
 
-This is an existence statement, a hypothesis and not a theorem, while the completion of the amalgam
-of `VaughtConjecture.Extension.CoatomAmalgam` is not constructed.  `exists_pinned_extension` uses
-nothing about the stage `α`: the limit stage of row 6 enters only when this hypothesis is
-discharged, through the stronger `HasApexCoatomExtensions`. -/
+This is an existence statement, proved at every stage `α` that is zero or a limit
+(`StageType.hasCoatomExtensions (hα : Order.IsSuccPrelimit α)`, in
+`VaughtConjecture.MainTheorem.CoatomExtensionTheorem`), by forgetting the apex of
+`HasApexCoatomExtensions`.  `exists_pinned_extension` uses nothing about the stage `α`: the
+premise of row 6 that the stage is zero or a limit enters only through that proof. -/
 def HasCoatomExtensions : Prop :=
   ∀ (m : ℕ) (ta tb : StageType.{u} α (m + 1)) (p : StageType.{u} α m), ta.IsLegal → tb.IsLegal →
     restrictFace Fin.castSuccEmb ta = some p → restrictFace Fin.castSuccEmb tb = some p →
@@ -159,9 +160,13 @@ points with the same face along `Fin.castSuccEmb` are the faces, along `Fin.cast
 cell `Ξ` of full scope and full grade `m + 2` carrying the largest label of `t`,
 `q(Ξ) = max ran q`.
 
-This is an existence statement, a hypothesis and not a theorem, while the completion of the amalgam
-of `VaughtConjecture.Extension.CoatomAmalgam` is not constructed; it is the form in which the
-completion is to be proved, and the apex is what high-arity dominance [Kni26, Lemma 4.4.3] uses. -/
+This is an existence statement, proved at every stage `α` that is zero or a limit
+(`StageType.hasApexCoatomExtensions (hα : Order.IsSuccPrelimit α)`, in
+`VaughtConjecture.Extension.ProfileTowerCompletion`, from a completion of every seed below the
+full grade, `Seed.nonempty_completionBelowFullGrade`), hence at every block stage
+`λ_η = ω + ω · η` (`StageType.hasApexCoatomExtensions_blockStage`, in
+`VaughtConjecture.MainTheorem.CoatomExtensionTheorem`).  The apex is what high-arity dominance
+[Kni26, Lemma 4.4.3] uses. -/
 def HasApexCoatomExtensions : Prop :=
   ∀ (m : ℕ) (ta tb : StageType.{u} α (m + 1)) (p : StageType.{u} α m), ta.IsLegal → tb.IsLegal →
     restrictFace Fin.castSuccEmb ta = some p → restrictFace Fin.castSuccEmb tb = some p →
