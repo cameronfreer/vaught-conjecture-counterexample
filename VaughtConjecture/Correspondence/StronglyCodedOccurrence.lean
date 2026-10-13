@@ -13,9 +13,13 @@ import VaughtConjecture.Realization.Expansion
 
 Every receiving realization at a positive stage, every model at any stage, and every structure
 satisfying the density sentence realizes a type whose rows violate the range clause (5) of
-[AFK26, Definition 4.29].  Under every reading of the printed base symbols in which a symbol holds
-only of tuples carrying a type with strongly coded rows, such a structure fails the clauses
-(Singletons) of [AFK26, Definition 4.13] and the first clause of [AFK26, Definition 4.22 (b)].
+[AFK26, Definition 4.29].  Under every reading of the printed base symbols satisfying
+`baseLanguage.SymbolReading.PresentsStronglyCoded` (a printed symbol holds only of tuples carrying
+a type with strongly coded rows), a structure satisfying the density sentence cannot satisfy both
+the clause (Singletons) of [AFK26, Definition 4.13] and the first clause of
+[AFK26, Definition 4.22 (b)] at arity `1`, whatever the reading of `P_1`.  Neither clause is
+claimed to fail on its own.  The conclusion is restricted to such readings; the comparison of the
+density sentence with the sentence `σ[L]` itself is not proved here (see the last paragraph).
 
 Results are marked **[native]** (statements about realizations and structures of the base
 language) or **[printed correspondence]** (statements about readings of the printed symbols).
@@ -66,14 +70,15 @@ this is why the receiving forms assume a positive stage.
 **The incompatibility** [printed correspondence].  Let `M` satisfy the density sentence and let
 the printed symbols be read so as to present strongly coded templates.  Then there is no reading
 `P` of `P_1` with both `∀ x, P x` (Singletons) and `∀ x, P x ↔ ⋁_s R_s(x)` (the first clause of
-(b) at arity `1`) (`baseLanguage.not_singletons_and_typing_of_realize_densitySentence`).  When
-`P_n` is read as "typed", the first clause of (b) alone fails
-(`baseLanguage.not_typing_of_realize_densitySentence`).  The template presented at the offending
+(b) at arity `1`) (`baseLanguage.not_singletons_and_typing_of_realize_densitySentence`); each of
+the two may hold separately.  Only for the particular reading of `P_n` as "typed" does the first
+clause of (b) fail by itself (`baseLanguage.not_typing_of_realize_densitySentence`).  The template presented at the offending
 point fails clause (5) in every cell renaming
 (`baseLanguage.exists_not_isStronglyCoded_isCellRenaming_of_realize_densitySentence`).
 
 **What the sentence comparison still needs.**  To conclude that no model of the density sentence
-is carried to a model of `σ[L]`, three facts are needed, none of them proved here:
+is carried to a model of `σ[L]`, three facts are needed, none of them proved here, so that
+conclusion remains open:
 1. the sentence `σ[L]` over `L_c[L]` as a Lean sentence, and an interpretation reading `R_t` as
    the class disjunction (`SymbolReading.ofClasses`) and `P_n` by any formula;
 2. satisfaction of `σ[L]` in the interpreted structure gives clause (Singletons) and the first
