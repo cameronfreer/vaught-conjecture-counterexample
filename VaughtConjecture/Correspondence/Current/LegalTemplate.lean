@@ -11,8 +11,8 @@ import VaughtConjecture.Stage.Legal
 /-!
 # Correspondence with the legal templates of [AFK26]
 
-Roadmap, "Manuscript concordance", row 45.  [AFK26, Definition 4.27] calls a template
-`t = (c, (ℓ_d)_{d ∈ D})` over a plan `(A, P)` *legal* if
+Roadmap, "Manuscript concordance", row 45.  [AFK26, Definition 4.27] (version of 5 October 2026)
+calls a template `t = (c, (ℓ_d)_{d ∈ D})` over a plan `(A, P)` *legal* if
 
 1. `range(c) = GradedFace[P]`: every graded face has a cell;
 2. each `ℓ_d` is lawful;
@@ -21,14 +21,14 @@ Roadmap, "Manuscript concordance", row 45.  [AFK26, Definition 4.27] calls a tem
 
 The clauses are compared with `Scheme.IsLegal` (`Stage/Legal`), with the coding clause
 `Scheme.IsCoded` (`Stage/Scheme`).  The setting is that of
-`VaughtConjecture.Correspondence.Current.LocalLabelling` (row 43): a frame is a cell scheme `D`
-with its gradings, and the row system `(ℓ_d)_{d ∈ D}` is read as the fixed semantic rows `R` of
-the scheme ([AFK26, Definitions 4.4–4.6] transcribed literally).  This is not the representation
-of README item 1 and row 9, where a labelling `p` is represented by its coherent local rows
-`r_d(e) = min(p(e), p(d))`; under that reading clause 4 below would bound the labels of `p` (no
-`⊤`, no label `≥ ω ^ 2`) instead of the rows, so the two readings make different objects legal.
-As in rows 43 and 44, the definition is stated at a stage `θ` (`CellScheme.Rows.PrintedLegal θ`);
-[AFK26] takes `θ = ω₁`.
+`VaughtConjecture.Correspondence.Current.LocalLabelling` (row 43): a frame is a cell scheme `D` with
+its gradings, and the row system `(ℓ_d)_{d ∈ D}` is read as the fixed semantic rows `R` of the
+scheme ([AFK26, Definitions 4.4–4.6] (version of 5 October 2026) transcribed literally).  This is
+not the representation of README item 1 and row 9, where a labelling `p` is represented by its
+coherent local rows `r_d(e) = min(p(e), p(d))`; under that reading clause 4 below would bound the
+labels of `p` (no `⊤`, no label `≥ ω ^ 2`) instead of the rows, so the two readings make different
+objects legal.  As in rows 43 and 44, the definition is stated at a stage `θ`
+(`CellScheme.Rows.PrintedLegal θ`); [AFK26] takes `θ = ω₁`.
 
 | Printed clause | `PrintedLegal` | `CorrectedLegal` | `Scheme.IsLegal` |
 | --- | --- | --- | --- |
@@ -39,15 +39,16 @@ As in rows 43 and 44, the definition is stated at a stage `θ` (`CellScheme.Rows
 | 4. `range(ℓ_d) ⊆ {-∞} ∪ {ω · n + i : i ≤ g(d)}` | `range` | `range` | `isCoded` (weaker) |
 
 **Correction of clause 1** (status C).  A printed graded face may have grade `0`
-([AFK26, Definition 4.2]), so clause 1 asks for a cell of grade `0` on every face, `∅` among them.
-Within [AFK26] this is consistent, since a frame there may have cells of grade `0`.  The
-correction is therefore one of the graded faces of [AFK26, Definition 4.2]: they are taken of
-positive grade, as in [Kni26, Definition 2.1.8], which the frames of this development follow.  No
-such frame satisfies clause 1 as printed (`CellScheme.Rows.not_printedLegal`).  The corrected
-clause asks for a cell on every graded face of positive grade, which is completeness
-(`CellScheme.IsComplete`, field `isComplete` of `CellScheme.Rows.CorrectedLegal`); the typing of the
-frame is corrected in the same way (field `gradedIndex_mem`).  No theorem here relates a printed
-legal template with cells of grade `0` to a corrected one.
+([AFK26, Definition 4.2] (version of 5 October 2026)), so clause 1 asks for a cell of grade `0` on
+every face, `∅` among them.  Within [AFK26] this is consistent, since a frame there may have cells
+of grade `0`.  The correction is therefore one of the graded faces of [AFK26, Definition 4.2]
+(version of 5 October 2026): they are taken of positive grade, as in [Kni26, Definition 2.1.8],
+which the frames of this development follow.  No such frame satisfies clause 1 as printed
+(`CellScheme.Rows.not_printedLegal`).  The corrected clause asks for a cell on every graded face of
+positive grade, which is completeness (`CellScheme.IsComplete`, field `isComplete` of
+`CellScheme.Rows.CorrectedLegal`); the typing of the frame is corrected in the same way (field
+`gradedIndex_mem`).  No theorem here relates a printed legal template with cells of grade `0` to a
+corrected one.
 
 **Clauses 2–4** (status S).  Agreement on lawful labellings (row 43, clause 2) is not a
 correspondence of legal schemes: clause 4 excludes some legal schemes.
@@ -70,10 +71,23 @@ correspondence of legal schemes: clause 4 excludes some legal schemes.
   printed (clause 3 at `ω₁` only) is a legal scheme is not proved (row 44).  Whether every legal
   scheme is equivalent to one satisfying clause 4 is not proved here.
 
+**The current draft.**  This module formalizes Definition 4.27 of the version of 5 October 2026,
+and its citations are to that version: `CellScheme.Rows.PrintedLegal` encodes its graded faces of
+grade `0`, and `CellScheme.Rows.HasPrintedRange` its range bound `i ≤ g(d)`.  Definition 4.29 of
+the current draft of [AFK26] differs: a template there is a triple `(c, Σ, p)`, and its clauses
+are (1) every graded face has a cell, with the graded faces of its Definition 4.2 of positive
+grade (the correction of clause 1 above, adopted); (2), new, the labelling `p` is lawful with
+respect to `Σ`; (3) and (4), clauses 2 and 3 above, with the bountifulness of its Definition 4.28
+(caps in `{-∞} ∪ ω₁ ∪ {∞}`, row 44); and (5) the range clause with the bound `i ≤ g(d) + 1`, the
+strong coding of the rows `CellScheme.Rows.IsStronglyCoded` (the bound `j ≤ k + 1` of
+[Kni26, Lemma 2.5.13]).  No declaration of this module states Definition 4.29; the comparison with
+it is concordance note 45 (an informal comparison) and the strongly coded legal stage types
+(`StageType.IsStronglyCodedLegal`, under development).
+
 **Departures that are not fields.**
-* The plan conditions of [AFK26, Definition 4.1] are not fields of `CellScheme.Rows.PrintedLegal`
-  or `CellScheme.Rows.CorrectedLegal`; they are supplied by `Scheme.IsWellFormed` in
-  `Scheme.isLegal_and_hasPrintedRange_iff`.
+* The plan conditions of [AFK26, Definition 4.1] (version of 5 October 2026) are not fields of
+  `CellScheme.Rows.PrintedLegal` or `CellScheme.Rows.CorrectedLegal`; they are given by
+  `Scheme.IsWellFormed` in `Scheme.isLegal_and_hasPrintedRange_iff`.
 * The printed set of cells `D` is arbitrary, while the cells of a scheme here are finite
   (`Fin card`), and the bountiful theorems of row 44 take `[Finite ι]`.
 
@@ -85,25 +99,27 @@ is legal and satisfies clause 4; the two together are an equivalence
 (`Scheme.isLegal_and_hasPrintedRange_iff`).  No theorem here derives `Scheme.IsLegal` from the
 corrected definition at the single stage `ω₁`.
 
-**The statements that follow** (statements only, rows 46 and 47).  [AFK26, Lemma 4.28]: a template
-system of legal templates representing every legal template up to relabelling isomorphism; here the
-legal stage types are closed under the face maps (`StageType.IsLegal.restrictFace`), reindexing
-(`StageType.IsLegal.reindex`), and stage reduction (`StageType.isLegal_reduce_iff`), with one
-relation symbol of the base language for each legal stage type at stage `ω`.  Under the reading of
-rows 43–45 the first clause of Lemma 4.28 (all templates in `L` are legal templates) fails for the
-legal stage types here as they stand: at every stage there is a legal stage type on a scheme
-violating clause 4 (`StageType.exists_isLegal_not_hasPrintedRange`).  Under this reading a
-template carries no labelling, so `σ[L]` and `baseLanguage` are indexed by different kinds of
-object (templates, legal stage types); their underlying schemes differ by clause 4
-(`pointRow 2`), and a comparison of the two languages needs the representation of README item 1
-(row 9) in any case.  Under the coherent-rows reading of row 9 the witness, whose labels are all
-`⊥`, satisfies clause 4; there clause 4 bounds the labels.  Either of two results would resolve
-this, and neither is chosen here: a proof that the class restricted by clause 4 suffices for the
-main theorem, or a correction of clause 4 recorded as C.
-[AFK26, Theorem 4.29], the counterexample, corresponds to the main theorem in its conditional
-composition `vaughtCounterexample_of_expansionDomains` (`MainTheorem/Assembly`), with the density
-sentence for `σ[L]`; both rows are still to be proved.  Under the fixed-semantic-rows reading,
-the identification of `σ[L]` is subject to the same difference of classes.
+**The statements that follow, in the version of 5 October 2026** (statements only, rows 46 and 47;
+in the current draft, Proposition 4.30 and Theorem 4.36, compared in concordance notes 46 and 47).
+[AFK26, Lemma 4.28] (version of 5 October 2026): a template system of legal templates representing
+every legal template up to relabelling isomorphism; here the legal stage types are closed under the
+face maps (`StageType.IsLegal.restrictFace`), reindexing (`StageType.IsLegal.reindex`), and stage
+reduction (`StageType.isLegal_reduce_iff`), with one relation symbol of the base language for each
+legal stage type at stage `ω`.  Under the reading of rows 43–45 the first clause of Lemma 4.28 (all
+templates in `L` are legal templates) fails for the legal stage types here as they stand: at every
+stage there is a legal stage type on a scheme violating clause 4
+(`StageType.exists_isLegal_not_hasPrintedRange`).  Under this reading a template carries no
+labelling, so `σ[L]` and `baseLanguage` are indexed by different kinds of object (templates, legal
+stage types); their underlying schemes differ by clause 4 (`pointRow 2`), and a comparison of the
+two languages needs the representation of README item 1 (row 9) in any case.  Under the
+coherent-rows reading of row 9 the witness, whose labels are all `⊥`, satisfies clause 4; there
+clause 4 bounds the labels.  Either of two results would resolve this, and neither is chosen here: a
+proof that the class restricted by clause 4 suffices for the main theorem, or a correction of clause
+4 recorded as C.  [AFK26, Theorem 4.29] (version of 5 October 2026), the counterexample, corresponds
+to the main theorem in its conditional composition `vaughtCounterexample_of_expansionDomains`
+(`MainTheorem/Assembly`), with the density sentence for `σ[L]`; both rows are still to be proved.
+Under the fixed-semantic-rows reading, the identification of `σ[L]` is subject to the same
+difference of classes.
 
 ## Placement
 
@@ -120,40 +136,56 @@ namespace CellScheme.Rows
 
 variable {ι α : Type*} {D : CellScheme ι α} (R : D.Rows.{u}) {θ : Ordinal.{u}}
 
-/-- **The range clause of [AFK26, Definition 4.27]**: every value of the row of a cell `d` is `-∞`
-or an ordinal `ω · n + i` with `n ∈ ω` and `i ≤ g(d)`. -/
+/-- **The range clause of [AFK26, Definition 4.27] (version of 5 October 2026)**: every value of
+the row of a cell `d` is `-∞` or an ordinal `ω · n + i` with `n ∈ ω` and `i ≤ g(d)`.
+
+Historical: this is the bound of the version of 5 October 2026.  Clause 5 of Definition 4.29 of
+the current draft of [AFK26] has the bound `i ≤ g(d) + 1`, the strong coding of the rows
+`CellScheme.Rows.IsStronglyCoded`; see concordance note 45 and the strongly coded legal stage
+types (`StageType.IsStronglyCodedLegal`, under development). -/
 def HasPrintedRange : Prop :=
   ∀ s (t : D.below (D.gradedIndex s)), R.row s t = ⊥ ∨
     ∃ n i : ℕ, i ≤ D.grade s ∧ R.row s t = ((ω * n + i : Ordinal.{u}) : Label.{u})
 
-/-- **Legal templates as printed** [AFK26, Definition 4.27], at stage `θ`: the frame takes values
-among the printed graded faces (grade `0` allowed), and the four printed clauses. -/
+/-- **Legal templates as printed** [AFK26, Definition 4.27] (version of 5 October 2026), at stage
+`θ`: the frame takes values among the printed graded faces (grade `0` allowed), and the four printed
+clauses.
+
+Historical: Definition 4.29 of the current draft of [AFK26] takes graded faces of positive grade,
+adds the lawfulness of the labelling `p` of a template `(c, Σ, p)`, and has the range bound
+`i ≤ g(d) + 1`; see concordance note 45 and the strongly coded legal stage types
+(`StageType.IsStronglyCodedLegal`, under development). -/
 structure PrintedLegal (θ : Ordinal.{u}) : Prop where
-  /-- The frame of [AFK26, Definition 4.4]: `c : D → GradedFace[P]`. -/
+  /-- The frame of [AFK26, Definition 4.4] (version of 5 October 2026): `c : D → GradedFace[P]`. -/
   gradedIndex_mem : ∀ d, D.gradedIndex d ∈ D.printedGradedFaces
-  /-- Clause 1 of [AFK26, Definition 4.27]: every graded face has a cell. -/
+  /-- Clause 1 of [AFK26, Definition 4.27] (version of 5 October 2026): every graded face has a
+  cell. -/
   exists_gradedIndex_eq : ∀ X ∈ D.printedGradedFaces, ∃ d, D.gradedIndex d = X
-  /-- Clause 2 of [AFK26, Definition 4.27]: each `ℓ_d` is lawful. -/
+  /-- Clause 2 of [AFK26, Definition 4.27] (version of 5 October 2026): each `ℓ_d` is lawful. -/
   lawful : ∀ d, R.PrintedLawfulLocal θ (D.gradedIndex d) (R.row d)
-  /-- Clause 3 of [AFK26, Definition 4.27]: the rows are bountiful. -/
+  /-- Clause 3 of [AFK26, Definition 4.27] (version of 5 October 2026): the rows are bountiful. -/
   bountiful : R.PrintedBountifulRows θ
-  /-- Clause 4 of [AFK26, Definition 4.27]: `range(ℓ_d) ⊆ {-∞} ∪ {ω · n + i : i ≤ g(d)}`. -/
+  /-- Clause 4 of [AFK26, Definition 4.27] (version of 5 October 2026):
+  `range(ℓ_d) ⊆ {-∞} ∪ {ω · n + i : i ≤ g(d)}`. -/
   range : R.HasPrintedRange
 
-/-- **Legal templates, corrected** [AFK26, Definition 4.27], at stage `θ`: as printed, with the
-graded faces of clause 1 and of the frame those of positive grade. -/
+/-- **Legal templates, corrected** [AFK26, Definition 4.27] (version of 5 October 2026), at stage
+`θ`: as printed, with the graded faces of clause 1 and of the frame those of positive grade.  The
+range clause is still that of the version of 5 October 2026 (`i ≤ g(d)`), not clause 5 of the
+current draft's Definition 4.29 (`i ≤ g(d) + 1`; concordance note 45). -/
 structure CorrectedLegal (θ : Ordinal.{u}) : Prop where
-  /-- The frame of [AFK26, Definition 4.4], corrected: every cell has a graded face of positive
-  grade. -/
+  /-- The frame of [AFK26, Definition 4.4] (version of 5 October 2026), corrected: every cell has a
+  graded face of positive grade. -/
   gradedIndex_mem : ∀ d, D.gradedIndex d ∈ D.gradedFaces
-  /-- Clause 1 of [AFK26, Definition 4.27], corrected: every graded face of positive grade has a
-  cell. -/
+  /-- Clause 1 of [AFK26, Definition 4.27] (version of 5 October 2026), corrected: every graded face
+  of positive grade has a cell. -/
   isComplete : D.IsComplete
-  /-- Clause 2 of [AFK26, Definition 4.27]: each `ℓ_d` is lawful. -/
+  /-- Clause 2 of [AFK26, Definition 4.27] (version of 5 October 2026): each `ℓ_d` is lawful. -/
   lawful : ∀ d, R.PrintedLawfulLocal θ (D.gradedIndex d) (R.row d)
-  /-- Clause 3 of [AFK26, Definition 4.27]: the rows are bountiful. -/
+  /-- Clause 3 of [AFK26, Definition 4.27] (version of 5 October 2026): the rows are bountiful. -/
   bountiful : R.PrintedBountifulRows θ
-  /-- Clause 4 of [AFK26, Definition 4.27]: `range(ℓ_d) ⊆ {-∞} ∪ {ω · n + i : i ≤ g(d)}`. -/
+  /-- Clause 4 of [AFK26, Definition 4.27] (version of 5 October 2026):
+  `range(ℓ_d) ⊆ {-∞} ∪ {ω · n + i : i ≤ g(d)}`. -/
   range : R.HasPrintedRange
 
 variable {R}
@@ -186,9 +218,9 @@ variable {n : ℕ} {S : Scheme.{u} n} {θ : Ordinal.{u}}
 private theorem isSuccPrelimit_omega0_sq : Order.IsSuccPrelimit (ω ^ 2 : Ordinal.{u}) :=
   isSuccPrelimit_iff_omega0_dvd.mpr (dvd_pow_self ω two_ne_zero)
 
-/-- **Legal schemes are legal templates, with the range clause** [AFK26, Definition 4.27]: a legal
-scheme whose rows satisfy clause 4 satisfies the corrected definition at every stage `θ ≥ ω ^ 2`
-that is zero or a limit. -/
+/-- **Legal schemes are legal templates, with the range clause** [AFK26, Definition 4.27] (version
+of 5 October 2026): a legal scheme whose rows satisfy clause 4 satisfies the corrected definition at
+every stage `θ ≥ ω ^ 2` that is zero or a limit. -/
 theorem IsLegal.correctedLegal (hS : S.IsLegal) (hr : S.rows.HasPrintedRange)
     (hθ : Order.IsSuccPrelimit θ) (hθ2 : ω ^ 2 ≤ θ) : S.rows.CorrectedLegal θ where
   gradedIndex_mem := hS.isWellFormed.isWellFormed.gradedIndex_mem
@@ -199,17 +231,17 @@ theorem IsLegal.correctedLegal (hS : S.IsLegal) (hr : S.rows.HasPrintedRange)
     (hS.isCoded.atStage hθ2)
   range := hr
 
-/-- **Legal schemes are legal templates of [AFK26, Definition 4.27] at `ω₁`**, corrected, when their
-rows satisfy clause 4. -/
+/-- **Legal schemes are legal templates of [AFK26, Definition 4.27] (version of 5 October 2026) at
+`ω₁`**, corrected, when their rows satisfy clause 4. -/
 theorem IsLegal.correctedLegal_omega_one (hS : S.IsLegal) (hr : S.rows.HasPrintedRange) :
     S.rows.CorrectedLegal (Ordinal.omega 1) :=
   hS.correctedLegal hr (Cardinal.isSuccLimit_omega 1).isSuccPrelimit Label.omega0_sq_lt_omega_one.le
 
-/-- **Legal schemes with the range clause are the legal templates of [AFK26, Definition 4.27] at
-every stage, with the extension of lawful labellings**: a scheme is legal and satisfies clause 4
-exactly when it is well formed, satisfies the corrected definition at every stage `θ ≥ ω ^ 2` that
-is zero or a limit, and every labelling lawful below a graded face extends to one lawful below
-every larger graded face. -/
+/-- **Legal schemes with the range clause are the legal templates of [AFK26, Definition 4.27]
+(version of 5 October 2026) at every stage, with the extension of lawful labellings**: a scheme is
+legal and satisfies clause 4 exactly when it is well formed, satisfies the corrected definition at
+every stage `θ ≥ ω ^ 2` that is zero or a limit, and every labelling lawful below a graded face
+extends to one lawful below every larger graded face. -/
 theorem isLegal_and_hasPrintedRange_iff :
     S.IsLegal ∧ S.rows.HasPrintedRange ↔
       S.IsWellFormed ∧
@@ -237,8 +269,8 @@ private theorem isLegal_pointRow_two : (CodingExamples.pointRow (2 : Label.{u}))
   CodingExamples.isLegal_pointRow (lt_omega0_sq_iff.mpr (.inr ⟨0, 2, by simp⟩))
     (by simp)
 
-/-- **`CodingExamples.pointRow 2` violates clause 4 of [AFK26, Definition 4.27]**: its row has the
-value `2` at a cell of grade `1`. -/
+/-- **`CodingExamples.pointRow 2` violates clause 4 of [AFK26, Definition 4.27] (version of 5
+October 2026)**: its row has the value `2` at a cell of grade `1`. -/
 theorem not_hasPrintedRange_pointRow_two :
     ¬ (CodingExamples.pointRow (2 : Label.{u})).rows.HasPrintedRange := fun h ↦ by
   rcases h (0 : Fin 1) ⟨(0 : Fin 1), CellScheme.mem_below_gradedIndex _ _⟩ with h | ⟨k, i, hi, h⟩
@@ -261,15 +293,16 @@ theorem not_hasPrintedRange_pointRow_two :
 
 /-- **`CodingExamples.pointRow 2` satisfies the offset bound of [Kni26, Lemma 2.5.13]**: its row
 value `2` at a cell of grade `1` has finite part at most the grade plus one.  With
-`Scheme.not_hasPrintedRange_pointRow_two`, clause 4 of [AFK26, Definition 4.27] (`i ≤ g(d)`) is
-strictly tighter than that bound (`j ≤ k + 1`). -/
+`Scheme.not_hasPrintedRange_pointRow_two`, clause 4 of [AFK26, Definition 4.27] (version of 5
+October 2026) (`i ≤ g(d)`) is strictly tighter than that bound (`j ≤ k + 1`), which is the bound
+of clause 5 of the current draft's Definition 4.29. -/
 theorem isStronglyCoded_pointRow_two :
     (CodingExamples.pointRow (2 : Label.{u})).rows.IsStronglyCoded := fun _ _ ↦ by
   simp [CodingExamples.pointRow]
 
 /-- **The range clause is not part of legality**: the one-point scheme `CodingExamples.pointRow 2`,
 whose row has the value `2` at its cell of grade `1`, is legal and violates clause 4 of
-[AFK26, Definition 4.27]. -/
+[AFK26, Definition 4.27] (version of 5 October 2026). -/
 theorem exists_isLegal_not_hasPrintedRange :
     ∃ S : Scheme.{u} 1, S.IsLegal ∧ ¬ S.rows.HasPrintedRange :=
   ⟨_, isLegal_pointRow_two, not_hasPrintedRange_pointRow_two⟩
@@ -280,7 +313,8 @@ namespace StageType
 
 /-- **Legal stage types on a scheme violating the range clause**: at every stage, the bottom
 labelling of `CodingExamples.pointRow 2` is a legal stage type whose rows violate clause 4 of
-[AFK26, Definition 4.27].  At stage `ω` it is a relation symbol of `baseLanguage`. -/
+[AFK26, Definition 4.27] (version of 5 October 2026).  At stage `ω` it is a relation symbol of
+`baseLanguage`. -/
 theorem exists_isLegal_not_hasPrintedRange (α : Ordinal.{u}) :
     ∃ t : StageType.{u} α 1, t.IsLegal ∧ ¬ t.rows.HasPrintedRange :=
   ⟨Scheme.isLegal_pointRow_two.toStageType α, Scheme.isLegal_pointRow_two.isLegal_toStageType α,

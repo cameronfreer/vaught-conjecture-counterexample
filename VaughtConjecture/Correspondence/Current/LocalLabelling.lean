@@ -9,31 +9,41 @@ import VaughtConjecture.Correspondence.Current.Transform
 /-!
 # Correspondence with the legal templates of [AFK26]: lawful local labellings
 
-Roadmap, "Manuscript concordance", row 43.  [AFK26, Definition 4.26] (first part) calls a local
-labelling `r : D↓U → L` at a graded face `U` of a template `t = (c, Σ)`, `Σ = (ℓ_d)_{d ∈ D}`,
-*lawful* with respect to `Σ` when it satisfies Orderliness, Locality, and Availability.  The
-clauses are compared with `CellScheme.Rows.IsLawfulBelow`, lawfulness below a pair.
+Roadmap, "Manuscript concordance", row 43.  [AFK26, Definition 4.28] (current draft; first
+part) calls a local labelling `r : D↓U → L` at a graded face `U` of a template with row system
+`Σ = (ℓ_d)_{d ∈ D}` *lawful* with respect to `Σ` when it satisfies Orderliness, Locality, and
+Availability.  The three clauses are those of the first part of [AFK26, Definition 4.26] (version
+of 5 October 2026), unchanged apart from notation (Locality there reads
+`ℓ_d ⇒ [min {r↾D↓d, r(d)}]`).  The clauses are compared with `CellScheme.Rows.IsLawfulBelow`,
+lawfulness below a pair.
 
 ## The setting
 
-A template is a frame `c : D → GradedFace[P]` with a row system [AFK26, Definitions 4.4–4.6]: here
-a cell scheme `D` (the frame, with the faces of the scheme as the plan), its scope and grade
-functions `s = CellScheme.scope`, `g = CellScheme.grade`, `c = CellScheme.gradedIndex`, and rows
-`R : D.Rows`, the row `R.row d` being the local label `ℓ_d : D↓d → L`.  The cells `D↓U` below `U`
-[AFK26, Definition 4.4] are `D.below U`, the order of graded faces [AFK26, Definition 4.2] being
-the product order on pairs.  The printed graded faces `(B, j)` have `B ∈ P` and `j ≤ |B|`
-(`CellScheme.printedGradedFaces`); the graded faces of this development have `0 < j`
-(`CellScheme.gradedFaces`), and the two differ by the faces of grade `0`
-(`CellScheme.mem_printedGradedFaces_iff`).  Lawfulness at `U` is stated here for every pair `U`.
+The setting is that of the version of 5 October 2026 of [AFK26].  A template is a frame
+`c : D → GradedFace[P]` with a row system [AFK26, Definitions 4.4–4.6] (version of 5 October
+2026; in the current draft, Definitions 4.3–4.5, a template is a triple `(c, Σ, p)` carrying a
+labelling `p`, and the rows take values in `{-∞} ∪ ω²`): here a cell scheme `D` (the frame, with
+the faces of the scheme as the plan), its scope and grade functions `s = CellScheme.scope`,
+`g = CellScheme.grade`, `c = CellScheme.gradedIndex`, and rows `R : D.Rows`, the row `R.row d`
+being the local label `ℓ_d : D↓d → L`.  The cells `D↓U` below `U` [AFK26, Definition 4.3]
+(current draft; Definition 4.4 of the version of 5 October 2026) are `D.below U`, the order of
+graded faces [AFK26, Definition 4.2] (version of 5 October 2026) being the product order on pairs.
+The printed graded faces `(B, j)` of that version have `B ∈ P` and `j ≤ |B|`
+(`CellScheme.printedGradedFaces`); the graded faces of this development, like those of the
+current draft's Definition 4.2, have `0 < j` (`CellScheme.gradedFaces`), and the two differ by the
+faces of grade `0` (`CellScheme.mem_printedGradedFaces_iff`).  Lawfulness at `U` is stated here
+for every pair `U`.
 
 **The reading of the row system.**  Rows 43–47 read the row system `Σ = (ℓ_d)_{d ∈ D}` of a
 template as the *fixed semantic rows* `R` of a cell scheme, against which a labelling is lawful;
-this is [AFK26, Definitions 4.4–4.6] transcribed literally.  It is not the representation of
-README item 1 and concordance row 9, in which a labelling `p` of a fixed scheme is represented by
-its *coherent local rows* `r_d(e) = min(p(e), p(d))`.  The two readings make different objects
-legal: under the coherent-rows reading the range clause (clause 4) of [AFK26, Definition 4.27]
-would bound the labels of `p` (no `⊤`, no label `≥ ω ^ 2`, finite part at most the grade on the
-diagonal), while under the reading here it bounds the rows of the scheme only.  Which reading
+this is [AFK26, Definitions 4.4–4.6] (version of 5 October 2026) transcribed literally.  It is
+not the representation of README item 1 and concordance row 9, in which a labelling `p` of a fixed
+scheme is represented by its *coherent local rows* `r_d(e) = min(p(e), p(d))`.  The two readings
+make different objects legal: under the coherent-rows reading the range clause (clause 4) of
+[AFK26, Definition 4.27] (version of 5 October 2026; clause 5 of Definition 4.29 of the current
+draft, with the bound `i ≤ g(d) + 1`) would bound the labels of `p` (no `⊤`, no label `≥ ω ^ 2`,
+finite part at most the grade on the diagonal, under the bound of that version), while under the
+reading here it bounds the rows of the scheme only.  Which reading
 [AFK26] intends is part of the fidelity question of item 1.  The identification of this module
 holds for every row system `R`: it concerns lawful labellings against given rows, and by itself
 says nothing about which schemes are legal (row 45).
@@ -46,7 +56,7 @@ labellings with values at that stage; at `ω₁` it is
 | Printed clause | `PrintedLawfulLocal` | `IsLawful` below `U` |
 | --- | --- | --- |
 | (Orderliness) `r(d)` self-visible at `g(d)` | `orderliness` | `orderly` |
-| (Locality) `ℓ_d ⇒ min (r↾D↓d, r(d))` | `locality` | `locality` |
+| (Locality) `ℓ_d ⇒ r_d`, `r_d(e) = min (r(e), r(d))` | `locality` | `locality` |
 | (Availability) `s(d) ⊆ s(e)`, `g(d) = g(e)` give `e'` (below) | `availability` | `availability` |
 
 In (Availability) the cell `e' ∈ D` has `c(e) = c(e')` and `r(d) ≤ r(e')`.
@@ -56,11 +66,14 @@ limit, for rows and a labelling with values at stage `θ`, `r` is lawful at `U` 
 when it is lawful below `U`.
 
 **Departures**, each proved harmless:
-1. *Self-visibility* in Orderliness is that of [AFK26, Definition 4.24], with the corrected
-   visibility map of row 41 (`Label.CorrectedVisibilityMap.apply_eq_self_iff`).
+1. *Self-visibility* in Orderliness is that of [AFK26, Definition 4.24] (version of 5 October
+   2026), with the corrected visibility map of row 41
+   (`Label.CorrectedVisibilityMap.apply_eq_self_iff`); the current draft's Definition 4.26 states
+   the corrected map (concordance note 41; no theorem here compares the two).
 2. *The relation* `⇒` in Locality is the corrected relation of row 42, the relation of
    [Kni26, Definition 2.3.9] at stage `θ`; it is `Label.TransformsTo` for the labellings in
-   question by `Label.printedTransformsTo_iff` (row 3).
+   question by `Label.printedTransformsTo_iff` (row 3).  The current draft's Definition 4.27
+   states the corrected relation (concordance note 42; no theorem here compares the two).
 3. *The cell `e'` of Availability* ranges over `D`, while `r(e')` is defined only on `D↓U`: here
    `e'` is a cell of `D` lying in `D↓U`, and every cell with the graded index of a cell below `U`
    lies below `U` (`CellScheme.mem_below_of_gradedIndex_eq`).
@@ -92,8 +105,9 @@ namespace CellScheme
 
 variable {ι α : Type*} {D : CellScheme ι α}
 
-/-- **The graded faces of [AFK26, Definition 4.2]**: the pairs `(B, j)` with `B` a face and
-`j ≤ |B|`, the grade `0` included. -/
+/-- **The graded faces of [AFK26, Definition 4.2] (version of 5 October 2026)**: the pairs
+`(B, j)` with `B` a face and `j ≤ |B|`, the grade `0` included.  Historical: the graded faces of
+the current draft's Definition 4.2 have `1 ≤ j ≤ |B|`, which are `CellScheme.gradedFaces`. -/
 def printedGradedFaces (D : CellScheme ι α) : Set (Finset α × ℕ) :=
   {X | X.1 ∈ D.faces ∧ X.2 ≤ #X.1}
 
@@ -117,29 +131,32 @@ namespace Rows
 
 variable (R : D.Rows.{u}) {θ : Ordinal.{u}} {U : Finset α × ℕ}
 
-/-- **Lawful local labellings** [AFK26, Definition 4.26], at stage `θ`: a labelling `r` of the
-cells below `U` satisfying Orderliness, Locality, and Availability with respect to the rows `R`,
-the relation of Locality being the corrected relation of [AFK26, Definition 4.25], that of
-[Kni26, Definition 2.3.9] at stage `θ`. -/
+/-- **Lawful local labellings** [AFK26, Definition 4.28] (current draft; the same clauses as the
+first part of Definition 4.26 of the version of 5 October 2026), at stage `θ`: a labelling `r` of
+the cells below `U` satisfying Orderliness, Locality, and Availability with respect to the rows
+`R`, the relation of Locality being the corrected relation of [AFK26, Definition 4.25] (version of
+5 October 2026), that of [Kni26, Definition 2.3.9] at stage `θ`. -/
 structure PrintedLawfulLocal (θ : Ordinal.{u}) (U : Finset α × ℕ) (r : D.below U → Label.{u}) :
     Prop where
-  /-- (Orderliness) of [AFK26, Definition 4.26]: `r(d)` is self-visible at `g(d)`. -/
+  /-- (Orderliness) of [AFK26, Definition 4.28] (current draft): `r(d)` is self-visible at
+  `g(d)`. -/
   orderliness : ∀ d : D.below U, IsSelfVisible (D.grade d) (r d)
-  /-- (Locality) of [AFK26, Definition 4.26]: `ℓ_d ⇒ min (r↾D↓d, r(d))` over the grades of the
-  cells below `d`. -/
+  /-- (Locality) of [AFK26, Definition 4.28] (current draft): `ℓ_d ⇒ r_d`, where
+  `r_d(e) = min (r(e), r(d))` for `e ∈ D↓d`, over the grades of the cells below `d`. -/
   locality : ∀ d : D.below U,
     PrintedTransformsTo θ (fun e : D.below (D.gradedIndex d) ↦ D.grade e) (R.row d)
       (fun e ↦ min (r (Set.inclusion (D.below_mono d.2) e)) (r d))
-  /-- (Availability) of [AFK26, Definition 4.26]: if `s(d) ⊆ s(e)` and `g(d) = g(e)`, then some
-  cell `e'` of `D` (lying in `D↓U`) has `c(e) = c(e')` and `r(d) ≤ r(e')`. -/
+  /-- (Availability) of [AFK26, Definition 4.28] (current draft): if `s(d) ⊆ s(e)` and
+  `g(d) = g(e)`, then some cell `e'` of `D` (lying in `D↓U`) has `c(e) = c(e')` and
+  `r(d) ≤ r(e')`. -/
   availability : ∀ d e : D.below U, D.scope d ⊆ D.scope e → D.grade d = D.grade e →
     ∃ e' : ι, D.gradedIndex e' = D.gradedIndex e ∧ ∃ he' : e' ∈ D.below U, r d ≤ r ⟨e', he'⟩
 
 variable {R} {r : D.below U → Label.{u}}
 
-/-- **Lawful local labellings are the labellings lawful below `U`** [AFK26, Definition 4.26]: at
-a stage `θ` that is zero or a limit, for rows and a labelling with values at stage `θ`, `r` is
-lawful at `U` as printed exactly when it is lawful below `U`. -/
+/-- **Lawful local labellings are the labellings lawful below `U`** [AFK26, Definition 4.28]
+(current draft): at a stage `θ` that is zero or a limit, for rows and a labelling with values at
+stage `θ`, `r` is lawful at `U` as printed exactly when it is lawful below `U`. -/
 theorem printedLawfulLocal_iff (hθ : Order.IsSuccPrelimit θ) (hR : ∀ s t, AtStage θ (R.row s t))
     (hr : ∀ d, AtStage θ (r d)) : R.PrintedLawfulLocal θ U r ↔ R.IsLawfulBelow U r := by
   -- The cells below `d` in `D` and in the scheme of cells below `U`.
@@ -162,7 +179,7 @@ theorem printedLawfulLocal_iff (hθ : Order.IsSuccPrelimit θ) (hR : ∀ s t, At
   · obtain ⟨e', he, hle⟩ := (isLawfulBelow_iff.mp h).availability d e hde hg
     exact ⟨e'.1, he, e'.2, hle⟩
 
-/-- **Lawful local labellings** [AFK26, Definition 4.26] on the printed labels
+/-- **Lawful local labellings** [AFK26, Definition 4.28] (current draft) on the printed labels
 `{-∞} ∪ ω₁ ∪ {∞}`: for rows and a labelling with values at stage `ω₁`, `r` is lawful at `U` as
 printed exactly when it is lawful below `U`. -/
 theorem printedLawfulLocal_omega_one_iff (hR : ∀ s t, AtStage (Ordinal.omega 1) (R.row s t))
@@ -172,8 +189,8 @@ theorem printedLawfulLocal_omega_one_iff (hR : ∀ s t, AtStage (Ordinal.omega 1
 
 /-- **The two printed definitions of lawfulness**: for cells with graded index in the graded plan,
 at a stage `θ` that is zero or a limit, for rows and a labelling with values at stage `θ`, `r` is
-lawful at `U` in the sense of [AFK26, Definition 4.26] exactly when it respects the rows below `U`
-in the sense of [Kni26, Definition 2.5.4]. -/
+lawful at `U` in the sense of [AFK26, Definition 4.28] (current draft) exactly when it respects
+the rows below `U` in the sense of [Kni26, Definition 2.5.4]. -/
 theorem printedLawfulLocal_iff_printedRespects (hθ : Order.IsSuccPrelimit θ)
     (hD : ∀ d, D.gradedIndex d ∈ D.gradedFaces) (hR : ∀ s t, AtStage θ (R.row s t))
     (hr : ∀ d, AtStage θ (r d)) :

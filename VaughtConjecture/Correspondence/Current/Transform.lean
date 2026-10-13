@@ -9,9 +9,9 @@ import VaughtConjecture.Correspondence.Witness
 /-!
 # Correspondence with the legal templates of [AFK26]: the relation `u ⇒ v`
 
-Roadmap, "Manuscript concordance", row 42.  [AFK26, Definition 4.25] defines, for labellings `u`
-and `v` of a frame with cells `D` and grades `g`, the relation `u ⇒ v`: there are `f : ℕ → L` and
-`h : L → L`, `L = {-∞} ∪ ω₁ ∪ {∞}` the labels, with
+Roadmap, "Manuscript concordance", row 42.  [AFK26, Definition 4.25] (version of 5 October 2026)
+defines, for labellings `u` and `v` of a frame with cells `D` and grades `g`, the relation `u ⇒ v`:
+there are `f : ℕ → L` and `h : L → L`, `L = {-∞} ∪ ω₁ ∪ {∞}` the labels, with
 
 1. `f` antitone, and `f(k)` visible at `k` for every `k`;
 2. `h(-∞) = -∞`, and `h(visible<k>[i](x)) = visible<k>[i](h(x))` for all `i ≤ k` and `x` with
@@ -37,14 +37,14 @@ As in row 3, the printed labels are those at stage `ω₁`; the clauses are stat
 | `v(d) = min (h(u(d)), f(g(d)))` | the equation of `PrintedFrameTransformsTo` | the same |
 
 **The two printed definitions.**  They differ by the monotonicity of the shifter, clause 4 of
-[Kni26, Definition 2.3.9], which [AFK26, Definition 4.25] does not state: a pair is a witness of
-[Kni26] exactly when it is a witness of [AFK26] with a shifter monotone on the labels at the stage
-(`Label.printedWitness_iff_printedFrameWitness`).  So `p ⇒ q` in the sense of [Kni26] gives `p ⇒ q`
-in the sense of [AFK26] (`Label.PrintedTransformsTo.printedFrameTransformsTo`), and so does
-`Label.TransformsTo` (`Label.TransformsTo.printedFrameTransformsTo`), but not conversely: on two
-cells of grade `1` labelled `1` and `2`, the relation of [AFK26] reaches the labelling `2`, `1`,
-which no monotone shifter reaches (`Label.exists_printedFrameTransformsTo_not_transformsTo`, at
-`ω₁`).
+[Kni26, Definition 2.3.9], which [AFK26, Definition 4.25] (version of 5 October 2026) does not
+state: a pair is a witness of [Kni26] exactly when it is a witness of [AFK26] with a shifter
+monotone on the labels at the stage (`Label.printedWitness_iff_printedFrameWitness`).  So `p ⇒ q` in
+the sense of [Kni26] gives `p ⇒ q` in the sense of [AFK26]
+(`Label.PrintedTransformsTo.printedFrameTransformsTo`), and so does `Label.TransformsTo`
+(`Label.TransformsTo.printedFrameTransformsTo`), but not conversely: on two cells of grade `1`
+labelled `1` and `2`, the relation of [AFK26] reaches the labelling `2`, `1`, which no monotone
+shifter reaches (`Label.exists_printedFrameTransformsTo_not_transformsTo`, at `ω₁`).
 
 **Corrections** (status C).
 1. *Monotonicity of the shifter*: restored, as in [Kni26, Definition 2.3.9], clause 4.  The
@@ -53,11 +53,19 @@ which no monotone shifter reaches (`Label.exists_printedFrameTransformsTo_not_tr
    Without it the relation reaches labellings that reverse the order of the source labels at
    cells of equal grade (above), while the relation of [Kni26] and of this development is
    monotone in the source label (`Label.TransformsTo.le_of_le`).
-2. *"Visible at `k`"*: [AFK26] defines only self-visibility at `k` (Definition 4.24, row 41); the
-   clause is read as self-visibility, which is clause 2 of [Kni26, Definition 2.3.9].
+2. *"Visible at `k`"*: [AFK26] (version of 5 October 2026) defines only self-visibility at `k`
+   (its Definition 4.24, row 41); the clause is read as self-visibility, which is clause 2 of
+   [Kni26, Definition 2.3.9].
 3. *The visibility map* in clause 2 is the corrected map of row 41.
 The printed equation `v(d) = min {h(u(d)), f(g(d))` lacks a closing brace; it is read as the
 minimum of the two labels.
+
+**The current draft.**  This module formalizes Definition 4.25 of the version of 5 October 2026,
+and its citations are to that version.  Definition 4.27 of the current draft of [AFK26] has the
+clause "`h` is non-decreasing", asks that `f(k)` be self-visible at `k`, and uses the visibility
+map of its Definition 4.26, which states the corrected clause of row 41; the reversal of
+`Label.exists_printedFrameTransformsTo_not_transformsTo` concerns the earlier text, and no theorem
+here compares Definition 4.27 with `Label.TransformsTo` (concordance note 42).
 
 ## Placement
 
@@ -73,36 +81,42 @@ open Ordinal
 variable {D : Type*} {θ : Ordinal.{u}} {g : D → ℕ} {u v : D → Label.{u}}
   {f : ℕ → Label.{u}} {h : Label.{u} → Label.{u}}
 
-/-- **The clauses of a witness of `u ⇒ v`** in [AFK26, Definition 4.25], at stage `θ`: a
-suppressor `f` and a shifter `h` with values among the labels at stage `θ`, subject to the printed
-clauses, the visibility map being visibility replacement (the corrected map of
-[AFK26, Definition 4.24]).  [AFK26] takes `θ = ω₁`.  It has no monotonicity clause. -/
+/-- **The clauses of a witness of `u ⇒ v`** in [AFK26, Definition 4.25] (version of 5 October 2026),
+at stage `θ`: a suppressor `f` and a shifter `h` with values among the labels at stage `θ`, subject
+to the printed clauses, the visibility map being visibility replacement (the corrected map of
+[AFK26, Definition 4.24] (version of 5 October 2026)).  [AFK26] takes `θ = ω₁`.  It has no
+monotonicity clause.  Historical: the current draft's Definition 4.27 adds the clause "`h` is
+non-decreasing" (concordance note 42). -/
 structure PrintedFrameWitness (θ : Ordinal.{u}) (f : ℕ → Label.{u}) (h : Label.{u} → Label.{u}) :
     Prop where
-  /-- The typing of `f` in [AFK26, Definition 4.25]: `f : ℕ → {-∞} ∪ θ ∪ {∞}`. -/
+  /-- The typing of `f` in [AFK26, Definition 4.25] (version of 5 October 2026):
+  `f : ℕ → {-∞} ∪ θ ∪ {∞}`. -/
   suppressor_atStage : ∀ n, AtStage θ (f n)
-  /-- The typing of `h` in [AFK26, Definition 4.25]: `h` maps `{-∞} ∪ θ ∪ {∞}` to itself. -/
+  /-- The typing of `h` in [AFK26, Definition 4.25] (version of 5 October 2026): `h` maps
+  `{-∞} ∪ θ ∪ {∞}` to itself. -/
   shifter_atStage : ∀ x, AtStage θ x → AtStage θ (h x)
-  /-- First clause of [AFK26, Definition 4.25]: `f` is antitone, `a ≤ b → f(b) ≤ f(a)`. -/
+  /-- First clause of [AFK26, Definition 4.25] (version of 5 October 2026): `f` is antitone,
+  `a ≤ b → f(b) ≤ f(a)`. -/
   antitone : ∀ a b : ℕ, a ≤ b → f b ≤ f a
-  /-- First clause of [AFK26, Definition 4.25]: `f(k)` is (self-)visible at `k`. -/
+  /-- First clause of [AFK26, Definition 4.25] (version of 5 October 2026): `f(k)` is (self-)visible
+  at `k`. -/
   isSelfVisible : ∀ k, IsSelfVisible k (f k)
-  /-- Second clause of [AFK26, Definition 4.25]: `h(-∞) = -∞`. -/
+  /-- Second clause of [AFK26, Definition 4.25] (version of 5 October 2026): `h(-∞) = -∞`. -/
   map_bot : h ⊥ = ⊥
-  /-- Second clause of [AFK26, Definition 4.25]: for all `i ≤ k` and every label `x` at stage `θ`
-  with `h(x) ≤ f(k)`, `h(visible<k>[i](x)) = visible<k>[i](h(x))`. -/
+  /-- Second clause of [AFK26, Definition 4.25] (version of 5 October 2026): for all `i ≤ k` and
+  every label `x` at stage `θ` with `h(x) ≤ f(k)`, `h(visible<k>[i](x)) = visible<k>[i](h(x))`. -/
   comm : ∀ i k : ℕ, i ≤ k → ∀ x, AtStage θ x → h x ≤ f k →
     h (visibilityReplace k i x) = visibilityReplace k i (h x)
 
-/-- **The relation `u ⇒ v` of [AFK26, Definition 4.25]** at stage `θ`, for labellings `u`, `v` of
-cells with grades `g`: some printed witness `(f, h)` has `v d = min (h (u d)) (f (g d))` for every
-cell `d`. -/
+/-- **The relation `u ⇒ v` of [AFK26, Definition 4.25] (version of 5 October 2026)** at stage `θ`,
+for labellings `u`, `v` of cells with grades `g`: some printed witness `(f, h)` has
+`v d = min (h (u d)) (f (g d))` for every cell `d`. -/
 def PrintedFrameTransformsTo (θ : Ordinal.{u}) (g : D → ℕ) (u v : D → Label.{u}) : Prop :=
   ∃ f h, PrintedFrameWitness θ f h ∧ ∀ d, v d = min (h (u d)) (f (g d))
 
 /-- **The two printed witnesses**: a pair is a witness of [Kni26, Definition 2.3.9] at stage `θ`
-exactly when it is a witness of [AFK26, Definition 4.25] at stage `θ` whose shifter is monotone on
-the labels at stage `θ` (clause 4 of [Kni26, Definition 2.3.9]). -/
+exactly when it is a witness of [AFK26, Definition 4.25] (version of 5 October 2026) at stage `θ`
+whose shifter is monotone on the labels at stage `θ` (clause 4 of [Kni26, Definition 2.3.9]). -/
 theorem printedWitness_iff_printedFrameWitness :
     PrintedWitness θ f h ↔
       PrintedFrameWitness θ f h ∧ ∀ x y, AtStage θ x → AtStage θ y → x ≤ y → h x ≤ h y := by
@@ -115,15 +129,16 @@ theorem printedWitness_iff_printedFrameWitness :
       fun x hx k hk i hik ↦ hw.comm i k hik x hx hk⟩⟩
 
 /-- **The relation of [Kni26] gives that of [AFK26]**: `p ⇒ q` in the sense of
-[Kni26, Definition 2.3.9] at stage `θ` gives `p ⇒ q` in the sense of [AFK26, Definition 4.25]. -/
+[Kni26, Definition 2.3.9] at stage `θ` gives `p ⇒ q` in the sense of [AFK26, Definition 4.25]
+(version of 5 October 2026). -/
 theorem PrintedTransformsTo.printedFrameTransformsTo (hpq : PrintedTransformsTo θ g u v) :
     PrintedFrameTransformsTo θ g u v :=
   let ⟨f, h, hw, heq⟩ := hpq
   ⟨f, h, (printedWitness_iff_printedFrameWitness.mp hw).1, heq⟩
 
-/-- **The transformation relation gives that of [AFK26, Definition 4.25]**: at a stage `θ` that is
-zero or a limit, for labellings with values at stage `θ`, `TransformsTo g u v` gives `u ⇒ v` in the
-sense of [AFK26]. -/
+/-- **The transformation relation gives that of [AFK26, Definition 4.25] (version of 5 October
+2026)**: at a stage `θ` that is zero or a limit, for labellings with values at stage `θ`,
+`TransformsTo g u v` gives `u ⇒ v` in the sense of [AFK26]. -/
 theorem TransformsTo.printedFrameTransformsTo (hθ : Order.IsSuccPrelimit θ)
     (hu : ∀ d, AtStage θ (u d)) (hv : ∀ d, AtStage θ (v d)) (huv : TransformsTo g u v) :
     PrintedFrameTransformsTo θ g u v :=
@@ -223,10 +238,10 @@ private theorem printedFrameWitness_example (hθ : (2 : Ordinal.{u}) < θ) :
       obtain rfl := exampleShifter_eq_bot_iff.mp hb
       simp [exampleShifter]
 
-/-- **The relation of [AFK26, Definition 4.25] is not the transformation relation**: on two cells
-of grade `1` labelled `1` and `2`, `u ⇒ v` holds at `ω₁` for the labelling `2`, `1` that reverses
-their order, while neither `Label.TransformsTo` nor the relation of [Kni26, Definition 2.3.9]
-relates them. -/
+/-- **The relation of [AFK26, Definition 4.25] (version of 5 October 2026) is not the transformation
+relation**: on two cells of grade `1` labelled `1` and `2`, `u ⇒ v` holds at `ω₁` for the labelling
+`2`, `1` that reverses their order, while neither `Label.TransformsTo` nor the relation of
+[Kni26, Definition 2.3.9] relates them. -/
 theorem exists_printedFrameTransformsTo_not_transformsTo :
     ∃ u v : Bool → Label.{u}, (∀ d, AtStage ω₁ (u d)) ∧ (∀ d, AtStage ω₁ (v d)) ∧
       PrintedFrameTransformsTo ω₁ (fun _ ↦ 1) u v ∧ ¬ TransformsTo (fun _ ↦ 1) u v ∧
