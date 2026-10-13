@@ -37,8 +37,9 @@ system `L` keeps one template per class, [AFK26, Definition 4.11 and Proposition
   for `templateSignature`) and the pairs (`Correspondence.SatisfiesPairs`).  The pairs hold
   exactly when every tuple with an invariant `Q_c` has the relations that `c` prescribes
   (`satisfiesPairs_templateDiagramPairs_iff`).  The third clause of [AFK26, Definition 2.4] (each
-  invariant realized in a compatible countable structure) is not used by Definition 2.5 and is
-  not proved here.
+  invariant realized in a compatible countable structure) is not used by Definition 2.5; it is
+  proved, by the finite charts, in `VaughtConjecture.Correspondence.Density.Structure`
+  (`exists_isTemplateCompatible_relMap_invariant`, `templateDiagram`).
 * **The base sublanguage** `L_c[L]` [AFK26, Definition 4.17] (correspondence with the printed
   definitions): `baseTemplateLanguage`, with the symbols `P_n` and `R_c` (`BaseSymbol`), its
   inclusion `baseInclusion` into `templateLanguage` (injective, `baseInclusion_injective`), and
@@ -278,7 +279,9 @@ theorem realize_atom_templateLanguage {M : Type v} [templateLanguage.{u}.Structu
       RelMap (L := templateLanguage.{u}) r (x ∘ i) :=
   Iff.rfl
 
-private theorem atom_injective {r r' : TemplateSymbol.{u} k} {i i' : Fin k → Fin n}
+/-- The atomic formulas `r(x_i)` of `L_b[L] ∪ L_c[L]` determine the symbol and the places.
+Native construction. -/
+theorem atom_templateLanguage_injective {r r' : TemplateSymbol.{u} k} {i i' : Fin k → Fin n}
     (h : atom (L := templateLanguage) r i = atom (L := templateLanguage) r' i') :
     r = r' ∧ i = i' := by
   simp only [atom, Relations.formula, Relations.boundedFormula] at h
@@ -300,7 +303,7 @@ theorem mk_atom_mem_templateDiagramPairs_iff (hn : 0 < n) (c : LegalClass.{u} n)
         simp only [atom, Relations.formula, Relations.boundedFormula] at he₂
         injection he₂
       subst hk
-      obtain ⟨rfl, rfl⟩ := atom_injective he₂
+      obtain ⟨rfl, rfl⟩ := atom_templateLanguage_injective he₂
       obtain rfl : c = c' := by injection he₁
       exact hh
     · obtain ⟨rfl, he⟩ := Sigma.mk.inj_iff.mp he

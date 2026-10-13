@@ -55,9 +55,11 @@ decoder needs no hypothesis to be defined; its coherence is in the targets.
 stage (`projectStructure_toStructure`), and `decode β R.toStructure = R` for every well-formed
 one (`decode_toStructure`).
 
-## Targets
+## The statements B.T5 and B.T6
 
-Stated as propositions, every premise visible; no proof is given here.
+Stated here as propositions, every premise visible; proved in
+`VaughtConjecture.Correspondence.Density.Decoder` (`decoderRoundTrip`) and
+`VaughtConjecture.Correspondence.Density.DonorDensity` (`densityDecoderEquivalence`).
 
 * **B.T5, the decoder round trip** (`DecoderRoundTrip β M`, for `β < ω₁`): compatible `β`-fixed
   structures and well-formed class realizations at `ω + ω · β` correspond, all symbols preserved:
@@ -72,8 +74,8 @@ Stated as propositions, every premise visible; no proof is given here.
       IsTemplateCompatible R.toStructure ∧ projectStructure β R.toStructure = R.toStructure ∧
         decode β R.toStructure = R
   ```
-  The last two conjuncts of the second half are proved (`projectStructure_toStructure`,
-  `decode_toStructure`).
+  The last two conjuncts of the second half are proved in this file
+  (`projectStructure_toStructure`, `decode_toStructure`).
 * **B.T6, density** (`DensityDecoderEquivalence β M`, for `β < ω₁`):
   ```
   theorem densityDecoderEquivalence (hβ : β < ω₁) : DensityDecoderEquivalence β M
@@ -87,10 +89,31 @@ Stated as propositions, every premise visible; no proof is given here.
   `Nonempty M` is needed for the roots on no points of `HasDonorDensity`, which `D[α]` does not
   have.
 
-A further target, to be unified with the stage-indexed classes of the receiving core (not
-imported here): the class reading of a realization with receiving restricted to strongly coded
-donors has donor density, as `Realization.HasFiniteExtensionReceiving.hasDonorDensity_classReading`
-does for receiving with every legal donor.
+## Targets of the presentation checkpoint
+
+Nothing in this directory presents class data positionally.  The tuplewise statement
+`Realization.classReading_eq_classReading_iff` (equal class readings exactly when the types are
+cell renamings of each other, tuple by tuple) is not a coherent renaming: it asserts no
+compatibility of the bijections of cells with faces, and no statement here uses it as one.  The
+statements that need a positional presentation are targets of the presentation checkpoint:
+
+* **B.T7, presentation**: for `β < ω₁`, `[Countable M]`, `Nonempty M`, a well-formed class
+  realization `S` at `ω + ω · β` with `S.HasDonorDensity` is the class reading of a positional
+  realization with strongly coded legal types and receiving restricted to strongly coded donors:
+  ```
+  ∃ R : Realization (blockStage β) M, R.IsConsistent ∧ R.IsCovering ∧
+    (∀ ⦃n⦄ (t : Fin n ↪ M) p, R.eval t = some p → p.IsStronglyCodedLegal) ∧
+    R.HasFiniteExtensionReceivingIn (fun t ↦ t.rows.IsStronglyCoded) ∧ R.classReading = S
+  ```
+  Here the positional consistency of `R` is the coherence that tuplewise renaming lacks.
+* **B.T8, coherent renaming**: for `[Countable M]`, two such presentations of one class
+  realization are related by a coherent cell renaming (bijections of cells natural along faces).
+* **Unification with the receiving core**: the class reading of a realization with receiving
+  restricted to strongly coded donors (`HasFiniteExtensionReceivingIn`, not on the main branch
+  when this was written) has donor density, as
+  `Realization.HasFiniteExtensionReceiving.hasDonorDensity_classReading` does for receiving with
+  every legal donor.  This direction reads a given positional realization and needs no
+  presentation.
 -/
 
 universe u v
@@ -391,12 +414,15 @@ def classReading : ClassRealization.{u, v} α M where
   rfl
 
 /-- Two realizations **agree up to cell renaming, tuple by tuple**: the same tuples are typed,
-by types that are cell renamings of each other.  Native construction. -/
+by types that are cell renamings of each other.  The bijections of cells are chosen tuple by
+tuple, with no compatibility along faces: this is not a coherent renaming of presentations.
+Native construction. -/
 def IsCellRenamingOf (R' : Realization.{u, v} α M) : Prop :=
   ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M), Option.Rel StageType.IsCellRenaming (R.eval t) (R'.eval t)
 
 /-- **The class reading respects renaming**: two realizations have the same class reading exactly
-when their types are cell renamings of each other, tuple by tuple.  Native construction. -/
+when their types are cell renamings of each other, tuple by tuple.  Tuplewise only: a coherent
+renaming of presentations is a target of the presentation checkpoint.  Native construction. -/
 theorem classReading_eq_classReading_iff {R' : Realization.{u, v} α M} :
     R.classReading = R'.classReading ↔ R.IsCellRenamingOf R' := by
   constructor
@@ -473,15 +499,14 @@ theorem HasFiniteExtensionReceiving.hasDonorDensity_classReading
 
 end Realization
 
-/-! ### Targets -/
+/-! ### The statements B.T5 and B.T6 -/
 
 /-- **Target B.T5, the decoder round trip at `β`** (for `β < ω₁`): a compatible structure fixed by
 `τ_β` decodes to a well-formed class realization at `ω + ω · β` whose structure is the given one;
 and the structure of a well-formed class realization at `ω + ω · β` is compatible, fixed by
 `τ_β`, and decodes back to the realization.  All symbols are preserved: the equalities are
-equalities of structures of `L_b[L] ∪ L_c[L]` and of class realizations.  The last two conjuncts
-of the second half are proved for `β < ω₁` (`ClassRealization.projectStructure_toStructure`,
-`decode_toStructure`).  Correspondence with the printed definitions. -/
+equalities of structures of `L_b[L] ∪ L_c[L]` and of class realizations.  Proved for `β < ω₁`
+(`decoderRoundTrip`).  Correspondence with the printed definitions. -/
 def DecoderRoundTrip (β : Ordinal.{u}) (M : Type v) : Prop :=
   (∀ G : templateLanguage.{u}.Structure M, IsTemplateCompatible G → projectStructure β G = G →
       (decode β G).IsWellFormed ∧ (decode β G).toStructure = G) ∧
@@ -491,8 +516,8 @@ def DecoderRoundTrip (β : Ordinal.{u}) (M : Type v) : Prop :=
 
 /-- **Target B.T6, density through the decoder at `β`** (for `β < ω₁`): for a compatible
 structure on a nonempty carrier fixed by `τ_β`, density `D[α]` at every `α < ω + ω · β` holds
-exactly when its decoded class realization has donor density.
-Correspondence with the printed definitions. -/
+exactly when its decoded class realization has donor density.  Proved for `β < ω₁`
+(`densityDecoderEquivalence`).  Correspondence with the printed definitions. -/
 def DensityDecoderEquivalence (β : Ordinal.{u}) (M : Type v) : Prop :=
   ∀ G : templateLanguage.{u}.Structure M, Nonempty M → IsTemplateCompatible G →
     projectStructure β G = G →
