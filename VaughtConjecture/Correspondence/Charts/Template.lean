@@ -53,11 +53,23 @@ template exactly when the template is (`CellScheme.Rows.isLegalTemplate_toStageT
 numberings give stage types that are cell renamings of each other
 (`CellScheme.Rows.isCellRenaming_toStageType`).  Conversely the data of a stage type on a
 nonempty set of points form a template (`StageType.isTemplate`), and numbering its own cells by
-the identity gives it back (`StageType.toStageType_refl`).  So a printed template up to cell
-renaming is a stage type up to `StageType.IsCellRenaming`; the points are never renamed.
+the identity gives it back (`StageType.toStageType_refl`).  So a finite lawful template on the
+points `Fin n` with labels at stage `α`, up to cell renaming, is a stage type at stage `α` up to
+`StageType.IsCellRenaming`; the points are never renamed.  This is not a statement about
+arbitrary templates: the cells are finite, the label lawful, and the labels at stage `α`.
 
-**Not stated here.**  The face maps of renamed stage types (the induced bijection of the cells
-of a closed face) and the charts of [AFK26, Definition 4.31].
+**From a legal template, with no further hypothesis.**  For a legal template
+([AFK26, Definition 4.29], labels at a stage `θ ≥ ω ^ 2` that is zero or a limit) on a plan of
+[AFK26, Definition 4.1] whose ground set is all of `Fin n`, the lawfulness of the label and its
+stage bound are derived from the printed clauses (clause 2 and the labels at stage `θ`), and the
+frame and the range of the rows from clauses 1 and 5:
+`CellScheme.Rows.toStageTypeOfLegal` takes only the plan, the printed legality, the numbering of
+the cells, and the ground set, and is a legal template (`isLegalTemplate_toStageTypeOfLegal`).
+
+**Not stated here.**  The face maps of renamed stage types and charts on arbitrary finite carriers
+are in `VaughtConjecture.Correspondence.Charts.RenamingFaces` and
+`VaughtConjecture.Correspondence.Charts.Chart` (alignment of faces, embeddings, and the charts of
+[AFK26, Definition 4.31]).
 -/
 
 universe u
@@ -457,6 +469,40 @@ theorem isCellRenaming_toStageType (e e' : Fin k ≃ ι) (hground : D.ground = F
     obtain rfl := Fin.ext hij
     change p (e (e.symm (e' i))) = p (e' i)
     rw [e.apply_symm_apply]
+
+/-- **The template laws of a legal template** [AFK26, Definitions 4.1–4.5 and 4.29]: for finitely
+many cells, at a stage `θ ≥ ω ^ 2` that is zero or a limit, a legal template on a plan of
+[AFK26, Definition 4.1] satisfies the template laws: the frame and the range of the rows follow
+from clauses 1 and 5. -/
+theorem IsLegalTemplate.isTemplate (hplan : Geometry.IsTemplatePlan D.ground D.faces)
+    (hL : R.IsLegalTemplate θ p) : R.IsTemplate θ p where
+  plan := hplan
+  frame d := by
+    rw [← hL.range_gradedIndex]
+    exact ⟨d, rfl⟩
+  rowSystem d e := Label.IsStronglyCoded.lt_omega0_sq (hL.row_range d e)
+  label_atStage := hL.label_atStage
+
+/-- **The positional stage type of a legal template**, with no hypothesis beyond the printed
+definitions: for a legal template ([AFK26, Definition 4.29], labels at a stage `θ ≥ ω ^ 2` that is
+zero or a limit) on a plan of [AFK26, Definition 4.1] with ground set all of `Fin n`, and a
+numbering `e : Fin k ≃ ι` of its cells, the stage type at stage `θ` of `toStageType`.  The
+lawfulness of the label is clause 2 (`CellScheme.Rows.isLegalTemplate_iff`), and its stage bound
+is the label range `{-∞} ∪ θ ∪ {∞}`. -/
+def toStageTypeOfLegal (hθ : Order.IsSuccPrelimit θ) (hθ2 : ω ^ 2 ≤ θ) (e : Fin k ≃ ι)
+    (hground : D.ground = Finset.univ) (hplan : Geometry.IsTemplatePlan D.ground D.faces)
+    (hL : R.IsLegalTemplate θ p) : StageType.{u} θ n :=
+  haveI : Finite ι := Finite.of_equiv _ e
+  R.toStageType p e hground (hL.isTemplate hplan)
+    ((isLegalTemplate_iff hθ hθ2).mp hL).2.2.2.1 hL.label_atStage
+
+/-- **The positional stage type of a legal template is a legal template** [AFK26,
+Definition 4.29]. -/
+theorem isLegalTemplate_toStageTypeOfLegal (hθ : Order.IsSuccPrelimit θ) (hθ2 : ω ^ 2 ≤ θ)
+    (e : Fin k ≃ ι) (hground : D.ground = Finset.univ)
+    (hplan : Geometry.IsTemplatePlan D.ground D.faces) (hL : R.IsLegalTemplate θ p) :
+    (toStageTypeOfLegal (R := R) hθ hθ2 e hground hplan hL).IsLegalTemplate θ :=
+  (isLegalTemplate_toStageType_iff hθ hθ2 e hground _ _ _).mpr hL
 
 end CellScheme.Rows
 
