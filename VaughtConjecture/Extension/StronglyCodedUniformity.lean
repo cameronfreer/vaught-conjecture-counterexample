@@ -56,9 +56,11 @@ one-point stage type `StageType.exists_stronglyCoded_onePoint_label` (the strong
 the cellless scheme, capped) with the label `γ + 1`
 (`StageType.exists_stronglyCodedLegal_onePoint_add_one`).  Strong coding is a property of the
 rows, not of the labels: the one row of the donor is the strongly coded apex row, strongly coded at
-grade `1` whatever the label.  The label must be self-visible at `1` for the cap to be lawful,
-that is, of finite part at least `1`; the block start `γ` (finite part `0`) is excluded, and
-`γ + 1` has finite part `1`, within the bound `1 + 1` of the range clause at grade `1`.  The
+grade `1` whatever the label.  The condition on the label is self-visibility at `1`, which the
+cap needs to be lawful: the block start `γ` is not self-visible at `1` and is excluded; `γ + 1`
+is.  This is a condition on the label alone, separate from the bound of the range clause on the
+finite parts of the row entries, which strong coding of the rows imposes and which the apex row
+satisfies.  The
 coface is the strongly coded pinned extension over the empty face
 (`StageType.exists_stronglyCoded_pinned_extension_empty`); its new cell is the image of the donor's
 cell, of scope the new point (`StageType.exists_gradedIndex_last_of_restrictFace`).
@@ -182,9 +184,10 @@ theorem exists_gradedIndex_last_of_restrictFace {Q : StageType.{u} α (n + 1)}
 zero or a limit with `γ < α` and `α` zero or a limit, a strongly coded legal stage type on one point
 with a cell of graded index `(univ, 1)` labelled `γ + 1`.  It is
 `StageType.exists_stronglyCoded_onePoint_label` (the strongly coded apex over the cellless scheme,
-capped at `γ + 1`): the label `γ + 1` is self-visible at `1` (finite part `1`), which the cap
-needs; the label `γ` (finite part `0`) is not self-visible at `1`.  Strong coding is a property of
-the rows: the one row is the strongly coded apex row, whatever the label. -/
+capped at `γ + 1`): the label `γ + 1` is self-visible at `1`, which the cap needs; the label `γ`
+is not self-visible at `1`.  This condition on the label is separate from the bound on the finite
+parts of the row entries, which strong coding of the rows imposes: the one row is the strongly
+coded apex row, whatever the label. -/
 theorem exists_stronglyCodedLegal_onePoint_add_one (hα : Order.IsSuccPrelimit α)
     {γ : Ordinal.{u}} (hγ : Order.IsSuccPrelimit γ) (hγα : γ < α) :
     ∃ d : StageType.{u} α 1, d.IsStronglyCodedLegal ∧ ∃ i : Fin d.card,
