@@ -34,8 +34,9 @@ The four differences between the two notions are handled as follows.
   `ω + ω · β` (`Label.isPermittedCutoff_iff`), successors included.
 
 The direction from donor density to `D[α]` uses neither fixedness, nor `β < ω₁`, nor
-`Nonempty M`.  The proof uses the pairs of `ID[L]` only, and no positional presentation of class
-data.
+`Nonempty M`.
+Uses compatibility — structured geometry and pair satisfaction — but not Definition 2.4(c), nor a
+positional presentation.
 -/
 
 universe u v
