@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Correspondence.Boundedness.Targets
-import VaughtConjecture.Correspondence.Reconstruction.Reconstruction
+import VaughtConjecture.Correspondence.Reconstruction.Coherence
 import VaughtConjecture.Extension.StronglyCodedUniformity
 
 /-!
@@ -36,12 +36,12 @@ and the bijection of cells behind an equality of classes is never fixed.
   block `[λ_ξ, λ_ξ + ω)`.  Donor density (`mem_templateStageClass_iff`) at the cutoff
   `λ_ξ + ω = λ_{ξ+1} < λ_γ` with a strongly coded uniformity donor at `λ_γ`; the label `λ_ξ` itself
   is not used.
-* `decode_reduce_eq_decode_of_baseReduct_eq`, `reduce_eq_of_baseReduct_eq`,
-  `cellCount_eq_of_baseReduct_eq` (correspondence with the printed definitions): on a countable
-  carrier, of two lifts of one base structure at stages `ξ ≤ ζ < ω₁`, the decoded class
-  realization of the higher one reduces at `λ_ξ` to that of the lower one (B.T9 and B.T10), so the
-  class of a tuple in the lower lift is the reduction of its class in the higher lift, with the
-  same cell count.
+* `reduce_eq_of_baseReduct_eq`, `cellCount_eq_of_baseReduct_eq` (correspondence with the printed
+  definitions): on a countable carrier, of two lifts of one base structure at stages
+  `ξ ≤ ζ < ω₁`, the decoded class realization of the higher one reduces at `λ_ξ` to that of the
+  lower one (`decode_reduce_eq_decode_of_baseReduct_eq`, by B.T9 and B.T10), so the class of a
+  tuple in the lower lift is the reduction of its class in the higher lift, with the same cell
+  count.
 * `stageBoundOfDonorsTarget`, `stageBoundTarget`, `boundednessTarget` (correspondence with the
   printed definitions): the stage bound, conditional on the donors and then unconditional, and
   B.T15, Boundedness [AFK26, Proposition 4.34], for every carrier `M` (the targets carry
@@ -240,25 +240,6 @@ theorem exists_onePoint_isInBlock (hd : HasStronglyCodedUniformityDonors.{u})
   exact ⟨a, q, hq, d.label j, hobs.mem_labels ⟨j, rfl⟩ hj.2, hj⟩
 
 /-! ### Lifts at different stages -/
-
-/-- **A lift at a higher stage reduces to a lift at a lower stage** (correspondence with the
-printed definitions): for `ξ ≤ ζ < ω₁` on a countable carrier, if `G ∈ K_ζ[L]` and `H ∈ K_ξ[L]`
-have the same base reduct, the decoded class realization of `G` reduces at `λ_ξ` to that of `H`.
-By projection (`projectionTarget`, B.T9) `τ_ξ(G) ∈ K_ξ[L]`; it has the base reduct of `G`
-(`baseReduct_projectStructure`); Reconstruction (`reconstructionTarget`, B.T10) at `ξ` gives
-`τ_ξ(G) = H`; and `τ_ξ(G)` is the structure of the reduction
-(`projectStructure_eq_toStructure_decode_reduce`), which the decoder gives back
-(`decode_toStructure`). -/
-theorem decode_reduce_eq_decode_of_baseReduct_eq (hc : Countable M) {ζ ξ : Ordinal.{u}}
-    (hζ : ζ < ω₁) (hξζ : ξ ≤ ζ) {G H : templateLanguage.{u}.Structure M}
-    (hG : G ∈ templateStageClass M ζ) (hH : H ∈ templateStageClass M ξ)
-    (h : baseReduct G = baseReduct H) :
-    (decode ζ G).reduce (isSuccPrelimit_blockStage ξ) = decode ξ H := by
-  have hτ : projectStructure ξ G = H :=
-    reconstructionTarget ξ M hc (hξζ.trans_lt hζ) _ (projectionTarget ζ ξ M hc hζ hξζ G hG) H hH
-      (by rw [baseReduct_projectStructure, h])
-  rw [← hτ, projectStructure_eq_toStructure_decode_reduce hζ hξζ hG,
-    decode_toStructure (hξζ.trans_lt hζ) (hG.2.1.isWellFormed_decode.reduce _)]
 
 /-- **The class of a tuple in a lower lift is the reduction of its class in a higher lift**, for
 lifts as in `decode_reduce_eq_decode_of_baseReduct_eq`.  Correspondence with the printed
