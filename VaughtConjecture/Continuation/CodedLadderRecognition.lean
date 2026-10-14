@@ -25,6 +25,10 @@ and `2`):
 * `GrowthCarrier.CodedLadder`: a growth carrier with a cell of full scope at the threshold, coded
   rungs, every cell of full scope at the threshold a ladder controller
   (`GrowthCarrier.IsLadderController`, which does not mention the codes), and strongly coded rows.
+* `GrowthCarrier.CodedLadder.isStronglyCoded_context`,
+  `GrowthCarrier.CodedLadder.isStronglyCoded_donor`: a coded ladder carrier has a strongly
+  coded context and donor (its literal faces), so a contract asking for one must assume both
+  strongly coded.
 
 The old equations are not kept: the coded clauses replace them.  **Recognition from the coded
 ladder** (`GrowthCarrier.recognizes_of_codedLadder`) is the proof of
@@ -90,6 +94,27 @@ structure CodedLadder {Mb : Type*} (H : ℕ) (r : Mb → ℕ → Fin G.scheme.ca
     ∃ (a : Mb) (F : ℕ → Label.{u}), G.IsLadderController Q (H := H) r u a F
   /-- The rows of the carrier are strongly coded: the target of the strongly coded recovery. -/
   stronglyCoded : G.scheme.rows.IsStronglyCoded
+
+/-- **A strongly coded carrier has a strongly coded context** (native construction): the context
+type is the restriction of the carrier scheme to the context face (`GrowthCarrier.comap_context`),
+and strong coding passes to restrictions.  So a coded ladder carrier exists only over a strongly
+coded context. -/
+theorem CodedLadder.isStronglyCoded_context {Mb : Type*} {H : ℕ} {r : Mb → ℕ → Fin G.scheme.card}
+    (hL : G.CodedLadder Q H r) : t'.rows.IsStronglyCoded := by
+  have h : (G.scheme.comap Fin.castSuccEmb).rows.IsStronglyCoded :=
+    hL.stronglyCoded.comap (G.scheme.isLowerEmbedding_comap _)
+  rw [G.comap_context] at h
+  exact h
+
+/-- **A strongly coded carrier has a strongly coded donor** (native construction): the donor is
+the restriction of the carrier scheme to the donor face (`GrowthCarrier.comap_donor`).  So a coded
+ladder carrier exists only over a strongly coded donor. -/
+theorem CodedLadder.isStronglyCoded_donor {Mb : Type*} {H : ℕ} {r : Mb → ℕ → Fin G.scheme.card}
+    (hL : G.CodedLadder Q H r) : D.rows.IsStronglyCoded := by
+  have h : (G.scheme.comap (extendByLast e)).rows.IsStronglyCoded :=
+    hL.stronglyCoded.comap (G.scheme.isLowerEmbedding_comap _)
+  rw [G.comap_donor] at h
+  exact h
 
 /-- **Recognition from the coded ladder** (native construction): a coded ladder carrier, at a
 threshold `≥ 1` and with donor cells of grade at most the threshold, recognizes admitted states.
