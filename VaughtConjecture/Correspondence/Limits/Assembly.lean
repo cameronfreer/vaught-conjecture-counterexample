@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Correspondence.Limits.ClassGluing
+import VaughtConjecture.Correspondence.Reconstruction.Coherence
 
 /-!
 # Limits: a lift at a limit level from lower lifts over one base
@@ -115,10 +116,8 @@ def LimitsTarget (δ : Ordinal.{u}) (M : Type v) : Prop :=
 (`reconstructionTarget`).  Used: `Countable M`, `ζ < ω₁`, `ξ ≤ ζ`.  Correspondence with the
 printed definitions. -/
 theorem lowerLiftCoherenceTarget (ζ ξ : Ordinal.{u}) (M : Type v) :
-    LowerLiftCoherenceTarget ζ ξ M := by
-  intro hc hζ hξζ G hG H hH h
-  exact reconstructionTarget ξ M hc (hξζ.trans_lt hζ) _ (projectionTarget ζ ξ M hc hζ hξζ G hG)
-    H hH (by rw [baseReduct_projectStructure, h])
+    LowerLiftCoherenceTarget ζ ξ M := fun hc hζ hξζ _ hG _ hH h ↦
+  projectStructure_eq_of_baseReduct_eq hc hζ hξζ hG hH h
 
 /-- **Coherence of lower lifts holds on decoded class realizations** (`DecodedCoherenceTarget ζ ξ M`
 for every `ζ`, `ξ` and `M`): `τ_ξ(G) = H` (`lowerLiftCoherenceTarget`), `τ_ξ(G)` is the structure
@@ -126,11 +125,8 @@ of `(decode ζ G).reduce λ_ξ` (`projectStructure_eq_toStructure_decode_reduce`
 structure gives the reduction back (`decode_toStructure`).  Correspondence with the printed
 definitions. -/
 theorem decodedCoherenceTarget (ζ ξ : Ordinal.{u}) (M : Type v) :
-    DecodedCoherenceTarget ζ ξ M := by
-  intro hc hζ hξζ G hG H hH h
-  obtain rfl := lowerLiftCoherenceTarget ζ ξ M hc hζ hξζ G hG H hH h
-  rw [projectStructure_eq_toStructure_decode_reduce hζ hξζ hG,
-    decode_toStructure (hξζ.trans_lt hζ) (hG.2.1.isWellFormed_decode.reduce _)]
+    DecodedCoherenceTarget ζ ξ M := fun hc hζ hξζ _ hG _ hH h ↦
+  decode_reduce_eq_decode_of_baseReduct_eq hc hζ hξζ hG hH h
 
 /-! ### The coherent family of decoded lower lifts -/
 
