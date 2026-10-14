@@ -17,7 +17,8 @@ This file states the targets of Reconstruction [AFK26, Proposition 4.34] as prop
 premise visible.  None is proved here.  Correspondence with the printed definitions.
 
 * **B.T9, projection** (`ProjectionTarget β ξ M`): for `ξ ≤ β < ω₁` on a countable carrier,
-  `τ_ξ` sends `K_β[L]` into `K_ξ[L]`.  The base reduct is unchanged by `τ_ξ`
+  `τ_ξ` sends `K_β[L]` into `K_ξ[L]` (the countable-stage projection result; the unrestricted
+  statement is not stated here).  The base reduct is unchanged by `τ_ξ`
   (`baseReduct_projectStructure`, proved).
 * **Base case** (`BaseCaseTarget β M`): for `β < ω₁`, two structures of `K_β[L]` with equal base
   reducts have equal projections to level zero: `τ_0(G) = τ_0(H)`.
@@ -43,8 +44,11 @@ namespace VaughtConjecture
 
 open FirstOrder Language Structure Ordinal
 
-/-- **Target B.T9, projection**: for `ξ ≤ β < ω₁` on a countable carrier `M`, the projection
-`τ_ξ` sends `K_β[L]` into `K_ξ[L]`.  Correspondence with the printed definitions. -/
+/-- **Target B.T9, projection, at countable stages on countable carriers**: for `ξ ≤ β < ω₁` on
+a countable carrier `M`, the projection `τ_ξ` sends `K_β[L]` into `K_ξ[L]`.  This is the
+countable-stage projection result: the premises `Countable M` and `β < ω₁` are those of the
+route taken (through a strongly coded receiving presentation), not shown to be necessary, and the
+statement without them is not this target.  Correspondence with the printed definitions. -/
 def ProjectionTarget (β ξ : Ordinal.{u}) (M : Type v) : Prop :=
   Countable M → β < ω₁ → ξ ≤ β →
     ∀ G ∈ templateStageClass M β, projectStructure ξ G ∈ templateStageClass M ξ
