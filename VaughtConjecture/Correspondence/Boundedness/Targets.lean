@@ -22,16 +22,19 @@ premise visible.
   `β < ω₁`, every `G ∈ K_β[L]` has a rank.
 * **Rank at most stage** (`RankLeStageTarget β M`, proved: `rankLeStageTarget`): the rank of
   `G ∈ K_β[L]` is at most `β`.
-* **Strongly coded uniformity donors** (`HasStronglyCodedUniformityDonors`, stated, not proved):
-  for `ξ < η`, a strongly coded legal one-point stage type at `λ_η` with a label in the block
-  `[λ_ξ, λ_ξ + ω)`.  It is the premise of the stage bound.
-* **Stage bound** (`StageBoundTarget M`, stated, not proved): on a countable carrier, the lift
-  stages `liftStages M B` of every base structure `B` are bounded below `ω₁`.  Its form
-  conditional on the donors is `StageBoundOfDonorsTarget M`, stated, not proved.
-* **B.T15, Boundedness** (`BoundednessTarget M`, stated): on a countable carrier, the lift ranks
-  `liftRanks M B` of every base structure `B` form a countable set bounded below `ω₁`.  The
-  derivation from the stage bound is proved (`boundednessTarget_of_stageBoundTarget`), through
-  the rank-at-most-stage bound and the countability of the ordinals below a countable ordinal.
+* **Strongly coded uniformity donors** (`HasStronglyCodedUniformityDonors`, proved in
+  `Boundedness/StageBound.lean`: `hasStronglyCodedUniformityDonors`): for `ξ < η`, a strongly
+  coded legal one-point stage type at `λ_η` with a label in the block `[λ_ξ, λ_ξ + ω)`.  It is
+  the premise of the conditional stage bound.
+* **Stage bound** (`StageBoundTarget M`, proved in `Boundedness/StageBound.lean`:
+  `stageBoundTarget`): on a countable carrier, the lift stages `liftStages M B` of every base
+  structure `B` are bounded below `ω₁`.  Its form conditional on the donors is
+  `StageBoundOfDonorsTarget M`, proved there as `stageBoundOfDonorsTarget`.
+* **B.T15, Boundedness** (`BoundednessTarget M`, proved in `Boundedness/StageBound.lean`:
+  `boundednessTarget`): on a countable carrier, the lift ranks `liftRanks M B` of every base
+  structure `B` form a countable set bounded below `ω₁`.  The derivation from the stage bound is
+  proved here (`boundednessTarget_of_stageBoundTarget`), through the rank-at-most-stage bound and
+  the countability of the ordinals below a countable ordinal.
 
 **What is not used.**  None of these targets says that the rank of `G ∈ K_β[L]` is `β`, and the
 derivation of Boundedness from the stage bound does not use it.  The stage bound is a bound on
@@ -74,7 +77,8 @@ legal stage type `d` on one point at the stage `λ_η` has a label in the block 
 (`d ∈ StageType.uniformityFamily (blockStage ξ)`).  Compare the uniformity field of
 `StageType.HasNonemptyCofaceInstances`, which asks for a coface of any legal stage type with a
 label in a block, with no strong coding; here only the coface of the stage type on no points is
-asked for, and it must be strongly coded.  Stated, not proved. -/
+asked for, and it must be strongly coded.  Proved: `hasStronglyCodedUniformityDonors`
+(`Boundedness/StageBound.lean`). -/
 def HasStronglyCodedUniformityDonors : Prop :=
   ∀ ⦃ξ η : Ordinal.{u}⦄, ξ < η → ∃ d : StageType.{u} (blockStage η) 1,
     d.IsStronglyCodedLegal ∧ d ∈ StageType.uniformityFamily (blockStage ξ)

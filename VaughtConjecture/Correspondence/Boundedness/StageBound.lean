@@ -36,6 +36,27 @@ and the bijection of cells behind an equality of classes is never fixed.
   block `[λ_ξ, λ_ξ + ω)`.  Donor density (`mem_templateStageClass_iff`) at the cutoff
   `λ_ξ + ω = λ_{ξ+1} < λ_γ` with a strongly coded uniformity donor at `λ_γ`; the label `λ_ξ` itself
   is not used.
+* `decode_reduce_eq_decode_of_baseReduct_eq`, `reduce_eq_of_baseReduct_eq`,
+  `cellCount_eq_of_baseReduct_eq` (correspondence with the printed definitions): on a countable
+  carrier, of two lifts of one base structure at stages `ξ ≤ ζ < ω₁`, the decoded class
+  realization of the higher one reduces at `λ_ξ` to that of the lower one (B.T9 and B.T10), so the
+  class of a tuple in the lower lift is the reduction of its class in the higher lift, with the
+  same cell count.
+* `stageBoundOfDonorsTarget`, `stageBoundTarget`, `boundednessTarget` (correspondence with the
+  printed definitions): the stage bound, conditional on the donors and then unconditional, and
+  B.T15, Boundedness [AFK26, Proposition 4.34], for every carrier `M` (the targets carry
+  `Countable M` as a premise).
+
+**The pigeonhole.**  If the lift stages of `B` were unbounded below `ω₁`, each block
+`[λ_ξ, λ_ξ + ω)`, `ξ < ω₁`, would be witnessed by a label of the one-point class of some point in
+some lift; the carrier being countable and `ω₁` not, one point `x` witnesses infinitely many
+blocks.  The cell count `N` of the class of `x` is the same in every lift.  Finitely many of the
+witnessing lifts, for `N + 1` blocks, are reductions of the one at the largest of their stages, and
+each witnessed label lies below the stage of its own lift, so it is a label of the one class of
+`x` in that largest lift: `N + 1` distinct labels of a class with `N` cells.
+
+**Rank and stage.**  Boundedness uses only that the rank of a lift is at most its stage
+(`rankLeStageTarget`); the rank is never identified with the stage, and no Scott rank enters.
 -/
 
 universe u v
@@ -217,6 +238,164 @@ theorem exists_onePoint_isInBlock (hd : HasStronglyCodedUniformityDonors.{u})
     (decode_eval_zero γ G _) d.toClass Function.Embedding.ofIsEmpty hdl
     (TemplateClass.restrictFace_zero _ _) _ hx
   exact ⟨a, q, hq, d.label j, hobs.mem_labels ⟨j, rfl⟩ hj.2, hj⟩
+
+/-! ### Lifts at different stages -/
+
+/-- **A lift at a higher stage reduces to a lift at a lower stage** (correspondence with the
+printed definitions): for `ξ ≤ ζ < ω₁` on a countable carrier, if `G ∈ K_ζ[L]` and `H ∈ K_ξ[L]`
+have the same base reduct, the decoded class realization of `G` reduces at `λ_ξ` to that of `H`.
+By projection (`projectionTarget`, B.T9) `τ_ξ(G) ∈ K_ξ[L]`; it has the base reduct of `G`
+(`baseReduct_projectStructure`); Reconstruction (`reconstructionTarget`, B.T10) at `ξ` gives
+`τ_ξ(G) = H`; and `τ_ξ(G)` is the structure of the reduction
+(`projectStructure_eq_toStructure_decode_reduce`), which the decoder gives back
+(`decode_toStructure`). -/
+theorem decode_reduce_eq_decode_of_baseReduct_eq (hc : Countable M) {ζ ξ : Ordinal.{u}}
+    (hζ : ζ < ω₁) (hξζ : ξ ≤ ζ) {G H : templateLanguage.{u}.Structure M}
+    (hG : G ∈ templateStageClass M ζ) (hH : H ∈ templateStageClass M ξ)
+    (h : baseReduct G = baseReduct H) :
+    (decode ζ G).reduce (isSuccPrelimit_blockStage ξ) = decode ξ H := by
+  have hτ : projectStructure ξ G = H :=
+    reconstructionTarget ξ M hc (hξζ.trans_lt hζ) _ (projectionTarget ζ ξ M hc hζ hξζ G hG) H hH
+      (by rw [baseReduct_projectStructure, h])
+  rw [← hτ, projectStructure_eq_toStructure_decode_reduce hζ hξζ hG,
+    decode_toStructure (hξζ.trans_lt hζ) (hG.2.1.isWellFormed_decode.reduce _)]
+
+/-- **The class of a tuple in a lower lift is the reduction of its class in a higher lift**, for
+lifts as in `decode_reduce_eq_decode_of_baseReduct_eq`.  Correspondence with the printed
+definitions. -/
+theorem reduce_eq_of_baseReduct_eq (hc : Countable M) {ζ ξ : Ordinal.{u}} (hζ : ζ < ω₁)
+    (hξζ : ξ ≤ ζ) {G H : templateLanguage.{u}.Structure M} (hG : G ∈ templateStageClass M ζ)
+    (hH : H ∈ templateStageClass M ξ) (h : baseReduct G = baseReduct H) {n : ℕ} {a : Fin n ↪ M}
+    {c : TemplateClass.{u} (blockStage ζ) n} {d : TemplateClass.{u} (blockStage ξ) n}
+    (hca : (decode ζ G).eval a = some c) (hda : (decode ξ H).eval a = some d) :
+    c.reduce (isSuccPrelimit_blockStage ξ) = d := by
+  have he := congrArg (fun S : ClassRealization.{u, v} (blockStage ξ) M ↦ S.eval a)
+    (decode_reduce_eq_decode_of_baseReduct_eq hc hζ hξζ hG hH h)
+  simp only [ClassRealization.reduce_eval, hca, hda, Option.map_some] at he
+  exact Option.some.inj he
+
+/-- **The cell count of the class of a tuple is the same in every lift of a base structure**, for
+lifts as in `decode_reduce_eq_decode_of_baseReduct_eq` (`TemplateClass.cellCount_reduce`).
+Correspondence with the printed definitions. -/
+theorem cellCount_eq_of_baseReduct_eq (hc : Countable M) {ζ ξ : Ordinal.{u}} (hζ : ζ < ω₁)
+    (hξζ : ξ ≤ ζ) {G H : templateLanguage.{u}.Structure M} (hG : G ∈ templateStageClass M ζ)
+    (hH : H ∈ templateStageClass M ξ) (h : baseReduct G = baseReduct H) {n : ℕ} {a : Fin n ↪ M}
+    {c : TemplateClass.{u} (blockStage ζ) n} {d : TemplateClass.{u} (blockStage ξ) n}
+    (hca : (decode ζ G).eval a = some c) (hda : (decode ξ H).eval a = some d) :
+    c.cellCount = d.cellCount := by
+  rw [← reduce_eq_of_baseReduct_eq hc hζ hξζ hG hH h hca hda, TemplateClass.cellCount_reduce]
+
+/-! ### The stage bound -/
+
+/-- The countable ordinals do not form a countable set: the supremum of a countable set of
+countable ordinals is countable (`Ordinal.iSup_lt_omega_one`), and so is its successor. -/
+theorem not_countable_Iio_omega_one : ¬ (Set.Iio (ω₁ : Ordinal.{u})).Countable := fun hc ↦ by
+  have := hc.to_subtype
+  have hs := Ordinal.iSup_lt_omega_one fun x : Set.Iio (ω₁ : Ordinal.{u}) ↦ x.2
+  have h1 := (Cardinal.isSuccLimit_omega 1).succ_lt hs
+  exact (Order.lt_succ _).not_ge
+    (Ordinal.le_iSup (fun x : Set.Iio (ω₁ : Ordinal.{u}) ↦ x.1) ⟨_, h1⟩)
+
+/-- **A witness of the block `ξ` at the point `x` over `B`**: a lift `G ∈ K_γ[L]` of `B` at a
+stage `ξ + 1 < γ < ω₁` in whose decoded class realization the one-point tuple of `x` has a class
+with a label in `[λ_ξ, λ_ξ + ω)`.  Native construction. -/
+def IsBlockWitness (B : baseTemplateLanguage.{u}.Structure M) (ξ : Ordinal.{u}) (x : M)
+    (γ : Ordinal.{u}) : Prop :=
+  γ < ω₁ ∧ ξ + 1 < γ ∧ ∃ G ∈ templateStageClass M γ, baseReduct G = B ∧
+    ∃ c : TemplateClass.{u} (blockStage γ) 1, (decode γ G).eval (onePoint x) = some c ∧
+      ∃ ℓ ∈ c.labels, IsInBlock ξ ℓ
+
+/-- **The stage bound from strongly coded uniformity donors** (`StageBoundOfDonorsTarget M`, for
+every `M`): on a countable carrier, the lift stages of every base structure `B` are bounded below
+`ω₁`.  Suppose not.  Then every `ξ < ω₁` has a lift of `B` at a stage `γ > ξ + 1`, and so a point
+`f ξ` witnessing the block `[λ_ξ, λ_ξ + ω)` (`exists_onePoint_isInBlock`).  The carrier being
+countable and the countable ordinals not, some point `x` witnesses infinitely many blocks.  Fix
+one of them, `ξ₀`, with its lift, and let `N` be the cell count of the class of `x` there.  Take
+`N + 1` further blocks witnessed at `x`, and among the `N + 2` witnessing lifts the one at the
+largest stage: every other lift is its reduction (`reduce_eq_of_baseReduct_eq`, through B.T9 and
+B.T10), so the class `c` of `x` there has cell count `N`
+(`cellCount_eq_of_baseReduct_eq`) and every witnessed label, being below the stage of its own
+lift, is a label of `c` (`TemplateClass.mem_labels_of_mem_labels_reduce`).  The `N + 1` labels lie
+in pairwise disjoint blocks (`IsInBlock.eq`), so they are distinct labels of `c`, which has
+`N` cells (`TemplateClass.card_le_cellCount`): a contradiction.  Correspondence with the printed
+definitions. -/
+theorem stageBoundOfDonorsTarget (M : Type v) : StageBoundOfDonorsTarget.{u} M := by
+  intro hd hc B
+  by_contra hne
+  push Not at hne
+  have hsucc : ∀ o : Ordinal.{u}, o < ω₁ → o + 1 < ω₁ := fun o ho ↦ by
+    simpa [Order.succ_eq_add_one] using (Cardinal.isSuccLimit_omega 1).succ_lt ho
+  -- every countable `ξ` has a witness point
+  have hW : ∀ ξ ∈ Set.Iio (ω₁ : Ordinal.{u}), ∃ x : M, ∃ γ, IsBlockWitness B ξ x γ := by
+    intro ξ hξ
+    obtain ⟨β, ⟨hβ, G, hG, hGB⟩, hle⟩ := hne _ (hsucc _ (hsucc ξ hξ))
+    have hξβ : ξ + 1 < β := (Order.lt_add_one_iff.mpr le_rfl).trans_le hle
+    obtain ⟨a, c, hca, hl⟩ := exists_onePoint_isInBlock hd hβ hξβ hG
+    exact ⟨a 0, β, hβ, hξβ, G, hG, hGB, c, by rwa [onePoint_apply_zero], hl⟩
+  have hM : Nonempty M := by
+    obtain ⟨_, ⟨_, G, hG, _⟩, _⟩ := hne 0 (omega0_pos.trans omega0_lt_omega_one)
+    exact nonempty_of_mem_templateStageClass hG
+  choose! f hf using hW
+  -- some point witnesses infinitely many blocks
+  have hfib : ∃ x : M, ¬ {ξ | ξ < ω₁ ∧ f ξ = x}.Countable := by
+    by_contra! hall
+    have : Countable M := hc
+    refine not_countable_Iio_omega_one ?_
+    have he : Set.Iio (ω₁ : Ordinal.{u}) = ⋃ x : M, {ξ | ξ < ω₁ ∧ f ξ = x} := by
+      ext ξ
+      simp
+    rw [he]
+    exact Set.countable_iUnion hall
+  obtain ⟨x, hx⟩ := hfib
+  set F := {ξ | ξ < ω₁ ∧ f ξ = x} with hFdef
+  have hF : F.Infinite := fun hfin ↦ hx hfin.countable
+  have hFW : ∀ ξ ∈ F, ∃ γ, IsBlockWitness B ξ x γ := fun ξ hξ ↦ by
+    have := hf ξ hξ.1
+    rwa [hξ.2] at this
+  choose! γ hγ using hFW
+  -- the cell count at one witnessing lift
+  obtain ⟨ξ₀, hξ₀⟩ := hF.nonempty
+  obtain ⟨-, -, G₀, hG₀, hB₀, c₀, hc₀, -⟩ := hγ ξ₀ hξ₀
+  -- `N + 1` further witnessed blocks, and the lift at the largest stage
+  obtain ⟨T, hTF, hTcard⟩ := hF.exists_subset_card_eq (c₀.cellCount + 1)
+  obtain ⟨ξs, hξs, hmax⟩ :=
+    (insert ξ₀ T).exists_max_image γ (Finset.insert_nonempty ξ₀ T)
+  have hξsF : ξs ∈ F := by
+    rcases Finset.mem_insert.mp hξs with rfl | h
+    · exact hξ₀
+    · exact hTF h
+  obtain ⟨hγs, -, Gs, hGs, hBs, cs, hcs, -⟩ := hγ ξs hξsF
+  have hN : cs.cellCount = c₀.cellCount :=
+    cellCount_eq_of_baseReduct_eq hc hγs (hmax ξ₀ (Finset.mem_insert_self ξ₀ T)) hGs hG₀
+      (hBs.trans hB₀.symm) hcs hc₀
+  have hlab : ∀ ξ ∈ T, ∃ ℓ ∈ cs.labels, IsInBlock ξ ℓ := by
+    intro ξ hξ
+    obtain ⟨-, hξγ, G, hG, hB, c, hcx, ℓ, hℓ, hblk⟩ := hγ ξ (hTF hξ)
+    have hred := reduce_eq_of_baseReduct_eq hc hγs (hmax ξ (Finset.mem_insert_of_mem hξ)) hGs hG
+      (hBs.trans hB.symm) hcs hcx
+    have hlt : ℓ < (blockStage (γ ξ) : Label.{u}) := by
+      refine hblk.2.trans (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr ?_))
+      rw [← blockStage_add_one]
+      exact blockStage_strictMono hξγ
+    exact ⟨ℓ, TemplateClass.mem_labels_of_mem_labels_reduce _ (by rw [hred]; exact hℓ) hlt, hblk⟩
+  choose! ℓ hℓ hblk using hlab
+  have hinj : Set.InjOn ℓ T := fun ξ hξ ξ' hξ' h ↦ (hblk ξ hξ).eq (h ▸ hblk ξ' hξ')
+  have hcard := TemplateClass.card_le_cellCount hinj hℓ
+  omega
+
+/-- **The stage bound** (`StageBoundTarget M`, for every `M`): on a countable carrier, the lift
+stages of every base structure are bounded below `ω₁`.  `stageBoundOfDonorsTarget` with the
+donors `hasStronglyCodedUniformityDonors`.  Correspondence with the printed definitions. -/
+theorem stageBoundTarget (M : Type v) : StageBoundTarget.{u} M :=
+  stageBoundOfDonorsTarget M hasStronglyCodedUniformityDonors
+
+/-- **B.T15, Boundedness** [AFK26, Proposition 4.34] (`BoundednessTarget M`, for every `M`): on a
+countable carrier, the ranks of the lifts of every base structure form a countable set bounded
+below `ω₁`.  The stage bound (`stageBoundTarget`) and the rank at most the stage
+(`boundednessTarget_of_stageBoundTarget`); the rank is never identified with the stage.
+Correspondence with the printed definitions. -/
+theorem boundednessTarget (M : Type v) : BoundednessTarget.{u} M :=
+  boundednessTarget_of_stageBoundOfDonorsTarget (stageBoundOfDonorsTarget M)
 
 end
 
