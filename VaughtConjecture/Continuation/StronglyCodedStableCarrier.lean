@@ -89,9 +89,10 @@ theorem HasStronglyCodedStableGrowthCarriers.hasStableGrowthCarriers
 
 /-- **A strongly coded stable recovery scheme gives a strongly coded carrier of cutoff stable
 recovery**: as `StageType.IsStableRecoveryScheme.exists_isCutoffStableRecovery`, the coface `q` of
-`T⁺↓λ_ξ` on the scheme `E` carries cutoff stable recovery, and its rows are those of `E`.  The
-recovery contract is that of `StageType.IsCutoffStableRecovery`: every stage type whose reduction
-lies in the receiving family of `q`. -/
+`T⁺↓λ_ξ` on the scheme `E` carries cutoff stable recovery at the cutoff
+`δ = ((0 : Ordinal) : Label)`, the ordinal zero as a label (permitted since `0 < λ_ξ`), and its
+rows are those of `E`.  The recovery contract is that of `StageType.IsCutoffStableRecovery`: every
+stage type whose reduction lies in the receiving family of `q` at `δ`. -/
 theorem IsStableRecoveryScheme.exists_isCutoffStableRecovery_of_isStronglyCoded {m k : ℕ}
     {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f : Fin k ↪ Fin m}
     {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}} {E : Scheme.{u} (m + 1)}
@@ -102,7 +103,7 @@ theorem IsStableRecoveryScheme.exists_isCutoffStableRecovery_of_isStronglyCoded 
   have hqs : q.rows.IsStronglyCoded := by
     rw [hqE]
     exact hEs
-  exact ⟨q, _, hqs, hE.isCutoffStableRecovery hq hqE
+  exact ⟨q, ((0 : Ordinal.{u}) : Label.{u}), hqs, hE.isCutoffStableRecovery hq hqE
     (isPermittedCutoff_coe.mpr (isSuccLimit_blockStage ξ).bot_lt)⟩
 
 /-- **Strongly coded cutoff stable recovery from strongly coded stable growth carriers** for the

@@ -22,21 +22,26 @@ strongly coded stage types (`Realization.HasFiniteCutReceivingIn`, with
 `fun t ↦ t.rows.IsStronglyCoded`) can replace that call only for a strongly coded carrier `q`.
 
 **The finite target** (`StageType.HasStronglyCodedCutoffStableRecovery ξ`, a named statement;
-**open**).  For a strongly coded legal context `T⁺` at `λ_{ξ+1}`, an embedding `f` of `k > 0`
-points with face `P`, a strongly coded coface `D` of `P`, `γ < λ_{ξ+1}` and the margin calibration
+proved at every `ξ` as `StageType.hasStronglyCodedCutoffStableRecovery`, in
+`VaughtConjecture.MainTheorem.CodedLadderCutoffRecovery`, from the coded ladder carrier).  For a
+strongly coded legal context `T⁺` at `λ_{ξ+1}`, an embedding `f` of `k > 0` points with face `P`, a
+strongly coded coface `D` of `P`, `γ < λ_{ξ+1}` and the margin calibration
 (`StageType.GradedCapMarginCalibration`), it asks for a **strongly coded** carrier `(q, δ)` of
 cutoff stable recovery (`StageType.IsCutoffStableRecovery`, unchanged: literal faces, and recovery
 for every stage type whose reduction lies in the receiving family of `q` at `δ`).  The binders are
 those of `StageType.HasCutoffStableRecoverySchemes` for the margin calibration, with strong coding
 added to `T⁺`, `D` and `q`.
 
-**The existing construction does not give it.**  The compiled carrier for the margin calibration is
-the ladder carrier (`StageType.HasLadderGrowthCarriersStable.hasStableGrowthCarriers`, from
-`StageType.hasLadderGrowthCarriersStableAtSeed_levels`), and its carrier `q` lies on the carrier
-scheme (`GrowthCarrier.isStableRecoveryScheme`).  Its first construction that is not strongly coded
-is the padded grade-one base (`Scheme.LadderBaseData.not_isStronglyCoded_ladderBase`, in
+**The original ladder construction does not give it.**  The original ladder carrier for the
+margin calibration (`StageType.HasLadderGrowthCarriersStable.hasStableGrowthCarriers`, from
+`StageType.hasLadderGrowthCarriersStableAtSeed_levels`), whose rungs read `Label.ladderSource`, has
+its carrier `q` on the carrier scheme (`GrowthCarrier.isStableRecoveryScheme`).  Its first
+construction that is not strongly coded is the padded grade-one base
+(`Scheme.LadderBaseData.not_isStronglyCoded_ladderBase`, in
 `VaughtConjecture.MainTheorem.LevelCarrierCoding`): at the height of the seed choice the second
-rung is present, and its diagonal `ω + 3` exceeds the grade-one bound `2`.
+rung is present, and its diagonal `ω + 3` exceeds the grade-one bound `2`.  The coded ladder
+carrier (`GrowthCarrier.CodedLadder`, rungs reading `Label.codedLadderSource`) replaces it and does
+give the target (`StageType.hasStronglyCodedCutoffStableRecovery`).
 
 **Evaluation without modelhood**
 (`Realization.stablyReceivesAt_of_isCutoffStableRecovery_of_isStronglyCoded`,
@@ -44,7 +49,10 @@ rung is present, and its diagonal `ω + 3` exceeds the grade-one bound `2`.
 covering, stable lawfulness (`Realization.isStablyLawful_of_hasLegalTypes`) and finite-cut receiving
 for the strongly coded cofaces, a strongly coded carrier of cutoff stable recovery at a context
 containing `x` gives (R4) at `(x, D, γ)`.  The second form takes the finite target as a hypothesis;
-it is an assumption, not evidence that the finite construction is solved.
+the target is proved separately (`StageType.hasStronglyCodedCutoffStableRecovery`), and the form
+without it is `Realization.stablyReceivesAt_of_gradedCapMarginCalibration_of_isStronglyCoded`.  In
+both, the calibrated context is a hypothesis: its acquisition in the strongly coded class is
+separate and not addressed here.
 
 ## Placement
 
@@ -63,13 +71,15 @@ namespace StageType
 variable (ξ : Ordinal.{u})
 
 /-- **Strongly coded cutoff stable recovery for the margin calibration** (a named statement;
-open).  For every strongly coded legal `T⁺` at `λ_{ξ+1}` on `m` points, embedding `f` of `k > 0`
-points with face `P`, coface `D` of `P` with strongly coded rows, and `γ < λ_{ξ+1}` with the margin
-calibration `StageType.GradedCapMarginCalibration ξ T⁺ f D γ`, there is a carrier `(q, δ)` of cutoff
+proved at every `ξ` as `StageType.hasStronglyCodedCutoffStableRecovery`).  For every strongly
+coded legal `T⁺` at `λ_{ξ+1}` on `m` points, embedding `f` of `k > 0` points with face `P`, coface
+`D` of `P` with strongly coded rows, and `γ < λ_{ξ+1}` with the margin calibration
+`StageType.GradedCapMarginCalibration ξ T⁺ f D γ`, there is a carrier `(q, δ)` of cutoff
 stable recovery (`StageType.IsCutoffStableRecovery`) with `q` strongly coded.  The recovery
 contract is unchanged: literal faces, and recovery for every stage type whose reduction lies in the
-receiving family of `q` at `δ`.  The existing ladder carrier does not give it
-(`Scheme.LadderBaseData.not_isStronglyCoded_ladderBase`). -/
+receiving family of `q` at `δ`.  The original ladder carrier, with rungs reading
+`Label.ladderSource`, does not give it (`Scheme.LadderBaseData.not_isStronglyCoded_ladderBase`);
+the coded ladder carrier does. -/
 def HasStronglyCodedCutoffStableRecovery : Prop :=
   ∀ ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin k ↪ Fin m)
     (P : StageType.{u} (blockStage (ξ + 1)) k), Tp.IsStronglyCodedLegal → 0 < k →
@@ -125,9 +135,10 @@ the candidate of positive arity, `D` a strongly coded coface of its type, `γ < 
 occurrence of `R` containing the tuple of `x` along `f` whose stable type satisfies the margin
 calibration for `f`, `D` and `γ`.  Then **assuming** the finite target
 `StageType.HasStronglyCodedCutoffStableRecovery ξ` (`hS`), (R4) holds at `(x, D, γ)`.  The target is
-a hypothesis here, not evidence that the finite construction is solved: it is open, and the
-existing ladder carrier does not give it (`Scheme.LadderBaseData.not_isStronglyCoded_ladderBase`).
-The calibrated context `w` is also a hypothesis: its acquisition in this class is not addressed. -/
+a hypothesis here; it is proved separately (`StageType.hasStronglyCodedCutoffStableRecovery`), and
+the form without it is
+`Realization.stablyReceivesAt_of_gradedCapMarginCalibration_of_isStronglyCoded`.  The calibrated
+context `w` is also a hypothesis: its acquisition in this class is separate and not addressed. -/
 theorem stablyReceivesAt_of_hasStronglyCodedCutoffStableRecovery (hR : R.IsConsistent)
     (hc : R.IsCovering) (hl : R.HasLegalTypes)
     (hsc : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) (p : StageType.{u} (blockStage ξ) n), R.eval t = some p →
