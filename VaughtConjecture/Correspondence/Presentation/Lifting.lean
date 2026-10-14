@@ -37,8 +37,9 @@ namespace VaughtConjecture
 /-- **Target: stable labels are invariant under coherent renaming** (native construction).  For
 exactly consistent realizations `S`, `S'` at `λ_η` and a coherent renaming `c` of `S` into `S'`,
 at every tuple `u` typed by `p` in `S` and by `q` in `S'`, the stable label in `S` of a cell `d` of
-`p` is the stable label in `S'` of the cell `c.cellEquiv u hp hq d` of `q`.  Stated, not proved.
--/
+`p` is the stable label in `S'` of the cell `c.cellEquiv u hp hq d` of `q`.  Proved, with these
+premises only, in `VaughtConjecture.Correspondence.Presentation.StableLabelInvariance`
+(`stableLabelInvarianceTarget`). -/
 def StableLabelInvarianceTarget (η : Ordinal.{u}) (M : Type v) : Prop :=
   ∀ S S' : Realization.{u, v} (blockStage η) M, S.IsConsistent → S'.IsConsistent →
     ∀ (c : Realization.CoherentRenaming S S') ⦃k : ℕ⦄ (u : Fin k ↪ M)
