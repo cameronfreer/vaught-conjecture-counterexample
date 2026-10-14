@@ -20,12 +20,13 @@ the reduction (`Realization.stableLabel`), the supremum over the rooted covers o
 (`Realization.ExtendsToCover`) of the provisional offsets (`StageType.provisionalOffset`).
 
 The input the lifting step needs is the invariance of stable labels under coherent renaming,
-stated here as a target (`StableLabelInvarianceTarget`).  It is not a consequence of equality of
-class readings or of literal equality of the reductions: it requires transporting each rooted
-cover `(m, D, f)` of the tuple in one reduction, with its witness `s : Fin m → M`, to the rooted
-cover `(m, D', f)` in the other, where `D'` is the type of `s` there, together with the cell maps
-along `f`: the renaming at `s` restricts along `f` to the renaming at the tuple
-(`Realization.CoherentRenaming.faceCellMap_comm`), and forcing a threshold
+stated here as a target (`StableLabelInvarianceTarget`).  It is not obtained merely by rewriting
+equality of class readings or literal equality of the reductions (alignment gives coherent
+renamings under its hypotheses; what remains is the invariance of stable labels under them): it
+requires transporting each rooted cover `(m, D, f)` of the tuple in one reduction, with its
+witness `s : Fin m → M`, to the rooted cover `(m, D', f)` in the other, where `D'` is the type of
+`s` there, together with the cell maps along `f`: the renaming at `s` restricts along `f` to the
+renaming at the tuple (`Realization.CoherentRenaming.faceCellMap_comm`), and forcing a threshold
 (`StageType.ForcesThreshold`) at a cell is then to be compared at the renamed cell.
 -/
 
