@@ -102,6 +102,11 @@ is compared.
   `Realization.StronglyCodedResidualReceiving`) and `Realization.StronglyCodedHollowIsoTarget`
   (premise: restricted (R3), `Realization.StronglyCodedHollowReceiving`, for the restricted hollow
   property: cover-hollowness without a globally rigid core).
+  The exact-growth, residual and hollow comparisons are proved in
+  `VaughtConjecture.MainTheorem.StronglyCodedComparison`
+  (`Realization.stronglyCodedExactGrowthIsoTarget`, `Realization.stronglyCodedResidualIsoTarget`,
+  `Realization.stronglyCodedHollowIsoTarget`); the residual and hollow ones keep restricted (R2)
+  and (R3) as premises.
 * `Realization.StronglyCodedTerminalIsoTarget`: two realizations terminal in the class sharing a
   restricted terminal property are isomorphic, under restricted (R2) and (R3) on both carriers.
   It follows from the three comparisons
