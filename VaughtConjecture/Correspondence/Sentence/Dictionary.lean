@@ -37,23 +37,25 @@ template system `L` of legal templates, whose `L_c[L]` is `baseTemplateLanguage`
   specialization** of `Realization.classReading_eq_classReading_iff` with
   `StageType.globalClass_eq_iff` (not yet written).  The converse is not established here; this
   reading forgets non-strongly-coded classes.
-* **D4**, isomorphism reflection on countable carriers: **new**; for `L` it needs the strongly
-  coded restriction of the converse of D3.  Not stated.
-* **D5**, `densitySentence.Realize B → σ[L°].Realize (classStructure B)`: **new**.  Not stated:
-  `L°` (the legal templates without clause (5)) has no language here, since
-  `baseTemplateLanguage` is fixed to `L`.
-* **D6**, `σ[L°].Realize (classStructure B) ↔ densitySentenceRen.Realize B`: **new**.  Not
-  stated (`σ[L°]` and `densitySentenceRen` are not defined).
+* **D4**, isomorphism reflection on countable carriers: **deferred**; not needed to finish the
+  three propositions for strongly coded `L`.  Not stated.
+* **D5**, `densitySentence.Realize B → σ[L°].Realize (classStructure B)`, where `L°` is the
+  legal templates without clause (5): **deferred**; not needed to finish the three propositions
+  for strongly coded `L`.  Not stated (`baseTemplateLanguage` is fixed to `L`; no language for
+  `L°` is defined).
+* **D6**, `σ[L°].Realize (classStructure B) ↔ densitySentenceRen.Realize B`: **deferred**; not
+  needed to finish the three propositions for strongly coded `L`.  Not stated.
 * **D7**, on countable carriers, every model of `σ[L°]` is the class structure of a model of
-  `densitySentence` on the same carrier: **new**.  Not stated (`σ[L°]` is not defined).
+  `densitySentence` on the same carrier: **deferred**; not needed to finish the three
+  propositions for strongly coded `L`.  Not stated.
 * **D8**, `densitySentence.Realize B → ¬ σ[L].Realize (classStructure B)`:
   `ClassStructureSeparationTarget`, **proved** (`classStructureSeparationTarget`) as a direct
   composition of the compiled `baseLanguage.not_singletons_and_typing_of_realize_densitySentence`
   with B.T18 (`singletonsProjectionTarget`, `typingProjectionTarget`) and B.T19
   (`classReadingTarget`).  Restricted to this reading.
 * **D9**, D1–D7 for `σ[L]` through the chosen vocabulary, against a strongly coded density
-  sentence: the chosen vocabulary is `ChosenVocabularyTarget`, **proved**.  The rest is **new**
-  and not stated (no strongly coded density sentence is defined).
+  sentence: the chosen vocabulary is `ChosenVocabularyTarget`, **proved**.  The rest is
+  **deferred**; not needed to finish the three propositions for strongly coded `L`.  Not stated.
 
 Nothing here compares `σ[L]` with the density sentence beyond D8, which is a separation for the
 class reading only; no spectrum transfer and no correspondence of model classes is claimed.
