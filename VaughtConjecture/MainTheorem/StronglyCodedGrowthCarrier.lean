@@ -3,9 +3,11 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Extension.StronglyCodedBotKeeping
 import VaughtConjecture.MainTheorem.CodedLadderStable
 import VaughtConjecture.MainTheorem.GrowthAdmittedCarrier
 import VaughtConjecture.MainTheorem.StronglyCodedTerminalProperty
+import VaughtConjecture.Realization.CapToModel
 
 /-!
 # Restricted (R3) in the strongly coded receiving class through coded exact-growth carriers
@@ -21,7 +23,37 @@ property receives every strongly coded one-point coface exactly.  For models, (R
 contexts and padding (`Realization.hollowReceiving_of_hasExactGrowthCarriers_pos`,
 `Realization.hollowGrowthAcquisition_reference'`, `Realization.HollowReceiving.of_pos`).
 
-## The saturation use, and its replacement
+Status: restricted (R3) is **open**.  The construction (strongly coded exact growth carriers) and
+the realization (the carrier received by strongly coded receiving) are proved, and padding of the
+empty cover is proved; the acquisition of calibrated contexts in the class
+(`Realization.StronglyCodedHollowAcquisitionTarget`) is open.
+
+## 1. Construction: strongly coded exact growth carriers
+
+* `StageType.HasExactStronglyCodedGrowthCarriers C`: `StageType.HasExactGrowthCarriers C` with a
+  strongly coded context and donor as inputs and a strongly coded carrier as output.
+* `StageType.hasExactStronglyCodedGrowthCarriers_codedLadder` (proved): for the hollow reference
+  calibration with a nonempty root, from the coded contract
+  `StageType.hasCodedLadderGrowthCarriers_levels`, recognition
+  `GrowthCarrier.recognizes_of_codedLadder`, recovery
+  `StageType.GrowthRequests.recovers_eq_of_recognizes`, and the field
+  `GrowthCarrier.CodedLadder.stronglyCoded`, which
+  `StageType.HasCodedLadderGrowthCarriers.exists_recognizes` forgets.
+
+The strong coding of the output is proved by the construction, not assumed from the inputs: each
+step that creates rows has its own preservation lemma.  The second coatom type is the strongly coded
+pinned extension (`StageType.exists_stronglyCoded_pinned_extension`, in
+`StageType.exists_stronglyCodedGrowthSeed_of_isSuccLimit`); the amalgam
+(`Seed.isStronglyCoded_amalgam`) and the attachment, a restriction of it
+(`Seed.isStronglyCoded_attachment`); the coded levels, initial and next
+(`Seed.codedLvLevel_codedGood`); their replicated copies (`Seed.ALvl.CodedGood.isStronglyCoded_rep`,
+`Seed.codedLvRep_isStronglyCoded`); the strongly coded apex
+(`StageType.isStronglyCoded_addStrongApex`, `Seed.isStronglyCoded_codedLvRepCompletion`), which
+gives the field `GrowthCarrier.CodedLadder.stronglyCoded` in
+`Seed.exists_codedLadder_codedLvRepCompletion`; and the relabelling to every context
+(`Scheme.isStronglyCoded_comap`, in `StageType.CodedLadderCarrierBody.relabel`).
+
+## 2. Realization: the saturation use and its replacement
 
 `GrowthCarrier.exists_eval_eq_of_recovers_eq` takes `hR : R.IsModel` and uses two of its clauses,
 both through `GrowthCarrier.exists_recovered`:
@@ -37,98 +69,92 @@ Exactness is not a property of the realization: it comes from the recovery
 rows agreeing with the labels of `x` on the context face.  So the replacement needs only some
 tuple over `x` with a type on the carrier scheme.  In the class this is the field
 `Realization.IsStronglyCodedReceiving.receiving` (finite-cut receiving for the cofaces with
-strongly coded rows) applied to the saturation instance `d ∈ x.type.cofaces` on `G.scheme` at any
-permitted cutoff (here `0`, permitted at a positive stage): the received type has the scheme of
-`d`, which is `G.scheme`.  The instance `d` is strongly coded exactly when the carrier scheme is
-(strong coding is a property of the rows), so the carrier must be **strongly coded**; it is the
-received coface, the actual type of `w`, that is then strongly coded and a coface of `x.type`.
-The cutoff-stable recovery of the coded ladder
+strongly coded rows) at a coface `d ∈ x.type.cofaces` on `G.scheme` and the cutoff `0` (permitted
+at a positive stage).  The cutoff-stable recovery of the coded ladder
 (`StageType.hasStronglyCodedCutoffStableRecovery`) is not used: it concerns the stable labels of
 (R4), not the actual labels.
 
-* `GrowthCarrier.exists_eval_eq_of_recovers_eq_of_isStronglyCoded` (proved, native construction):
-  the replacement, from exact consistency, strongly coded receiving and a positive stage.
-* `Realization.StronglyCodedCarrierEvaluationTarget` and its proof
-  `Realization.stronglyCodedCarrierEvaluationTarget`: the same for `R` in the class.
+* `GrowthCarrier.exists_eval_eq_of_recovers_eq_of_mem_cofaces` (proved): the coface `d` given to
+  receiving is explicit, with the premise `d.rows.IsStronglyCoded`; (a) the received type `r` is in
+  the receiving family of `d` at `0`, a coface of the type of `x`, with strongly coded rows; (b)
+  the face of the received tuple along the root followed by the new point has type `D` literally
+  (`R.eval … = some D`), the formal top included.
+* `GrowthCarrier.exists_eval_eq_of_recovers_eq_of_isStronglyCoded` (proved): the same from a
+  strongly coded carrier and a nonempty saturation instance, the instance being given to receiving.
+* `GrowthCarrier.exists_eval_eq_of_recovers_eq_of_hasFiniteCutReceivingIn` (proved): the conclusion
+  of `GrowthCarrier.exists_eval_eq_of_recovers_eq` clause by clause (`Fin.castSuccEmb.trans u =
+  e.trans x.tuple`, `u (Fin.last n) ∉ Set.range x.tuple`, `R.eval u = some D`), with `hR` replaced
+  by exact consistency, the receiving field and a positive stage, the carrier strongly coded.
+* `Realization.StronglyCodedCarrierEvaluationTarget`, proved
+  (`Realization.stronglyCodedCarrierEvaluationTarget`): the evaluation for `R` in the class.
+* `Realization.IsStronglyCodedReceiving.exists_covers_of_calibratedContext` (proved): exact
+  receiving of a strongly coded coface `D` over `c' ∘ h`, at an explicit calibrated context: a
+  cover `c'` of `t'` with `C t' h D` is a hypothesis, with strongly coded exact growth carriers for
+  `C`.
 
-## Strongly coded exact growth carriers
-
-* `StageType.HasExactStronglyCodedGrowthCarriers C`: `StageType.HasExactGrowthCarriers C` with a
-  strongly coded context and donor as inputs and a strongly coded carrier as output.
-* `StageType.hasExactStronglyCodedGrowthCarriers_codedLadder` (proved, native construction): for the
-  hollow reference calibration with a nonempty root, from the coded contract
-  `StageType.hasCodedLadderGrowthCarriers_levels`, recognition
-  `GrowthCarrier.recognizes_of_codedLadder`, recovery
-  `StageType.GrowthRequests.recovers_eq_of_recognizes`, and the field
-  `GrowthCarrier.CodedLadder.stronglyCoded`, which the unrestricted route
-  (`StageType.HasCodedLadderGrowthCarriers.exists_recognizes`) forgets.
-
-## The derivation of restricted (R3)
+## 3. Acquisition and the empty root
 
 * `Realization.StronglyCodedHollowGrowthAcquisition ξ M C`: the acquisition of calibrated contexts
-  in the class, an explicit premise: over every cover of positive arity, for every strongly coded
-  one-point coface, a cover of a context calibrated by `C`.  The acquisition of
+  in the class, an explicit premise: over every cover of **positive** arity, for every strongly
+  coded one-point coface, a cover of a context calibrated by `C`.  The acquisition of
   `VaughtConjecture.MainTheorem.StronglyCodedCalibratedContexts`
   (`Realization.CalibratedContextAcquisitionTarget`) is for the non-hollow case and the margin
   calibration of (R4); it does not apply here.  Only its reference-cell step carries over
   (`Realization.stronglyCodedReferenceCellsTarget`, the premise `huni` of
   `Realization.acquiresCalibratedContexts_gradedCapMargin_of_exists_extend_uniformity`).
-* `Realization.StronglyCodedHollowReceivingPos ξ M`: restricted (R3) over covers of positive arity.
-* `Realization.StronglyCodedHollowPadding ξ M` (stated, not proved): padding of the empty cover in
-  the class, the counterpart of `Realization.HollowReceiving.of_pos`.
+* `Realization.StronglyCodedHollowAcquisitionTarget ξ M` (open): the acquisition for
+  `StageType.HollowReferenceCalibration'`.
+* **The empty root.**  The calibration of the coded carriers has a nonempty root
+  (`StageType.HollowReferenceCalibrationPos`: the relative lift reads the donor through its root
+  face), so covers of arity zero are not acquired: they are padded.
+  `Realization.StronglyCodedHollowPadding ξ M`, proved (`Realization.stronglyCodedHollowPadding`),
+  from an occurrence of positive arity (`Realization.positiveOccurrenceStep`, from unbounded
+  growth) and the strongly coded pinned extension over the empty face
+  (`Realization.stronglyCodedPaddingExtensionStep`).
 * `Realization.stronglyCodedHollowReceivingPos_of_hasExactStronglyCodedGrowthCarriers` (proved):
-  restricted (R3) over positive covers from acquisition and strongly coded exact growth carriers for
-  one calibration, as `Realization.hollowReceiving_of_hasExactGrowthCarriers_pos`.
-* `Realization.StronglyCodedHollowDerivationTarget ξ M` and its proof
-  `Realization.stronglyCodedHollowDerivationTarget`: `Realization.StronglyCodedHollowReceiving ξ M`
-  from the two named premises `Realization.StronglyCodedHollowAcquisitionTarget ξ M` (acquisition
-  for `StageType.HollowReferenceCalibration'`) and `Realization.StronglyCodedHollowPadding ξ M`.
+  restricted (R3) over positive covers from acquisition and strongly coded exact growth carriers.
+* `Realization.StronglyCodedHollowDerivationTarget`, proved, and
+  `Realization.stronglyCodedHollowReceiving_of_acquisition` (proved): restricted (R3)
+  (`Realization.StronglyCodedHollowReceiving ξ M`) from the acquisition alone.
 
 ## Modelhood audit of the unrestricted (R3) route
 
-The route of `Realization.hollowReceiving_levels`, step by step, with the clause of a model it
-uses and its status in the strongly coded receiving class ("replaced": a compiled strongly coded
-result; "class field": a clause of `Realization.IsStronglyCodedReceiving`; "replaceable": a
-replacement named, not composed here; "MISSING": no strongly coded construction).
+The route of `Realization.hollowReceiving_levels`, step by step.  Each entry: step; the clause of a
+model it uses; status in the strongly coded receiving class.
 
-Each entry: step; the clause of a model it uses; status in the class.
-
-* Padding, an occurrence of positive arity; `IsModel.exists_le_arity`; replaceable by unbounded
-  growth (`topGradeSup = ⊤` and `StageType.grade_le`).
+* Padding, an occurrence of positive arity; `IsModel.exists_le_arity`; proved from unbounded growth
+  (`Realization.positiveOccurrenceStep`).
 * Padding, the pinned extension; none (`StageType.exists_pinned_extension_of_isSuccPrelimit`);
-  replaceable by `StageType.exists_stronglyCoded_pinned_extension`.
-* Acquisition, reference cells; `IsModel.exists_extend_uniformity`; replaced by
+  proved strongly coded (`Realization.stronglyCodedPaddingExtensionStep`).
+* Acquisition, reference cells; `IsModel.exists_extend_uniformity`; proved:
   `Realization.stronglyCodedReferenceCellsTarget`.
 * Acquisition, an occurrence with more points than the donor offsets; `IsModel.exists_le_arity`;
-  replaceable by unbounded growth.
+  from unbounded growth (an occurrence of top grade above `N` has more than `N` points), not
+  composed here.
 * Acquisition, one occurrence containing both; `IsModel.isCovering`; class field.
 * Synchronization with forcing (`Realization.IsModel.exists_forcing_floor`); covering and
-  consistency only; class fields.
+  consistency only; class fields, not composed here.
 * A top cap of the floor; `IsModel.isLegal`; class field.
-* One point more; `IsModel.dominance` at `0`; replaced by
-  `Realization.HasFiniteCutReceivingIn.dominance_of_hasStronglyCodedCofaceInstances`.
-* The bot-keeping completion of the seed; none (`Seed.exists_botKeeping`); **MISSING** in the
-  strongly coded form, `StageType.StronglyCodedBotKeepingCofaceTarget`.
-* The bottom-pattern realization; `IsModel.bottomPattern`; replaceable once the previous step
-  holds: class receiving and `StageType.receivingFamily_subset_bottomPatternFamily`.
+* One point more; `IsModel.dominance` at `0`; proved:
+  `Realization.IsStronglyCodedReceiving.realizesOver_dominanceFamily`.
+* The bot-keeping completion of the seed; none (`Seed.exists_botKeeping`); proved strongly coded:
+  `StageType.stronglyCodedBotKeepingCofaceTarget`
+  (`VaughtConjecture.Extension.StronglyCodedBotKeeping`).
+* The bottom-pattern realization; `IsModel.bottomPattern`; proved for strongly coded cofaces:
+  `Realization.IsStronglyCodedReceiving.realizesOver_bottomPatternFamily`.  Receiving at a cutoff
+  other than `⊥` keeps exactly the information the clause asks for (which cells are `⊥`).
 * The marked-cap context; none (`StageType.markedCapContextBelow'_of_botKeeping`); unchanged.
-* Exact growth carriers; none; replaced by
-  `StageType.hasExactStronglyCodedGrowthCarriers_codedLadder`.
+* Exact growth carriers; none; proved: `StageType.hasExactStronglyCodedGrowthCarriers_codedLadder`.
 * Legality and strong coding of the acquired context; `IsModel.isLegal`; class fields.
-* Realization of the carrier; `IsModel.saturation`; replaced by
-  `GrowthCarrier.exists_eval_eq_of_recovers_eq_of_isStronglyCoded`.
+* Realization of the carrier; `IsModel.saturation`; proved:
+  `GrowthCarrier.exists_eval_eq_of_recovers_eq_of_mem_cofaces`.
 * The evaluation; `IsModel.isConsistent`; class field.
 
-The first missing construction is in the acquisition, at the bottom-pattern step of
-`Realization.rootBottomAcquisition`: the coface realized there is the completion of a bot-keeping
-completion below the full grade of the seed of a coatom type with itself, whose apex row is the
-block coding of the labels (`StageType.addApex`).  To receive it in the class it must be strongly
-coded.  Strongly coded completions exist (`Seed.exists_completionBelowFullGrade_isStronglyCoded`,
-completed by `CompletionBelowFullGrade.strongCompletion`), and bot-keeping ones exist
-(`Seed.exists_botKeeping`), but no compiled completion is both, with the strongly coded apex
-reading the cells labelled `⊥` as `⊥`.  `StageType.StronglyCodedBotKeepingCofaceTarget` states what
-is needed; its unrestricted form is proved (`StageType.exists_botKeepingCoface`).  It is not built
-here.
+The first remaining gap is the composition of the acquisition in the class
+(`Realization.StronglyCodedHollowAcquisitionTarget`): the arguments of
+`Realization.IsModel.exists_forcing_floor`, `Realization.rootBottomAcquisition_of_botKeeping` and
+`Realization.hollowGrowthAcquisition_reference'` with each model clause replaced as listed.  Every
+step has a compiled replacement; the composed statement is not compiled.
 
 All results here are native constructions of this repository; no correspondence with [AFK26] is
 claimed.
@@ -150,13 +176,49 @@ namespace GrowthCarrier
 
 variable {α : Ordinal.{u}} {M : Type v} {R : Realization.{u, v} α M} {n : ℕ}
 
+/-- **The realization of a carrier through a given strongly coded coface** (native
+construction): the coface `d` of the type of `x` on the carrier scheme, with strongly coded rows,
+is given to finite-cut receiving for the cofaces with strongly coded rows at the cutoff `0`
+(permitted at a positive stage).  The received tuple `w` has a type `r` in the receiving family of
+`d` at `0`, hence on the carrier scheme; `r` is a coface of the type of `x` with strongly coded
+rows.  The face of `w` along the root `e` followed by the new point has type `D` literally, by the
+recovery of the labels of `D` from the actual labels of `x`
+(`GrowthCarrier.exists_recovered_of_eval`, which uses exact consistency only). -/
+theorem exists_eval_eq_of_recovers_eq_of_mem_cofaces (hR : R.IsConsistent)
+    (hrec : R.HasFiniteCutReceivingIn fun t ↦ t.rows.IsStronglyCoded) (hα : 0 < α)
+    (x : R.Occurrence) {e : Fin n ↪ Fin x.arity} {D : StageType.{u} α (n + 1)}
+    (G : GrowthCarrier x.type.toScheme D.toScheme e) {d : StageType.{u} α (x.arity + 1)}
+    (hd : d ∈ x.type.cofaces) (hdE : d.toScheme = G.scheme) (hds : d.rows.IsStronglyCoded)
+    (hrecov : G.Recovers x.type.label fun j ℓ ↦ ℓ = D.label j) :
+    ∃ (w : Fin (x.arity + 1) ↪ M) (r : StageType.{u} α (x.arity + 1)),
+      Fin.castSuccEmb.trans w = x.tuple ∧ R.eval w = some r ∧ r ∈ receivingFamily d 0 ∧
+        r ∈ x.type.cofaces ∧ r.rows.IsStronglyCoded ∧
+        Fin.castSuccEmb.trans ((extendByLast e).trans w) = e.trans x.tuple ∧
+        ((extendByLast e).trans w) (Fin.last n) ∉ Set.range x.tuple ∧
+        R.eval ((extendByLast e).trans w) = some D := by
+  obtain ⟨w, hw, r, hr, hev⟩ := hrec x d hd hds 0 (isPermittedCutoff_zero.mpr hα)
+  have hrE : r.toScheme = G.scheme := hr.1.trans hdE
+  obtain ⟨s, hs, hsD, hl⟩ :=
+    G.exists_recovered_of_eval hR (Realization.typeLabelling R) hrecov hw hev hrE
+  have hrl : r.IsLegal := by
+    change Scheme.IsLegal r.toScheme
+    rw [hrE]
+    exact G.isLegal
+  have hrf : restrictFace Fin.castSuccEmb r = some x.type := by
+    rw [← hR w r _ hev, hw]
+    exact x.eval_tuple
+  exact ⟨w, r, hw, hev, hr, ⟨hrl, hrf⟩, StageType.schemeInvariant_isStronglyCoded hr.1 hds,
+    castSuccEmb_trans_extendByLast_trans hw, last_notMem_range hw,
+    hs.trans (congrArg some (StageType.ext hsD hl))⟩
+
 /-- **Exact receiving from exact recovery, by strongly coded receiving** (native construction):
 `GrowthCarrier.exists_eval_eq_of_recovers_eq` with generalized saturation replaced by finite-cut
 receiving for the cofaces with strongly coded rows, for a carrier with strongly coded rows, at a
-positive stage.  The saturation instance `d` on the carrier scheme is strongly coded and is
-received over `x` at the cutoff `0`; the received tuple `w` has a type `r` on the carrier scheme,
-a coface of the type of `x` with strongly coded rows, and its face along the root `e` followed by
-the new point has type `D` by the recovery (`GrowthCarrier.exists_recovered_of_eval`). -/
+positive stage.  The saturation instance `d` on the carrier scheme is strongly coded (its rows are
+those of the carrier) and is given to receiving
+(`GrowthCarrier.exists_eval_eq_of_recovers_eq_of_mem_cofaces`); the received tuple `w` has a type
+`r` on the carrier scheme, a coface of the type of `x` with strongly coded rows, and its face along
+the root `e` followed by the new point has type `D`. -/
 theorem exists_eval_eq_of_recovers_eq_of_isStronglyCoded (hR : R.IsConsistent)
     (hrec : R.HasFiniteCutReceivingIn fun t ↦ t.rows.IsStronglyCoded) (hα : 0 < α)
     (x : R.Occurrence) {e : Fin n ↪ Fin x.arity} {D : StageType.{u} α (n + 1)}
@@ -174,22 +236,26 @@ theorem exists_eval_eq_of_recovers_eq_of_isStronglyCoded (hR : R.IsConsistent)
   have hds : d.rows.IsStronglyCoded := by
     rw [hdE']
     exact hG
-  obtain ⟨w, hw, r, hr, hev⟩ := hrec x d hd hds 0 (isPermittedCutoff_zero.mpr hα)
-  have hrE : r.toScheme = G.scheme := hr.1.trans hdE'
-  obtain ⟨s, hs, hsD, hl⟩ :=
-    G.exists_recovered_of_eval hR (Realization.typeLabelling R) hrecov hw hev hrE
-  have hrl : r.IsLegal := by
-    change Scheme.IsLegal r.toScheme
-    rw [hrE]
-    exact G.isLegal
-  have hrf : restrictFace Fin.castSuccEmb r = some x.type := by
-    rw [← hR w r _ hev, hw]
-    exact x.eval_tuple
-  have hrs : r.rows.IsStronglyCoded := by
-    rw [hrE]
-    exact hG
-  exact ⟨w, r, hw, hev, ⟨hrl, hrf⟩, hrE, hrs, castSuccEmb_trans_extendByLast_trans hw,
-    last_notMem_range hw, hs.trans (congrArg some (StageType.ext hsD hl))⟩
+  obtain ⟨w, r, hw, hev, hr, hcof, hrs, h₁, h₂, h₃⟩ :=
+    G.exists_eval_eq_of_recovers_eq_of_mem_cofaces hR hrec hα x hd hdE' hds hrecov
+  exact ⟨w, r, hw, hev, hcof, hr.1.trans hdE', hrs, h₁, h₂, h₃⟩
+
+/-- **Exact receiving from exact recovery, in the form of the original** (native construction):
+the conclusion of `GrowthCarrier.exists_eval_eq_of_recovers_eq` clause by clause (a tuple `u`
+extending the root `e` of `x`, its new point fresh over `x`, and `R.eval u = some D`), with
+`hR : R.IsModel` replaced by exact consistency, finite-cut receiving for the cofaces with strongly
+coded rows and a positive stage, and the carrier strongly coded. -/
+theorem exists_eval_eq_of_recovers_eq_of_hasFiniteCutReceivingIn (hR : R.IsConsistent)
+    (hrec : R.HasFiniteCutReceivingIn fun t ↦ t.rows.IsStronglyCoded) (hα : 0 < α)
+    (x : R.Occurrence) {e : Fin n ↪ Fin x.arity} {D : StageType.{u} α (n + 1)}
+    (G : GrowthCarrier x.type.toScheme D.toScheme e) (hG : G.scheme.rows.IsStronglyCoded)
+    (hsat : (x.type.cofaces ∩ saturationFamily G.scheme).Nonempty)
+    (hrecov : G.Recovers x.type.label fun j ℓ ↦ ℓ = D.label j) :
+    ∃ u : Fin (n + 1) ↪ M, Fin.castSuccEmb.trans u = e.trans x.tuple ∧
+      u (Fin.last n) ∉ Set.range x.tuple ∧ R.eval u = some D := by
+  obtain ⟨w, r, -, -, -, -, -, h₁, h₂, h₃⟩ :=
+    G.exists_eval_eq_of_recovers_eq_of_isStronglyCoded hR hrec hα x hG hsat hrecov
+  exact ⟨_, h₁, h₂, h₃⟩
 
 end GrowthCarrier
 
@@ -275,41 +341,123 @@ theorem hasExactStronglyCodedGrowthCarriers_codedLadder :
   rw [GrowthCarrier.donorCell, Scheme.grade_faceCell]
   exact (d.grade_le j).trans hQ.arity
 
-/-! ### The first missing construction: a strongly coded bot-keeping coface -/
-
-/-- **A bot-keeping coface** (native construction): over a legal stage type `q₀` on `m + 1` points
-with a face along the first `m` points, at a stage that is zero or a limit, some coface `qs` of
-`q₀` has every cell of full scope that is its apex (grade `m + 2`) or not labelled `⊥` reading
-every cell of proper scope labelled `⊥` as `⊥`.  It is the completion of a bot-keeping completion
-below the full grade of the seed of `q₀` with itself (`Seed.exists_botKeeping`,
-`CompletionBelowFullGrade.BotKeeping.rowAt_completion_eq_bot`), the coface used in
-`Realization.rootBottomAcquisition_of_botKeeping`.  Its apex row is the block coding of the labels,
-which need not be strongly coded. -/
-theorem exists_botKeepingCoface {α : Ordinal.{u}} {m : ℕ} (hα : Order.IsSuccPrelimit α)
-    {q₀ : StageType.{u} α (m + 1)} (hl : q₀.IsLegal) {p : StageType.{u} α m}
-    (hp : restrictFace Fin.castSuccEmb q₀ = some p) :
-    ∃ qs ∈ q₀.cofaces, ∀ u y, qs.toCellScheme.scope u = univ →
-      (qs.toCellScheme.grade u = m + 2 ∨ qs.label u ≠ ⊥) → qs.toCellScheme.scope y ≠ univ →
-        qs.label y = ⊥ → qs.rowAt u y = ⊥ := by
-  obtain ⟨F, hF⟩ := (Seed.ofCoatoms hl hl hp hp).exists_botKeeping
-  exact ⟨F.completion hα, ⟨F.isLegal_completion _, F.restrictFace_left_completion hα⟩,
-    fun u y hsu hu hys hyb ↦ hF.rowAt_completion_eq_bot hα u y hsu hu hys hyb⟩
-
-/-- **Target: a strongly coded bot-keeping coface**, still to be proved:
-`StageType.exists_botKeepingCoface` for a strongly coded `q₀`, with a coface `qs` whose rows are
-strongly coded.  This is what the bottom-pattern step of `Realization.rootBottomAcquisition` needs
-in the strongly coded receiving class, where only cofaces with strongly coded rows are received;
-with it, receiving `qs` at a permitted cutoff realizes its bottom pattern
-(`StageType.receivingFamily_subset_bottomPatternFamily`). -/
-def StronglyCodedBotKeepingCofaceTarget : Prop :=
-  ∀ ⦃α : Ordinal.{u}⦄ ⦃m : ℕ⦄ (q₀ : StageType.{u} α (m + 1)) (p : StageType.{u} α m),
-    Order.IsSuccPrelimit α → q₀.IsLegal → q₀.rows.IsStronglyCoded →
-    restrictFace Fin.castSuccEmb q₀ = some p →
-    ∃ qs ∈ q₀.cofaces, qs.rows.IsStronglyCoded ∧ ∀ u y, qs.toCellScheme.scope u = univ →
-      (qs.toCellScheme.grade u = m + 2 ∨ qs.label u ≠ ⊥) → qs.toCellScheme.scope y ≠ univ →
-        qs.label y = ⊥ → qs.rowAt u y = ⊥
-
 end StageType
+
+/-! ### The realization step at an explicit calibrated context, and the acquisition steps -/
+
+namespace Realization
+
+section Steps
+
+/-- **Exact receiving at an explicit calibrated context** (native construction): for `R` in the
+strongly coded receiving class at `λ_ξ`, a cover `c'` of a context `t'` calibrated by `C` along
+`h` for a strongly coded one-point coface `D` of the face `t` of `t'` along `h` (the calibration
+`hC` is a hypothesis), and strongly coded exact growth carriers for `C`: the cover `c' ∘ h` of `t`
+extends by one point to a cover of `D`.  The context is an actual type, so legal and strongly coded
+by the class fields; the carrier is strongly coded; it is realized over the context by strongly
+coded receiving (`GrowthCarrier.exists_eval_eq_of_recovers_eq_of_hasFiniteCutReceivingIn`). -/
+theorem IsStronglyCodedReceiving.exists_covers_of_calibratedContext {M : Type v} {ξ : Ordinal.{u}}
+    {R : Realization.{u, v} (blockStage ξ) M} (hR : R.IsStronglyCodedReceiving)
+    {C : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
+      StageType.{u} α (n + 1) → Prop}
+    (hcar : StageType.HasExactStronglyCodedGrowthCarriers.{u} C) {k n : ℕ}
+    {t' : StageType.{u} (blockStage ξ) k} {c' : Fin k → M} (hc' : R.Covers t' c')
+    {h : Fin n ↪ Fin k} {t : StageType.{u} (blockStage ξ) n} (ht : restrictFace h t' = some t)
+    {D : StageType.{u} (blockStage ξ) (n + 1)} (hD : D ∈ t.cofaces)
+    (hDs : D.rows.IsStronglyCoded) (hC : C t' h D) :
+    ∃ y : M, R.Covers D (Fin.snoc (c' ∘ h) y) := by
+  let x : R.Occurrence := ⟨k, ⟨c', hc'.injective⟩, t', hc'.eval_eq⟩
+  obtain ⟨G, hGs, hrec⟩ := hcar t' h (isSuccLimit_blockStage ξ)
+    (hR.hasLegalTypes _ _ hc'.eval_eq) (hR.isStronglyCoded _ _ hc'.eval_eq) t ht D hD hDs hC
+  have hpos : (0 : Ordinal.{u}) < blockStage ξ :=
+    Ordinal.omega0_pos.trans_le (omega0_le_blockStage ξ)
+  obtain ⟨u, hu, -, hev⟩ :=
+    GrowthCarrier.exists_eval_eq_of_recovers_eq_of_hasFiniteCutReceivingIn hR.isConsistent
+      hR.receiving hpos x G hGs
+      (G.nonempty_cofaces_inter_saturationFamily_of_isSuccPrelimit
+        (isSuccPrelimit_blockStage ξ) rfl) hrec
+  refine ⟨u (Fin.last n), ?_⟩
+  have hfun : Fin.snoc (c' ∘ h) (u (Fin.last n)) = ⇑u := by
+    funext i
+    induction i using Fin.lastCases with
+    | last => simp
+    | cast i =>
+      rw [Fin.snoc_castSucc]
+      exact (DFunLike.congr_fun hu i).symm
+  rw [hfun]
+  exact covers_of_eval u hev
+
+/-- **The bottom-pattern step in the class** (native construction): the clause
+`IsModel.bottomPattern` used by `Realization.rootBottomAcquisition_of_botKeeping`, for a coface
+with strongly coded rows, from the receiving field of the class at the cutoff `0`: the receiving
+family of a stage type at a cutoff other than `⊥` lies in its bottom-pattern family
+(`StageType.receivingFamily_subset_bottomPatternFamily`).  The coface used there is given
+strongly coded by `StageType.stronglyCodedBotKeepingCofaceTarget`. -/
+theorem IsStronglyCodedReceiving.realizesOver_bottomPatternFamily {M : Type v} {α : Ordinal.{u}}
+    {R : Realization.{u, v} α M} (hR : R.IsStronglyCodedReceiving) (hα : 0 < α)
+    (x : R.Occurrence) {qs : StageType.{u} α (x.arity + 1)} (hqs : qs ∈ x.type.cofaces)
+    (hsc : qs.rows.IsStronglyCoded) :
+    R.RealizesOver x.tuple (bottomPatternFamily qs.toScheme qs.label) :=
+  (hR.receiving x qs hqs hsc 0 (isPermittedCutoff_zero.mpr hα)).mono
+    (receivingFamily_subset_bottomPatternFamily
+      ⟨rfl, fun i j hij _ ↦ by obtain rfl : i = j := Fin.ext hij; rfl⟩ (by simp))
+
+/-- **The step of one point more in the class** (native construction): the clause
+`IsModel.dominance` used by `Realization.rootBottomAcquisition_of_botKeeping`, from the receiving
+field of the class and the strongly coded coface instances
+(`Realization.HasFiniteCutReceivingIn.dominance_of_hasStronglyCodedCofaceInstances`). -/
+theorem IsStronglyCodedReceiving.realizesOver_dominanceFamily {M : Type v} {α : Ordinal.{u}}
+    {R : Realization.{u, v} α M} (hR : R.IsStronglyCodedReceiving) (hα : Order.IsSuccPrelimit α)
+    (x : R.Occurrence) {γ : Ordinal.{u}} (hγα : γ < α) :
+    R.RealizesOver x.tuple (dominanceFamily γ) :=
+  hR.receiving.dominance_of_hasStronglyCodedCofaceInstances
+    (StageType.HasStronglyCodedCofaceInstances.of_isSuccPrelimit hα) hα
+    (fun _ t p h ↦ ⟨hR.hasLegalTypes t p h, hR.isStronglyCoded t p h⟩) x hγα
+
+variable (α : Ordinal.{u}) (M : Type v)
+
+/-- **Target: an occurrence of positive arity from unbounded growth**, the replacement of
+`IsModel.exists_le_arity` at `1` in `Realization.HollowReceiving.of_pos`. -/
+def PositiveOccurrenceStep : Prop :=
+  ∀ R : Realization.{u, v} α M, R.topGradeSup = ⊤ → ∃ x : R.Occurrence, 0 < x.arity
+
+/-- **An occurrence of positive arity from unbounded growth** (native construction): some
+occurrence has a cell labelled `⊤` of positive grade, and grades are at most the arity. -/
+theorem positiveOccurrenceStep : PositiveOccurrenceStep α M := by
+  intro R h
+  obtain ⟨x, hx⟩ : ∃ x : R.Occurrence, 0 < x.type.topGrade := by
+    by_contra! h'
+    have hle : R.topGradeSup ≤ 0 := iSup_le fun x ↦ by exact_mod_cast h' x
+    simp [h] at hle
+  obtain ⟨d, -, hd⟩ : ∃ d, x.type.label d = ⊤ ∧ 0 < x.type.toCellScheme.grade d := by
+    by_contra! h'
+    exact hx.not_ge (topGrade_le_iff.mpr h')
+  exact ⟨x, hd.trans_le (x.type.grade_le d)⟩
+
+/-- **Target: the strongly coded pinned extension over the empty face**, the replacement of
+`StageType.exists_pinned_extension_of_isSuccPrelimit` in `Realization.HollowReceiving.of_pos`: at a
+stage that is zero or a limit, a legal, strongly coded `P` on `k` points with empty face `p₀` and a
+strongly coded one-point coface `D` of `p₀` are the faces, along the first points and along the new
+point, of a legal, strongly coded `Q`. -/
+def StronglyCodedPaddingExtensionStep : Prop :=
+  Order.IsSuccPrelimit α → ∀ ⦃k : ℕ⦄ (P : StageType.{u} α k) (p₀ : StageType.{u} α 0)
+    (D : StageType.{u} α 1), P.IsLegal → P.rows.IsStronglyCoded →
+    restrictFace (Function.Embedding.ofIsEmpty : Fin 0 ↪ Fin k) P = some p₀ → D ∈ p₀.cofaces →
+    D.rows.IsStronglyCoded →
+    ∃ Q : StageType.{u} α (k + 1), Q.IsStronglyCodedLegal ∧
+      restrictFace Fin.castSuccEmb Q = some P ∧
+      restrictFace (extendByLast (Function.Embedding.ofIsEmpty : Fin 0 ↪ Fin k)) Q = some D
+
+/-- **The strongly coded pinned extension over the empty face** (native construction):
+`StageType.exists_stronglyCoded_pinned_extension` with
+`StageType.hasStronglyCodedApexCoatomExtensions`. -/
+theorem stronglyCodedPaddingExtensionStep : StronglyCodedPaddingExtensionStep α :=
+  fun hα _ _ _ _ hl hsc hp hD hDs ↦ exists_stronglyCoded_pinned_extension
+    (hasStronglyCodedApexCoatomExtensions hα) ⟨hl, hsc⟩ hp ⟨hD.1, hDs⟩ hD.2
+
+end Steps
+
+end Realization
 
 /-! ### The derivation of restricted (R3) -/
 
@@ -336,10 +484,9 @@ def StronglyCodedHollowGrowthAcquisition
           R.Covers t' c' ∧ c' ∘ h = c ∧ C t' h d
 
 /-- **Target: hollow growth acquisition in the class for the hollow reference calibration with
-bounded donor offsets**, still to be proved: the counterpart of
-`Realization.hollowGrowthAcquisition_reference'`.  Its bottom-pattern step needs
-`StageType.StronglyCodedBotKeepingCofaceTarget` (missing); its other steps have strongly coded
-replacements (see the audit in the module documentation). -/
+bounded donor offsets** (open): the counterpart of `Realization.hollowGrowthAcquisition_reference'`.
+Every step has a compiled strongly coded replacement (see the audit in the module documentation);
+the composition is not compiled. -/
 def StronglyCodedHollowAcquisitionTarget : Prop :=
   StronglyCodedHollowGrowthAcquisition ξ M StageType.HollowReferenceCalibration'
 
@@ -351,12 +498,13 @@ def StronglyCodedHollowReceivingPos : Prop :=
     ∀ ⦃n : ℕ⦄, 0 < n → ∀ (t : StageType.{0} (blockStage ξ) n) (c : Fin n → M), R.Covers t c →
       ∀ D ∈ t.cofaces, D.rows.IsStronglyCoded → ∃ y : M, R.Covers D (Fin.snoc c y)
 
-/-- **Target: padding of the empty cover in the class**, still to be proved: restricted (R3) over
-positive covers gives restricted (R3).  The counterpart of `Realization.HollowReceiving.of_pos`,
+/-- **Target: padding of the empty cover in the class**: restricted (R3) over positive covers gives
+restricted (R3).  The counterpart of `Realization.HollowReceiving.of_pos`,
 whose two uses beyond exact consistency and legality have strongly coded replacements: an
 occurrence of positive arity (from unbounded growth instead of `IsModel.exists_le_arity`) and the
 strongly coded pinned extension (`StageType.exists_stronglyCoded_pinned_extension` instead of
-`StageType.exists_pinned_extension_of_isSuccPrelimit`). -/
+`StageType.exists_pinned_extension_of_isSuccPrelimit`).  Proved:
+`Realization.stronglyCodedHollowPadding`. -/
 def StronglyCodedHollowPadding : Prop :=
   StronglyCodedHollowReceivingPos ξ M → StronglyCodedHollowReceiving ξ M
 
@@ -377,28 +525,9 @@ theorem stronglyCodedHollowReceivingPos_of_hasExactStronglyCodedGrowthCarriers
     StronglyCodedHollowReceivingPos ξ M := by
   intro R hR hP n hn t c hc D hD hDs
   obtain ⟨k, t', c', h, hc', hcc', hC⟩ := hacq R hR hP hn t c hc D hD hDs
-  let x : R.Occurrence := ⟨k, ⟨c', hc'.injective⟩, t', hc'.eval_eq⟩
-  obtain ⟨G, hGs, hrec⟩ := hcar t' h (isSuccLimit_blockStage ξ)
-    (hR.hasLegalTypes _ _ hc'.eval_eq) (hR.isStronglyCoded _ _ hc'.eval_eq) t
-    (restrictFace_of_covers hR.isConsistent hc hc' hcc') D hD hDs ⟨hC, hn⟩
-  have hpos : (0 : Ordinal.{0}) < blockStage ξ :=
-    Ordinal.omega0_pos.trans_le (omega0_le_blockStage ξ)
-  obtain ⟨w, r, -, -, -, -, -, hu, -, hev⟩ :=
-    GrowthCarrier.exists_eval_eq_of_recovers_eq_of_isStronglyCoded hR.isConsistent hR.receiving
-      hpos x G hGs
-      (G.nonempty_cofaces_inter_saturationFamily_of_isSuccPrelimit
-        (isSuccPrelimit_blockStage ξ) rfl) hrec
-  set u := (extendByLast h).trans w
-  refine ⟨u (Fin.last n), ?_⟩
-  have hfun : Fin.snoc c (u (Fin.last n)) = ⇑u := by
-    funext i
-    induction i using Fin.lastCases with
-    | last => simp
-    | cast i =>
-      rw [Fin.snoc_castSucc, ← hcc']
-      exact (DFunLike.congr_fun hu i).symm
-  rw [hfun]
-  exact covers_of_eval u hev
+  subst hcc'
+  exact hR.exists_covers_of_calibratedContext hcar hc'
+    (restrictFace_of_covers hR.isConsistent hc hc' rfl) hD hDs ⟨hC, hn⟩
 
 /-- **Restricted (R3) over positive covers from acquisition alone** (native construction): the
 strongly coded exact growth carriers for the hollow reference calibration with a nonempty root are
@@ -423,6 +552,58 @@ def StronglyCodedHollowDerivationTarget : Prop :=
 `Realization.stronglyCodedHollowReceivingPos_of_acquisition`, then padding. -/
 theorem stronglyCodedHollowDerivationTarget : StronglyCodedHollowDerivationTarget ξ M :=
   fun hacq hpad ↦ hpad (stronglyCodedHollowReceivingPos_of_acquisition hacq)
+
+/-- **Padding of the empty cover in the class** (native construction): as
+`Realization.HollowReceiving.of_pos`, with an occurrence of positive arity from unbounded growth
+(`Realization.positiveOccurrenceStep`) and the strongly coded pinned extension over the empty face
+(`Realization.stronglyCodedPaddingExtensionStep`); the arity-zero cover is received through that
+occurrence and restricted to the new point by exact consistency. -/
+theorem stronglyCodedHollowPadding : StronglyCodedHollowPadding ξ M := by
+  intro hpos R hR hP n t c hc D hD hDs _
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  swap
+  · exact hpos R hR hP hn t c hc D hD hDs
+  obtain ⟨hhol, htop⟩ := hP
+  obtain ⟨x, hxpos⟩ := positiveOccurrenceStep _ M R htop
+  let f : Fin 0 ↪ Fin x.arity := Function.Embedding.ofIsEmpty
+  obtain ⟨p₀, hp₀⟩ := Option.isSome_iff_exists.mp (x.type.isSome_restrictFace_of_zero f)
+  have htp : t = p₀ := by
+    have h1 := Realization.eval_face hR.isConsistent x f
+    rw [hp₀] at h1
+    have h2 : R.eval (f.trans x.tuple) = R.eval ⟨c, hc.injective⟩ := by
+      congr 1
+      ext i
+      exact i.elim0
+    rw [h2, hc.eval_eq] at h1
+    exact Option.some_injective _ h1
+  subst htp
+  obtain ⟨Q, hQ, hQx, hQD⟩ := stronglyCodedPaddingExtensionStep _ (isSuccPrelimit_blockStage ξ)
+    x.type t D (hR.hasLegalTypes _ _ x.eval_tuple) (hR.isStronglyCoded _ _ x.eval_tuple) hp₀ hD
+    hDs
+  obtain ⟨y, hy⟩ := hpos R hR ⟨hhol, htop⟩ hxpos x.type x.tuple (covers_of_eval _ x.eval_tuple) Q
+    ⟨hQ.1, hQx⟩ hQ.2
+  refine ⟨y, ?_⟩
+  have hres := hR.isConsistent _ Q (extendByLast f) hy.eval_eq
+  rw [hQD] at hres
+  refine ⟨?_, ?_⟩
+  · intro i j _
+    exact Fin.ext (by omega)
+  · rw [← hres]
+    congr 1
+    ext i
+    obtain rfl : i = Fin.last 0 := Fin.ext (by omega)
+    simp only [Function.Embedding.coeFn_mk, Function.Embedding.trans_apply, extendByLast_last]
+    change Fin.snoc (α := fun _ ↦ M) c y (Fin.last 0) =
+      Fin.snoc (α := fun _ ↦ M) (⇑x.tuple) y (Fin.last x.arity)
+    rw [Fin.snoc_last, Fin.snoc_last]
+
+/-- **Restricted (R3) from acquisition in the class** (native construction): the derivation
+(`Realization.stronglyCodedHollowDerivationTarget`) with padding
+(`Realization.stronglyCodedHollowPadding`).  The one remaining premise is the acquisition
+`Realization.StronglyCodedHollowAcquisitionTarget ξ M` (open). -/
+theorem stronglyCodedHollowReceiving_of_acquisition
+    (hacq : StronglyCodedHollowAcquisitionTarget ξ M) : StronglyCodedHollowReceiving ξ M :=
+  stronglyCodedHollowDerivationTarget ξ M hacq (stronglyCodedHollowPadding ξ M)
 
 end Derivation
 
