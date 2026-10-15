@@ -54,6 +54,9 @@ of the legal strongly coded types of top grade at most `K`, closed under faces; 
 many by `Realization.ExactReceivingWithin.of_one_point`; the initial match is the pair of covers on
 no points.  The residual and hollow comparisons follow, under restricted (R2) and (R3) on both
 carriers (`Realization.stronglyCodedResidualIsoTarget`, `Realization.stronglyCodedHollowIsoTarget`).
+With the rigid-core comparison they give `Realization.stronglyCodedTerminalIsoTarget` and
+`Realization.stronglyCodedTerminalCountTarget`, conditional on the restricted residual and hollow
+receiving premises, which are open and remain premises of both statements.
 
 | model-level use (`nonempty_equiv_of_residual`, `nonempty_equiv_of_hollow`) | replacement |
 |---|---|
@@ -324,6 +327,27 @@ theorem stronglyCodedHollowIsoTarget (ξ : Ordinal.{0}) (M N : Type w) :
   fun hholM hholN hM hN R S hR hS hRP hSP ↦
     stronglyCodedExactGrowthIsoTarget ξ M N hM hN R S ⊤ hR hS hRP.2 hSP.2
       (hholM R hR hRP) (hholN S hS hSP)
+
+/-- **Target: shared restricted terminal properties determine the isomorphism class** (native
+construction), conditional on the restricted residual and hollow receiving premises, which are
+open (`Realization.StronglyCodedResidualReceiving`, `Realization.StronglyCodedHollowReceiving`, on
+both carriers; they remain premises of the statement): the three comparisons
+(`Realization.stronglyCodedRigidCoreIsoTarget`, `Realization.stronglyCodedResidualIsoTarget`,
+`Realization.stronglyCodedHollowIsoTarget`) through
+`Realization.stronglyCodedTerminalIsoTarget_of_comparisons`. -/
+theorem stronglyCodedTerminalIsoTarget (ξ : Ordinal.{0}) (M N : Type w) :
+    StronglyCodedTerminalIsoTarget ξ M N :=
+  stronglyCodedTerminalIsoTarget_of_comparisons (stronglyCodedRigidCoreIsoTarget ξ M N)
+    (stronglyCodedResidualIsoTarget ξ M N) (stronglyCodedHollowIsoTarget ξ M N)
+
+/-- **Target: countably many strongly coded terminal isomorphism classes** (native
+construction), conditional on the restricted residual and hollow receiving premises, which are
+open (`Realization.StronglyCodedResidualReceiving ξ ℕ`, `Realization.StronglyCodedHollowReceiving
+ξ ℕ`; they remain premises of the statement, with `ξ < ω₁`):
+`Realization.stronglyCodedTerminalCountTarget_of_isoTarget` and
+`Realization.stronglyCodedTerminalIsoTarget`. -/
+theorem stronglyCodedTerminalCountTarget (ξ : Ordinal.{0}) : StronglyCodedTerminalCountTarget ξ :=
+  stronglyCodedTerminalCountTarget_of_isoTarget (stronglyCodedTerminalIsoTarget ξ ℕ ℕ)
 
 end ExactGrowth
 
