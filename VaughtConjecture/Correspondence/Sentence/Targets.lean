@@ -46,8 +46,8 @@ Numbering as in the current draft of [AFK26].  `σ[L]` is `templateSentence`
 
 These are what the compiled incompatibility
 `baseLanguage.not_singletons_and_typing_of_realize_densitySentence` asks of a reading; their
-composition with it is recorded, not proved, in
-`VaughtConjecture.Correspondence.Sentence.Dictionary` (D8).  Nothing here identifies `σ[L]` with
+composition with it is D8, proved in `VaughtConjecture.Correspondence.Sentence.Dictionary` for the
+class reading only.  Nothing here identifies `σ[L]` with
 the density sentence, and no correspondence of model classes beyond the targets stated is claimed.
 -/
 

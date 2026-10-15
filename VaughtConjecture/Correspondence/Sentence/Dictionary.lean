@@ -46,11 +46,11 @@ template system `L` of legal templates, whose `L_c[L]` is `baseTemplateLanguage`
   stated (`σ[L°]` and `densitySentenceRen` are not defined).
 * **D7**, on countable carriers, every model of `σ[L°]` is the class structure of a model of
   `densitySentence` on the same carrier: **new**.  Not stated (`σ[L°]` is not defined).
-* **D8**, `densitySentence.Realize B → ¬ σ[L].Realize (classStructure B)`: stated
-  (`ClassStructureSeparationTarget`).  A **direct composition** (not yet written) of the compiled
-  `baseLanguage.not_singletons_and_typing_of_realize_densitySentence` with B.T18
-  (`singletonsProjectionTarget`, `typingProjectionTarget`) and B.T19 (`classReadingTarget`), all
-  proved.  Restricted to this reading.
+* **D8**, `densitySentence.Realize B → ¬ σ[L].Realize (classStructure B)`:
+  `ClassStructureSeparationTarget`, **proved** (`classStructureSeparationTarget`) as a direct
+  composition of the compiled `baseLanguage.not_singletons_and_typing_of_realize_densitySentence`
+  with B.T18 (`singletonsProjectionTarget`, `typingProjectionTarget`) and B.T19
+  (`classReadingTarget`).  Restricted to this reading.
 * **D9**, D1–D7 for `σ[L]` through the chosen vocabulary, against a strongly coded density
   sentence: the chosen vocabulary is `ChosenVocabularyTarget`, **proved**.  The rest is **new**
   and not stated (no strongly coded density sentence is defined).
@@ -186,14 +186,29 @@ def ClassStructureFibreTarget : Prop :=
       (@baseLanguage.toRealization M B).IsCellRenamingOf (@baseLanguage.toRealization M B') →
         @classStructure M B = @classStructure M B'
 
-/-- **D8 (stated; a direct composition, not yet written)**: a structure of the positional base
-language satisfying the density sentence has a class structure that does not satisfy `σ[L]`.
+/-- **D8**: a structure of the positional base language satisfying the density sentence has a
+class structure that does not satisfy `σ[L]`.
 Restricted to the class-disjunction interpretation: the compiled core
 `baseLanguage.not_singletons_and_typing_of_realize_densitySentence` with B.T18 and B.T19.
 Correspondence with the printed definitions. -/
 def ClassStructureSeparationTarget : Prop :=
   ∀ (M : Type v) [baseLanguage.{u}.Structure M], baseLanguage.densitySentence.{u}.Realize M →
     ¬ @Sentenceω.Realize _ templateSentence.{u} M (classStructure M)
+
+/-- **D8, proved for the class-disjunction interpretation**: a structure of the positional base
+language satisfying the density sentence has a class structure that does not satisfy `σ[L]`.  In
+the class structure, `P_1` is read as "typed" and `R_t` by `classSymbolReading`; B.T18 gives
+(Singletons) and typing at arity `1` from `σ[L]`, B.T19 gives `PresentsStronglyCoded` for the
+class reading, and the compiled `baseLanguage.not_singletons_and_typing_of_realize_densitySentence`
+excludes both together.  Restricted to this reading: no other reading or presentation is
+excluded.  Correspondence with the printed definitions. -/
+theorem classStructureSeparationTarget : ClassStructureSeparationTarget.{u, v} := by
+  intro M _ h hσ
+  exact baseLanguage.not_singletons_and_typing_of_realize_densitySentence h
+    (classSymbolReading M) (classReadingTarget M)
+    (fun x ↦ ∃ p : baseLanguage.{u}.Relations 1, RelMap p ![x])
+    ⟨singletonsProjectionTarget M (classStructure M) hσ,
+      typingProjectionTarget M (classStructure M) hσ⟩
 
 end
 
