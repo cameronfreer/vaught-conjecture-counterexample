@@ -297,9 +297,12 @@ Notes on the rows, each with its marker:
   The forms of the main theorem on the retained
   all-model terminal-classification route are conditional, at fewest on the four of the
   four-hypothesis form ((R1), the continuation criterion, (R2), (R3)), each still to be proved; on
-  the receiving-models route the three hypotheses of its three-hypothesis form ((R4), (R2) and
-  (R3) for receiving models) are compiled, so the main theorem is compiled with no hypothesis
-  (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`); hypothesis 8 is compiled.
+  the receiving-models route the three hypotheses of its three-hypothesis form are compiled,
+  (R4) for receiving models (`Expansion.receivingStableCappedReceiving_levels`), (R2) for
+  receiving models (`Realization.receivingResidualReceiving_of_padded`) and (R3) for receiving
+  models (`Realization.hollowReceiving_levels`), so the main theorem is compiled with no
+  hypothesis (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`); hypothesis 8 is
+  compiled.
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`),
   and with both compiled, at every `β < ω₁` with no further hypothesis

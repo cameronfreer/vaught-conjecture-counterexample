@@ -107,8 +107,9 @@ stronger `proposition434Clauses_of_countable` (countable carriers, `β < ω₁`,
 with level zero the separate theorem `exists_lift_zero_of_realize_templateSentence`
 ([`Correspondence/Proposition434.lean`](VaughtConjecture/Correspondence/Proposition434.lean); notes
 in [`milestones/2026-10-15-proposition-4-34.md`](milestones/2026-10-15-proposition-4-34.md)).
-Proposition 4.35, countably many structures maximal at each level `β < ω₁`, up to isomorphism in
-the full template language: `proposition435Target`, derived from the stronger `maximalCountTarget`
+Proposition 4.35, at most countably many countable structures maximal at each level `β < ω₁`, up
+to isomorphism in the full template language: `proposition435Target`, derived from the stronger
+`maximalCountTarget`
 ([`Correspondence/Maximality/Count.lean`](VaughtConjecture/Correspondence/Maximality/Count.lean));
 maximality is the printed Definition 2.20, `IsMaximalAt`, transcribed with its allowance for an
 unchanged higher lift (notes in

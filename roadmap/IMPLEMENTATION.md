@@ -1321,12 +1321,16 @@ classes `K_β` of the template system of the current draft (`templateStageClass`
 `templateSentence` are proved here (rows 53, 55 and 56, P lines: `IsTemplateChart.hereditary`,
 `.jointEmbedding`, `.amalgamation`, `proposition434Target`, `proposition435Target`); Lemma 4.33 is
 not (row 54).  It also states that the proof that its system `K[L]` is a Knight system has been
-formalized; in this repository every compiled form of the main theorem is conditional on named
-hypotheses: on the retained all-model terminal-classification route, at fewest the four of
-`DASHBOARD.md` (hypotheses 2 and 4–6), or hypotheses derived from them; on the receiving-models
-route, (R4) and (R3) for receiving models, each still to be proved ((R2) for receiving models is
-compiled, `Realization.receivingResidualReceiving_of_padded`); hypothesis 8 is compiled in this
-repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstrings of
+formalized; in this repository the main theorem is compiled with no hypothesis
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`) for the repository's own sentence
+`densitySentence`, not for the system `K[L]` (note 47), by the receiving-models route, whose three
+hypotheses are compiled: (R4) for receiving models
+(`Expansion.receivingStableCappedReceiving_levels`), (R2) for receiving models
+(`Realization.receivingResidualReceiving_of_padded`), and (R3) for receiving models
+(`Realization.hollowReceiving_levels`).  The forms on the retained all-model
+terminal-classification route remain conditional on named hypotheses, at fewest the four of
+`DASHBOARD.md` (hypotheses 2 and 4–6), or hypotheses derived from them; hypothesis 8 is compiled
+in this repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstrings of
 `VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026, with two
 exceptions: the two citation groups of statements unchanged since, lawful local labellings
 (Definition 4.28 of the current draft) and the cells `D↓U` below a graded face (Definition 4.3 of
@@ -2370,13 +2374,16 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     expansions of the base, for one model; conditional on (R1), next-block uniqueness and
     hypothesis 8; row 55) and `isNice_of_hasTerminalRefinement` (row 30), both compiled
     conditionally; the composition into `FullPresentations` (row 27) is prospective.  [AFK26]
-    states that this proof has been formalized; in this repository every compiled form of the
-    main theorem is conditional on named hypotheses: on the retained all-model
-    terminal-classification route, at fewest the four of `DASHBOARD.md` ((R1), the continuation
-    criterion, (R2), (R3)), or hypotheses derived from them; on the receiving-models route, (R4)
-    and (R3) for receiving models, each still to be proved ((R2) for receiving models is compiled,
-    `Realization.receivingResidualReceiving_of_padded`);
-    hypothesis 8 is compiled in this repository (theorem named).
+    states that this proof has been formalized; in this repository the main theorem is compiled
+    with no hypothesis (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`) for
+    `densitySentence`, not for `K[L]` or `σ[L]`, by the receiving-models route, whose three
+    hypotheses are compiled: (R4) for receiving models
+    (`Expansion.receivingStableCappedReceiving_levels`), (R2) for receiving models
+    (`Realization.receivingResidualReceiving_of_padded`), and (R3) for receiving models
+    (`Realization.hollowReceiving_levels`).  The forms on the retained all-model
+    terminal-classification route remain conditional on named hypotheses, at fewest the four of
+    `DASHBOARD.md` ((R1), the continuation criterion, (R2), (R3)), or hypotheses derived from
+    them; hypothesis 8 is compiled in this repository (theorem named).
 48. [AFK26, Theorem 2.19] (weak Knight systems and perfect sets of models): if `K` is a weak
     Knight system and, for every `β`, the members of the base `K_{-∞}` with no lift in `K_β`
     fall into countably many isomorphism classes, then `K_{-∞}` contains no perfect set of
