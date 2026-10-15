@@ -128,12 +128,16 @@ Each entry: model-level use; where it is used; replacement in the class.
 
 Strong coding of the actual types (`isStronglyCoded` field) is what lets the ages be restricted to
 strongly coded donors.  Unrestricted saturation or unrestricted receiving is not invoked by any
-proved statement here.  It is invoked by the known routes to the assumed inputs: by the
-model-level route to (R3) (the realization of the growth carrier uses unrestricted saturation, and
-strongly coded inputs do not certify the new rows of that carrier), and the route to (R2) needs a
-strongly coded intermediate pinned extension keeping top grade at most `K` and a strongly coded
-donor of the low determination, neither of which is stated in this repository yet.  These are the
-remaining premises, each a named `Prop` here.
+proved statement here.  For (R3), the model-level route realizes a growth carrier through
+unrestricted saturation, and strongly coded inputs do not certify the new rows of that carrier.
+The original ladder carrier is not strongly coded: its codes `Label.ladderSource` have a diagonal
+that is not strongly coded at grade one (`Label.not_isStronglyCoded_ladderSource_diag`).  The
+coded replacement `Label.codedLadderSource` is strongly coded
+(`Label.isStronglyCoded_codedLadderSource`); the limitation is that of the original ladder only.
+For (R2), the bounded strongly coded pinned extension exists
+(`StageType.exists_stronglyCoded_pinned_extension_topGrade_le`: strongly coded, top grade at most
+`K`, both faces kept); what remains is a strongly coded donor of the low determination.  These
+remaining inputs are the premises, each a named `Prop` here.
 
 Everything here is a native construction of this repository; no correspondence with [AFK26] is
 claimed beyond the reading of the conclusion in the class language.  Manuscript maximality, the
