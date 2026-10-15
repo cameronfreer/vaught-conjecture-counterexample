@@ -35,8 +35,8 @@ template system `L` of legal templates, whose `L_c[L]` is `baseTemplateLanguage`
 * **D3**, literal fibres: tuplewise cell renaming gives equal class structures, and conversely.
   The forward `L`-instance is stated (`ClassStructureFibreTarget`); it is a **direct
   specialization** of `Realization.classReading_eq_classReading_iff` with
-  `StageType.globalClass_eq_iff` (not yet written).  The converse is **new**, and false for the
-  `L`-instance in general: `R_t` sees only strongly coded classes.
+  `StageType.globalClass_eq_iff` (not yet written).  The converse is not established here; this
+  reading forgets non-strongly-coded classes.
 * **D4**, isomorphism reflection on countable carriers: **new**; for `L` it needs the strongly
   coded restriction of the converse of D3.  Not stated.
 * **D5**, `densitySentence.Realize B → σ[L°].Realize (classStructure B)`: **new**.  Not stated:
@@ -177,7 +177,8 @@ def ClassStructureEquivTarget : Prop :=
 
 /-- **D3, forward, the `L`-instance (a direct specialization, not yet written)**: two type
 assignments on one carrier whose types are cell renamings of each other, tuple by tuple, have the
-same class structure.  The converse is not stated: `R_t` sees only strongly coded classes.
+same class structure.  The converse is not established here; this reading forgets
+non-strongly-coded classes.
 Correspondence with the printed definitions. -/
 def ClassStructureFibreTarget : Prop :=
   ∀ (M : Type v) (B B' : baseLanguage.{u}.Structure M),
