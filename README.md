@@ -93,6 +93,34 @@ by name (both in `MainTheorem/GrowthLevelRoute.lean`).  The full map is
 [`roadmap/README.md`](roadmap/README.md); compiled refutations of candidate statements are in the
 `*Counterexample*.lean` modules, indexed in [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md).
 
+## Propositions 4.32, 4.34 and 4.35 of [AFK26]
+
+For the strongly coded template system, the formal counterparts of three propositions of [AFK26]
+are proved, using at most the three axioms above, relative to the current draft of 7 October 2026
+(not part of this repository; pinned by the SHA-256 of its source, `654b2780…`), not to a
+published version.  Proposition 4.32, the hereditary, joint embedding and amalgamation properties
+of the charts `C_β[L]`: `IsTemplateChart.hereditary`, `IsTemplateChart.jointEmbedding` and
+`IsTemplateChart.amalgamation`, the last two for `β < ω₁`
+([`Correspondence/Charts/Chart.lean`](VaughtConjecture/Correspondence/Charts/Chart.lean)).
+Proposition 4.34, Boundedness, Reconstruction and Limits: `proposition434Target`, derived from the
+stronger `proposition434Clauses_of_countable` (countable carriers, `β < ω₁`, no sentence premise),
+with level zero the separate theorem `exists_lift_zero_of_realize_templateSentence`
+([`Correspondence/Proposition434.lean`](VaughtConjecture/Correspondence/Proposition434.lean); notes
+in [`milestones/2026-10-15-proposition-4-34.md`](milestones/2026-10-15-proposition-4-34.md)).
+Proposition 4.35, at most countably many countable structures maximal at each level `β < ω₁`, up
+to isomorphism in the full template language: `proposition435Target`, derived from the stronger
+`maximalCountTarget`
+([`Correspondence/Maximality/Count.lean`](VaughtConjecture/Correspondence/Maximality/Count.lean));
+maximality is the printed Definition 2.20, `IsMaximalAt`, transcribed with its allowance for an
+unchanged higher lift (notes in
+[`milestones/2026-10-15-proposition-4-35.md`](milestones/2026-10-15-proposition-4-35.md)).  These are statements
+about the classes `K_β` of the template dictionary (`templateStageClass`) and the repository's own
+sentence `templateSentence`, the transcription of `σ[L]`.  No identification of `templateSentence`
+with `baseLanguage.densitySentence`, and no transfer of the spectrum between them, is claimed; the
+native count of strongly coded terminal realizations,
+`Realization.stronglyCodedTerminalClasses_countable`, is an input of the proof of Proposition 4.35
+and is distinct from it.
+
 ## Citation
 
 GitHub's "Cite this repository" uses [`CITATION.cff`](CITATION.cff):

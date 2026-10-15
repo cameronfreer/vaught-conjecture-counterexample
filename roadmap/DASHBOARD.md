@@ -270,18 +270,39 @@ Notes on the rows, each with its marker:
   refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
   stay S.
 - *Manuscript correspondence, [AFK26] of 7 October.*  The concordance cites the draft of
-  7 October 2026; rows 48–56 are new to the concordance, all S.  Adopted there and recorded without a change of
-  status: the block indexing of row 1 in §4, the fixed rows of rows 9 and 10, the corrections of
-  rows 41 and 42, the cap `-∞` of row 44, and clause 1 of row 45; its range clause of legality is
-  now strong coding (row 45).  [AFK26] states Propositions 4.32 (amalgamation of charts, where
-  hypothesis 8 enters), 4.34 and 4.35 without proof and sketches Lemma 4.33.  Their counterparts
-  here are compiled (the hereditary property, `hereditary_legalAge`, with no hypothesis) or
-  compiled conditionally on the hypotheses below.  The forms of the main theorem on the retained
+  7 October 2026; rows 48–56 are new to the concordance, their first lines all S.  Adopted there
+  and recorded without a change of status: the block indexing of row 1 in §4, the fixed rows of
+  rows 9 and 10, the corrections of rows 41 and 42, the cap `-∞` of row 44, and clause 1 of
+  row 45; its range clause of legality is now strong coding (row 45).  [AFK26] states
+  Propositions 4.32 (amalgamation of charts, where hypothesis 8 enters), 4.34 and 4.35 without
+  proof and sketches Lemma 4.33.  Their counterparts for the native classes are compiled (the
+  hereditary property, `hereditary_legalAge`, with no hypothesis) or compiled conditionally on
+  the hypotheses below.  For the strongly coded template system, with the classes `K_β` as
+  `templateStageClass` and the sentence `σ[L]` as `templateSentence`, all three are proved
+  (#217, #233, #240; concordance rows 53, 55 and 56, P lines), relative to the pinned draft:
+  `IsTemplateChart.hereditary`, `.jointEmbedding` and `.amalgamation` (the last two for
+  `β < ω₁`, with no hypothesis on coatom extensions); `proposition434Target`, from
+  `proposition434Clauses_of_countable` (countable carriers, `β < ω₁`, no sentence premise; inputs
+  `boundednessTarget`, `reconstructionTarget`, `limitsTarget`), with level zero the separate
+  `exists_lift_zero_of_realize_templateSentence`; and `proposition435Target`, from
+  `maximalCountTarget` (maximality as `IsMaximalAt`, Definition 2.20 with its allowance for an
+  unchanged higher lift).  The count uses the native count of strongly coded terminal
+  realizations (`Realization.stronglyCodedTerminalClasses_countable`), which rests on the
+  restricted (R2) and (R3) of the strongly coded receiving class,
+  `Realization.stronglyCodedResidualReceiving` and `Realization.stronglyCodedHollowReceiving`,
+  both proved with no premise; these are not (R2) and (R3) for every model, whose status below
+  is unchanged.  Lemma 4.33 (row 54) is not stated; `templateSentence` is not identified with
+  `densitySentence`, and no spectrum is transferred between them; the language `L°`, its sentence
+  `σ[L°]` and the dictionary items D4–D7 and the rest of D9 are deferred (concordance note 47).
+  The forms of the main theorem on the retained
   all-model terminal-classification route are conditional, at fewest on the four of the
   four-hypothesis form ((R1), the continuation criterion, (R2), (R3)), each still to be proved; on
-  the receiving-models route the three hypotheses of its three-hypothesis form ((R4), (R2) and
-  (R3) for receiving models) are compiled, so the main theorem is compiled with no hypothesis
-  (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`); hypothesis 8 is compiled.
+  the receiving-models route the three hypotheses of its three-hypothesis form are compiled,
+  (R4) for receiving models (`Expansion.receivingStableCappedReceiving_levels`), (R2) for
+  receiving models (`Realization.receivingResidualReceiving_of_padded`) and (R3) for receiving
+  models (`Realization.hollowReceiving_levels`), so the main theorem is compiled with no
+  hypothesis (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`); hypothesis 8 is
+  compiled.
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`),
   and with both compiled, at every `β < ω₁` with no further hypothesis
