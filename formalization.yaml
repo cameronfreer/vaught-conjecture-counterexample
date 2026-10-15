@@ -92,7 +92,9 @@ status:
     annotated tag `main-theorem-2026-10-11` (commit b00bb878b12a1ef75b9aecf1ef5a1e6577645ff4,
     notes in `milestones/2026-10-11-main-theorem.md`) is a historical reference to one verified
     commit; later commits are verified by their own CI runs and do not inherit that
-    verification. Open mathematics outside the main theorem (the hypotheses (R1) and (R2) for
+    verification. The formal counterparts of Propositions 4.32, 4.34 and 4.35 of [AFK26] for the
+    strongly coded template system are proved, relative to the current draft of 7 October 2026
+    (`alignment`). Open mathematics outside the main theorem (the hypotheses (R1) and (R2) for
     every model, and other correspondence questions) is recorded in `roadmap/`.
   sorry_count: 0
   sorry_in_definitions: 0
@@ -147,9 +149,13 @@ fidelity:
     The theorem is proved for the repository's own sentence, `baseLanguage.densitySentence`,
     constructed following the manuscript; the formalization does not identify its models with
     the manuscript's strongly coded templates, and several intermediate statements of the
-    manuscript are not formalized. Where the formal route differs from the manuscript (for
-    example, receiving models in place of hypotheses on every model), the roadmap records the
-    difference next to the named declarations.
+    manuscript are not formalized. Propositions 4.32, 4.34 and 4.35 of [AFK26] are formalized
+    and proved for the strongly coded template system, its classes `K_β` and the repository's
+    transcription `templateSentence` of its sentence, relative to the current draft of
+    7 October 2026; `templateSentence` is not identified with `baseLanguage.densitySentence`,
+    and no spectrum result is transferred between them. Where the formal route differs from the
+    manuscript (for example, receiving models in place of hypotheses on every model), the roadmap
+    records the difference next to the named declarations.
 
 review:
   status: agent-reviewed
@@ -181,6 +187,50 @@ alignment:
       module: comparator/Solution.lean
       status: proved
       note: "Stated in `comparator/Challenge.lean` with Mathlib-only imports; proved from the main theorem."
+    - source: "[AFK26], Proposition 4.32"
+      lean:
+        - IsTemplateChart.hereditary
+        - IsTemplateChart.jointEmbedding
+        - IsTemplateChart.amalgamation
+      module: VaughtConjecture/Correspondence/Charts/Chart.lean
+      status: proved
+      note: >-
+        The hereditary (for nonempty closed sets), joint embedding and amalgamation properties of
+        the charts `C_β[L]` of the strongly coded template system; joint embedding and
+        amalgamation for `β < ω₁`. Relative to the current draft of [AFK26] of 7 October 2026
+        (not part of this repository; SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version.
+    - source: "[AFK26], Proposition 4.34"
+      lean: proposition434Target
+      module: VaughtConjecture/Correspondence/Proposition434.lean
+      status: proved
+      note: >-
+        Boundedness, Reconstruction and Limits (at nonzero limits) for the classes `K_β` of the
+        strongly coded template system (`templateStageClass`) and the sentence `templateSentence`,
+        on countable nonempty carriers, for `β < ω₁`. The three clauses hold without the sentence
+        premise and without nonemptiness, as `proposition434Clauses_of_countable`; level zero is
+        the separate theorem `exists_lift_zero_of_realize_templateSentence`. Rank is the least
+        projection-fixing stage, not Scott rank. Relative to the current draft of [AFK26] of
+        7 October 2026 (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version; `templateSentence` is not identified with `baseLanguage.densitySentence`, and no
+        spectrum result is transferred between them. Notes in
+        `milestones/2026-10-15-proposition-4-34.md`.
+    - source: "[AFK26], Proposition 4.35"
+      lean: proposition435Target
+      module: VaughtConjecture/Correspondence/Maximality/Count.lean
+      status: proved
+      note: >-
+        For `β < ω₁`, a countable set of structures on ℕ, each maximal at `β` (the printed
+        Definition 2.20, `IsMaximalAt`, with its allowance for an unchanged higher lift), such that
+        every structure maximal at `β` on a countable nonempty carrier is isomorphic to one of them
+        in the full template language. The stronger `maximalCountTarget` drops nonemptiness. The
+        native count of strongly coded terminal realizations
+        (`Realization.stronglyCodedTerminalClasses_countable`) is an input, distinct from this
+        proposition. Relative to the current draft of [AFK26] of 7 October 2026 (SHA-256 of its
+        source 654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a
+        published version; no spectrum result is transferred to `baseLanguage.densitySentence`.
 
 acknowledgements: >-
   Built on Mathlib and the pinned InfinitaryLogic and ComputableModelTheory developments; the

@@ -1286,13 +1286,18 @@ and 43 are P, by the definition-level identifications of `VaughtConjecture/Corre
 in their notes.  The second lines of rows 44, 45 and 53, the third line of row 53, and rows 59–61
 are P, by the comparisons of `VaughtConjecture/Correspondence/Charts` named in notes 44, 45, 53
 and 59–61; the first lines of rows 44, 45 and 53 record the earlier comparisons and keep their
-status.  Row 6 is S: `IsBountiful` is the printed definition required at every stage that
-is zero or a limit (note 6), and at `ω₁` only the implication from `IsBountiful` is proved.  Row
-57 is S: native cell coherence is compiled, the coded domains are not reconstructed (note 57).  Row
-58 is C: the top label of the anchor made explicit, supported by a compiled degeneracy (note 58).
-The other rows whose declaration carries the manuscript's number but whose clauses have not been
-compared are S, with the compiled declarations listed in the notes.  A line with the first two
-cells empty continues the row above it: a further notion of the same row, with its own status.
+status.  The second lines of rows 51, 52, 55 and 56 and the third line of row 52 are P, by the
+transcriptions and theorems of `VaughtConjecture/Correspondence` (`Density`, `Sentence`,
+`Proposition434`, `Maximality`) named in notes 51, 52, 55 and 56, for the template system of
+strongly coded legal templates of the current draft; the first lines of these rows record the
+comparisons with the native classes and keep their status.  Row 6 is S: `IsBountiful` is the printed
+definition required at every stage that is zero or a limit (note 6), and at `ω₁` only the
+implication from `IsBountiful` is proved.  Row 57 is S: native cell coherence is compiled, the coded
+domains are not reconstructed (note 57).  Row 58 is C: the top label of the anchor made explicit,
+supported by a compiled degeneracy (note 58).  The other rows whose declaration carries the
+manuscript's number but whose clauses have not been compared are S, with the compiled declarations
+listed in the notes.  A line with the first two cells empty continues the row above it: a further
+notion of the same row, with its own status.
 Rows 41–47 concern the legal templates of the current draft of [AFK26] and cite its numbering
 (its §4, "The Counterexample");
 rows 9 and 10 cite the current numbering, and their notes also cite that of the version of
@@ -1308,23 +1313,29 @@ that version has adopted a correction recorded here, the row says so ("adopted i
 with that version's numbers.  An adoption changes no status letter: the letters record the
 comparisons made here, and a row becomes P only by the comparison described above.  Rows 48–56, and
 the second lines of rows 46 and 47, are rows new to the concordance (rows 49, 50 and 52 concern
-statements already in earlier versions); each is S, and its note gives the status of the
+statements already in earlier versions); each first line is S, and its note gives the status of the
 corresponding declarations here: compiled in this repository (theorem named), compiled conditionally
 (the hypotheses named), informal and not compiled, or prospective.  [AFK26] states Propositions
-4.32, 4.34 and 4.35 without proof and sketches the proof of Lemma 4.33.  It also states that the
-proof that its system `K[L]` is a Knight system has been formalized; in this repository every
-compiled form of the main theorem is conditional on named hypotheses: on the retained all-model
-terminal-classification route, at fewest the four of `DASHBOARD.md` (hypotheses 2 and 4–6), or
-hypotheses derived from them; on the receiving-models route, (R4) and (R3) for receiving models,
-each still to be proved ((R2) for receiving models is compiled,
-`Realization.receivingResidualReceiving_of_padded`); hypothesis 8 is compiled in this
+4.32, 4.34 and 4.35 without proof and sketches the proof of Lemma 4.33.  Their counterparts for the
+classes `K_β` of the template system of the current draft (`templateStageClass`) and the sentence
+`templateSentence` are proved here (rows 53, 55 and 56, P lines: `IsTemplateChart.hereditary`,
+`.jointEmbedding`, `.amalgamation`, `proposition434Target`, `proposition435Target`); Lemma 4.33 is
+not (row 54).  It also states that the proof that its system `K[L]` is a Knight system has been
+formalized; in this repository every compiled form of the main theorem is conditional on named
+hypotheses: on the retained all-model terminal-classification route, at fewest the four of
+`DASHBOARD.md` (hypotheses 2 and 4–6), or hypotheses derived from them; on the receiving-models
+route, (R4) and (R3) for receiving models, each still to be proved ((R2) for receiving models is
+compiled, `Realization.receivingResidualReceiving_of_padded`); hypothesis 8 is compiled in this
 repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstrings of
 `VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026, with two
 exceptions: the two citation groups of statements unchanged since, lawful local labellings
 (Definition 4.28 of the current draft) and the cells `D↓U` below a graded face (Definition 4.3 of
 the current draft), which are marked "(current draft)"; and the modules of
 `Correspondence/Charts`, which cite the current draft throughout (their clauses were compared
-with the text of the draft of 10 October 2026, which has the same numbers).
+with the text of the draft of 10 October 2026, which has the same numbers), as do those of
+`Correspondence/Density`, `Correspondence/Sentence`, `Correspondence/Boundedness`,
+`Correspondence/Reconstruction`, `Correspondence/Limits`, `Correspondence/Presentation`,
+`Correspondence/Maximality` and `Correspondence/Proposition434`.
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
@@ -1389,13 +1400,18 @@ with the text of the draft of 10 October 2026, which has the same numbers).
 | 49 | [AFK26] | the lower bound in the proof of Theorem 2.25 (bounded levels) | S |
 | 50 | [AFK26] | plans as the models of `ThPlan`, Definition 4.13 and Lemma 4.14 | S |
 | 51 | [AFK26] | the classes `K_β` as density classes, Definitions 4.20 and 4.21 | S |
+| | | the same, current draft, as `templateStageClass` and `SatisfiesDensityAt` | P (nonempty carriers) |
 | 52 | [AFK26] | `K[T]` a weak Knight system over `σ[T]`, Theorem 4.23 and Claim 4.24 | S |
+| | | the sentence `σ[L]` and its base equation at level zero, as `templateSentence` and `realize_templateSentence_iff_exists_lift` | P (nonempty carriers) |
+| | | Claim 4.24 for `K[L]`, as `projectionTarget` | P (countable carriers, `ξ ≤ β < ω₁`) |
 | 53 | [AFK26] | charts and `C_β[L]`, Definition 4.31; HP, JEP and AP, Proposition 4.32 | S |
 | | | charts and their embeddings, Definition 4.31, as `IsTemplateChart` and `StageType.embeddingEquivFace` | P |
 | | | HP, JEP and AP, Proposition 4.32, as `IsTemplateChart.hereditary`, `.jointEmbedding`, `.amalgamation` | P (JEP, AP: `β < ω₁`) |
 | 54 | [AFK26] | the `β`-Fraïssé limit, Lemma 4.33 | S |
 | 55 | [AFK26] | Boundedness, Reconstruction and Limits, Proposition 4.34 | S |
+| | | the same, current draft, for `K[L]` and `templateSentence`, as `proposition434Target` (from `proposition434Clauses_of_countable`) | P (countable carriers, `β < ω₁`) |
 | 56 | [AFK26] | countably many maximal structures at each level, Proposition 4.35 | S |
+| | | the same, current draft, for `K[L]` with maximality as `IsMaximalAt` (Definition 2.20), as `proposition435Target` (from `maximalCountTarget`) | P (`β < ω₁`, universe `0`) |
 | 57 | [Kni26] | the value of an element allotted by a model, Definition 3.2.5, Lemma 3.2.6 | S |
 | 58 | [Kni26] | hollowness and the anchor at infinity, Definition 5.4.2 | C |
 | 59 | [AFK26] | plans, Definition 4.1 | P (nonempty ground set) |
@@ -2330,12 +2346,24 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     are indexed by objects of the same kind (informal; not compiled); their underlying schemes
     still differ by strong coding (note 46), and `σ[L]` is not literally `densitySentence`.
     Their identification needs the resolution of note 46, then rows 12 and 13, and the
-    representation question of item 1 (row 9).  *Its proof and Claim 4.37* (the second line of
-    the row).  [AFK26] derives clauses (a)–(d) of Definition 2.23 for `K[L]`: (b) is
-    Proposition 4.35, (d) follows from Lemma 4.33, and (a) and (c) follow from Claim 4.37 (every
-    `M` in `K_β` has a unique maximal `N` in `K` with `τ_β(N) = M`) with Reconstruction; then
-    Theorems 4.23 and 2.25 conclude.  The proof is complete modulo Propositions 4.32, 4.34 and
-    4.35 and Lemma 4.33, which [AFK26] states without proof (Lemma 4.33 sketched).  Claim 4.37 is
+    representation question of item 1 (row 9).  For the transcription `templateSentence` of
+    `σ[L]` (note 52), the comparison items are recorded in `Correspondence/Sentence/Dictionary`:
+    the separation `classStructureSeparationTarget` (D8: a structure of the positional base
+    language satisfying `densitySentence` has a class-disjunction reading that does not satisfy
+    `templateSentence`), proved for that reading only and not a component of Proposition 4.34;
+    D1, D2 and the forward D3 stated, and the chosen vocabulary of D9 proved
+    (`chosenVocabularyTarget`); the language `L°` of the legal templates without clause (5), its
+    sentence `σ[L°]`, D4–D7 and the rest of D9 deferred (no language for `L°` is defined).  No
+    spectrum result is transferred between `templateSentence` and `densitySentence`.  *Its proof
+    and Claim 4.37* (the second line of the row).  [AFK26] derives clauses (a)–(d) of
+    Definition 2.23 for `K[L]`: (b) is Proposition 4.35, (d) follows from Lemma 4.33, and (a) and
+    (c) follow from Claim 4.37 (every `M` in `K_β` has a unique maximal `N` in `K` with
+    `τ_β(N) = M`) with Reconstruction; then Theorems 4.23 and 2.25 conclude.  The proof is
+    complete modulo Propositions 4.32, 4.34 and 4.35 and Lemma 4.33, which [AFK26] states without
+    proof (Lemma 4.33 sketched).  For the template classes `templateStageClass` and the sentence
+    `templateSentence`, the counterparts of Propositions 4.32, 4.34 and 4.35 are proved here
+    (rows 53, 55 and 56, P lines); Lemma 4.33 (row 54), Claim 4.37 and Theorem 4.36 for
+    `templateSentence` are not stated, so the second line of this row stays S.  Claim 4.37 is
     stated for `M ∈ K_β` and its proof is for `M ∈ K_{-∞}`; the coherence `τ_α(M_β) = M_α` at
     limits is used without comment and follows from Reconstruction.  Counterparts here:
     `MainTheorem.exists_maximalRefinement` (a terminal model expansion bounding all model
@@ -2373,8 +2401,10 @@ zero or a limit (`StageType.hasCoatomExtensions`).
 50. [AFK26, Lemma 4.14]: an `L_a`-structure is a plan (Definition 4.12) exactly when it satisfies
     `ThPlan`, the `L_{ω₁ω}` axiomatization of Definition 4.13; stated as immediate, with no
     proof.  Counterpart here: `Geometry.IsPlan` (`Geometry/Plan`), whose comparison with
-    Definition 4.1 is not recorded (note 9); no axiomatization `ThPlan` is stated here
-    (prospective).  Informal; not compiled.
+    Definition 4.1 is not recorded (note 9).  The axiomatization `ThPlan` of Definition 4.13 is
+    stated, as clause (a) of the sentence `templateSentence` (`planClause`,
+    `Correspondence/Sentence/TemplateSentence`; note 52); Lemma 4.14 itself, its equivalence with
+    plans, is not stated (prospective).  Informal; not compiled.
 51. [AFK26, Definitions 4.20 and 4.21]: `K_β` is the class of `L_b[T] ∪ L_c[T]`-structures
     compatible with the diagram, fixed by `τ_β`, and satisfying `D[α]` for every
     `α < ω + ω · β`, where `D[α]` asks that every donor `u ∈ T` over a realized template `t ∈ T`
@@ -2389,7 +2419,22 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     cutoffs included: prospective.  The third remark of `README.md`, item 3 (density at block
     observations against the scalar-cutoff predicate), is to be restated against Definition 4.21.
     Whether, if it holds, the conditional compositions can be stated over density classes,
-    without (R1) among their hypotheses, is open (informal; not compiled).
+    without (R1) among their hypotheses, is open (informal; not compiled).  *Current draft
+    (second line, P), `Correspondence/Density`.*  For the template system `L` of strongly coded
+    legal templates, `D[α]` is `SatisfiesDensityAt α G`, one quantifier for each printed one, at
+    every ordinal `α`, successors included, with truncation up to renaming compared on raw
+    labellings (`StageType.IsTruncRenaming`, `TemplateClass.TruncEquiv`); `K_β[L]` is
+    `templateStageClass M β`: compatible with `ID[L]` (`IsTemplateCompatible`), fixed by `τ_β`
+    (`projectStructure β`), and `D[α]` for every `α < ω + ω · β`, on a nonempty carrier (the
+    convention of [AFK26, §1], the first clause).  Countability is not part of the class, and
+    `β < ω₁` is a premise of the statements that use it.  The sublanguage `L_c[L]` is
+    `baseTemplateLanguage` and the reduct `N↾L_c[L]` is `baseReduct`
+    (`Correspondence/Density/Language`).  The comparison with the native classes is through
+    presentations, not an identification: for `β < ω₁` on a countable carrier, every
+    `G ∈ K_β[L]` is the class reading of a realization at `blockStage β` in the strongly coded
+    receiving class (`stronglyCodedPresentationTarget`), and the class reading of a realization
+    in that class at `blockStage (β + 1)` is in `K_{β+1}[L]` (`successorReadingTarget`).  The
+    class of the first line is unchanged, and its identification with `K_β` stays prospective.
 52. [AFK26, Theorem 4.23]: `K[T]` is a weak Knight system whose class of `L_c`-reducts is the
     class of models of `σ[T]` (Definition 4.22).  Claim 4.24 (`τ_α` maps `K_β` into `K_α`) is
     argued from clause (g) of Definition 4.11.  The base equation `Mod σ[T] = {M↾L_c : M ∈ K_0}`
@@ -2401,7 +2446,24 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     `baseLanguage.realize_toStructure_densitySentence_iff`, to be composed with the
     identification of `σ[L]` with `densitySentence` (rows 12, 13 and 47, still to be proved).
     The claim: argued in [AFK26], not formalized in its form; the base equation: informal; not
-    compiled.
+    compiled.  *Current draft (second and third lines, P), `Correspondence/Sentence`,
+    `Correspondence/Reconstruction`.*  For the template system `L` of strongly coded legal
+    templates, `σ[L]` is `templateSentence`, the sentence of Definition 4.22 written clause by
+    clause as a sentence of `L_{ω₁ω}` over `baseTemplateLanguage` (`planClause`,
+    `structureClause`, `diagramClause`, `densityClause`; rank-zero donors and witnesses up to
+    renaming), not defined by the existence of a lift.  The base equation at level zero, the label
+    stage `blockStage 0 = ω`: on a nonempty carrier, `B` satisfies `templateSentence` exactly when
+    `B = baseReduct G` for some `G ∈ K_0[L]` on the same carrier
+    (`realize_templateSentence_iff_exists_lift`, `Correspondence/Sentence/Correspondence`).  On an
+    empty carrier it fails (`realize_templateSentence_and_not_exists_lift_of_isEmpty`), so the
+    convention of nonempty domains of [AFK26, §1] is a premise.  The comparison of clause (d)
+    with `D[α]` for `α < ω` that [AFK26] does not make is the passage between donors of rank zero
+    and donors of every rank (`SatisfiesDensityAt.rankZero`, `satisfiesDensityAt_of_rankZero`).
+    Claim 4.24: for `ξ ≤ β < ω₁` on a countable carrier, `τ_ξ` maps `K_β[L]` into `K_ξ[L]`
+    (`projectionTarget`); the premises `Countable M` and `β < ω₁` are those of the route taken,
+    through strongly coded receiving presentations.  The rest of Theorem 4.23, that `K[L]` is a
+    weak Knight system, is not stated, and `templateSentence` is not identified with
+    `densitySentence` (note 47).
 53. [AFK26, Definition 4.31]: a chart on `t ∈ L` is a finite structure realizing the single
     invariant `Q_t`, read through the diagram; `C_β[L]` is the class of charts of the templates
     fixed by truncation at `ω + ω · β`, top labels included.  [AFK26, Proposition 4.32], stated
@@ -2442,8 +2504,8 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     labels of the amalgam in `{-∞} ∪ ω₁ ∪ {∞}` and identifies classes at `ω₁` with classes at the
     block stage (`StageType.globalClass_eq_iff`).  For AP the two faces of the common chart are
     renamings of each other and are aligned first (`StageType.exists_restrictFace_renameCells`).
-    Not done here: the Fraïssé limit (row 54), and the sublanguage `L_c[L]` with the reduct to it
-    (deferred).
+    Not done here: the Fraïssé limit (row 54).  The sublanguage `L_c[L]` and the reduct to it are
+    `baseTemplateLanguage` and `baseReduct` (`Correspondence/Density/Language`, note 51).
 54. [AFK26, Lemma 4.33], with a sketched proof (two sentences, from Proposition 4.32 and the
     countability of `C_β[L]`): for each `β` a structure `F_β ∈ K_β` into which every chart of
     `C_β[L]` embeds, with exact extension between invariants fixed at `β`.  Not argued there: the
@@ -2461,9 +2523,11 @@ zero or a limit (`StageType.hasCoatomExtensions`).
 55. [AFK26, Proposition 4.34], stated without proof, for every `β` and every model `M` of
     `σ[L]`: Boundedness (the ranks of the lifts of `M` in `K` form a countable set),
     Reconstruction (two lifts of `M` in `K_β` are equal), and Limits (at a limit `β`, lifts at
-    every `α < β` give a lift at `β`).  Counterparts here, in two groups, both stated for model
-    expansions in the raw base encoding and not for the density classes `K_β` of row 51 (the end
-    of this note); the status S is unchanged.
+    every `α < β` give a lift at `β`).  Counterparts here for the native classes (first line), in
+    two groups, both stated for model expansions in the raw base encoding and not for the density
+    classes `K_β` of row 51 (the end of this note); the status S of the first line is unchanged.
+    The counterpart for the template classes of the current draft (second line, P) is the last
+    paragraph of this note.
     *Receiving models: compiled in this repository (theorem named), each hypothesis proved.*
     Reconstruction, `ModelExpansion.eq_of_hasFiniteCutReceiving` (`Expansion/ReceivingModels`: two
     model expansions of a base structure to `λ_ξ`, `ξ < ω₁`, with the finite-cut receiving
@@ -2509,6 +2573,26 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     the printed density axioms are part of the definition; their correspondence with native
     finite-cut receiving, the hypothesis of the first group, is still to be proved.  Boundedness
     is more than the expansion-domain route uses (`README.md`, "The persistent core").
+    *Current draft (second line, P), `Correspondence/Proposition434`.*  With `σ[L]` the sentence
+    `templateSentence` and `K_β` the class `templateStageClass M β` (notes 51 and 52),
+    `Proposition434Clauses β M B` is the three printed clauses for a base structure `B` of
+    `L_c[L]` on `M`: Boundedness, the set `liftRanks M B` of the ranks of the lifts of `B` is
+    countable, with a bound `A < ω₁` added (`boundednessTarget`,
+    `Correspondence/Boundedness/StageBound`), where the rank of a lift is its least
+    projection-fixing stage (`IsLeast (fixingStages G) ρ`), not a Scott rank; Reconstruction,
+    literal equality of two lifts of `B` in `K_β[L]` (`reconstructionTarget`,
+    `Correspondence/Reconstruction/Reconstruction`); and Limits at a nonzero limit `β`
+    (`Order.IsSuccLimit β`, the convention of Claim 4.37), the lower lifts given level by level
+    with no coherence premise (`limitsTarget`, `Correspondence/Limits/Assembly`).  The three hold
+    for every base structure on a countable carrier and every `β < ω₁`, with no sentence premise
+    (`proposition434Clauses_of_countable`); the form with the printed premises (`Countable M`,
+    `Nonempty M`, `β < ω₁`, `B` satisfies `templateSentence`) is `proposition434Target`, derived
+    from it, and its nonemptiness and sentence premises are not used.  Level zero, (Limits) read
+    at `0`, is the separate theorem `exists_lift_zero_of_realize_templateSentence`, which uses a
+    nonempty carrier and the sentence (note 52).  Only rank at most stage is used
+    (`rankLeStageTarget`); no rank-equals-stage claim is made.  The statement concerns the
+    template classes and `templateSentence`; it is not transferred to the native classes of the
+    first line or to `densitySentence`.  Notes: `milestones/2026-10-15-proposition-4-34.md`.
 56. [AFK26, Proposition 4.35], stated without proof: for each `β`, only countably many structures
     up to isomorphism are maximal at `β` (Definition 2.20).  Counterpart here:
     `MainTheorem.countable_isoClasses_terminalAt` (`MainTheorem/TerminalClasses`), compiled in
@@ -2521,8 +2605,45 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     The realizations here are stage-indexed, and terminality at `β`
     (`Realization.IsTerminalAt`) excludes any model at `λ_{β+1}` reducing to the given one: the
     stage-dependent meaning of the top that `README.md` flags ("Reduction to full
-    presentations").  A theorem relating "maximal at `β`" to "terminal at `β`, or lying in some
-    `K_{β′}` with `β′ > β`" is still to be proved (informal; not compiled).
+    presentations").  For the native classes, a theorem relating "maximal at `β`" to "terminal at
+    `β`, or lying in some `K_{β′}` with `β′ > β`" is still to be proved (informal; not compiled).
+    *Current draft (second line, P), `Correspondence/Maximality`.*  Maximality at `β` is
+    `IsMaximalAt β G` (`Correspondence/Maximality/Definitions`), the printed Definition 2.20:
+    `G ∈ K_β[L]`, and every `G′ ∈ K_{β′}[L]` on the same carrier, `β < β′ < ω₁`, with
+    `τ_β(G′) = G` equals `G`; the allowance for an unchanged higher lift is kept.  For the
+    template classes the overlap of the previous paragraph does not occur below `ω₁` on countable
+    carriers: no structure of `K_{β′}[L]`, `β < β′ < ω₁`, is fixed by `τ_β`
+    (`strictnessTarget_of_countable`, from strictness at the successor level,
+    `successorStrictnessTarget`, which needs no countability), so maximality at `β` is the
+    absence of a lift in `K_{β+1}[L]` (`maximalNoSuccessorTarget`).  The count,
+    `MaximalCountTarget β`: for `β < ω₁`, a countable set of structures on `ℕ`, each maximal at
+    `β`, such that every structure maximal at `β` on a countable carrier is isomorphic to one of
+    them in the full language `L_b[L] ∪ L_c[L]` (not only by its base reduct); proved as
+    `maximalCountTarget`.  `Proposition435Target β`, the same with the convention of nonempty
+    domains (`[Nonempty M]`) and nothing else added, no sentence premise among them, is proved as
+    `proposition435Target` (`Correspondence/Maximality/Count`).  The ordinals and the language
+    are at universe `0`; the carriers are in any universe.  The inputs, each proved: infinitude of
+    a carrier of a structure of `K_β[L]`, by fresh points inside the structure
+    (`infinitudeTarget`); transport along a bijection of carriers
+    (`isMaximalAt_transportStructure_iff`, `transportEquiv`); a strongly coded receiving
+    presentation (`stronglyCodedPresentationTarget`); maximal implies terminal in the strongly
+    coded receiving class (`maximalToTerminalTarget`, `Realization.IsStronglyCodedTerminalAt`; the
+    converse is not stated); countably many strongly coded terminal realizations on `ℕ` up to
+    isomorphism of realizations at each `β < ω₁`
+    (`Realization.stronglyCodedTerminalClasses_countable`,
+    `MainTheorem/StronglyCodedTerminalCount`), from the restricted (R2) and (R3) of the strongly
+    coded receiving class, `Realization.stronglyCodedResidualReceiving`
+    (`MainTheorem/StronglyCodedLowDisplay`) and `Realization.stronglyCodedHollowReceiving`
+    (`MainTheorem/StronglyCodedGrowthCarrier`), both with no premise; and an isomorphism of
+    realizations as an isomorphism of the class-reading structures in the full language
+    (`Realization.Iso.classReadingEquiv`).  Same-stage injectivity, for classes of base
+    structures, is also proved (`sameStageInjectivityTarget`).  The native terminal count is an
+    input of Proposition 4.35, distinct from it; the restricted (R2) and (R3) are statements
+    about the strongly coded receiving class, not (R2) and (R3) for every model, whose status is
+    unchanged (`DASHBOARD.md`).  Not stated: the converse of maximal implies terminal, uniqueness
+    of maximal structures across stages, the existence of a greatest stage, and the existence of
+    a maximal structure at every level (the count is not an existence result).  The milestone
+    notes of Proposition 4.35 follow its verification run.
 
 57. [Kni26, Definition 3.2.5 and Lemma 3.2.6]: the value `𝔐(Σ)` of an element `Σ` of the domain of a
     type of a model, allotted by the model as a whole and well defined by consistency.  Here the
