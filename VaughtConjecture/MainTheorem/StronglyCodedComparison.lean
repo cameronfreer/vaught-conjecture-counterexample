@@ -56,7 +56,11 @@ no points.  The residual and hollow comparisons follow, under restricted (R2) an
 carriers (`Realization.stronglyCodedResidualIsoTarget`, `Realization.stronglyCodedHollowIsoTarget`).
 With the rigid-core comparison they give `Realization.stronglyCodedTerminalIsoTarget` and
 `Realization.stronglyCodedTerminalCountTarget`, conditional on the restricted residual and hollow
-receiving premises, which are open and remain premises of both statements.
+receiving premises, which remain premises of both statements.  Both premises are proved
+(`Realization.stronglyCodedResidualReceiving`, `Realization.stronglyCodedHollowReceiving`); the
+statements with them instantiated, with no (R2) or (R3) premise, are in
+`VaughtConjecture.MainTheorem.StronglyCodedTerminalCount` (`Realization.stronglyCodedTerminalIso`,
+`Realization.stronglyCodedTerminalClasses_countable`).
 
 | model-level use (`nonempty_equiv_of_residual`, `nonempty_equiv_of_hollow`) | replacement |
 |---|---|
@@ -329,9 +333,11 @@ theorem stronglyCodedHollowIsoTarget (ξ : Ordinal.{0}) (M N : Type w) :
       (hholM R hR hRP) (hholN S hS hSP)
 
 /-- **Target: shared restricted terminal properties determine the isomorphism class** (native
-construction), conditional on the restricted residual and hollow receiving premises, which are
-open (`Realization.StronglyCodedResidualReceiving`, `Realization.StronglyCodedHollowReceiving`, on
-both carriers; they remain premises of the statement): the three comparisons
+construction), conditional on the restricted residual and hollow receiving premises
+(`Realization.StronglyCodedResidualReceiving`, `Realization.StronglyCodedHollowReceiving`, on
+both carriers; they remain premises of the statement, and are proved as
+`Realization.stronglyCodedResidualReceiving` and `Realization.stronglyCodedHollowReceiving`,
+instantiated in `Realization.stronglyCodedTerminalIso`): the three comparisons
 (`Realization.stronglyCodedRigidCoreIsoTarget`, `Realization.stronglyCodedResidualIsoTarget`,
 `Realization.stronglyCodedHollowIsoTarget`) through
 `Realization.stronglyCodedTerminalIsoTarget_of_comparisons`. -/
@@ -341,9 +347,10 @@ theorem stronglyCodedTerminalIsoTarget (ξ : Ordinal.{0}) (M N : Type w) :
     (stronglyCodedResidualIsoTarget ξ M N) (stronglyCodedHollowIsoTarget ξ M N)
 
 /-- **Target: countably many strongly coded terminal isomorphism classes** (native
-construction), conditional on the restricted residual and hollow receiving premises, which are
-open (`Realization.StronglyCodedResidualReceiving ξ ℕ`, `Realization.StronglyCodedHollowReceiving
-ξ ℕ`; they remain premises of the statement, with `ξ < ω₁`):
+construction), conditional on the restricted residual and hollow receiving premises
+(`Realization.StronglyCodedResidualReceiving ξ ℕ`, `Realization.StronglyCodedHollowReceiving
+ξ ℕ`; they remain premises of the statement, with `ξ < ω₁`, and are proved, instantiated in
+`Realization.stronglyCodedTerminalClasses_countable`):
 `Realization.stronglyCodedTerminalCountTarget_of_isoTarget` and
 `Realization.stronglyCodedTerminalIsoTarget`. -/
 theorem stronglyCodedTerminalCountTarget (ξ : Ordinal.{0}) : StronglyCodedTerminalCountTarget ξ :=
