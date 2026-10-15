@@ -109,12 +109,12 @@ reducts are then equal (`FirstOrder.Language.Equiv.inducedStructure_eq`); Recons
 `K_β[L]` (`nonempty_equiv_of_baseReduct_equiv`), and no uniqueness of maximal pairs across stages
 is used.
 
-## The count (C.T10), stated
+## The count (C.T10), proved
 
 `MaximalCountTarget β`: a countable set of structures on `ℕ`, each maximal at `β`, representing
 every structure maximal at `β` on every countable carrier, up to isomorphism in the full language
-`L_b[L] ∪ L_c[L]` (never only of base reducts).  Open.  The intended assembly, each input with its
-status:
+`L_b[L] ∪ L_c[L]` (never only of base reducts).  Proved as `maximalCountTarget`
+(`VaughtConjecture.Correspondence.Maximality.Count`).  The assembly, each input with its status:
 
 1. infinitude, `infinitudeTarget` (proved): the carrier is countably infinite, so `M ≃ ℕ`;
 2. transport, `isMaximalAt_transportStructure_iff` and `transportEquiv` (proved): `G` is isomorphic
@@ -680,8 +680,8 @@ end Injectivity
 a countable set `S` of structures on `ℕ`, each maximal at `β`, such that every structure maximal
 at `β` on a countable carrier `M` is isomorphic, in the full language `L_b[L] ∪ L_c[L]`, to a
 member of `S`.  Stated at universe `0` for the ordinals and the language, as the terminal count
-`Realization.stronglyCodedTerminalCountTarget`; the carriers are in any universe.  Open; the
-assembly and the status of its inputs are in the module documentation.
+`Realization.stronglyCodedTerminalCountTarget`; the carriers are in any universe.  Proved as
+`maximalCountTarget` (`VaughtConjecture.Correspondence.Maximality.Count`).
 Correspondence with the printed definitions. -/
 def MaximalCountTarget (β : Ordinal.{0}) : Prop :=
   β < ω₁ → ∃ S : Set (templateLanguage.{0}.Structure ℕ), S.Countable ∧
