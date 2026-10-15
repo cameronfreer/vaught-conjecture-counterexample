@@ -6,8 +6,6 @@ Authors: Cameron Freer
 import VaughtConjecture.MainTheorem.StronglyCodedLowDonor
 
 /-!
-# The strongly coded LOW display
-
 # The strongly coded LOW display, and restricted (R2)
 
 Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3) and Layer 4 (the residual

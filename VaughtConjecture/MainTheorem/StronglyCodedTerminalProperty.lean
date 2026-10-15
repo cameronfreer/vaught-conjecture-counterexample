@@ -145,10 +145,11 @@ The original ladder carrier is not strongly coded: its codes `Label.ladderSource
 that is not strongly coded at grade one (`Label.not_isStronglyCoded_ladderSource_diag`).  The
 coded replacement `Label.codedLadderSource` is strongly coded
 (`Label.isStronglyCoded_codedLadderSource`); the limitation is that of the original ladder only.
-For (R2), the bounded strongly coded pinned extension exists
-(`StageType.exists_stronglyCoded_pinned_extension_topGrade_le`: strongly coded, top grade at most
-`K`, both faces kept); what remains is a strongly coded donor of the low determination.  These
-remaining inputs are the premises, each a named `Prop` here.
+Restricted (R2) is proved as `Realization.stronglyCodedResidualReceiving`, in
+`VaughtConjecture.MainTheorem.StronglyCodedLowDisplay` (the bounded strongly coded pinned extension
+`StageType.exists_stronglyCoded_pinned_extension_topGrade_le` and a LOW display with the strongly
+coded apex); the statements here keep it as an explicit premise.  These inputs are the premises,
+each a named `Prop` here.
 
 Everything here is a native construction of this repository; no correspondence with [AFK26] is
 claimed beyond the reading of the conclusion in the class language.  Manuscript maximality, the
@@ -448,9 +449,12 @@ section Premises
 
 variable (ξ : Ordinal.{0}) (M : Type w)
 
-/-- **Restricted (R2), exact residual receiving in the strongly coded receiving class**, still to
-be proved: a realization in the class at `λ_ξ` with the residual property `K` has exact one-point
-receiving of the strongly coded cofaces of top grade at most `K`.  The model-level form is
+/-- **Restricted (R2), exact residual receiving in the strongly coded receiving class**: a
+realization in the class at `λ_ξ` with the residual property `K` has exact one-point receiving of
+the strongly coded cofaces of top grade at most `K`.  Proved as
+`Realization.stronglyCodedResidualReceiving`, in
+`VaughtConjecture.MainTheorem.StronglyCodedLowDisplay`; the statements here keep it as an explicit
+premise.  The model-level form is
 `Realization.ResidualReceiving`, for models and every coface. -/
 def StronglyCodedResidualReceiving : Prop :=
   ∀ (R : Realization.{0, w} (blockStage ξ) M) (K : ℕ), R.IsStronglyCodedReceiving →
@@ -559,7 +563,9 @@ def StronglyCodedExactGrowthIsoTarget : Prop :=
 /-- **Target: the residual comparison in the strongly coded receiving class**, under restricted
 (R2) on both carriers (`Realization.StronglyCodedResidualReceiving`): two realizations in the class
 at `λ_ξ` on countable carriers with the same residual property `K` are isomorphic.  The model-level
-form is `Realization.nonempty_equiv_of_residual`. -/
+form is `Realization.nonempty_equiv_of_residual`.  Restricted (R2) is proved
+(`Realization.stronglyCodedResidualReceiving`, in
+`VaughtConjecture.MainTheorem.StronglyCodedLowDisplay`) and kept here as an explicit premise. -/
 def StronglyCodedResidualIsoTarget : Prop :=
   StronglyCodedResidualReceiving ξ M → StronglyCodedResidualReceiving ξ N →
     Countable M → Countable N →
@@ -584,7 +590,9 @@ def StronglyCodedHollowIsoTarget : Prop :=
 restricted (R2) and (R3) on both carriers.  Two realizations at `λ_ξ` on countable carriers,
 terminal in the strongly coded receiving class at `ξ`, with a common restricted terminal property,
 are isomorphic realizations.  Terminality is not used by the comparisons; it enters through the
-cover (`Realization.IsStronglyCodedTerminalAt.exists_hasRestrictedTerminalProperty`). -/
+cover (`Realization.IsStronglyCodedTerminalAt.exists_hasRestrictedTerminalProperty`).  Restricted
+(R2) is proved (`Realization.stronglyCodedResidualReceiving`, in
+`VaughtConjecture.MainTheorem.StronglyCodedLowDisplay`) and kept here as an explicit premise. -/
 def StronglyCodedTerminalIsoTarget : Prop :=
   StronglyCodedResidualReceiving ξ M → StronglyCodedResidualReceiving ξ N →
     StronglyCodedHollowReceiving ξ M → StronglyCodedHollowReceiving ξ N →
@@ -625,7 +633,9 @@ def stronglyCodedTerminalClasses (ξ : Ordinal.{0}) :
 
 /-- **Target: countably many strongly coded terminal isomorphism classes**: for `ξ < ω₁`, under
 restricted (R2) and (R3) on `ℕ`, only countably many isomorphism classes of realizations on `ℕ`
-are terminal in the strongly coded receiving class at `ξ`. -/
+are terminal in the strongly coded receiving class at `ξ`.  Restricted (R2) is proved
+(`Realization.stronglyCodedResidualReceiving`, in
+`VaughtConjecture.MainTheorem.StronglyCodedLowDisplay`) and kept here as an explicit premise. -/
 def StronglyCodedTerminalCountTarget (ξ : Ordinal.{0}) : Prop :=
   ξ < ω₁ → StronglyCodedResidualReceiving ξ ℕ → StronglyCodedHollowReceiving ξ ℕ →
     (stronglyCodedTerminalClasses ξ).Countable
