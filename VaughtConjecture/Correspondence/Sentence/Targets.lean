@@ -13,8 +13,10 @@ Numbering as in the current draft of [AFK26].  `σ[L]` is `templateSentence`
 (`VaughtConjecture.Correspondence.Sentence.TemplateSentence`), `K_β[L]` is
 `templateStageClass M β`, and `N↾L_c[L]` is `baseReduct N`.
 
-* **B.T12, the sentence and the lifts at level zero** (`SentenceCorrespondenceTarget M`, stated,
-  not proved): on a countable nonempty carrier, a structure `B` of `L_c[L]` satisfies `σ[L]`
+* **B.T12, the sentence and the lifts at level zero** (`SentenceCorrespondenceTarget M`, proved
+  as `sentenceCorrespondenceTarget` in
+  `VaughtConjecture.Correspondence.Sentence.Correspondence`, where `Countable M` is not used): on
+  a countable nonempty carrier, a structure `B` of `L_c[L]` satisfies `σ[L]`
   exactly when some `G ∈ K₀[L]` on the same carrier has `G↾L_c[L] = B` ([AFK26, Theorem 4.23],
   the base of `K[L]` at level zero).  **Level zero is the label stage `blockStage 0 = ω`**, not
   the literal stage `0`: `templateStageClass M 0` asks for `τ₀(G) = G`, the projection to
@@ -63,8 +65,8 @@ open FirstOrder Language Structure Ordinal BoundedFormulaω TemplateSentence
 carrier `M`, a structure `B` of `L_c[L]` satisfies `σ[L]` exactly when there is `G ∈ K₀[L]` on
 `M` with `G↾L_c[L] = B` (literal reduct, same carrier).  Level zero is the label stage
 `blockStage 0 = ω`.  `Nonempty M` is the printed convention of [AFK26, §1]; without it the
-statement fails (`realize_templateSentence_and_not_exists_lift_of_isEmpty`).
-Correspondence with the printed definitions. -/
+statement fails (`realize_templateSentence_and_not_exists_lift_of_isEmpty`).  Proved as
+`sentenceCorrespondenceTarget`.  Correspondence with the printed definitions. -/
 def SentenceCorrespondenceTarget (M : Type v) : Prop :=
   Countable M → Nonempty M → ∀ B : baseTemplateLanguage.{u}.Structure M,
     (@Sentenceω.Realize _ templateSentence.{u} M B ↔

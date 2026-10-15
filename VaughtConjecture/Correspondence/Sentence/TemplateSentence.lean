@@ -15,7 +15,8 @@ Numbering as in the current draft of [AFK26].  This file transcribes the sentenc
 [AFK26, Definition 4.22] for the template system `L` of legal templates, as a sentence of
 `L_{ω₁,ω}` over the base sublanguage `L_c[L]` (`baseTemplateLanguage`), clause by clause.  It is
 defined syntactically, as a countable conjunction of the printed sentences; it is **not** defined
-by the existence of a lift in `K₀[L]` (that comparison is the target B.T12,
+by the existence of a lift in `K₀[L]` (that comparison is B.T12, proved in
+`VaughtConjecture.Correspondence.Sentence.Correspondence`; its statement is
 `SentenceCorrespondenceTarget` in `VaughtConjecture.Correspondence.Sentence.Targets`).
 Correspondence with the printed definitions.
 
