@@ -149,9 +149,9 @@ def StronglyCodedEmptyRootTarget : Prop :=
           IsPermittedCutoff (blockStage (ξ + 1)) c →
             (R.stableCandidate hR.isStablyLawful).RealizesOver x.tuple (receivingFamily D c)
 
-/-- **Target: terminality in the strongly coded receiving class with unbounded growth is
-hollowness**.  A realization at `λ_ξ` terminal in the class at `ξ` with top-grade supremum `⊤` is
-cover-hollow. -/
+/-- **Target: terminality in the strongly coded receiving class with unbounded growth implies
+cover-hollowness**.  A realization at `λ_ξ` terminal in the class at `ξ` with top-grade supremum
+`⊤` is cover-hollow. -/
 def StronglyCodedTerminalHollowTarget : Prop :=
   ∀ R : Realization.{u, v} (blockStage ξ) M, R.IsStronglyCodedTerminalAt ξ →
     R.topGradeSup = ⊤ → R.IsCoverHollow
@@ -288,8 +288,8 @@ theorem isStronglyCodedReceiving_stableCandidate (hR : R.IsStronglyCodedReceivin
     hc hcov fun x hx _ hD hDs _ hc' ↦
       hR.realizesOver_stableCandidate_of_pos hnh hgrow x hx hD hDs hc'⟩
 
-/-- **Terminality in the strongly coded receiving class with unbounded growth is hollowness**
-(native construction): otherwise the stable candidate is a successor in the class
+/-- **Terminality in the strongly coded receiving class with unbounded growth implies
+cover-hollowness** (native construction): otherwise the stable candidate is a successor in the class
 (`Realization.isStronglyCodedReceiving_stableCandidate`) reducing to `R`
 (`Realization.stableCandidate_reduce`). -/
 theorem IsStronglyCodedTerminalAt.isCoverHollow (ht : R.IsStronglyCodedTerminalAt ξ)
@@ -323,8 +323,8 @@ theorem stronglyCodedEmptyRootTarget (ξ : Ordinal.{u}) (M : Type v) :
     (fun y hy _ hD' hDs' _ hc' ↦ hR.realizesOver_stableCandidate_of_pos hnh hgrow y hy hD' hDs' hc')
     x hx hD hDs hc
 
-/-- **Target: terminality in the strongly coded receiving class with unbounded growth is
-hollowness** (native construction): `Realization.IsStronglyCodedTerminalAt.isCoverHollow`. -/
+/-- **Target: terminality in the strongly coded receiving class with unbounded growth implies
+cover-hollowness** (native construction): `Realization.IsStronglyCodedTerminalAt.isCoverHollow`. -/
 theorem stronglyCodedTerminalHollowTarget (ξ : Ordinal.{u}) (M : Type v) :
     StronglyCodedTerminalHollowTarget ξ M :=
   fun _ ht hgrow ↦ ht.isCoverHollow hgrow
