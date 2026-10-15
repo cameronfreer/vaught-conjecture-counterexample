@@ -124,10 +124,10 @@ every structure maximal at `β` on every countable carrier, up to isomorphism in
 4. maximal implies terminal, `maximalToTerminalTarget` (proved): `R` is terminal in the class at
    `β`;
 5. countably many terminal realizations on `ℕ` up to isomorphism of realizations,
-   `Realization.stronglyCodedTerminalCountTarget (ξ : Ordinal.{0})` (proved), whose statement has
-   restricted (R2) and (R3) on `ℕ` (`Realization.StronglyCodedResidualReceiving`,
-   `Realization.StronglyCodedHollowReceiving`) as premises, which are open; this input is at
-   universe `0`, so the count is stated with `β : Ordinal.{0}`;
+   `Realization.stronglyCodedTerminalClasses_countable (ξ : Ordinal.{0})` (proved, with the
+   restricted (R2) and (R3) premises of `Realization.stronglyCodedTerminalCountTarget`
+   instantiated by their proofs); this input is at universe `0`, so the count is stated with
+   `β : Ordinal.{0}`;
 6. an isomorphism of realizations is an isomorphism of class-reading structures in the full
    language, `Realization.Iso.classReadingEquiv` (proved), and the class-reading structure of
    `decode β G` is `G` (`IsTemplateCompatible.toStructure_decode`, proved).  This is one input of
