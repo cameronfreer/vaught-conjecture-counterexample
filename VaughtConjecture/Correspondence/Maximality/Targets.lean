@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Correspondence.Boundedness.StageBound
 import VaughtConjecture.Correspondence.Maximality.Definitions
 import VaughtConjecture.Correspondence.Presentation.Scheduler
 import VaughtConjecture.Correspondence.Reconstruction.Reconstruction
@@ -21,36 +22,44 @@ a named open target, or open.
 
 ## Strictness and the comparison with "no successor"
 
-* `StrictnessTarget β M` (**open**): a structure of `K_{β'}[L]`, `β < β' < ω₁`, is not fixed by
-  `τ_β`.  `SuccessorStrictnessTarget β M` (**open**) is its instance `β' = β + 1`.  On a countable
-  carrier the two are equivalent: the instance gives the general statement by projection to
-  `β + 1` (`strictnessTarget_of_successorStrictnessTarget`, proved from B.T9).  The general form
-  says that the least fixing stage (`rank_τ`) of a member of `K_{β'}[L]` is `β'`; it is **not** a
-  consequence of "the rank is at most the stage" (`rankLeStageTarget`), which bounds the rank from
-  above only.
+* `SuccessorStrictnessTarget β M` (**proved**, `successorStrictnessTarget`, no premise beyond
+  `β < ω₁`): a structure of `K_{β+1}[L]` is not fixed by `τ_β`.  `StrictnessTarget β M` is the
+  statement for every `β'` with `β < β' < ω₁`; on a countable carrier it follows from the
+  successor instance by projection to `β + 1` (`strictnessTarget_of_successorStrictnessTarget`,
+  B.T9), and it gives the successor instance back
+  (`successorStrictnessTarget_of_strictnessTarget`).  So on countable carriers it is **proved**
+  (`strictnessTarget_of_countable`).  Neither is derived from "the rank is at most the stage"
+  (`rankLeStageTarget`), and nothing is claimed here about the least fixing stage.
 * `MaximalNoSuccessorTarget β M`: maximality at `β` is `G ∈ K_β[L]` and no `H ∈ K_{β+1}[L]` with
   `τ_β(H) = G`.  The direction from "no successor" to maximality is **proved** with no
   strictness (`isMaximalAt_of_not_exists_succ`): a lift at `β' > β` projects to a lift at `β + 1`
-  (B.T9).  The other direction is **proved from `SuccessorStrictnessTarget`**
+  (B.T9).  The other direction uses `SuccessorStrictnessTarget`
   (`maximalNoSuccessorTarget_of_successorStrictnessTarget`): maximality turns a successor `H` into
-  `H = G`, an unchanged successor, fixed by `τ_β`, and strictness excludes exactly this.
+  `H = G`, an unchanged successor, fixed by `τ_β`, and strictness excludes exactly this.  With
+  strictness proved, the target is **proved** (`maximalNoSuccessorTarget`).
 * `MaximalSuccessorComparisonTarget β M`: maximality is `G ∈ K_β[L]` and every `H ∈ K_{β+1}[L]`
   with `τ_β(H) = G` equals `G` (the printed clause at `β + 1` only, unchanged successor allowed).
-  Maximality gives it (`IsMaximalAt.forall_succ`, **proved**).  The converse is **proved from
-  `SuccessorStrictnessTarget`**; without it, an unchanged successor `G ∈ K_{β+1}[L]` would have to
-  be continued to every `β' > β + 1`, which nothing here provides.
+  Maximality gives it (`IsMaximalAt.forall_succ`, **proved**).  The converse uses
+  `SuccessorStrictnessTarget`; the target is **proved** (`maximalSuccessorComparisonTarget`).
 
-**What strictness needs** (route, estimated, not compiled).  Let `H ∈ K_{β+1}[L]` with
-`τ_β(H) = H`.  The strongly coded uniformity donor at `λ_{β+1}` for `β`
-(`hasStronglyCodedUniformityDonors`) is a strongly coded legal stage type on one point with a
-label `ℓ` in the block `[λ_β, λ_β + ω)`.  Donor density of `decode (β + 1) H`
-(`mem_templateStageClass_iff`) over the empty tuple at the permitted cutoff `ℓ + 1 < λ_{β+1}` gives
-a point whose one-point class has the label `ℓ` (`TemplateClass.ObservesAt.mem_labels`).  Since
-`τ_β(H) = H`, every invariant holding in `H` is a class fixed by `τ_β`, whose labels are below
-`λ_β` or formal tops, a contradiction.  The existing `exists_onePoint_isInBlock` does not apply as
-stated: its cutoff `λ_{ξ+1}` must lie below `λ_γ`, so it needs `ξ + 1 < γ`, which fails at
-`γ = β + 1`, `ξ = β`; the cutoff `ℓ + 1` is the change.  The missing lemma is the computation of the
-labels of a class fixed by `τ_β`.
+**The proof of strictness at the successor level** (`successorStrictnessTarget`).  Let
+`H ∈ K_{β+1}[L]` with `τ_β(H) = H`.
+
+* **Label range** (`TemplateClass.mem_labels_project`, `mem_labels_of_projectStructure_eq`): every
+  label of a projected class `τ_β(c)` is below `λ_β` or the formal top; since `τ_β(H) = H`, every
+  invariant `Q_c` holding in `H` has `c = τ_β(c')` for some `c'`, so its labels are below `λ_β` or
+  the formal top.
+* **Adjacent-stage donor witness**: the strongly coded uniformity donor at `λ_{β+1}` for `β`
+  (`hasStronglyCodedUniformityDonors`) is a strongly coded legal stage type on one point with a
+  label `ℓ` in the block `[λ_β, λ_β + ω)`.  Donor density of `decode (β + 1) H`
+  (`mem_templateStageClass_iff`) over the empty tuple at the permitted cutoff `ℓ + 1 < λ_{β+1}`
+  gives a point whose one-point class has the label `ℓ` (`TemplateClass.ObservesAt.mem_labels`).
+  The class is the reduction to `λ_{β+1}` of a class `c` with `H ⊨ Q_c` (`decode_eval_eq_some_iff`),
+  and `ℓ < λ_{β+1}`, so `ℓ` is a label of `c` (`TemplateClass.mem_labels_of_mem_labels_reduce`):
+  below `λ_β` or the formal top, against `λ_β ≤ ℓ < λ_β + ω`.
+
+`exists_onePoint_isInBlock` is not used: its cutoff `λ_{ξ+1}` must lie below `λ_γ`, which fails at
+`γ = β + 1`, `ξ = β`; the cutoff `ℓ + 1` replaces it.
 
 ## Transport (C.T5), proved
 
@@ -84,11 +93,11 @@ three are **proved** (`freshPointTarget`, `infinitudeTarget`).
   `λ_β`.
 * `MaximalToTerminalTarget β M`: for `β < ω₁`, if `G` is maximal at `β` and `R` is in the class at
   `λ_β` with class reading `decode β G`, then `R` is terminal in the class at `β`
-  (`Realization.IsStronglyCodedTerminalAt`).  **Proved from `SuccessorStrictnessTarget`**
-  (`maximalToTerminalTarget_of_successorStrictnessTarget`): a successor `R'` of `R`, with
-  `R'.reduce = R`, gives `H ∈ K_{β+1}[L]` with `τ_β(H) = G`; maximality gives `G = H`, an unchanged
-  successor; strictness excludes it.  This is the only use of strictness.  The converse (terminal
-  presentation implies maximal) is not stated.
+  (`Realization.IsStronglyCodedTerminalAt`).  **Proved** (`maximalToTerminalTarget`), from
+  `SuccessorStrictnessTarget` (`maximalToTerminalTarget_of_successorStrictnessTarget`): a
+  successor `R'` of `R`, with `R'.reduce = R`, gives `H ∈ K_{β+1}[L]` with `τ_β(H) = G`;
+  maximality gives `G = H`, an unchanged successor; strictness excludes it.  This is the only use
+  of strictness.  The converse (terminal presentation implies maximal) is not stated.
 
 ## Same-stage injectivity (C.T6), proved
 
@@ -112,15 +121,13 @@ status:
    to a structure maximal at `β` on `ℕ`;
 3. presentation, `stronglyCodedPresentationTarget` (proved): a realization `R` in the strongly
    coded receiving class with class reading `decode β G`;
-4. maximal implies terminal, `MaximalToTerminalTarget` (proved from the open
-   `SuccessorStrictnessTarget`): `R` is terminal in the class at `β`;
+4. maximal implies terminal, `maximalToTerminalTarget` (proved): `R` is terminal in the class at
+   `β`;
 5. countably many terminal realizations on `ℕ` up to isomorphism of realizations,
-   `Realization.StronglyCodedTerminalCountTarget` (universe `0`), a composition of compiled
-   results (`Realization.stronglyCodedTerminalCountTarget_of_isoTarget`,
-   `Realization.stronglyCodedTerminalIsoTarget_of_comparisons` and the rigid-core, residual and
-   hollow comparisons) whose premises, restricted (R2) and (R3) on `ℕ`
-   (`Realization.StronglyCodedResidualReceiving`, `Realization.StronglyCodedHollowReceiving`), are
-   open;
+   `Realization.stronglyCodedTerminalCountTarget (ξ : Ordinal.{0})` (proved), whose statement has
+   restricted (R2) and (R3) on `ℕ` (`Realization.StronglyCodedResidualReceiving`,
+   `Realization.StronglyCodedHollowReceiving`) as premises, which are open; this input is at
+   universe `0`, so the count is stated with `β : Ordinal.{0}`;
 6. an isomorphism of realizations is an isomorphism of class-reading structures in the full
    language, `Realization.Iso.classReadingEquiv` (proved), and the class-reading structure of
    `decode β G` is `G` (`IsTemplateCompatible.toStructure_decode`, proved).  This is one input of
@@ -150,15 +157,15 @@ section Strictness
 variable (β : Ordinal.{u}) (M : Type v)
 
 /-- **Target: strictness of the levels.**  For `β < β' < ω₁`, a structure of `K_{β'}[L]` is not
-fixed by `τ_β`; equivalently, `β` is not a fixing stage of it, so its least fixing stage
-(`rank_τ`) is `β'`.  Not a consequence of `rankLeStageTarget`.  Open.  Native construction. -/
+fixed by `τ_β`.  Proved on countable carriers (`strictnessTarget_of_countable`).
+Native construction. -/
 def StrictnessTarget : Prop :=
   ∀ β' : Ordinal.{u}, β' < ω₁ → β < β' →
     ∀ H ∈ templateStageClass M β', projectStructure β H ≠ H
 
 /-- **Target: strictness at the successor level.**  For `β < ω₁`, a structure of `K_{β+1}[L]` is
 not fixed by `τ_β`: there is no unchanged successor.  This is the instance of `StrictnessTarget`
-used by `MaximalToTerminalTarget`.  Open.  Native construction. -/
+used by `MaximalToTerminalTarget`.  Proved (`successorStrictnessTarget`).  Native construction. -/
 def SuccessorStrictnessTarget : Prop :=
   β < ω₁ → ∀ H ∈ templateStageClass M (β + 1), projectStructure β H ≠ H
 
@@ -243,6 +250,105 @@ theorem maximalSuccessorComparisonTarget_of_successorStrictnessTarget
   refine fun hc hβ G ↦ ⟨fun hG ↦ ⟨hG.1, hG.forall_succ hβ⟩, fun ⟨hG, h⟩ ↦ ?_⟩
   refine isMaximalAt_of_not_exists_succ hc hG fun ⟨H, hH, hHG⟩ ↦ hs hβ H hH ?_
   exact hHG.trans (h H hH hHG)
+
+/-- **The labels of a projected class are below the stage or the formal top**: every label of
+`τ_γ(c)` is below `γ` or `⊤` (`StageType.label_project_eq_reduce_min`, `Label.atStage_reduce`).
+Native construction. -/
+theorem TemplateClass.mem_labels_project {γ : Ordinal.{u}} (hγ : Order.IsSuccPrelimit γ) {n : ℕ}
+    (c : TemplateClass.{u} ω₁ n) {ℓ : Label.{u}} (h : ℓ ∈ (c.project hγ).labels) :
+    ℓ < (γ : Label.{u}) ∨ ℓ = ⊤ := by
+  induction c using Quotient.inductionOn with
+  | h t =>
+    rw [TemplateClass.project_toClass, TemplateClass.labels_toClass] at h
+    obtain ⟨d, rfl⟩ := h
+    have hl : (t.project hγ).label d = Label.reduce (min γ ω₁) (t.label d) :=
+      StageType.label_project_eq_reduce_min t hγ d
+    rw [hl]
+    rcases Label.atStage_reduce (min γ ω₁) (t.label d) with h | h
+    · exact .inl (h.trans_le (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (min_le_left _ _))))
+    · exact .inr h
+
+/-- **A structure fixed by `τ_β` reads only classes fixed by `τ_β`**: if `τ_β(H) = H` and
+`H ⊨ Q_c(t)`, every label of `c` is below `λ_β` or the formal top
+(`relMap_projectStructure_invariant`, `TemplateClass.mem_labels_project`).
+Correspondence with the printed definitions. -/
+theorem mem_labels_of_projectStructure_eq {β : Ordinal.{u}} {M : Type v}
+    {H : templateLanguage.{u}.Structure M} (hfix : projectStructure β H = H) {n : ℕ} (hn : 0 < n)
+    {c : LegalClass.{u} n} {t : Fin n → M}
+    (hc : RelMap (L := templateLanguage.{u}) (self := H) (TemplateSymbol.invariant c hn) t)
+    {ℓ : Label.{u}} (hℓ : ℓ ∈ c.1.labels) : ℓ < (blockStage β : Label.{u}) ∨ ℓ = ⊤ := by
+  rw [← hfix] at hc
+  obtain ⟨c', rfl, -⟩ := (relMap_projectStructure_invariant H c hn t).mp hc
+  exact TemplateClass.mem_labels_project _ c'.1 hℓ
+
+/-- **Strictness at the successor level holds** (`SuccessorStrictnessTarget β M` for every `β` and
+`M`): no structure of `K_{β+1}[L]` is fixed by `τ_β`.  The uniformity donor at `λ_{β+1}` for `β`
+has a label `ℓ ∈ [λ_β, λ_β + ω)`; donor density of `decode (β + 1) H` over the empty tuple at the
+permitted cutoff `ℓ + 1 < λ_{β+1}` gives a one-point class with the label `ℓ`, read from an
+invariant `Q_c` of `H` with `ℓ` a label of `c`; if `τ_β(H) = H`, the labels of `c` are below `λ_β`
+or `⊤` (`mem_labels_of_projectStructure_eq`), a contradiction.  Native construction. -/
+theorem successorStrictnessTarget (β : Ordinal.{u}) (M : Type v) :
+    SuccessorStrictnessTarget β M := by
+  intro hβ H hH hfix
+  have hβ1 := add_one_lt_omega_one hβ
+  obtain ⟨-, hc, -, hdd⟩ := (mem_templateStageClass_iff hβ1 H).mp hH
+  obtain ⟨d, hdl, j, hj⟩ :=
+    hasStronglyCodedUniformityDonors.{u} (Order.lt_add_one_iff.mpr le_rfl : β < β + 1)
+  have hlt : d.label j < ((blockStage (β + 1) : Ordinal.{u}) : Label.{u}) := by
+    have he : ((blockStage (β + 1) : Ordinal.{u}) : Label.{u}) =
+        ((blockStage β + ω : Ordinal.{u}) : Label.{u}) := by
+      rw [blockStage_add_one]
+    rw [he]
+    exact hj.2
+  obtain ⟨o, ho⟩ : ∃ o : Ordinal.{u}, d.label j = (o : Label.{u}) := by
+    cases hl : d.label j using WithBot.recBotCoe with
+    | bot =>
+      rw [hl] at hj
+      exact absurd hj.1 (WithBot.not_coe_le_bot _)
+    | coe x =>
+      cases x using WithTop.recTopCoe with
+      | top =>
+        rw [hl] at hlt
+        exact absurd (WithBot.coe_lt_coe.mp hlt) not_top_lt
+      | coe o => exact ⟨o, rfl⟩
+  have hob : o < blockStage (β + 1) := by
+    rw [ho] at hlt
+    exact WithTop.coe_lt_coe.mp (WithBot.coe_lt_coe.mp hlt)
+  have hx : Label.IsPermittedCutoff (blockStage (β + 1)) ((o + 1 : Ordinal.{u}) : Label.{u}) := by
+    rw [Label.isPermittedCutoff_coe, ← Order.succ_eq_add_one]
+    exact (isSuccPrelimit_blockStage (β + 1)).succ_lt hob
+  have hjx : d.label j < ((o + 1 : Ordinal.{u}) : Label.{u}) := by
+    rw [ho]
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (Order.lt_add_one_iff.mpr le_rfl))
+  obtain ⟨a, -, q, hq, hobs⟩ := hdd Function.Embedding.ofIsEmpty (TemplateClass.empty _)
+    (decode_eval_zero _ H _) d.toClass Function.Embedding.ofIsEmpty hdl
+    (TemplateClass.restrictFace_zero _ _) _ hx
+  have hmem : d.label j ∈ q.labels := hobs.mem_labels ⟨j, rfl⟩ hjx
+  obtain ⟨c, hcH, rfl⟩ := (decode_eval_eq_some_iff hc Nat.one_pos a q).mp hq
+  rcases mem_labels_of_projectStructure_eq hfix Nat.one_pos hcH
+      (TemplateClass.mem_labels_of_mem_labels_reduce _ hmem hlt) with h | h
+  · exact (not_lt.mpr hj.1) h
+  · rw [h] at hlt
+    exact not_top_lt hlt
+
+/-- **Strictness holds on countable carriers** (`StrictnessTarget β M` for every `β` and every
+countable `M`), from `successorStrictnessTarget` by projection to `β + 1`
+(`strictnessTarget_of_successorStrictnessTarget`).  Native construction. -/
+theorem strictnessTarget_of_countable (β : Ordinal.{u}) {M : Type v} (hc : Countable M) :
+    StrictnessTarget β M :=
+  strictnessTarget_of_successorStrictnessTarget hc (successorStrictnessTarget β M)
+
+/-- **Maximality is the absence of a successor** (`MaximalNoSuccessorTarget β M` for every `β` and
+`M`).  Correspondence with the printed definitions. -/
+theorem maximalNoSuccessorTarget (β : Ordinal.{u}) (M : Type v) : MaximalNoSuccessorTarget β M :=
+  maximalNoSuccessorTarget_of_successorStrictnessTarget (successorStrictnessTarget β M)
+
+/-- **Maximality is the printed clause at the successor level**
+(`MaximalSuccessorComparisonTarget β M` for every `β` and `M`).  Correspondence with the printed
+definitions. -/
+theorem maximalSuccessorComparisonTarget (β : Ordinal.{u}) (M : Type v) :
+    MaximalSuccessorComparisonTarget β M :=
+  maximalSuccessorComparisonTarget_of_successorStrictnessTarget (successorStrictnessTarget β M)
 
 end Strictness
 
@@ -491,6 +597,12 @@ theorem maximalToTerminalTarget_of_successorStrictnessTarget
     rw [hproj, hred, hRG, hG.1.2.1.toStructure_decode hG.1.2.2.1]
   exact hs hβ _ hmem (hHG.trans (hG.forall_succ hβ _ hmem hHG))
 
+/-- **Target C.T9 holds** (`MaximalToTerminalTarget β M` for every `β` and `M`): a strongly coded
+receiving realization with the class reading of a structure maximal at `β` is terminal in the
+class at `β`.  Correspondence with the printed definitions. -/
+theorem maximalToTerminalTarget (β : Ordinal.{u}) (M : Type v) : MaximalToTerminalTarget β M :=
+  maximalToTerminalTarget_of_successorStrictnessTarget (successorStrictnessTarget β M)
+
 end Terminal
 
 /-! ### Same-stage injectivity (C.T6) -/
@@ -567,13 +679,15 @@ end Injectivity
 /-- **Target C.T10, the count of maximal structures** [AFK26, Proposition 4.35]: for `β < ω₁`,
 a countable set `S` of structures on `ℕ`, each maximal at `β`, such that every structure maximal
 at `β` on a countable carrier `M` is isomorphic, in the full language `L_b[L] ∪ L_c[L]`, to a
-member of `S`.  Open; the assembly and the status of its inputs are in the module documentation.
+member of `S`.  Stated at universe `0` for the ordinals and the language, as the terminal count
+`Realization.stronglyCodedTerminalCountTarget`; the carriers are in any universe.  Open; the
+assembly and the status of its inputs are in the module documentation.
 Correspondence with the printed definitions. -/
-def MaximalCountTarget (β : Ordinal.{u}) : Prop :=
-  β < ω₁ → ∃ S : Set (templateLanguage.{u}.Structure ℕ), S.Countable ∧
+def MaximalCountTarget (β : Ordinal.{0}) : Prop :=
+  β < ω₁ → ∃ S : Set (templateLanguage.{0}.Structure ℕ), S.Countable ∧
     (∀ H ∈ S, IsMaximalAt β H) ∧
-    ∀ (M : Type v) [Countable M] (G : templateLanguage.{u}.Structure M), IsMaximalAt β G →
-      ∃ H ∈ S, Nonempty (@Language.Equiv templateLanguage.{u} M ℕ G H)
+    ∀ (M : Type v) [Countable M] (G : templateLanguage.{0}.Structure M), IsMaximalAt β G →
+      ∃ H ∈ S, Nonempty (@Language.Equiv templateLanguage.{0} M ℕ G H)
 
 end
 
