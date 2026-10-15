@@ -111,7 +111,8 @@ Proposition 4.35, countably many structures maximal at each level `β < ω₁`, 
 the full template language: `proposition435Target`, derived from the stronger `maximalCountTarget`
 ([`Correspondence/Maximality/Count.lean`](VaughtConjecture/Correspondence/Maximality/Count.lean));
 maximality is the printed Definition 2.20, `IsMaximalAt`, transcribed with its allowance for an
-unchanged higher lift.  Its milestone notes follow the verification run.  These are statements
+unchanged higher lift (notes in
+[`milestones/2026-10-15-proposition-4-35.md`](milestones/2026-10-15-proposition-4-35.md)).  These are statements
 about the classes `K_β` of the template dictionary (`templateStageClass`) and the repository's own
 sentence `templateSentence`, the transcription of `σ[L]`.  No identification of `templateSentence`
 with `baseLanguage.densitySentence`, and no transfer of the spectrum between them, is claimed; the
