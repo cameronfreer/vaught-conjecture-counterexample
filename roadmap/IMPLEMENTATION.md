@@ -2643,7 +2643,7 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     unchanged (`DASHBOARD.md`).  Not stated: the converse of maximal implies terminal, uniqueness
     of maximal structures across stages, the existence of a greatest stage, and the existence of
     a maximal structure at every level (the count is not an existence result).  The milestone
-    notes of Proposition 4.35 follow its verification run.
+    notes of Proposition 4.35 are `milestones/2026-10-15-proposition-4-35.md`.
 
 57. [Kni26, Definition 3.2.5 and Lemma 3.2.6]: the value `𝔐(Σ)` of an element `Σ` of the domain of a
     type of a model, allotted by the model as a whole and well defined by consistency.  Here the
