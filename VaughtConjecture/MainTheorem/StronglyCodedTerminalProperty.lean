@@ -85,9 +85,15 @@ is compared.
   `Realization.ClassReadingAtomicAgreementTarget` (covers of one type have the same atomic type in
   the class language, from exact consistency only: the replacement of
   `Realization.Covers.sameAtomicType`, which uses `IsExpansionOf`) and
-  `Realization.ClassReadingEquivTarget`.
+  `Realization.ClassReadingEquivTarget`.  `Realization.ExactAgeIsoTarget` and
+  `Realization.ClassReadingEquivTarget` are proved in
+  `VaughtConjecture.MainTheorem.StronglyCodedComparison` (`Realization.exactAgeIsoTarget`, in the
+  language of stage types, and `Realization.classReadingEquivTarget`);
+  `Realization.ClassReadingAtomicAgreementTarget` is not used there and remains stated only.
 * (b) `Realization.StronglyCodedRigidCoreIsoTarget`: the rigid-core comparison in the class.  No
   premise beyond the class: (c) with the proved restricted age inclusion and exact receiving.
+  Proved in `VaughtConjecture.MainTheorem.StronglyCodedComparison`
+  (`Realization.stronglyCodedRigidCoreIsoTarget`).
 * the residual and hollow comparisons, through one engine
   `Realization.StronglyCodedExactGrowthIsoTarget` (exact one-point receiving of the strongly coded
   cofaces of top grade at most the top-grade supremum, `Realization.HasExactStronglyCodedReceiving`,
