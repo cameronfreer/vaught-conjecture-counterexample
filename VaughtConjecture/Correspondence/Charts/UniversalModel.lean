@@ -270,6 +270,12 @@ def ExtendsOverEmptyRoot (β : Ordinal.{u}) (G : templateLanguage.{u}.Structure 
   ∀ (P : Type w) (D : templateLanguage.{u}.Structure P), IsTemplateChart β D →
     ∃ e' : @Language.Embedding templateLanguage.{u} P M D G, RealizesChartExactly β G D e'
 
+/-- **An embedding of `D` into `G` with point map `x` on the enumeration `eD`**: some embedding
+`e : D ↪ G` has `eD ; e = x` on points.  Native construction. -/
+def EmbedsAlong (G : templateLanguage.{u}.Structure M) {P : Type w}
+    (D : templateLanguage.{u}.Structure P) {n : ℕ} (eD : Fin n ≃ P) (x : Fin n ↪ M) : Prop :=
+  ∃ e : @Language.Embedding templateLanguage.{u} P M D G, eD.toEmbedding.trans e.toEmbedding = x
+
 end Clauses
 
 /-! ### The universal chart model -/
@@ -323,9 +329,8 @@ def ClassReadingChartEmbeddingTarget : Prop :=
   β < ω₁ → ∀ R : Realization.{u, v} (blockStage β) M, R.IsConsistent →
     ∀ (P : Type w) (D : templateLanguage.{u}.Structure P) (n : ℕ)
       (t : StageType.{u} (blockStage β) n) (eD : Fin n ≃ P), IsChartPresentation β D t eD →
-      ∀ u : Fin n ↪ M,
-        (∃ e : @Language.Embedding templateLanguage.{u} P M D R.classReading.toStructure,
-          eD.toEmbedding.trans e.toEmbedding = u) ↔ R.classReading.eval u = some t.toClass
+      ∀ x : Fin n ↪ M,
+        EmbedsAlong R.classReading.toStructure D eD x ↔ R.classReading.eval x = some t.toClass
 
 /-- **Target: exact realization from an embedding**.  For `β < ω₁` and a compatible structure
 `G`, every embedding of a chart into `G` realizes the chart exactly.  Native construction. -/
