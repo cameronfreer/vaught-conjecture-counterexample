@@ -13,7 +13,12 @@ import VaughtConjecture.MainTheorem.StronglyCodedSuccessor
 
 Numbering as in the current draft of [AFK26].  Write `λ_β = blockStage β = ω + ω · β`, `K_β[L]`
 for `templateStageClass M β` and `C_β[L]` for the charts `IsTemplateChart β`.  This file states
-targets only; every target is **stated**, none is proved here.
+targets only.  Proved elsewhere: the finite steps (`FreshPlacementTarget`,
+`UniversalPointStepTarget`, `UniversalTaskStepTarget`) in
+`VaughtConjecture.Correspondence.Charts.UniversalSteps`, and the chart reading
+(`ChartEmbeddingClosedRangeTarget`, `ClassReadingChartEmbeddingTarget`,
+`ExactRealizationOfEmbeddingTarget`) in `VaughtConjecture.Correspondence.Charts.UniversalReading`.
+The other targets are **stated**.
 
 ## The printed statement
 
@@ -54,9 +59,10 @@ template `t` with enumeration `eD` (`IsChartPresentation β D t eD`, the data of
 `IsTemplateChart`), the decoder reads the image tuple as the class of `t` literally:
 `(decode β G).eval (eD.toEmbedding.trans e'.toEmbedding) = some t.toClass`.  The decoder reads
 through the invariant symbols (`decodeEval`: the class `c` with `G ⊨ Q_c`), so this is "the image
-of `D` realizes the type of `D`", stated at the block stage, not only at `ω₁`.  For a compatible
-`G` it follows from the embedding (`ExactRealizationOfEmbeddingTarget`); it is stated as a clause
-so that the exactness is visible.
+of `D` realizes the type of `D`", stated at the block stage, not only at `ω₁`.  For `β < ω₁` it
+follows from the embedding, for every `G` (`realizesChartExactly_of_embedding`; the premise of
+compatibility in `ExactRealizationOfEmbeddingTarget` is not used); it is stated as a clause so
+that the exactness is visible.
 
 **Positive and empty roots.**  A chart has `n ≥ 1` points (the templates of [AFK26] have nonempty
 underlying sets, `IsTemplateChart`), so in `ExtendsOverChartRoots` the root `C` is nonempty: this
