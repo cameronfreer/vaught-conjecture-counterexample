@@ -13,7 +13,8 @@ empty family of generators.  Nothing here changes `templateSentence` or any of i
 
 * **What the formula says** (`inClosure_of_isEmpty_iff`): with no generators, the clause on the
   generators is vacuous, and `a ∈ cl(∅)` says that some closed tuple `e` contains `a` and every
-  closed subtuple of `e` contains `a`.
+  positive-arity closed subtuple of `e` contains `a`.  The empty subtuple is excluded, which is
+  exactly why this differs from the ordinary hull.
 * **A closed singleton is enough** (`inClosure_of_isEmpty_of_closedRel`): the one-point tuple
   `(a)` (the witness with `m = 0`) is a witness as soon as `P₁(a)`.  So in a model of `σ[L]`,
   where (Singletons) gives `P₁(a)` for every `a`, every point lies in the closure of the empty
@@ -40,8 +41,8 @@ variable {M : Type v} [baseTemplateLanguage.{u}.Structure M]
 /-! ### The closure formula on an empty family -/
 
 /-- **`a ∈ cl(∅)`, unfolded**: for an empty index type, the clause on the generators is vacuous,
-and `InClosure a b` says that some closed tuple `e` contains `a` and every closed subtuple of `e`
-contains `a`. -/
+and `InClosure a b` says that some closed tuple `e` contains `a` and every positive-arity closed
+subtuple of `e` contains `a` (the empty subtuple is excluded). -/
 theorem inClosure_of_isEmpty_iff {ι : Type} [IsEmpty ι] (a : M) (b : ι → M) :
     InClosure.{u} a b ↔ ∃ (m : ℕ) (e : Fin (m + 1) → M), a ∈ Set.range e ∧
       ClosedRel.{u} m.succ_pos e ∧ ∀ (k : ℕ) (i : Fin (k + 1) → Fin (m + 1)),
