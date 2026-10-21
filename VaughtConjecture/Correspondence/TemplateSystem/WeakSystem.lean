@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Correspondence.KnightSystem.Conditions
+import VaughtConjecture.Correspondence.TemplateSystem.Conditions
 import VaughtConjecture.Correspondence.Density.Structure
 
 /-!
@@ -18,8 +18,8 @@ The abstract theorem [AFK26, Theorem 2.25] is about a weak system ([AFK26, Defin
 an invariance diagram and a compatible invariant system ([AFK26, Definitions 2.4, 2.6, 2.8]).  This
 file states what the route through that theorem needs from the invariance-diagram side, for
 `K[L]`, separately from the four conditions
-(`VaughtConjecture.Correspondence.KnightSystem.Conditions`) and from the spectrum statement
-(`VaughtConjecture.Correspondence.KnightSystem.Theorem436`).
+(`VaughtConjecture.Correspondence.TemplateSystem.Conditions`) and from the spectrum statement
+(`VaughtConjecture.Correspondence.TemplateSystem.Theorem436`).
 
 * `TemplateBaseModelsTarget` ([AFK26, Theorem 4.23], second half): on a countable **nonempty**
   carrier, the base of `K[L]` is the class of models of `σ[L]`.  Proved.

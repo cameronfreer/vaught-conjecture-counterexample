@@ -23,9 +23,10 @@ for every `β ∈ ω₁`, countably many models maximal at `β` up to isomorphis
 some `M ∈ K` with `M ⊨ ∃x̄ Q(x̄)`.  This file states each condition for `K[L]` and records the
 status of each.  Three things are kept apart: the four conditions (this file); the weak-system
 clauses relative to the invariance diagram `ID[L]` and the identification of the base with the
-models of `σ[L]` ([AFK26, Theorem 4.23], `VaughtConjecture.Correspondence.KnightSystem.WeakSystem`);
-and the spectrum statement ([AFK26, Theorem 4.36],
-`VaughtConjecture.Correspondence.KnightSystem.Theorem436`).
+models of `σ[L]` ([AFK26, Theorem 4.23],
+`VaughtConjecture.Correspondence.TemplateSystem.WeakSystem`); and the spectrum statement
+([AFK26, Theorem 4.36],
+`VaughtConjecture.Correspondence.TemplateSystem.Theorem436`).
 
 ## Carrier conventions, explicitly
 
@@ -43,7 +44,7 @@ and the spectrum statement ([AFK26, Theorem 4.36],
   carrier (`Countable M`, `Infinite M`, the premises of `universalChartModelTarget`).
 * **Universes**: the ordinals and the language are in universe `u` in (a), (c), (d), and in
   universe `0` in (b) (as `maximalCountTarget`); the carriers are in any universe `v`.  The
-  bundle `IsKnightSystemTarget` is at universe `0` for the ordinals.
+  bundle `TemplateSystemConditionsTarget` is at universe `0` for the ordinals.
 
 ## The conditions, every input named
 
@@ -71,7 +72,7 @@ mathematics).  In each `S β` the set is chosen before the source carrier `M` an
 `ω₁` is uncountable, and the union `⋃_{β<ω₁} S β` is an `ω₁`-indexed union of countable sets; it
 is not asserted to be countable and it is not used.  The count of [AFK26, Theorem 4.36] uses
 the per-`β` countability, through the fibres of the maximal stage
-(`VaughtConjecture.Correspondence.KnightSystem.Theorem436`).
+(`VaughtConjecture.Correspondence.TemplateSystem.Theorem436`).
 
 **(c) Attained eventual determination** (`AttainedEventualDeterminationTarget M`, proved by
 composition): on a countable carrier, for every member `B` of the base and every closed tuple `t`
@@ -102,8 +103,9 @@ proved here:
 
 Given both, (d) is a composition (`invariantOccurrenceTarget_of`, `invariantOccurrenceTarget`).
 
-**The bundle** (`IsKnightSystemTarget`): (a), (b), (c), (d) at universe `0` for the ordinals and
-the language, with carriers in the universe `v`; proved (`knightSystemTarget`).
+**The bundle** (`TemplateSystemConditionsTarget`): (a), (b), (c), (d) at universe `0` for the
+ordinals and the language, with carriers in the universe `v`; proved
+(`templateSystemConditionsTarget`).
 -/
 
 universe u v w
@@ -366,9 +368,9 @@ universe `v` (charts of (d) on carriers in universe `0`): (a) `MaximalCoverageTa
 carrier, (b) `UniformMaximalRepresentativesTarget`, (c) `AttainedEventualDeterminationTarget` on
 every carrier, (d) `InvariantOccurrenceTarget` on every carrier.  The weak-system clauses
 ([AFK26, Theorem 4.23]) are not part of the bundle; they are stated in
-`VaughtConjecture.Correspondence.KnightSystem.WeakSystem`.  Proved (`knightSystemTarget`).
-Correspondence with the printed definitions. -/
-def IsKnightSystemTarget : Prop :=
+`VaughtConjecture.Correspondence.TemplateSystem.WeakSystem`.  Proved
+(`templateSystemConditionsTarget`).  Correspondence with the printed definitions. -/
+def TemplateSystemConditionsTarget : Prop :=
   (∀ M : Type v, MaximalCoverageTarget.{0} M) ∧ UniformMaximalRepresentativesTarget.{v} ∧
     (∀ M : Type v, AttainedEventualDeterminationTarget.{0} M) ∧
     ∀ M : Type v, InvariantOccurrenceTarget.{0, v, 0} M
@@ -377,16 +379,17 @@ def IsKnightSystemTarget : Prop :=
 (`maximalCoverageTarget`, `uniformMaximalRepresentativesTarget`,
 `attainedEventualDeterminationTarget`), and (d) is `invariantOccurrenceTarget_of`.
 Correspondence with the printed definitions. -/
-theorem isKnightSystemTarget_of (hfix : LegalClassFixingStageTarget.{0})
+theorem templateSystemConditionsTarget_of (hfix : LegalClassFixingStageTarget.{0})
     (hocc : ∀ M : Type v, UniversalModelOccurrenceTarget.{0, v, 0} M) :
-    IsKnightSystemTarget.{v} :=
+    TemplateSystemConditionsTarget.{v} :=
   ⟨maximalCoverageTarget, uniformMaximalRepresentativesTarget,
     attainedEventualDeterminationTarget, fun M ↦ invariantOccurrenceTarget_of hfix (hocc M)⟩
 
-/-- **`K[L]` satisfies the four conditions of a Knight system** (`IsKnightSystemTarget`), with no
-premise: `isKnightSystemTarget_of` with `legalClassFixingStageTarget` and
-`universalModelOccurrenceTarget`.  Correspondence with the printed definitions. -/
-theorem knightSystemTarget : IsKnightSystemTarget.{v} :=
-  isKnightSystemTarget_of legalClassFixingStageTarget universalModelOccurrenceTarget
+/-- **`K[L]` satisfies the four conditions of a Knight system**
+(`TemplateSystemConditionsTarget`), with no premise: `templateSystemConditionsTarget_of` with
+`legalClassFixingStageTarget` and `universalModelOccurrenceTarget`.  Correspondence with the printed
+definitions. -/
+theorem templateSystemConditionsTarget : TemplateSystemConditionsTarget.{v} :=
+  templateSystemConditionsTarget_of legalClassFixingStageTarget universalModelOccurrenceTarget
 
 end VaughtConjecture

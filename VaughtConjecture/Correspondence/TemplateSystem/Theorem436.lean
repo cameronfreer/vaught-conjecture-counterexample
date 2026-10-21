@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Correspondence.KnightSystem.WeakSystem
+import VaughtConjecture.Correspondence.TemplateSystem.WeakSystem
 import VaughtConjecture.MainTheorem.Spectrum
 
 /-!
@@ -12,9 +12,9 @@ import VaughtConjecture.MainTheorem.Spectrum
 Numbering as in the current draft of [AFK26].  [AFK26, Theorem 4.36]: the sentence `σ[L]` has
 `ℵ₁` countable models up to isomorphism and no perfect set of non-isomorphic countable models.
 The printed proof: `K[L]` is a weak system whose base is the class of models of `σ[L]`
-([AFK26, Theorem 4.23]; `VaughtConjecture.Correspondence.KnightSystem.WeakSystem`); it satisfies
-[AFK26, Definition 2.23] (a)–(d) (`knightSystemTarget`,
-`VaughtConjecture.Correspondence.KnightSystem.Conditions`); so the abstract theorem
+([AFK26, Theorem 4.23]; `VaughtConjecture.Correspondence.TemplateSystem.WeakSystem`); it satisfies
+[AFK26, Definition 2.23] (a)–(d) (`templateSystemConditionsTarget`,
+`VaughtConjecture.Correspondence.TemplateSystem.Conditions`); so the abstract theorem
 [AFK26, Theorem 2.25] applies.
 
 This file **states** the conclusion for `templateSentence` (`σ[L]`) itself, as
@@ -95,8 +95,8 @@ Write `X = Quotient (isoSetoid templateSentence.{0})`, the classes of models of 
 
 Each entry: the input, its name, its status, and its carrier convention.
 
-* The four conditions [AFK26, Definition 2.23]: `knightSystemTarget`.  Proved.  Countable
-  carriers, countably infinite for (d); nonemptiness automatic for members of `K[L]`.
+* The four conditions [AFK26, Definition 2.23]: `templateSystemConditionsTarget`.  Proved.
+  Countable carriers, countably infinite for (d); nonemptiness automatic for members of `K[L]`.
 * The base is the class of models of `σ[L]` [AFK26, Theorem 4.23]: `templateBaseModelsTarget`.
   Proved.  Countable carrier, premise `Nonempty M`.
 * The weak-system clauses for `ID[L]` [AFK26, Definition 2.17]: `WeakSystemClausesTarget`.
