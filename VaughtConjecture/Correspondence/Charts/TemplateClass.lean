@@ -34,17 +34,40 @@ classes.
 `ω₁` (`StageType.globalClass`).  For a stage at most `ω₁` two stage types have the same class at
 `ω₁` exactly when they are renamings of each other (`StageType.globalClass_eq_iff`).  The classes
 at `ω₁` fixed by the projection to a stage `γ ≤ ω₁` are those whose labels lie at stage `γ`
-(`TemplateClass.project_toClass_eq_iff`): a renaming keeps the number of labels `∞`, and the
-projection adds one for every label in `[γ, ∞)`.
+(`TemplateClass.project_toClass_eq_iff`): the projection is an idempotent change of labels, and
+an idempotent change of labels that is only a renaming of cells fixes every label
+(`apply_eq_self_of_surjective_renaming`, `Label.atStage_of_reduce_renaming`).
 -/
 
 universe u
 
 namespace VaughtConjecture
 
-open Finset Ordinal
+open Ordinal
 
 noncomputable section
+
+/-! ### Idempotent changes of labels up to renaming -/
+
+/-- **An idempotent change of labels that is a renaming fixes every label.**  If `j` is idempotent
+and changing the labels of `p` by `j` is the same as reindexing `p` along a surjection `e`
+(`p (e i) = j (p i)` for every `i`), then `j` fixes every label of `p`: each `p i` is some
+`p (e k) = j (p k)`, a value of `j`, which `j` fixes.  No finiteness of the index type, order on
+the labels, or injectivity of `p` is used.  Native construction. -/
+theorem apply_eq_self_of_surjective_renaming {ι V : Type*} {j : V → V}
+    (hj : ∀ v, j (j v) = j v) {p : ι → V} {e : ι → ι} (he : Function.Surjective e)
+    (h : ∀ i, p (e i) = j (p i)) (i : ι) : j (p i) = p i := by
+  obtain ⟨k, rfl⟩ := he i
+  rw [h k, hj]
+
+/-- **A stage reduction of labels that is a renaming leaves them at the stage**: if reducing the
+labels of `p` to `γ` is the same as reindexing `p` along a surjection `e`, every label of `p` is
+at stage `γ` (stage reduction is idempotent, `Label.reduce_reduce`).  Native construction. -/
+theorem Label.atStage_of_reduce_renaming {ι : Type*} {γ : Ordinal.{u}} {p : ι → Label.{u}}
+    {e : ι → ι} (he : Function.Surjective e) (h : ∀ i, p (e i) = Label.reduce γ (p i)) (i : ι) :
+    Label.AtStage γ (p i) :=
+  Label.reduce_eq_self_iff.mp
+    (apply_eq_self_of_surjective_renaming (Label.reduce_reduce γ) he h i)
 
 /-- **Stage types up to cell renaming** [AFK26, Definition 4.6]: the templates on `[n]` with labels
 at stage `α`, up to renaming. -/
@@ -194,32 +217,14 @@ truncation of `t` is a renaming of `t`). -/
 theorem project_toClass_eq_iff (hγ : Order.IsSuccPrelimit γ) (hγω : γ ≤ ω₁)
     (t : StageType.{u} ω₁ n) :
     t.toClass.project hγ = t.toClass ↔ ∀ d, Label.AtStage γ (t.label d) := by
-  classical
   rw [project_toClass, toClass_eq_toClass_iff]
   constructor
   · intro h
     obtain ⟨c, σ, hσ⟩ := h.symm
     have hc : c = t.card := congrArg (fun s : StageType.{u} ω₁ n ↦ s.card) hσ
     subst hc
-    have hl (d : Fin t.card) : t.label (σ d) = Label.reduce γ (t.label d) :=
+    exact Label.atStage_of_reduce_renaming σ.surjective fun d ↦
       (label_congr hσ rfl).trans (t.label_project hγ hγω d)
-    set A := univ.filter fun d ↦ t.label d = ⊤
-    set B := univ.filter fun d ↦ Label.reduce γ (t.label d) = ⊤
-    have hAB : A ⊆ B := fun d hd ↦ by
-      rw [mem_filter] at hd ⊢
-      rw [hd.2]
-      exact ⟨hd.1, Label.reduce_top⟩
-    have hcard : #B ≤ #A := by
-      refine Finset.card_le_card_of_injOn σ (fun d hd ↦ ?_) σ.injective.injOn
-      rw [mem_coe, mem_filter] at hd ⊢
-      exact ⟨mem_univ _, (hl d).trans hd.2⟩
-    have hBA : B = A := (Finset.eq_of_subset_of_card_le hAB hcard).symm
-    intro d
-    by_contra hd
-    rw [Label.AtStage, not_or, not_lt] at hd
-    have hdB : d ∈ B := mem_filter.mpr ⟨mem_univ _, Label.reduce_eq_top_iff.mpr hd.1⟩
-    rw [hBA, mem_filter] at hdB
-    exact hd.2 hdB.2
   · intro ht
     rw [(t.project_eq_self_iff hγ hγω).mpr ht]
     exact IsCellRenaming.refl t
