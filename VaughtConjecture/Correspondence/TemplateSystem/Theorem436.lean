@@ -36,7 +36,8 @@ passage from the models coded on `ℕ` to the models on all countable nonempty c
 * No dependency pin is changed.  The statements use this repository's definitions and
   InfinitaryLogic's coded-model notions at the current pins; no declaration of
   ComputableModelTheory appears in them, so its revision does not bear on them.
-* Neither the count of `ℵ₁` classes nor thinness is attempted.
+* Thinness is not attempted.  The count of `ℵ₁` classes, the first conjunct of
+  `Theorem436Target`, is proved in `VaughtConjecture.Correspondence.TemplateSystem.AlephOne`.
 
 ## Applicability of the existing counting infrastructure
 
@@ -113,7 +114,8 @@ Each entry: the input, its name, its status, and its carrier convention.
   (a named requirement).  Countable nonempty carriers.
 * The passage from the models coded on `ℕ` to all countable nonempty carriers:
   `NonemptyCarrierPassageTarget`.  Stated (a named requirement).  Countable nonempty carriers.
-* Exactly `ℵ₁` classes, steps 1–4.  Open (assembly).  Models coded on `ℕ`.
+* Exactly `ℵ₁` classes, steps 1–4: `templateSentenceAlephOneTarget`
+  (`VaughtConjecture.Correspondence.TemplateSystem.AlephOne`).  Proved.  Models coded on `ℕ`.
 * [AFK26, Proposition 2.18] for `K[L]`, with its levels compared with InfinitaryLogic's
   `BFEquiv`.  Open (a back-and-forth system; not yet named).  Countable carriers.
 * Thinness, step 5.  Open (assembly).  Models coded on `ℕ`.
