@@ -100,20 +100,21 @@ Each entry: the input, its name, its status, and its carrier convention.
   Countable carriers, countably infinite for (d); nonemptiness automatic for members of `K[L]`.
 * The base is the class of models of `σ[L]` [AFK26, Theorem 4.23]: `templateBaseModelsTarget`.
   Proved.  Countable carrier, premise `Nonempty M`.
-* The weak-system clauses for `ID[L]` [AFK26, Definition 2.17]: `WeakSystemClausesTarget`.
-  Stated.  Countable carrier.
+* The weak-system clauses for `ID[L]` [AFK26, Definition 2.17]: `weakSystemClausesTarget`.
+  Proved.  Countable carrier.
 * The invariant system of the legal classes [AFK26, Definitions 2.6 and 2.8, Lemma 4.19]:
-  `TemplateInvariantSystemTarget`.  Stated.  No carrier.
+  `templateInvariantSystemTarget`, with the projection of a structure
+  (`templateInvariantSystem_projection`).  Proved.  No carrier.
 * Countability of `L_c[L]`: `baseLanguageCountableTarget`.  Proved.  No carrier.
 * A full isomorphism restricts to the base reducts: `baseReductEquiv`,
   `baseReductEquivTarget`.  Proved.  Any carriers.
 * The maximal stage is an isomorphism invariant: `maximalStageInvariantTarget`.  Proved.
   Countable carriers `M`, `N`.
 * Unbounded maximal stages on `ℕ`: `unboundedMaximalStagesTarget`.  Proved.  `ℕ`.
-* Infinitude of the countable nonempty models of `σ[L]`: `TemplateModelInfiniteTarget`.  Stated
+* Infinitude of the countable nonempty models of `σ[L]`: `templateModelInfiniteTarget`.  Proved
   (a named requirement).  Countable nonempty carriers.
 * The passage from the models coded on `ℕ` to all countable nonempty carriers:
-  `NonemptyCarrierPassageTarget`.  Stated (a named requirement).  Countable nonempty carriers.
+  `nonemptyCarrierPassageTarget`.  Proved (a named requirement).  Countable nonempty carriers.
 * Exactly `ℵ₁` classes, steps 1–4: `templateSentenceAlephOneTarget`
   (`VaughtConjecture.Correspondence.TemplateSystem.AlephOne`).  Proved.  Models coded on `ℕ`.
 * [AFK26, Proposition 2.18] for `K[L]`, with its levels compared with InfinitaryLogic's
@@ -169,10 +170,20 @@ def Theorem436Target : Prop :=
 countable nonempty carrier, a model of `σ[L]` has a lift in `K_0[L]`
 (`realize_templateSentence_iff_exists_lift`), whose carrier is infinite (`infinitudeTarget` at
 `β = 0`).  The structure on the empty carrier is a model (`realize_templateSentence_of_isEmpty`), so
-`Nonempty M` is needed.  Stated; not proved.  Correspondence with the printed definitions. -/
+`Nonempty M` is needed.  Proved (`templateModelInfiniteTarget`).  Correspondence with the printed
+definitions. -/
 def TemplateModelInfiniteTarget (M : Type v) : Prop :=
   Countable M → Nonempty M → ∀ B : baseTemplateLanguage.{u}.Structure M,
     @Sentenceω.Realize _ templateSentence.{u} M B → Infinite M
+
+/-- **The countable nonempty models of `σ[L]` are infinite** (`TemplateModelInfiniteTarget M` for
+every `M`): a lift in `K_0[L]` (`realize_templateSentence_iff_exists_lift`) and `infinitudeTarget`
+at `β = 0`.  Countability is not used.  Correspondence with the printed definitions. -/
+theorem templateModelInfiniteTarget (M : Type v) : TemplateModelInfiniteTarget.{u} M := by
+  rintro - hne B hB
+  have := hne
+  obtain ⟨G, hG, -⟩ := (realize_templateSentence_iff_exists_lift B).mp hB
+  exact infinitudeTarget 0 M (Cardinal.isSuccLimit_omega 1).pos G hG
 
 /-- **Target (a named requirement): the passage from the models coded on `ℕ` to all countable
 nonempty carriers**: every model of `σ[L]` on a countable nonempty carrier in the universe `w` is
@@ -180,14 +191,22 @@ infinite and isomorphic, in `L_c[L]`, to the structure of a coded model of `σ[L
 `TemplateModelInfiniteTarget`, then the reduction to `ℕ`
 (`MainTheorem.exists_mem_modelsOf_equiv`).  With it, the classes of models of `σ[L]` on countable
 nonempty carriers of `w` correspond to the coded classes of `Theorem436Target`; on all countable
-carriers there is exactly one further class, the empty model.  Stated; not proved.
-Correspondence with the printed definitions. -/
+carriers there is exactly one further class, the empty model.  Proved
+(`nonemptyCarrierPassageTarget`).  Correspondence with the printed definitions. -/
 def NonemptyCarrierPassageTarget : Prop :=
   ∀ (M : Type w) [Countable M] [Nonempty M] (B : baseTemplateLanguage.{0}.Structure M),
     @Sentenceω.Realize _ templateSentence.{0} M B →
       Infinite M ∧ ∃ c : StructureSpace baseTemplateLanguage.{0},
         c ∈ ModelsOf templateSentence.{0} ∧
           Nonempty (@Language.Equiv baseTemplateLanguage.{0} M ℕ B c.toStructure)
+
+/-- **The passage from the models coded on `ℕ` to all countable nonempty carriers**
+(`NonemptyCarrierPassageTarget`): infinitude (`templateModelInfiniteTarget`), then the reduction
+to `ℕ` (`MainTheorem.exists_mem_modelsOf_equiv`).  Correspondence with the printed definitions. -/
+theorem nonemptyCarrierPassageTarget : NonemptyCarrierPassageTarget.{w} := by
+  intro M _ _ B hB
+  have := templateModelInfiniteTarget M inferInstance inferInstance B hB
+  exact ⟨this, MainTheorem.exists_mem_modelsOf_equiv hB⟩
 
 /-! ### Inputs of the count -/
 
