@@ -17,8 +17,12 @@ targets only.  Proved elsewhere: the finite steps (`FreshPlacementTarget`,
 `UniversalPointStepTarget`, `UniversalTaskStepTarget`) in
 `VaughtConjecture.Correspondence.Charts.UniversalSteps`, and the chart reading
 (`ChartEmbeddingClosedRangeTarget`, `ClassReadingChartEmbeddingTarget`,
-`ExactRealizationOfEmbeddingTarget`) in `VaughtConjecture.Correspondence.Charts.UniversalReading`.
-The other targets are **stated**.
+`ExactRealizationOfEmbeddingTarget`) in `VaughtConjecture.Correspondence.Charts.UniversalReading`,
+the scheduling and the limit (`UniversalChainLimitTarget`,
+`StronglyCodedUniversalRealizationTarget`) in
+`VaughtConjecture.Correspondence.Charts.UniversalConstruction`, and the reading, density and model
+targets (`StronglyCodedUniversalReadingTarget`, `UniversalityDensityTarget`,
+`UniversalChartModelTarget`) in `VaughtConjecture.Correspondence.Charts.UniversalTheorem`.
 
 ## The printed statement
 
