@@ -291,8 +291,24 @@ Notes on the rows, each with its marker:
   restricted (R2) and (R3) of the strongly coded receiving class,
   `Realization.stronglyCodedResidualReceiving` and `Realization.stronglyCodedHollowReceiving`,
   both proved with no premise; these are not (R2) and (R3) for every model, whose status below
-  is unchanged.  Lemma 4.33 (row 54) is not stated; `templateSentence` is not identified with
-  `densitySentence`, and no spectrum is transferred between them; the language `L°`, its sentence
+  is unchanged.  For the same system, relative to the pinned draft, Claim 4.37, Definition 2.21
+  for the models of `templateSentence`, and Lemma 4.33 are proved (#243, #244, #246; concordance
+  rows 30, 47 and 54, P lines; notes 54 and 56): the greatest lift stage
+  (`greatestLiftStageTarget`), maximality as the greatest lift stage
+  (`maximalIffGreatestTarget`), the maximal completion (`maximalCompletionTarget`), its uniqueness
+  across stages (`maximalLiftUniqueTarget`, `maximalCompletionUniqueTarget`), lower lifts as its
+  projections (`lowerLiftsAreProjectionsTarget`), the unique maximal lift of every model of
+  `templateSentence` on a countable nonempty carrier (`sentenceMaximalLiftTarget`), and eventual
+  determination of its closed tuples at a least threshold with an actual lift
+  (`sentenceEventualDeterminationTarget`, from `eventualDeterminationTarget`; `ξ ≤ ζ` strengthens
+  the printed strict inequality; no rank is identified with a stage); and one universal chart
+  model in `K_β` on every countably infinite carrier, `β < ω₁`, chosen before any chart is named
+  (`universalChartModelTarget`, from `stronglyCodedUniversalRealizationTarget` and
+  `stronglyCodedUniversalReadingTarget`, with density from universality,
+  `universalityDensityTarget`).  Theorem 4.36 for `templateSentence`: statement pending (not on
+  `main`); unproved; the weak-system and back-and-forth specialization pending.
+  `templateSentence` is not identified with `densitySentence`, and no spectrum is transferred
+  between them; the language `L°`, its sentence
   `σ[L°]` and the dictionary items D4–D7 and the rest of D9 are deferred (concordance note 47).
   The forms of the main theorem on the retained
   all-model terminal-classification route are conditional, at fewest on the four of the

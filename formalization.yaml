@@ -92,10 +92,11 @@ status:
     annotated tag `main-theorem-2026-10-11` (commit b00bb878b12a1ef75b9aecf1ef5a1e6577645ff4,
     notes in `milestones/2026-10-11-main-theorem.md`) is a historical reference to one verified
     commit; later commits are verified by their own CI runs and do not inherit that
-    verification. The formal counterparts of Propositions 4.32, 4.34 and 4.35 of [AFK26] for the
-    strongly coded template system are proved, relative to the current draft of 7 October 2026
-    (`alignment`). Open mathematics outside the main theorem (the hypotheses (R1) and (R2) for
-    every model, and other correspondence questions) is recorded in `roadmap/`.
+    verification. The formal counterparts of Propositions 4.32, 4.34 and 4.35, Lemma 4.33 and
+    Claim 4.37 of [AFK26] for the strongly coded template system are proved, relative to the
+    current draft of 7 October 2026 (`alignment`); Theorem 4.36 for that system is not proved.
+    Open mathematics outside the main theorem (the hypotheses (R1) and (R2) for every model, and
+    other correspondence questions) is recorded in `roadmap/`.
   sorry_count: 0
   sorry_in_definitions: 0
   axioms:
@@ -149,13 +150,14 @@ fidelity:
     The theorem is proved for the repository's own sentence, `baseLanguage.densitySentence`,
     constructed following the manuscript; the formalization does not identify its models with
     the manuscript's strongly coded templates, and several intermediate statements of the
-    manuscript are not formalized. Propositions 4.32, 4.34 and 4.35 of [AFK26] are formalized
-    and proved for the strongly coded template system, its classes `K_β` and the repository's
-    transcription `templateSentence` of its sentence, relative to the current draft of
-    7 October 2026; `templateSentence` is not identified with `baseLanguage.densitySentence`,
-    and no spectrum result is transferred between them. Where the formal route differs from the
-    manuscript (for example, receiving models in place of hypotheses on every model), the roadmap
-    records the difference next to the named declarations.
+    manuscript are not formalized. Propositions 4.32, 4.34 and 4.35, Lemma 4.33 and Claim 4.37
+    of [AFK26] are formalized and proved for the strongly coded template system, its classes
+    `K_β` and the repository's transcription `templateSentence` of its sentence, relative to the
+    current draft of 7 October 2026; `templateSentence` is not identified with
+    `baseLanguage.densitySentence`, and no spectrum result is transferred between them. Where the
+    formal route differs from the manuscript (for example, receiving models in place of
+    hypotheses on every model), the roadmap records the difference next to the named
+    declarations.
 
 review:
   status: agent-reviewed
@@ -231,6 +233,44 @@ alignment:
         proposition. Relative to the current draft of [AFK26] of 7 October 2026 (SHA-256 of its
         source 654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a
         published version; no spectrum result is transferred to `baseLanguage.densitySentence`.
+    - source: "[AFK26], Lemma 4.33"
+      lean: universalChartModelTarget
+      module: VaughtConjecture/Correspondence/Charts/UniversalTheorem.lean
+      status: proved
+      note: >-
+        For `β < ω₁` and a countable infinite carrier, one structure of the class `K_β` of the
+        strongly coded template system (`templateStageClass`), chosen before any chart is named,
+        into which every chart of `C_β[L]` embeds, and over which every chart embedding extends
+        every embedding of its root, with a commuting square and exact realization of the chart;
+        the empty root is a separate clause. Built positionally
+        (`stronglyCodedUniversalRealizationTarget`) and read through its classes
+        (`stronglyCodedUniversalReadingTarget`), without a previously given class realization with
+        donor density; density at every cutoff below the block stage follows from universality
+        (`universalityDensityTarget`). Relative to the current draft of [AFK26] of 7 October 2026
+        (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version.
+    - source: "[AFK26], Claim 4.37 (in the proof of Theorem 4.36) and Definition 2.21"
+      lean:
+        - sentenceMaximalLiftTarget
+        - sentenceEventualDeterminationTarget
+      module: VaughtConjecture/Correspondence/Maximality/Completion.lean
+      status: proved
+      note: >-
+        Every model of `templateSentence` on a countable nonempty carrier has exactly one maximal
+        lift in the classes `K_β` of the strongly coded template system, and every closed tuple of
+        it is eventually determined (Definition 2.21) at a least threshold with an actual lift,
+        for every lift at a stage `ζ` with `ξ ≤ ζ` (the printed clause has `ζ > ξ`). From the
+        greatest lift stage (`greatestLiftStageTarget`), the maximal completion of every member of
+        `K_β`, `β < ω₁`, on a countable carrier (`maximalCompletionTarget`), its uniqueness across
+        stages (`maximalLiftUniqueTarget`, `maximalCompletionUniqueTarget`) and lower lifts as its
+        projections (`lowerLiftsAreProjectionsTarget`); no rank is identified with a stage.
+        Theorem 4.36 for `templateSentence` is not proved: its statement is pending (not on
+        `main`), and the weak-system and back-and-forth specialization is pending. Relative to the
+        current draft of [AFK26] of 7 October 2026 (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version; `templateSentence` is not identified with `baseLanguage.densitySentence`, and no
+        spectrum result is transferred between them.
 
 acknowledgements: >-
   Built on Mathlib and the pinned InfinitaryLogic and ComputableModelTheory developments; the

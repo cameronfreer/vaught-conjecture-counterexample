@@ -1319,12 +1319,17 @@ corresponding declarations here: compiled in this repository (theorem named), co
 4.32, 4.34 and 4.35 without proof and sketches the proof of Lemma 4.33.  Their counterparts for the
 classes `K_β` of the template system of the current draft (`templateStageClass`) and the sentence
 `templateSentence` are proved here (rows 53, 55 and 56, P lines: `IsTemplateChart.hereditary`,
-`.jointEmbedding`, `.amalgamation`, `proposition434Target`, `proposition435Target`); Lemma 4.33 is
-not (row 54).  It also states that the proof that its system `K[L]` is a Knight system has been
-formalized; in this repository the main theorem is compiled with no hypothesis
-(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`) for the repository's own sentence
-`densitySentence`, not for the system `K[L]` (note 47), by the receiving-models route, whose three
-hypotheses are compiled: (R4) for receiving models
+`.jointEmbedding`, `.amalgamation`, `proposition434Target`, `proposition435Target`), and so are
+Lemma 4.33 (row 54, P line: `universalChartModelTarget`), Claim 4.37 (row 47, third line:
+`maximalCompletionTarget`, `maximalCompletionUniqueTarget`, `sentenceMaximalLiftTarget`) and
+Definition 2.21 for the models of `templateSentence` (row 30, second line:
+`sentenceEventualDeterminationTarget`); Theorem 4.36 for `templateSentence` is not (its statement
+pending, not on `main`; unproved; the weak-system and back-and-forth specialization pending; the
+second line of row 47 stays S).  It also states that the proof that its system `K[L]` is a
+Knight system has been formalized; in this repository the main theorem is compiled with no
+hypothesis (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`) for the repository's own
+sentence `densitySentence`, not for the system `K[L]` (note 47), by the receiving-models route,
+whose three hypotheses are compiled: (R4) for receiving models
 (`Expansion.receivingStableCappedReceiving_levels`), (R2) for receiving models
 (`Realization.receivingResidualReceiving_of_padded`), and (R3) for receiving models
 (`Realization.hollowReceiving_levels`).  The forms on the retained all-model
@@ -1379,6 +1384,7 @@ with the text of the draft of 10 October 2026, which has the same numbers), as d
 | | | full trees, current version: Definition 3.10 | S |
 | 29 | [AFK26] | closed tuples as supported tuples, Definition 2.1 (item 2) | P |
 | 30 | [AFK26] | niceness, Definition 2.21; condition (c) of Definition 2.23 (current draft) | S |
+| | | eventual determination, Definition 2.21, current draft, for the closed tuples of the models of `templateSentence` with respect to `K[L]`, as `sentenceEventualDeterminationTarget` (from `eventualDeterminationTarget`) | P (countable nonempty carriers) |
 | 31 | [AFK26] | a uniform fixing stage of a family (item 5; no numbered statement) | S |
 | 32 | [AFK26] | the bound of serving indices under strictness (item 5; no numbered statement) | S |
 | 33 | [AFK26] | maximal presentations of a literal base (item 5; no numbered statement) | S |
@@ -1400,6 +1406,7 @@ with the text of the draft of 10 October 2026, which has the same numbers), as d
 | | | its proof in [AFK26] (clauses (d) and (g) of Definition 4.11) | S |
 | 47 | [AFK26] | the counterexample, Theorem 4.36 (statement) | S |
 | | | its proof from Propositions 4.32, 4.34, 4.35 and Lemma 4.33; Claim 4.37 | S |
+| | | Claim 4.37, current draft, for `K[L]`, as `maximalCompletionTarget`, `maximalCompletionUniqueTarget` and `lowerLiftsAreProjectionsTarget`, and for `templateSentence` as `sentenceMaximalLiftTarget` | P (countable carriers, `β < ω₁`; the sentence form: nonempty carriers) |
 | 48 | [AFK26] | weak Knight systems and perfect sets of models, Theorem 2.19 | S |
 | 49 | [AFK26] | the lower bound in the proof of Theorem 2.25 (bounded levels) | S |
 | 50 | [AFK26] | plans as the models of `ThPlan`, Definition 4.13 and Lemma 4.14 | S |
@@ -1412,6 +1419,7 @@ with the text of the draft of 10 October 2026, which has the same numbers), as d
 | | | charts and their embeddings, Definition 4.31, as `IsTemplateChart` and `StageType.embeddingEquivFace` | P |
 | | | HP, JEP and AP, Proposition 4.32, as `IsTemplateChart.hereditary`, `.jointEmbedding`, `.amalgamation` | P (JEP, AP: `β < ω₁`) |
 | 54 | [AFK26] | the `β`-Fraïssé limit, Lemma 4.33 | S |
+| | | the same, current draft, for `K[L]`, as `universalChartModelTarget` (every chart embeds; extension over every chart root with exact realization) | P (countably infinite carriers, `β < ω₁`) |
 | 55 | [AFK26] | Boundedness, Reconstruction and Limits, Proposition 4.34 | S |
 | | | the same, current draft, for `K[L]` and `templateSentence`, as `proposition434Target` (from `proposition434Clauses_of_countable`) | P (countable carriers, `β < ω₁`) |
 | 56 | [AFK26] | countably many maximal structures at each level, Proposition 4.35 | S |
@@ -1922,6 +1930,15 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     of global termination (`README.md`, "The persistent core"), and not terminal fullness, which is
     the first special statement, is prospective, to be supplied by (a)–(c).  Neither may use
     positive niceness, and neither is a dependency of the expansion-domain endpoint.
+    *Current draft (second line, P), `Correspondence/Maximality/Completion`.*  For the template
+    classes `K_β[L]` (`templateStageClass`) and the sentence `templateSentence`, Definition 2.21
+    is read literally, the lifts of a model `B` being the members of `K_ξ[L]` with base reduct `B`
+    and its closed tuples those with `B ⊨ P_n`, `n ≥ 1`: `sentenceEventualDeterminationTarget`
+    proves that every closed tuple of every model of `templateSentence` on a countable nonempty
+    carrier is eventually determined, condition (c) of Definition 2.23 for `K[L]`.  It concerns
+    the template classes, not the raw base encoding of the first line, and no comparison with
+    `IsNiceTuple` is made; the details, with the two strengthenings (a least threshold, and
+    `ξ ≤ ζ` for the printed `ζ > ξ`), are in note 56.
 31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
@@ -2366,12 +2383,19 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     complete modulo Propositions 4.32, 4.34 and 4.35 and Lemma 4.33, which [AFK26] states without
     proof (Lemma 4.33 sketched).  For the template classes `templateStageClass` and the sentence
     `templateSentence`, the counterparts of Propositions 4.32, 4.34 and 4.35 are proved here
-    (rows 53, 55 and 56, P lines); Lemma 4.33 (row 54), Claim 4.37 and Theorem 4.36 for
-    `templateSentence` are not stated, so the second line of this row stays S.  Claim 4.37 is
+    (rows 53, 55 and 56, P lines), and so are Lemma 4.33 (row 54, P line,
+    `universalChartModelTarget`; note 54), Claim 4.37 (the third line of this row:
+    `maximalCompletionTarget`, `maximalCompletionUniqueTarget`, `lowerLiftsAreProjectionsTarget`,
+    and for `templateSentence`, `sentenceMaximalLiftTarget`; note 56) and Definition 2.21 for the
+    models of `templateSentence` (row 30, second line, `sentenceEventualDeterminationTarget`;
+    note 56).  Theorem 4.36 for `templateSentence`: statement pending (not on `main`); unproved;
+    the weak-system and back-and-forth specialization pending; so the second line of this row
+    stays S.  Claim 4.37 is
     stated for `M ∈ K_β` and its proof is for `M ∈ K_{-∞}`; the coherence `τ_α(M_β) = M_α` at
-    limits is used without comment and follows from Reconstruction.  Counterparts here:
-    `MainTheorem.exists_maximalRefinement` (a terminal model expansion bounding all model
-    expansions of the base, for one model; conditional on (R1), next-block uniqueness and
+    limits is used without comment and follows from Reconstruction (the formal Claim 4.37 is
+    stated for every `M ∈ K_β` and uses no recursion on stages; note 56).  Counterparts for the
+    native classes: `MainTheorem.exists_maximalRefinement` (a terminal model expansion bounding
+    all model expansions of the base, for one model; conditional on (R1), next-block uniqueness and
     hypothesis 8; row 55) and `isNice_of_hasTerminalRefinement` (row 30), both compiled
     conditionally; the composition into `FullPresentations` (row 27) is prospective.  [AFK26]
     states that this proof has been formalized; in this repository the main theorem is compiled
@@ -2527,6 +2551,35 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     `StageType.HasApexCoatomExtensions` at `λ_β`, concluding `Realization.IsModel`).  Drift:
     modelhood here is that of [Kni26] and uses the apex form; `K_β` of [AFK26] asks only for
     density (row 51), for which the plain form may suffice (informal; not compiled).
+    *Current draft (second line, P), `Correspondence/Charts/Universal*`.*  The statement
+    `UniversalChartModelTarget β M`: for `β < ω₁` and a prescribed countable infinite carrier `M`,
+    one `G ∈ K_β[L]` (`templateStageClass M β`) on `M`, chosen before any chart, root or donor is
+    named, with three clauses about that `G`: every chart of `C_β[L]` embeds (`EmbedsEveryChart`,
+    the printed first bullet); over a positive root, for charts `C`, `D`, every chart embedding
+    `ι : C ↪ D` and every embedding `e : C ↪ G`, some `e' : D ↪ G` has `ι ; e' = e` on points (the
+    commuting square) and realizes `D` exactly (`ExtendsOverChartRoots`, the printed second bullet
+    along an arbitrary chart embedding); and over the empty root, which is not a chart, every chart
+    embeds with exact realization (`ExtendsOverEmptyRoot`, stated separately).  Embeddings are
+    `FirstOrder.Language.Embedding` of `templateLanguage`, the morphisms of Definition 4.31; exact
+    realization (`RealizesChartExactly`) is the reading of the image tuple as the class of the
+    template, for every presentation of the chart; a chart embedding has closed range
+    (`chartEmbeddingClosedRangeTarget`), so closedness of the root is not a premise.  Proved as
+    `universalChartModelTarget` (`Correspondence/Charts/UniversalTheorem`).  The construction is
+    positional, at `λ_β` on the prescribed carrier: a countable chain of finite conditions meeting
+    countably many requirements (the points of `M` and the exact tasks), with literal root
+    preservation at every step and fresh placement of new points, gives a realization in the
+    strongly coded receiving class with exact receiving of every strongly coded legal donor
+    (`stronglyCodedUniversalRealizationTarget`, `Correspondence/Charts/UniversalConstruction`);
+    its class-reading structure, on any nonempty carrier, is in `K_β[L]` and satisfies the three
+    clauses (`stronglyCodedUniversalReadingTarget`).  It starts from no structure of `K_β[L]` and
+    from no class realization with donor density, and uses no Fraïssé theorem.  Of the items above
+    not argued in [AFK26]: the requirements are countable (the stage types at one stage,
+    `StageType.countable`); the geometry axioms hold by membership in `K_β[L]`; and universality
+    gives `D[α]` for every `α < λ_β`, `α = 0` included, with donors of every rank
+    (`universalityDensityTarget`, with the passage `LegalClass.truncEquiv_project_of_le`).  Not
+    stated: uniqueness of `G` up to isomorphism, and ultrahomogeneity; the native counterparts of
+    the first line remain conditional as above.  Condition (d) of Definition 2.23 for `K[L]`, from
+    this lemma, is pending (not on `main`).
 55. [AFK26, Proposition 4.34], stated without proof, for every `β` and every model `M` of
     `σ[L]`: Boundedness (the ranks of the lifts of `M` in `K` form a countable set),
     Reconstruction (two lifts of `M` in `K_β` are equal), and Limits (at a limit `β`, lifts at
@@ -2647,10 +2700,42 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     structures, is also proved (`sameStageInjectivityTarget`).  The native terminal count is an
     input of Proposition 4.35, distinct from it; the restricted (R2) and (R3) are statements
     about the strongly coded receiving class, not (R2) and (R3) for every model, whose status is
-    unchanged (`DASHBOARD.md`).  Not stated: the converse of maximal implies terminal, uniqueness
-    of maximal structures across stages, the existence of a greatest stage, and the existence of
-    a maximal structure at every level (the count is not an existence result).  The milestone
-    notes of Proposition 4.35 are `milestones/2026-10-15-proposition-4-35.md`.
+    unchanged (`DASHBOARD.md`).  Not stated: the converse of maximal implies terminal, and the
+    existence of a maximal structure at every level (the count is not an existence result; the
+    maximal completion below is maximal at the greatest lift stage, not at a prescribed level).
+    The milestone notes of Proposition 4.35 are `milestones/2026-10-15-proposition-4-35.md`; their
+    list of statements not stated describes the pinned commit of those notes.
+    *Claim 4.37 and Definition 2.21, current draft (row 47, third line, and row 30, second line,
+    P), `Correspondence/Maximality/Completion`.*  On a countable carrier, for `β < ω₁`: the lift
+    stages `liftStages M B` of a base structure `B` with a lift `G ∈ K_β[L]` have an attained
+    greatest element `γ`, `β ≤ γ < ω₁` (`greatestLiftStageTarget`, from
+    `exists_isGreatest_of_closed` with `projectionTarget`, `limitsTarget` and `stageBoundTarget`);
+    for `H ∈ K_γ[L]`, `γ < ω₁`, `IsMaximalAt γ H` holds exactly when `γ` is the greatest lift
+    stage of the base reduct of `H` (`maximalIffGreatestTarget`; the direction from maximality
+    uses `strictnessTarget_of_countable`); every `G ∈ K_β[L]` has a maximal completion `(γ, H)` on
+    the same carrier, `τ_β(H) = G` and `H` maximal at `γ` (`maximalCompletionTarget`); two
+    structures maximal at countable stages with equal base reducts have equal stages and are
+    equal (`maximalLiftUniqueTarget`), so the maximal completion is unique
+    (`maximalCompletionUniqueTarget`); and every lift of the base of `G` at a stage `ξ < ω₁` has
+    `ξ ≤ γ` and is `τ_ξ(H)` (`lowerLiftsAreProjectionsTarget`).  Greatest-stage existence and
+    uniqueness across stages, not stated at the pinned commit of the Proposition 4.35 notes, are
+    therefore proved.  For a model `B` of `templateSentence` on a countable nonempty carrier,
+    exactly one pair `(γ, H)` has `γ < ω₁`, `H` maximal at `γ` and base reduct `B`
+    (`sentenceMaximalLiftTarget`, from the level-zero lift
+    `exists_lift_zero_of_realize_templateSentence`).  Eventual determination: for `H` maximal at
+    `γ` and a tuple `t` with invariant `Q_c` in `H`, the stages at which some lift of the base of
+    `H` has `Q_c(t)` have a least element `ξ ≤ γ`, the projection `τ_ξ(H)` is an actual lift at `ξ`
+    with `Q_c(t)`, and every lift at a stage `ζ` with `ξ ≤ ζ < ω₁` has `Q_c(t)`
+    (`eventualDeterminationTarget`, through `relMap_projectStructure_invariant_iff_project_eq`:
+    `τ_ζ(H) ⊨ Q_c(t)` exactly when `c.project ζ = c`); every legal class on `n > 0` points is
+    allowed, the invariants of rank zero included.  Definition 2.21 for the closed tuples of a
+    model of `templateSentence` on a countable nonempty carrier is
+    `sentenceEventualDeterminationTarget`.  Two strengthenings of the printed clause: the
+    threshold is the least stage at which any lift has the invariant (the printed definition asks
+    for some stage), and the conclusion covers every `ζ` with `ξ ≤ ζ` (the printed definition has
+    `ζ > ξ`).  No recursion on stages and no rank is used, and no rank is identified with a stage.
+    Theorem 4.36 for `templateSentence`: statement pending (not on `main`); unproved; the
+    weak-system and back-and-forth specialization pending.
 
 57. [Kni26, Definition 3.2.5 and Lemma 3.2.6]: the value `𝔐(Σ)` of an element `Σ` of the domain of a
     type of a model, allotted by the model as a whole and well defined by consistency.  Here the
