@@ -121,6 +121,36 @@ native count of strongly coded terminal realizations,
 `Realization.stronglyCodedTerminalClasses_countable`, is an input of the proof of Proposition 4.35
 and is distinct from it.
 
+Claim 4.37 (in the proof of Theorem 4.36), Definition 2.21 for the models of `templateSentence`,
+and Lemma 4.33 are proved for the same system, relative to the same pinned draft, using at most
+the three axioms above.  Claim 4.37, on countable carriers and for `β < ω₁`: the lift stages of
+the base reduct of a member of `K_β` have an attained greatest element (`greatestLiftStageTarget`),
+a member of `K_γ` is maximal at `γ` exactly when `γ` is that greatest stage
+(`maximalIffGreatestTarget`), every member of `K_β` has a maximal completion
+(`maximalCompletionTarget`), unique with its stage (`maximalLiftUniqueTarget`,
+`maximalCompletionUniqueTarget`), and every lift of the same base is a projection of it
+(`lowerLiftsAreProjectionsTarget`); every model of `templateSentence` on a countable nonempty
+carrier has exactly one maximal lift (`sentenceMaximalLiftTarget`).  Definition 2.21: every
+closed tuple of such a model is eventually determined (`sentenceEventualDeterminationTarget`, from
+`eventualDeterminationTarget` and `relMap_projectStructure_invariant_iff_project_eq`), at a least
+threshold with an actual lift there, the projection of the maximal lift, for every positive arity
+(the invariants of rank zero included), and in every lift at a stage `ζ` with `ξ ≤ ζ`, which
+strengthens the printed strict inequality; no rank is identified with a stage
+([`Correspondence/Maximality/Completion.lean`](VaughtConjecture/Correspondence/Maximality/Completion.lean)).
+Lemma 4.33, for `β < ω₁` and every countably infinite carrier: one structure of `K_β`, chosen
+before any chart is named, into which every chart of `C_β[L]` embeds, and over which every chart
+embedding extends every embedding of its root, with a commuting square and exact realization of
+the chart, the empty root stated separately (`universalChartModelTarget`).  It is built
+positionally (`stronglyCodedUniversalRealizationTarget`) and read through its classes
+(`stronglyCodedUniversalReadingTarget`), without a previously given class realization with donor
+density; universality gives density at every cutoff below the block stage, zero included
+(`universalityDensityTarget`, with `LegalClass.truncEquiv_project_of_le` for donors of every
+rank) ([`Correspondence/Charts/UniversalTheorem.lean`](VaughtConjecture/Correspondence/Charts/UniversalTheorem.lean)
+and the files `Universal*.lean` beside it).  Theorem 4.36 for `templateSentence`: statement
+pending (not on `main`); unproved; the weak-system and back-and-forth specialization pending.  As
+above, no identification of `templateSentence` with `baseLanguage.densitySentence`, and no
+transfer of the spectrum between them, is claimed.
+
 ## Citation
 
 GitHub's "Cite this repository" uses [`CITATION.cff`](CITATION.cff):
