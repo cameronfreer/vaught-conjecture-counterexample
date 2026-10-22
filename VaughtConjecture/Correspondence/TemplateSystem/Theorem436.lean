@@ -23,9 +23,12 @@ This file **states** the conclusion for `templateSentence` (`σ[L]`) itself, as
 `ModelsOf`, satisfaction `Sentenceω.Realize` of a code's structure) have exactly `ℵ₁` classes
 under isomorphism in the language of the sentence (`isoSetoid`), and there is no perfect set of
 pairwise nonisomorphic coded models (`Sentenceω.HasPerfectSetOfPairwiseNonisomorphicNatModels`).
-Nothing here is proved about the spectrum.  The file also proves some inputs of the count (the
+The statement is proved downstream: the count in
+`VaughtConjecture.Correspondence.TemplateSystem.AlephOne` (`templateSentenceAlephOneTarget`) and
+thinness with the assembly in `VaughtConjecture.Correspondence.TemplateSystem.BackAndForth`
+(`thinnessTarget`, `theorem436Target`).  This file proves some inputs of the count (the
 countability of the language, the restriction of an isomorphism to the base reducts, the
-invariance of the maximal stage, unbounded maximal stages) and states, as a named requirement, the
+invariance of the maximal stage, unbounded maximal stages) and, as named requirements, the
 passage from the models coded on `ℕ` to the models on all countable nonempty carriers.
 
 ## What is not done here
@@ -36,8 +39,8 @@ passage from the models coded on `ℕ` to the models on all countable nonempty c
 * No dependency pin is changed.  The statements use this repository's definitions and
   InfinitaryLogic's coded-model notions at the current pins; no declaration of
   ComputableModelTheory appears in them, so its revision does not bear on them.
-* Thinness is not attempted.  The count of `ℵ₁` classes, the first conjunct of
-  `Theorem436Target`, is proved in `VaughtConjecture.Correspondence.TemplateSystem.AlephOne`.
+* The statement on all countable carriers (`MainTheorem.HasThinAlephOneSpectrumOnCountableCarriers`)
+  is not stated; see below.
 
 ## Applicability of the existing counting infrastructure
 
@@ -118,8 +121,10 @@ Each entry: the input, its name, its status, and its carrier convention.
 * Exactly `ℵ₁` classes, steps 1–4: `templateSentenceAlephOneTarget`
   (`VaughtConjecture.Correspondence.TemplateSystem.AlephOne`).  Proved.  Models coded on `ℕ`.
 * [AFK26, Proposition 2.18] for `K[L]`, with its levels compared with InfinitaryLogic's
-  `BFEquiv`.  Open (a back-and-forth system; not yet named).  Countable carriers.
-* Thinness, step 5.  Open (assembly).  Models coded on `ℕ`.
+  `BFEquiv`: `backAndForthCoreTarget`
+  (`VaughtConjecture.Correspondence.TemplateSystem.BackAndForth`).  Proved.  Countable carriers.
+* Thinness, step 5: `thinnessTarget`, and `Theorem436Target` itself: `theorem436Target` (same
+  file).  Proved.  Models coded on `ℕ`.
 -/
 
 universe u v w
@@ -159,7 +164,8 @@ instance : Countable (Σ n, baseTemplateLanguage.{u}.Relations n) :=
 the models of `σ[L]` coded on `ℕ` have exactly `ℵ₁` isomorphism classes, and there is no perfect
 set of pairwise nonisomorphic coded models (`MainTheorem.HasThinAlephOneSpectrum`).  The
 countability of the language is the instance from `baseLanguageCountableTarget`.  Not identified
-with any statement about `baseLanguage.densitySentence`.  Stated; open; the proof plan is in the
+with any statement about `baseLanguage.densitySentence`.  Proved (`theorem436Target`, in
+`VaughtConjecture.Correspondence.TemplateSystem.BackAndForth`); the proof plan is in the
 module docstring.  Correspondence with the printed definitions. -/
 def Theorem436Target : Prop :=
   MainTheorem.HasThinAlephOneSpectrum templateSentence.{0}
