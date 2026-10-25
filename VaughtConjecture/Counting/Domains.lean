@@ -52,8 +52,10 @@ theorem countable_split_of_uniform_domain {Q : Type*} {D : Set Q} (P : Q → Pro
     {q | P q}.Countable ∨ {q | ¬ P q}.Countable := by
   by_cases hex : ∃ q ∈ D, P q
   · obtain ⟨q, hq, hp⟩ := hex
-    exact .inr (hsmall.mono fun s hs hsD ↦ hs ((huniform q hq s hsD).1 hp))
-  · exact .inl (hsmall.mono fun q hq hqD ↦ hex ⟨q, hqD, hq⟩)
+    refine .inr (hsmall.mono ?_)
+    exact fun s hs hsD ↦ hs ((huniform q hq s hsD).1 hp)
+  · refine .inl (hsmall.mono ?_)
+    exact fun q hq hqD ↦ hex ⟨q, hqD, hq⟩
 
 /-- **Injective choice from nonempty successor losses.**  For an antitone family `D` indexed by a
 linear successor order and a set `S` of indices whose successor losses `D ξ \ D (succ ξ)` are
