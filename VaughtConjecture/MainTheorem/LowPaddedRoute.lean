@@ -45,7 +45,13 @@ and `Realization.hollowReceiving_levels`).
 ## References
 
 The LOW displays serve the proof of [AFK26, Theorem 4.29] for the legal templates of
-[AFK26, Definition 4.27]; the displays and generalized saturation are those of [Kni26, §4.3].
+[AFK26, Definition 4.27], in the version of 5 October 2026; the displays and generalized
+saturation are those of [Kni26, §4.3].  In the current draft and the published v1 the
+corresponding statements are Theorem 4.36, that `σ[L]` has `ℵ₁` countable models up to
+isomorphism and no perfect set of non-isomorphic countable models (Theorem 4.29 of the earlier
+version states that the system `K[L]` is a Knight system), and Definition 4.29, which adds to the
+pairs `(c, Σ)` of the earlier Definition 4.27 a labelling `p`, lawful with respect to `Σ`, and
+relaxes the range bound `i ≤ g(d)` to `i ≤ g(d) + 1`.
 -/
 
 universe u w

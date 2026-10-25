@@ -1311,8 +1311,15 @@ access record"), and every number in the table not marked with an earlier date i
 that version has adopted a correction recorded here, the row says so ("adopted in [AFK26] of
 7 October") and its note keeps the earlier text as history, cited as the version of 5 October 2026
 with that version's numbers.  An adoption changes no status letter: the letters record the
-comparisons made here, and a row becomes P only by the comparison described above.  Rows 48–56, and
-the second lines of rows 46 and 47, are rows new to the concordance (rows 49, 50 and 52 concern
+comparisons made here, and a row becomes P only by the comparison described above.  The
+statements audited on 25 October 2026, Definitions 2.6–2.8, 2.10, 2.17, 2.20, 2.21 and 2.23,
+Proposition 2.18, Theorems 2.19, 2.25 and 2.27, Definitions 4.6, 4.11, 4.13, 4.16, 4.20–4.22, 4.29
+and 4.31, Propositions 4.30, 4.32, 4.34 and 4.35, Lemma 4.33, Theorem 4.36 and Claim 4.37, read
+identically, in number and text, in the hash-pinned source draft and in the published version
+[AFK26] v1, [hexagon:2610.00188v1](https://hexagonmath.org/2610.00188v1) (PDF SHA-256
+`2b3f3aa14c32174a8dae4e343f234cb08ea1027031a14dcd7c651ab6b7d8668d`, retrieved 25 October 2026;
+method, coverage and numbering map in `milestones/2026-10-25-published-v1-audit.md`).  Rows 48–56,
+and the second lines of rows 46 and 47, are rows new to the concordance (rows 49, 50 and 52 concern
 statements already in earlier versions); each first line is S, and its note gives the status of the
 corresponding declarations here: compiled in this repository (theorem named), compiled conditionally
 (the hypotheses named), informal and not compiled, or prospective.  [AFK26] states Propositions
@@ -1337,15 +1344,27 @@ whose three hypotheses are compiled: (R4) for receiving models
 terminal-classification route remain conditional on named hypotheses, at fewest the four of
 `DASHBOARD.md` (hypotheses 2 and 4–6), or hypotheses derived from them; hypothesis 8 is compiled
 in this repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstrings of
-`VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026, with two
-exceptions: the two citation groups of statements unchanged since, lawful local labellings
-(Definition 4.28 of the current draft) and the cells `D↓U` below a graded face (Definition 4.3 of
-the current draft), which are marked "(current draft)"; and the modules of
-`Correspondence/Charts`, which cite the current draft throughout (their clauses were compared
-with the text of the draft of 10 October 2026, which has the same numbers), as do those of
-`Correspondence/Density`, `Correspondence/Sentence`, `Correspondence/Boundedness`,
-`Correspondence/Reconstruction`, `Correspondence/Limits`, `Correspondence/Presentation`,
-`Correspondence/Maximality` and `Correspondence/Proposition434`.
+`Correspondence/Template`, `Correspondence/InvariantSystem` (its departures and
+`omega0MulSystem`), `Correspondence/StageIndexing` and the modules of `Correspondence/Current`
+cite the numbering of the version of 5 October 2026, marked as such, and give beside it the
+current formulation, with its number, where the two differ, with two exceptions: the two citation
+groups of statements unchanged since, lawful local labellings (Definition 4.28 of the current
+draft) and the cells `D↓U` below a graded face (Definition 4.3 of the current draft), which are
+marked "(current draft)".  The modules of `Correspondence/Charts` cite the current draft
+throughout (their clauses were compared with the text of the draft of 10 October 2026, which has
+the same numbers), as do those of `Correspondence/Density`, `Correspondence/Sentence`,
+`Correspondence/Boundedness`, `Correspondence/Reconstruction`, `Correspondence/Limits`,
+`Correspondence/Presentation`, `Correspondence/Maximality`, `Correspondence/TemplateSystem`,
+`Correspondence/Proposition434` and `Correspondence/StronglyCodedOccurrence`; the other modules
+of `VaughtConjecture/Correspondence` cite no numbered statement of [AFK26].  Outside
+`Correspondence`, `MainTheorem/StronglyCodedTerminalCount` cites the current draft (Proposition
+4.35); `MainTheorem/Niceness` cites the current draft, with the numbers of the version of
+5 October 2026 beside them (Definitions 2.21 and 2.23 of the current draft, Definitions 2.19 and
+2.22 of the earlier version); and `MainTheorem/LowPaddedRoute` cites the version of 5 October
+2026, marked as such, with the corresponding statements of the current draft (Theorem 4.36 and
+Definition 4.29).  The
+current-numbering citations are to the hash-pinned source draft, whose numbers are those of
+[AFK26] v1 throughout §§1–4; the numbers of the version of 5 October 2026 are not.
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |

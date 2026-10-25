@@ -11,8 +11,9 @@ import VaughtConjecture.Realization.Expansion
 Roadmap, "Manuscript correspondence (required)", the index translation and item 1; concordance
 row 1 (`IMPLEMENTATION.md`, "Manuscript concordance").
 
-**The printed indexing.**  [AFK26] indexes its projections by the countable ordinals `β < ω₁` and
-reads the projection of index `β` at the stage `ω · β`:
+**The printed indexing (version of 5 October 2026).**  The version of 5 October 2026 of [AFK26]
+indexes its projections by the countable ordinals `β < ω₁` and reads the projection of index `β`
+at the stage `ω · β`:
 
 * the `β`-truncation function [AFK26, Definition 3.12] keeps an ordinal below `β` and sends every
   other ordinal, and `∞`, to `∞`; it is extended by `-∞ ↦ -∞` [AFK26, Definition 4.9].  It is the
@@ -27,12 +28,21 @@ reads the projection of index `β` at the stage `ω · β`:
   truncation of `t` at `ω · β` [AFK26, Definition 4.16];
 * the limit ordinals below `ω₁` are the stages of the later of the two versions of 4 October 2026
   of [AFK26] (its Definition 4.23; the earlier version of that date defines them in its
-  Definition 4.15); the current version has no separate notion of a stage.
+  Definition 4.15); neither the version of 5 October 2026 nor the current draft has a separate
+  notion of a stage.
 
-Printed material, not used here: the structures of index `β` of the system of templates are asked
-for density at the index `ω · β` [AFK26, Definition 4.20], density at an index being read through
-the projection of that index [AFK26, Definition 2.10]; by [AFK26, Definition 4.16] that projection
-is the truncation at `ω² · β`, not at `ω · β`.
+Printed material of the version of 5 October 2026, not used here: the structures of index `β` of
+the system of templates are asked for density at the index `ω · β` [AFK26, Definition 4.20],
+density at an index being read through the projection of that index [AFK26, Definition 2.10]; by
+[AFK26, Definition 4.16] of that version, that projection is the truncation at `ω² · β`, not at
+`ω · β`.
+
+**The current indexing.**  In the current draft and the published v1 of [AFK26], the projection
+of index `β` of the templates is the truncation at `ω + ω · β` (Definition 4.16), which is the
+block stage `λ_β` below; the class `K_β[T]` asks for the axioms `D[α]` of Definition 4.20, read
+through the truncation at `α` itself, at every `α < ω + ω · β` (Definition 4.21); and only the
+example of trees keeps `τ_β = τ⁻_{ω·β}` (Definition 3.20).  The comparison and the departure
+below concern the indexing `ω · β` of the version of 5 October 2026.
 
 **The comparison.**  The block stage `λ_ξ = ω + ω · ξ` (`blockStage`) is the printed stage of
 the index `1 + ξ`: `blockStage ξ = ω * (1 + ξ)` (`blockStage_eq_mul`).  So the two indexings agree

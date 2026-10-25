@@ -82,7 +82,10 @@ respect to `Σ`; (3) and (4), clauses 2 and 3 above, with the bountifulness of i
 strong coding of the rows `CellScheme.Rows.IsStronglyCoded` (the bound `j ≤ k + 1` of
 [Kni26, Lemma 2.5.13]).  No declaration of this module states Definition 4.29; the comparison with
 it is concordance note 45 (an informal comparison) and the strongly coded legal stage types
-(`StageType.IsStronglyCodedLegal`, under development).
+(`StageType.IsStronglyCodedLegal`, under development).  Definition 4.29, Proposition 4.30 and
+Theorem 4.36 read identically, in number and text, in the published version [AFK26] v1, and
+Definitions 4.2 and 4.28 have the same numbers there
+(`milestones/2026-10-25-published-v1-audit.md`).
 
 **Departures that are not fields.**
 * The plan conditions of [AFK26, Definition 4.1] (version of 5 October 2026) are not fields of

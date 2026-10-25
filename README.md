@@ -182,6 +182,14 @@ concerns `templateSentence` separately from, and without reference to, the main 
 above, no identification of `templateSentence` with `baseLanguage.densitySentence`, and no
 transfer of the spectrum between them, is claimed.
 
+The statements of [AFK26] audited against its published version on 25 October 2026, Definitions
+2.6–2.8, 2.10, 2.17, 2.20, 2.21 and 2.23, Proposition 2.18, Theorems 2.19, 2.25 and 2.27,
+Definitions 4.6, 4.11, 4.13, 4.16, 4.20–4.22, 4.29 and 4.31, Propositions 4.30, 4.32, 4.34 and
+4.35, Lemma 4.33, Theorem 4.36 and Claim 4.37 (every statement named in this section among them),
+read identically, in number and text, in the pinned draft and in [AFK26] v1,
+[hexagon:2610.00188v1](https://hexagonmath.org/2610.00188v1)
+([`milestones/2026-10-25-published-v1-audit.md`](milestones/2026-10-25-published-v1-audit.md)).
+
 ## Citation
 
 GitHub's "Cite this repository" uses [`CITATION.cff`](CITATION.cff):
