@@ -38,6 +38,8 @@ otherwise, which is the operation of [Kni26, Definition 2.2.3] (row 2).
 and its citations are to that version.  Definition 4.26 of the current draft of [AFK26] states the
 corrected clause, for `i, k ∈ ω`; `Label.PrintedVisibilityMap` describes the earlier text, and no
 theorem here compares Definition 4.26 with `Label.CorrectedVisibilityMap` (concordance note 41).
+Definition 4.26 has the same number in the published version [AFK26] v1 (the numbering map of
+`milestones/2026-10-25-published-v1-audit.md`).
 
 **The corrected clauses.**  `Label.correctedVisibilityMap_iff`: a map satisfies the corrected
 clauses at stage `θ` exactly when it agrees with `Label.visibilityReplace k i` on the labels at
