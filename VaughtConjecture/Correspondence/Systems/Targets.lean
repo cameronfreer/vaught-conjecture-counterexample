@@ -17,12 +17,16 @@ stated targets with existing results.
 
 | Target | Printed | Premises beyond the printed ones |
 |---|---|---|
+| `WeakSystem.BFEquivOfPatternMatchedTarget` | Proposition 2.18, arbitrary tuples | — |
 | `WeakSystem.BFEquivOfMatchedTarget` | Proposition 2.18, closed tuples | — |
 | `WeakSystem.BFEquivOfCommonInvariantTarget` | Proposition 2.18, as printed | — |
 | `WeakSystem.CountableBFClassesTarget` | Theorem 2.19, back-and-forth content | coded on `ℕ` |
 | `WeakSystem.ThinnessTarget` | Theorem 2.19 | coded on `ℕ` |
 | `WeakSystem.ExistsRankBoundTarget` | Lemma 2.22 | — |
 | `WeakSystem.FewMaximalCodingTarget` | Definition 2.20, coding passage | carriers in universe `0` |
+| `WeakSystem.BaseClassesRepresentTarget` | coding passage for the base | carriers in universe `0` |
+| `QualifyingSystem.MkBaseClassesEqAlephOneTarget` | Theorem 2.25 (a), general | universe `0` |
+| `QualifyingSystem.MkModelClassesEqAlephOneTarget` | Theorem 2.25 (a), for a sentence | — |
 | `QualifyingSystem.MkClassesLeAlephOneTarget` | Theorem 2.25 (a), `≤ ℵ₁` | coded on `ℕ` |
 | `QualifyingSystem.MkClassesEqAlephOneTarget` | Theorem 2.25 (a) | coded; infinite members |
 | `QualifyingSystem.CountableClassesWithoutLiftTarget` | proof of Theorem 2.25 (b) | coded |
@@ -35,6 +39,18 @@ are the members of the base on `ℕ` (`WeakSystem.IsBaseSentence`,
 models (`isoSetoid φ`, `bfEquivSetoid φ`, `HasPerfectSetOfPairwiseNonisomorphicNatModels`).
 Carriers of the system are then in universe `0`.  The countable relational language `L_c` is an
 explicit instance premise of every coded statement.
+
+**The general count and its specializations.**  [AFK26, Theorem 2.25 (a)] concerns the base class
+itself, with no sentence.  Its general form is `QualifyingSystem.MkBaseClassesEqAlephOneTarget`:
+the isomorphism classes of the base on the positive finite carriers `Fin (n + 1)` and on `ℕ`
+(`WeakSystem.BaseClasses`), with **no** infiniteness premise; finite members are counted, and their
+contribution is not assumed countable on the ground that the language is countable.  For a
+sentence, the general form is `QualifyingSystem.MkModelClassesEqAlephOneTarget`, for a sentence
+axiomatizing the base on all countable nonempty carriers (`WeakSystem.IsBaseSentenceOnCarriers`),
+counting InfinitaryLogic's coded classes on every `Fin (n + 1)` and on `ℕ`.  The targets coded on
+`ℕ` alone (`MkClassesLeAlephOneTarget`, `MkClassesEqAlephOneTarget`, `NoPerfectSetTarget`,
+`HasThinAlephOneSpectrumTarget`) are separate, explicitly restricted specializations; the ones
+with the premise `CountableMembersInfinite` do not replace the general statements.
 
 ## Design decisions
 
@@ -93,6 +109,21 @@ namespace WeakSystem
 
 /-! ### Proposition 2.18 -/
 
+/-- **Target: [AFK26, Proposition 2.18], for arbitrary tuples**: on countable carriers `M` and
+`N`, for `G ∈ K_β` on `M`, `H ∈ K_β` on `N` and a level `ι ≤ β`, tuples `x` and `y` matched at
+`ι` through a common tuple pattern (`InvariantSystem.IsPatternMatchedAt`: read along one map of
+positions from tuples with a common invariant in `τ_ι(G)` and `τ_ι(H)`) are back-and-forth
+equivalent at level `ι` in the reducts (`BFEquiv ι`).  This is the form the induction on `ι`
+needs: InfinitaryLogic's `BFEquiv` extends by single points and compares arbitrary tuples,
+including tuples with repeated entries and the empty tuple.  The closed-tuple form
+`BFEquivOfMatchedTarget` is a consequence (`bfEquivOfMatchedTarget_of_patternMatched`).  Stated.
+Correspondence with the printed definitions. -/
+def BFEquivOfPatternMatchedTarget (W : WeakSystem.{w, w', v} D S) : Prop :=
+  ∀ (M N : Type v) [Countable M] [Countable N] (β : SystemLevel) (G : L.Structure M)
+    (H : L.Structure N), G ∈ W.K β M → H ∈ W.K β N →
+    ∀ ι : SystemLevel, ι ≤ β → ∀ ⦃n : ℕ⦄ (x : Fin n → M) (y : Fin n → N),
+      S.IsPatternMatchedAt ι G H x y → @BFEquiv Lc M (E.reduct G) N (E.reduct H) ι.1 n x y
+
 /-- **Target: [AFK26, Proposition 2.18], for closed tuples**: on countable carriers `M` and `N`,
 for `G ∈ K_β` on `M` and `H ∈ K_β` on `N`, tuples `a` and `b` of the same length with one common
 invariant (`InvariantSystem.IsMatchedAt` at `β`; then `a`, `b` are closed) are back-and-forth
@@ -105,6 +136,12 @@ def BFEquivOfMatchedTarget (W : WeakSystem.{w, w', v} D S) : Prop :=
     (H : L.Structure N), G ∈ W.K β M → H ∈ W.K β N →
     ∀ ⦃n : ℕ⦄ (a : Fin n → M) (b : Fin n → N), S.IsMatchedAt β G H a b →
       @BFEquiv Lc M (E.reduct G) N (E.reduct H) β.1 n a b
+
+/-- **The closed-tuple form from the pattern form**: matched tuples are pattern-matched along the
+identity map of positions, at the level `ι = β`.  Correspondence with the printed definitions. -/
+theorem bfEquivOfMatchedTarget_of_patternMatched {W : WeakSystem.{w, w', v} D S}
+    (h : W.BFEquivOfPatternMatchedTarget E) : W.BFEquivOfMatchedTarget E :=
+  fun M N _ _ β G H hG hH n a b hm ↦ h M N β G H hG hH β le_rfl a b ⟨n, a, b, id, rfl, rfl, hm⟩
 
 /-- **Target: [AFK26, Proposition 2.18], as printed**: (a) a weak system; (b) `G ∈ K_β` and
 `H ∈ K_β`, on countable carriers; (c) some invariant `Q` with `G ⊨ ∃x̄ Q(x̄)` and `H ⊨ ∃x̄ Q(x̄)`.
@@ -185,31 +222,75 @@ Stated.  Correspondence with the printed definitions. -/
 def FewMaximalCodingTarget (W : WeakSystem.{w, w', 0} D S) : Prop :=
   W.HasFewMaximal ↔ W.HasFewMaximalOnCanonicalCarriers
 
+/-- **Target: the canonical carriers represent the base** (carriers in universe `0`): every member
+of the base on a countable nonempty carrier is isomorphic to a member of the base on a positive
+finite carrier `Fin (n + 1)` or on `ℕ`.  So `WeakSystem.BaseClasses` represents the countable
+members of the base up to isomorphism.  Route: a bijection with `Fin (n + 1)` or `ℕ`, and transport
+of a lift (`WeakSystem.isoClosed`).  Stated.  Correspondence with the printed definitions. -/
+def BaseClassesRepresentTarget (W : WeakSystem.{w, w', 0} D S) : Prop :=
+  ∀ (M : Type) [Countable M] [Nonempty M] (B : Lc.Structure M), W.IsInBase E B →
+    (∃ (n : ℕ) (B' : Lc.Structure (Fin (n + 1))), W.IsInBase E B' ∧
+      Nonempty (@Language.Equiv Lc M (Fin (n + 1)) B B')) ∨
+    ∃ B' : Lc.Structure ℕ, W.IsInBase E B' ∧ Nonempty (@Language.Equiv Lc M ℕ B B')
+
 end WeakSystem
+
+namespace QualifyingSystem
+
+/-! ### Theorem 2.25 (a): the general count -/
+
+/-- **Target: [AFK26, Theorem 2.25 (a)], general form**: the base of a qualifying system (carriers
+in universe `0`) has exactly `ℵ₁` isomorphism classes on the canonical carriers — the positive
+finite carriers `Fin (n + 1)` and `ℕ` (`WeakSystem.BaseClasses`).  No sentence and **no**
+infiniteness premise; finite members are counted with the others.  Printed route: at most `ℵ₁`
+from conditions (a) and (b) (each member is the reduct of a maximal structure on its carrier,
+and the maximal structures at each level are countably many up to isomorphism, finite carriers
+included); at least `ℵ₁` from Lemma 2.22, condition (d) and `InvariantSystem.ne_univ`, the
+member of condition (d) moved to a canonical carrier by a bijection.  Stated.  Correspondence with
+the printed definitions. -/
+def MkBaseClassesEqAlephOneTarget (W : QualifyingSystem.{w, w', wc, wc', 0} D S E) : Prop :=
+  Cardinal.mk (W.toWeakSystem.BaseClasses E) = Cardinal.aleph 1
+
+/-- **Target: [AFK26, Theorem 2.25 (a)], for a sentence**: if `φ` axiomatizes the base on all
+countable nonempty carriers (`WeakSystem.IsBaseSentenceOnCarriers`), its countable nonempty models
+have exactly `ℵ₁` isomorphism classes, counted on InfinitaryLogic's codes on every positive finite
+carrier `Fin (n + 1)` (`isoSetoidOn φ (n + 1)`) and on `ℕ` (`isoSetoid φ`).  No infiniteness
+premise.  The instance premises are those of the coded models.  Stated.  Correspondence with the
+printed definitions. -/
+def MkModelClassesEqAlephOneTarget (W : QualifyingSystem.{w, w', wc, wc', 0} D S E)
+    [Lc.IsRelational] [Countable (Σ n, Lc.Relations n)] (φ : Lc.Sentenceω) : Prop :=
+  W.toWeakSystem.IsBaseSentenceOnCarriers E φ →
+    Cardinal.mk ((Σ n : ℕ, Quotient (isoSetoidOn φ (n + 1))) ⊕ Quotient (isoSetoid φ)) =
+      Cardinal.aleph 1
+
+end QualifyingSystem
 
 namespace QualifyingSystem
 
 variable {E}
 variable [Lc.IsRelational] [Countable (Σ n, Lc.Relations n)]
 
-/-! ### Theorem 2.25 -/
+/-! ### Theorem 2.25: the specializations coded on `ℕ` -/
 
-/-- **Target: [AFK26, Theorem 2.25 (a)], the upper bound, coded**: for a qualifying sentence `φ`,
-the models of `φ` coded on `ℕ` have at most `ℵ₁` isomorphism classes.  Printed route: each member of
-the base is the reduct of a maximal structure (condition (a)), and the structures maximal at each
-countable level are countably many up to isomorphism (condition (b)); an isomorphism restricts to
-the reducts.  No infiniteness premise.  Stated.  Correspondence with the printed definitions. -/
+/-- **Target: [AFK26, Theorem 2.25 (a)], the upper bound, coded on `ℕ` (a specialization)**: for a
+qualifying sentence `φ`, the models of `φ` coded on `ℕ` have at most `ℵ₁` isomorphism classes.
+Printed route: each member of the base is the reduct of a maximal structure (condition (a)), and
+the structures maximal at each countable level are countably many up to isomorphism (condition
+(b)); an isomorphism restricts to the reducts.  No infiniteness premise.  Stated.  Correspondence
+with the printed definitions. -/
 def MkClassesLeAlephOneTarget (W : QualifyingSystem.{w, w', wc, wc', 0} D S E)
     (φ : Lc.Sentenceω) : Prop :=
   W.IsQualifyingSentence φ → Cardinal.mk (Quotient (isoSetoid φ)) ≤ Cardinal.aleph 1
 
-/-- **Target: [AFK26, Theorem 2.25 (a)], coded**: for a qualifying sentence `φ`, the models of `φ`
-coded on `ℕ` have exactly `ℵ₁` isomorphism classes, **under the explicit extra hypothesis**
-`CountableMembersInfinite` (members of `K` on countable carriers are infinite).  The lower bound
-follows the printed route — Lemma 2.22, condition (d) and `InvariantSystem.ne_univ`: the bounds
-`α_B` of the members of the base are cofinal in `ω₁` — and the extra hypothesis moves the member of
-`K` given by condition (d) to `ℕ`.  It does not use Reconstruction, uniqueness of maximal lifts or
-successor strictness.  Stated.  Correspondence with the printed definitions. -/
+/-- **Target: [AFK26, Theorem 2.25 (a)], coded on `ℕ` (a restricted specialization)**: for a
+qualifying sentence `φ`, the models of `φ` coded on `ℕ` have exactly `ℵ₁` isomorphism classes,
+**under the explicit extra hypothesis** `CountableMembersInfinite` (members of `K` on countable
+carriers are infinite).  The lower bound follows the printed route — Lemma 2.22, condition (d)
+and `InvariantSystem.ne_univ`: the bounds `α_B` of the members of the base are cofinal in `ω₁` —
+and the extra hypothesis moves the member of `K` given by condition (d) to `ℕ`.  It does not use
+Reconstruction, uniqueness of maximal lifts or successor strictness.  It does not replace the
+general form `MkBaseClassesEqAlephOneTarget`.  Stated.  Correspondence with the printed
+definitions. -/
 def MkClassesEqAlephOneTarget (W : QualifyingSystem.{w, w', wc, wc', 0} D S E)
     (φ : Lc.Sentenceω) : Prop :=
   W.IsQualifyingSentence φ → W.CountableMembersInfinite →

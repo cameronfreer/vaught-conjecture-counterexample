@@ -34,7 +34,9 @@ nothing about them is proved here.
 * `InvarianceDiagram.IsDenseAt D S α G` [AFK26, Definition 2.10 (c)], at `β = ω₁` (the form used
   by [AFK26, Definition 2.17]); clauses (a) and (b) of Definition 2.10 are compatibility with `D`.
 * `InvariantSystem.IsMatchedAt S ι G H a b`: the relation `I_ι` of the proof of
-  [AFK26, Proposition 2.18] — the tuples carry one common invariant in `τ_ι(G)` and `τ_ι(H)`.
+  [AFK26, Proposition 2.18] — the tuples carry one common invariant in `τ_ι(G)` and `τ_ι(H)` —
+  and `InvariantSystem.IsPatternMatchedAt`, its extension to arbitrary tuples read along one
+  common map of positions from matched tuples.
 * `IsCountableUpToIso P`: the structures on one carrier with property `P` fall into countably
   many isomorphism classes (used for the coding passage of "few maximal models").
 
@@ -154,6 +156,18 @@ def IsMatchedAt (ι : SystemLevel) {M : Type v} {N : Type v} (G : L.Structure M)
     (H : L.Structure N) {n : ℕ} (a : Fin n → M) (b : Fin n → N) : Prop :=
   ∃ Q : σ.Invariant n, RelMap (L := L) (self := S.projection ι G) Q.1 a ∧
     RelMap (L := L) (self := S.projection ι H) Q.1 b
+
+/-- **Matching through a common tuple pattern** at level `ι`: tuples `x` of `M` and `y` of `N` on
+`n` places, not necessarily injective and possibly empty, are read along **one** map of positions
+`f : Fin n → Fin k` from tuples `a` and `b` matched at `ι` (`IsMatchedAt`): `x = a ∘ f` and
+`y = b ∘ f`.  The induction behind [AFK26, Proposition 2.18] for InfinitaryLogic's `BFEquiv`
+runs over arbitrary tuples (repeated entries, the empty tuple), so it is stated for this
+relation; matched closed tuples are pattern-matched along `f = id`.  Correspondence with the
+printed definitions. -/
+def IsPatternMatchedAt (ι : SystemLevel) {M : Type v} {N : Type v} (G : L.Structure M)
+    (H : L.Structure N) {n : ℕ} (x : Fin n → M) (y : Fin n → N) : Prop :=
+  ∃ (k : ℕ) (a : Fin k → M) (b : Fin k → N) (f : Fin n → Fin k),
+    x = a ∘ f ∧ y = b ∘ f ∧ S.IsMatchedAt ι G H a b
 
 end InvariantSystem
 

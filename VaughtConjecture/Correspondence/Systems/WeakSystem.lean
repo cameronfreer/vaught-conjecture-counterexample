@@ -23,6 +23,9 @@ invariance diagram `D` and an invariant system `S` on an arbitrary geometry sign
 * eventual determination, `WeakSystem.IsEventuallyDeterminedTuple` and
   `WeakSystem.IsEventuallyDetermined` [AFK26, Definition 2.21], with the printed **strict**
   inequality `α* > α`;
+* the isomorphism classes of the base on the canonical carriers `Fin (n + 1)` and `ℕ`,
+  `WeakSystem.BaseClasses` (from `WeakSystem.baseIsoSetoid`), the type counted by the general form
+  of [AFK26, Theorem 2.25 (a)];
 * the base axiomatized by a sentence on the codes on `ℕ`, `WeakSystem.IsBaseSentence`, and on all
   countable nonempty carriers, `WeakSystem.IsBaseSentenceOnCarriers`;
 * the extra hypothesis of the statements that count only models on `ℕ`,
@@ -162,6 +165,25 @@ def IsEventuallyDeterminedTuple {M : Type v} (B : Lc.Structure M) {n : ℕ} (a :
 eventually determined.  Correspondence with the printed definitions. -/
 def IsEventuallyDetermined {M : Type v} (B : Lc.Structure M) : Prop :=
   ∀ ⦃n : ℕ⦄ (a : Fin n → M), E.IsClosedTuple B a → W.IsEventuallyDeterminedTuple E B a
+
+/-! ### The isomorphism classes of the base on the canonical carriers -/
+
+/-- **Isomorphism of members of the base on one carrier `X`**: `L_c`-isomorphism of the structures.
+Correspondence with the printed definitions. -/
+def baseIsoSetoid (X : Type v) : Setoid {B : Lc.Structure X // W.IsInBase E B} where
+  r B B' := Nonempty (@Language.Equiv Lc X X B.1 B'.1)
+  iseqv := ⟨fun B ↦ ⟨@Language.Equiv.refl Lc X B.1⟩,
+    fun {B B'} ⟨e⟩ ↦ ⟨@Language.Equiv.symm Lc X X B.1 B'.1 e⟩,
+    fun {B B' B''} ⟨e⟩ ⟨f⟩ ↦ ⟨@Language.Equiv.comp Lc X X B.1 B'.1 X B''.1 f e⟩⟩
+
+/-- **The isomorphism classes of the base on the canonical carriers** ([AFK26, Theorem 2.25 (a)],
+carriers in universe `0`): the classes of members of the base on each **positive finite** carrier
+`Fin (n + 1)`, and on `ℕ`, in a disjoint union.  Every countable nonempty carrier is in bijection
+with exactly one of these, and isomorphic structures have carriers of the same cardinality, so this
+type represents the countable members of the base up to isomorphism (the stated target
+`WeakSystem.BaseClassesRepresentTarget`).  Correspondence with the printed definitions. -/
+abbrev BaseClasses (W : WeakSystem.{w, w', 0} D S) : Type (max wc wc') :=
+  (Σ n : ℕ, Quotient (W.baseIsoSetoid E (Fin (n + 1)))) ⊕ Quotient (W.baseIsoSetoid E ℕ)
 
 /-! ### Infinite members: an explicit extra hypothesis -/
 
