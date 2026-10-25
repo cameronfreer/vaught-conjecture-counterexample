@@ -11,8 +11,9 @@ import VaughtConjecture.Correspondence.TemplateSystem.WeakSystem
 Numbering as in the current draft of [AFK26] (Definitions 4.6, 4.7, 4.8, 4.10, 4.11, 4.29 and
 Proposition 4.30 read identically in the published version).  This file states
 [AFK26, Proposition 4.30] for the positional legal templates, clause by clause, and proves the
-clauses that are compositions of compiled lemmas.  Clause (g) and the passage from arbitrary finite
-carriers are stated, not proved.
+clauses (a)–(g) and the four clauses of a template system for the chosen representatives of the
+legal classes (`proposition430Target`).  The passage from arbitrary finite carriers is stated, not
+proved.
 
 **Positional reading.**  A template on `[n]` is a stage type `t : StageType ω₁ n` (points `Fin n`,
 cells `Fin t.card`); a legal template is `t.IsLegalTemplate ω₁` ([AFK26, Definition 4.29],
@@ -56,14 +57,15 @@ sets, so the arity is positive throughout (`0 < n`, explicit in `LegalTemplates`
   `legalTemplates_nonempty`); the specification of the representatives
   (`toClass_chosenTemplateRepresentative`, `isLegalTemplate_chosenTemplateRepresentative`,
   `isStronglyCodedLegal_chosenTemplateRepresentative`); the four clauses of a template system for
-  `chosenLegalTemplates` (`isTemplateSystemOver_chosenLegalTemplates`); and the compositions
-  `truncRepairClause_of_truncRepairTarget` and `proposition430Target_of_truncRepairTarget`, so
-  `Proposition430Target` is reduced to `TruncRepairTarget`.
-* Stated: `TruncRepairTarget`, `LegalClassTruncRepairTarget`, `FintypeCarrierClause`,
-  `FinsetNatCarrierClause` and the three `Proposition430…Target`s.
+  `chosenLegalTemplates` (`isTemplateSystemOver_chosenLegalTemplates`); clause (g) as a literal
+  stage-type statement (`truncRepairTarget`) and on legal classes (`legalClassTruncRepairTarget`),
+  for `LegalTemplates` (`truncRepairClause_legalTemplates`); and `proposition430Target`.  No premise
+  beyond those of the printed clause (no countability, no coatom hypothesis).
+* Stated: `FintypeCarrierClause`, `FinsetNatCarrierClause`, `Proposition430FintypeTarget` and
+  `Proposition430FinsetNatTarget`.
 
-**Plan for clause (g)** (a plan, not compiled).  Fix `β < ω₁`, `λ := blockStage β`, `δ < λ`, and
-the data of `TruncRepairTarget`.
+**Proof of clause (g)** (`truncRepairTarget`, as in the proof of [AFK26, Proposition 4.30]).
+Fix `β < ω₁`, `λ := blockStage β`, `δ < λ`, and the data of `TruncRepairTarget`.
 1. A cap `c` with `δ < c < λ` self-visible at `n`: `Label.exists_lt_lt_isSelfVisible`
    (`λ` is a limit, `isSuccPrelimit_blockStage`).
 2. `q' := u'.reduce hλ` is legal with the face `t.reduce hλ` along `f`:
@@ -98,11 +100,12 @@ the labels.
   (`chosenTemplateRepresentative`) and the four clauses of a template system for its legal range
   (`isTemplateSystemOver_chosenLegalTemplates`).  With `chosenLegalTemplates` named, "a chart on
   `t ∈ L`" of [AFK26, Definition 4.31] (item P32.1) can be stated literally; it is not stated here.
-* Open: clause (g) (`TruncRepairTarget`), and the passage from arbitrary finite carriers
-  (`FintypeCarrierClause`, `FinsetNatCarrierClause`).
-* Later work, separate from this file and only after (g) is proved: the printed argument for
-  `τ_α(K_β[L]) ⊆ K_α[L]` in [AFK26, Theorem 4.23] uses (g); with (g) compiled it could remove the
-  premise `Countable M` from `ProjectionTarget`.  Not attempted here.
+* Closed by this file: clause (g) (`truncRepairTarget`, `legalClassTruncRepairTarget`).
+* Open: the passage from arbitrary finite carriers (`FintypeCarrierClause`,
+  `FinsetNatCarrierClause`).
+* Later work, separate from this file: the printed argument for `τ_α(K_β[L]) ⊆ K_α[L]` in
+  [AFK26, Theorem 4.23] uses (g); with (g) proved here it could remove the premise `Countable M`
+  from `ProjectionTarget`.  Not attempted here.
 -/
 
 universe u w
@@ -237,7 +240,7 @@ statement.**  For `β < ω₁` and `λ = ω + ω · β`, legal templates `t` on 
 ambient stage `ω₁`, `t.project`), and every `δ < λ`: there are a legal template `v` on `[n]` and a
 renaming `v'` of `v` with `v'↾f = t` (the same `f`, the literal face `t`) and
 `trunc_δ(v) ≅_ren trunc_δ(u)`.  No closedness premise: the face equation states that `range f` is
-closed in `u'`.  Stated; the plan is in the module docstring. -/
+closed in `u'`.  Proved: `truncRepairTarget`. -/
 def TruncRepairTarget : Prop :=
   ∀ β < ω₁, ∀ ⦃m n : ℕ⦄ (t : StageType.{u} ω₁ m) (u : StageType.{u} ω₁ n), 0 < m → 0 < n →
     t.IsLegalTemplate ω₁ → u.IsLegalTemplate ω₁ → ∀ u' : StageType.{u} ω₁ n, u'.IsCellRenaming u →
@@ -250,7 +253,7 @@ def TruncRepairTarget : Prop :=
 /-- **Target: [AFK26, Definition 4.11 (g)] on legal classes.**  For `β < ω₁`, legal classes `t`
 on `[m]` and `u` on `[n]` (`m, n ≥ 1`) with `u↾f = τ_β(t)`, and every `δ < ω + ω · β`: some legal
 class `v` on `[n]` has `v↾f = t` and `trunc_δ(v) ≅_ren trunc_δ(u)` (`TemplateClass.TruncEquiv`).
-Stated. -/
+Proved: `legalClassTruncRepairTarget`. -/
 def LegalClassTruncRepairTarget : Prop :=
   ∀ β < ω₁, ∀ ⦃m n : ℕ⦄ (f : Fin m ↪ Fin n) (t : LegalClass.{u} m) (u : LegalClass.{u} n),
     0 < m → 0 < n → u.1.restrictFace f = some (t.project β).1 →
@@ -313,8 +316,8 @@ def FinsetNatCarrierClause (L : ∀ n, Set (StageType.{u} ω₁ n)) : Prop :=
 
 /-- **Target: [AFK26, Proposition 4.30] for positional legal templates**: the legal templates
 satisfy [AFK26, Definition 4.11] (b)–(g), and the chosen representatives of the legal classes form
-a template system over them (so all its members are legal templates, the first bullet).  Reduced to
-clause (g) by `proposition430Target_of_truncRepairTarget`. -/
+a template system over them (so all its members are legal templates, the first bullet).  Proved:
+`proposition430Target`. -/
 def Proposition430Target : Prop :=
   TemplateSystemClauses LegalTemplates.{u} ∧
     IsTemplateSystemOver LegalTemplates.{u} chosenLegalTemplates.{u}
@@ -415,5 +418,88 @@ theorem proposition430Target_of_truncRepairTarget (h : TruncRepairTarget.{u}) :
   ⟨⟨reindexClause_legalTemplates, faceClause_legalTemplates, projectClause_legalTemplates,
     projectNeClause_legalTemplates, arityClause_legalTemplates,
     truncRepairClause_of_truncRepairTarget h⟩, isTemplateSystemOver_chosenLegalTemplates⟩
+
+/-! ### Clause (g) -/
+
+/-- **[AFK26, Definition 4.11 (g)] for the legal templates, as a literal stage-type statement**
+(the proof of [AFK26, Proposition 4.30]).  Route: a cap `c` with `δ < c < λ` self-visible at `n`
+(`Label.exists_lt_lt_isSelfVisible`); bountifulness of the rows of `u'` from the face along `f`
+to all points, at the cap `c`, for the reduction of `u'` to `λ` whose face is `t` reduced to `λ`
+(`StageType.exists_isLawful_lift`); the stage type `v` on the scheme of `u'` with the lifted labels
+(`StageType.ofIsLawful`), whose face along `f` is `t` (`StageType.restrictFace_ofIsLawful`); and
+agreement of `v` with `u'` capped at `c`, hence after `trunc_δ` (`Label.min_eq_min_iff_reduce_eq`).
+The witness `v` has the frame and rows of `u'`, and `v' = v`. -/
+theorem truncRepairTarget : TruncRepairTarget.{u} := by
+  intro β hβ m n t u hm hn ht hu u' hu' f hf δ hδ
+  have hL := isSuccPrelimit_blockStage β
+  have hω : Order.IsSuccPrelimit ω₁ := (Cardinal.isSuccLimit_omega 1).isSuccPrelimit
+  have hLω : blockStage β ≤ ω₁ := (blockStage_lt_omega_one hβ).le
+  obtain ⟨c, hδc, hcL, hcn⟩ := Label.exists_lt_lt_isSelfVisible hL hδ n
+  obtain ⟨k, σ, rfl⟩ := hu'
+  have hsl : u'.IsStronglyCodedLegal :=
+    (StageType.isLegalTemplate_omega_one_iff_of_le le_rfl).mp
+      ((StageType.isLegalTemplate_renameCells_iff u' σ
+        (Cardinal.isSuccLimit_omega 1).isSuccPrelimit Label.omega0_sq_lt_omega_one.le).mp hu)
+  obtain ⟨hfm, heq⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
+  have hp : u'.toScheme.comap f = t.toScheme := congrArg StageType.toScheme heq
+  have hface : StageType.restrictFace f (u'.reduce hL) = some (t.reduce hL) := by
+    rw [StageType.restrictFace_reduce, hf, Option.map_some, StageType.project,
+      StageType.reduce_reduce _ hω hL hLω, StageType.reduce_reduce _ hL hL le_rfl]
+  have hcL' : ((c : Ordinal.{u}) : Label.{u}) ≤ ((blockStage β : Ordinal.{u}) : Label.{u}) :=
+    WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hcL.le)
+  obtain ⟨ρ, hρ, hρc, hext⟩ := StageType.exists_isLawful_lift hL hsl.1 hface hcn hcL'
+  let v : StageType.{u} ω₁ n := StageType.ofIsLawful hω u'.toScheme u'.isWellFormed u'.isCoded ρ hρ
+  have hv : v.IsLegalTemplate ω₁ :=
+    (StageType.isLegalTemplate_omega_one_iff_of_le le_rfl).mpr hsl
+  refine ⟨v, hv, v, StageType.IsCellRenaming.refl v,
+    StageType.restrictFace_ofIsLawful hω hfm hp hext, v.renameCells σ, ⟨k, σ, rfl⟩, rfl,
+    fun i j hij ↦ ?_⟩
+  obtain rfl := Fin.ext hij
+  change Label.reduce δ (Label.reduce ω₁ (ρ (σ i))) = Label.reduce δ (u'.label (σ i))
+  rw [Label.reduce_reduce_of_le (hδ.le.trans hLω)]
+  have h1 := hρc (σ i)
+  rw [StageType.reduce_label, Label.min_reduce_of_le hcL'] at h1
+  have hδc' : ((δ : Ordinal.{u}) : Label.{u}) ≤ ((c : Ordinal.{u}) : Label.{u}) :=
+    WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hδc.le)
+  refine Label.min_eq_min_iff_reduce_eq.mp ?_
+  have h2 := congrArg (min · ((δ : Ordinal.{u}) : Label.{u})) h1
+  simpa only [min_assoc, min_eq_right hδc'] using h2
+
+/-- **[AFK26, Definition 4.11 (g)] on legal classes**: from `truncRepairTarget` on the chosen
+representatives, after aligning a representative of `u` with the face `τ_β(t)`
+(`TemplateClass.exists_renaming_restrictFace_eq`); the truncation is read on classes by
+`TemplateClass.truncEquiv_toClass_iff`. -/
+theorem legalClassTruncRepairTarget : LegalClassTruncRepairTarget.{u} := by
+  intro β hβ m n f t u hm hn htu δ hδ
+  set t₀ := chosenTemplateRepresentative t.1
+  set u₀ := chosenTemplateRepresentative u.1
+  have ht₀ : t₀.toClass = t.1 := toClass_chosenTemplateRepresentative _
+  have hu₀ : u₀.toClass = u.1 := toClass_chosenTemplateRepresentative _
+  have hface : u₀.toClass.restrictFace f =
+      some (t₀.project (isSuccPrelimit_blockStage β)).toClass := by
+    rw [hu₀, htu, LegalClass.coe_project, ← ht₀, TemplateClass.project_toClass]
+  obtain ⟨u', hu'u, hu'f⟩ := TemplateClass.exists_renaming_restrictFace_eq u₀ f hface
+  obtain ⟨v, hv, v', hv'v, hv'f, hvu⟩ := truncRepairTarget β hβ t₀ u₀ hm hn
+    (isLegalTemplate_chosenTemplateRepresentative t.2)
+    (isLegalTemplate_chosenTemplateRepresentative u.2)
+    u' (StageType.toClass_eq_toClass_iff.mp hu'u) f hu'f δ hδ
+  refine ⟨⟨v.toClass, (TemplateClass.isStronglyCodedLegal_toClass_iff_isLegalTemplate le_rfl
+    v).mpr hv⟩, ?_, ?_⟩
+  · change v.toClass.restrictFace f = some t.1
+    rw [← StageType.toClass_eq_toClass_iff.mpr hv'v, TemplateClass.restrictFace_toClass, hv'f,
+      Option.map_some, ht₀]
+  · change v.toClass.TruncEquiv δ u.1
+    rw [← hu₀]
+    exact TemplateClass.truncEquiv_toClass_iff.mpr hvu
+
+/-- **[AFK26, Definition 4.11 (g)] for `LegalTemplates`.** -/
+theorem truncRepairClause_legalTemplates : TruncRepairClause LegalTemplates.{u} :=
+  truncRepairClause_of_truncRepairTarget truncRepairTarget
+
+/-- **[AFK26, Proposition 4.30] for positional legal templates**: the legal templates satisfy
+[AFK26, Definition 4.11] (b)–(g), and the chosen representatives of the legal classes form a
+template system over them. -/
+theorem proposition430Target : Proposition430Target.{u} :=
+  proposition430Target_of_truncRepairTarget truncRepairTarget
 
 end VaughtConjecture
