@@ -12,8 +12,8 @@ Numbering as in the current draft of [AFK26] (Definitions 4.6, 4.7, 4.8, 4.10, 4
 Proposition 4.30 read identically in the published version).  This file states
 [AFK26, Proposition 4.30] for the positional legal templates, clause by clause, and proves the
 clauses (a)–(g) and the four clauses of a template system for the chosen representatives of the
-legal classes (`proposition430Target`).  The passage from arbitrary finite carriers is stated, not
-proved.
+legal classes (`proposition430Target`).  The passage from arbitrary finite carriers is stated here
+and proved in `VaughtConjecture.Correspondence.TemplateSystem.LegalCarrier`.
 
 **Positional reading.**  A template on `[n]` is a stage type `t : StageType ω₁ n` (points `Fin n`,
 cells `Fin t.card`); a legal template is `t.IsLegalTemplate ω₁` ([AFK26, Definition 4.29],
@@ -61,7 +61,8 @@ sets, so the arity is positive throughout (`0 < n`, explicit in `LegalTemplates`
   stage-type statement (`truncRepairTarget`) and on legal classes (`legalClassTruncRepairTarget`),
   for `LegalTemplates` (`truncRepairClause_legalTemplates`); and `proposition430Target`.  No premise
   beyond those of the printed clause (no countability, no coatom hypothesis).
-* Stated: `FintypeCarrierClause`, `FinsetNatCarrierClause`, `Proposition430FintypeTarget` and
+* Stated here, proved in `VaughtConjecture.Correspondence.TemplateSystem.LegalCarrier`:
+  `FintypeCarrierClause`, `FinsetNatCarrierClause`, `Proposition430FintypeTarget` and
   `Proposition430FinsetNatTarget`.
 
 **Proof of clause (g)** (`truncRepairTarget`, as in the proof of [AFK26, Proposition 4.30]).
@@ -101,8 +102,9 @@ the labels.
   (`isTemplateSystemOver_chosenLegalTemplates`).  With `chosenLegalTemplates` named, "a chart on
   `t ∈ L`" of [AFK26, Definition 4.31] (item P32.1) can be stated literally; it is not stated here.
 * Closed by this file: clause (g) (`truncRepairTarget`, `legalClassTruncRepairTarget`).
-* Open: the passage from arbitrary finite carriers (`FintypeCarrierClause`,
-  `FinsetNatCarrierClause`).
+* Closed in `VaughtConjecture.Correspondence.TemplateSystem.LegalCarrier`: the passage from
+  arbitrary finite carriers (`fintypeCarrierClause_chosenLegalTemplates`,
+  `finsetNatCarrierClause_chosenLegalTemplates`).
 * Later work, separate from this file: the printed argument for `τ_α(K_β[L]) ⊆ K_α[L]` in
   [AFK26, Theorem 4.23] uses (g); with (g) proved here it could remove the premise `Countable M`
   from `ProjectionTarget`.  Not attempted here.
@@ -325,14 +327,15 @@ def Proposition430Target : Prop :=
 /-- **Target: [AFK26, Proposition 4.30], with legal templates on arbitrary finite carriers**:
 `Proposition430Target`, and every legal template on a finite type of points with an explicit
 equivalence to `Fin n` is isomorphic to a renaming of a chosen legal template (the second
-bullet).  Stated. -/
+bullet).  Proved: `proposition430FintypeTarget`. -/
 def Proposition430FintypeTarget : Prop :=
   Proposition430Target.{u} ∧ FintypeCarrierClause.{u, w} chosenLegalTemplates.{u}
 
 /-- **Target: [AFK26, Proposition 4.30] for templates on finite subsets of `ℕ`**:
 `Proposition430Target`, and every legal template whose underlying set and cells are finite subsets
 of `ℕ` is isomorphic to a renaming of a chosen legal template.  It is to follow from the `Fintype`
-form `Proposition430FintypeTarget` (point type the subtype of `A`).  Stated. -/
+form `Proposition430FintypeTarget` (point type the subtype of `A`).  Proved:
+`proposition430FinsetNatTarget`. -/
 def Proposition430FinsetNatTarget : Prop :=
   Proposition430Target.{u} ∧ FinsetNatCarrierClause.{u} chosenLegalTemplates.{u}
 
