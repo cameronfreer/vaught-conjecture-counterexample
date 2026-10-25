@@ -92,9 +92,16 @@ log() { printf '== %s\n' "$*"; }
 # The comment-free declarations of `Palomar/Challenge.lean` of
 # cameronfreer/vaught-conjecture-palomar at commit 032ccb7 (`comparator/scripts/declarations.py`).
 reviewed_declarations=37ea343194108b99620ce478081db4e0ee55f7375974205c2e31e1c3c735d3a2
-# The upstream mathlib4 commit (leanprover-community/mathlib4, "chore: bump toolchain to
-# v4.35.0-rc3 (#44172)") that the pinned fork extends with `Mathlib/ModelTheory/Infinitary`.
-mathlib_upstream=c55e6e786f49471c72fbddbec5415808896aec1e
+# The upstream mathlib4 commit (leanprover-community/mathlib4, "chore(GroupTheory/Commutator/Basic):
+# golf `map_commutator_eq` (#44951)") against which the sources of the pinned Mathlib are checked.
+# Since the InfinitaryLogic v7.0.0 pins, the pinned Mathlib is upstream mathlib4 itself at this
+# commit, so step 2 finds no changed or added file and the import-closure checks of step 4 keep
+# their full force (no module of `Mathlib.ModelTheory.Infinitary`, of this library or of
+# InfinitaryLogic or ComputableModelTheory, and not the root module `Mathlib`).  The checks are
+# kept as they are, so that a pinned Mathlib which extends upstream by new files under
+# `Mathlib/ModelTheory/Infinitary` is checked the same way.  The reviewed declarations above are
+# unchanged.
+mathlib_upstream=2e318faecff7d70d4e0cf8cc875104424a737355
 target=PalomarChallenge.independent_challenge
 
 # ---------------------------------------------------------------------------------------------
@@ -129,7 +136,7 @@ toolchain_dir=${expected_toolchain//\//--}
   /usr/bin/bwrap --version
 } > "$out/toolchain.txt"
 # TOOL-SHA256SUMS: every executable file and every `*.so` directly in the toolchain's `bin/` and
-# `lib/lean/` (in v4.35.0-rc3: lean, lake, leanexport, nanoda_bin, leanchecker,
+# `lib/lean/` (in v4.36.0-rc1: lean, lake, leanexport, nanoda_bin, leanchecker,
 # leanchecker-paranoid, lean4lean, con-leche, con-ron, leanc, leanir, leanmake, leantar, cadical,
 # clang, ld.lld, llvm-ar; libleanshared.so, libleanshared_1.so, libleanshared_2.so,
 # libInit_shared.so, libLake_shared.so), with paths relative to the toolchain, and one digest of
