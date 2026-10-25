@@ -23,11 +23,11 @@ Every coded model `B` of `σ[L]` (on `ℕ`, countable and nonempty) has a unique
 **maximal stage** of `B` is `γ` (`codedMaximalStage`), and it depends only on the class of `B`
 (`maximalStageInvariantTarget`), which gives `maximalStageOfClass`.
 
-**Not the projection-fixing rank.**  The maximal stage is the level at which the unique maximal
-lift is maximal ([AFK26, Definition 2.20]), the greatest lift stage of `B`
-(`MaximalIffGreatestTarget`).  It is **not** the least projection-fixing stage of a structure
-(`IsLeast (fixingStages G) ρ`, `Boundedness/Rank`), nor a member of the set `liftRanks M B` of
-those ranks over all lifts; no comparison with them is made or used here.
+**The greatest lift stage, not the least projection-fixing stage.**  The maximal stage is the
+level at which the unique maximal lift is maximal ([AFK26, Definition 2.20]), the greatest lift
+stage of `B` (`MaximalIffGreatestTarget`).  It is defined using the greatest lift stage, rather
+than the least projection-fixing stage (`IsLeast (fixingStages G) ρ`, `Boundedness/Rank`,
+`liftRanks`).  No equality or inequality between these notions is asserted or used here.
 
 ## The count
 
@@ -79,8 +79,9 @@ theorem codedMaximalLift_spec (c : ModelsOf templateSentence.{0}) :
     (realize_templateSentence_of_mem_modelsOf c)).exists.choose_spec
 
 /-- **The maximal stage of a coded model of `σ[L]`**: the level `γ` of its unique maximal lift.
-Not the least projection-fixing stage (`fixingStages`) and not a lift rank (`liftRanks`).
-Correspondence with the printed definitions. -/
+Defined using the greatest lift stage, rather than the least projection-fixing stage
+(`fixingStages`, `liftRanks`); no equality or inequality between these notions is asserted or
+used here.  Correspondence with the printed definitions. -/
 def codedMaximalStage (c : ModelsOf templateSentence.{0}) : Ordinal.{0} :=
   (codedMaximalLift c).1
 
@@ -100,9 +101,10 @@ theorem codedMaximalStage_eq_of_rel {a b : ModelsOf templateSentence.{0}}
 /-! ### The maximal stage of a class -/
 
 /-- **The maximal stage of an isomorphism class** of coded models of `σ[L]`
-(`codedMaximalStage` of any representative, `codedMaximalStage_eq_of_rel`).  It is distinct from
-the least projection-fixing rank (`fixingStages`, `liftRanks`).  Correspondence with the printed
-definitions. -/
+(`codedMaximalStage` of any representative, `codedMaximalStage_eq_of_rel`).  Defined using the
+greatest lift stage, rather than the least projection-fixing stage (`fixingStages`, `liftRanks`);
+no equality or inequality between these notions is asserted or used here.  Correspondence with
+the printed definitions. -/
 def maximalStageOfClass : Quotient (isoSetoid templateSentence.{0}) → Ordinal.{0} :=
   Quotient.lift codedMaximalStage fun _ _ h ↦ codedMaximalStage_eq_of_rel h
 
