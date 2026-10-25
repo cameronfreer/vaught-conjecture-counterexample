@@ -321,11 +321,14 @@ Notes on the rows, each with its marker:
   `attainedEventualDeterminationTarget`, `invariantOccurrenceTarget`); the weak-system interface
   (`templateInvariantSystemTarget`, `templateInvariantSystem_projection`,
   `weakSystemClausesTarget`, `projectedDensityAt_of_satisfiesDensityAt`,
-  `templateBaseModelsTarget`); `baseLanguageCountableTarget`.  The statement on all countable
-  carriers is not made (the empty structure satisfies `templateSentence`); the passage to
-  countable nonempty carriers is `nonemptyCarrierPassageTarget` (with
-  `templateModelInfiniteTarget`).  The theorem concerns `templateSentence` separately from, and
-  without reference to, `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`.
+  `templateBaseModelsTarget`); `baseLanguageCountableTarget`.  The statement is about models
+  coded on `ℕ`; a spectrum statement on all countable carriers is not made here, a distinction
+  of scope, not an obstruction: the empty structure also satisfies `templateSentence`, so an
+  all-carriers formulation would count one further isomorphism class, and the passage from
+  models on countable nonempty carriers to models coded on `ℕ` is proved
+  (`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`).  The theorem concerns
+  `templateSentence` separately from, and without reference to,
+  `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`.
   `templateSentence` is not identified with `densitySentence`, and no spectrum is transferred
   between them; the language `L°`, its sentence
   `σ[L°]` and the dictionary items D4–D7 and the rest of D9 are deferred (concordance note 47).

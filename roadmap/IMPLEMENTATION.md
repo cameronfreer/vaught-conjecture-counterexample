@@ -2429,11 +2429,14 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     (`templateInvariantSystemTarget`, `templateInvariantSystem_projection`,
     `weakSystemClausesTarget`, `projectedDensityAt_of_satisfiesDensityAt`,
     `templateBaseModelsTarget`; `Correspondence/TemplateSystem/WeakSystem`); and the countability
-    of the language, `baseLanguageCountableTarget`.  The statement on all countable carriers is
-    not made (the structure on the empty carrier satisfies `templateSentence`); the passage to
-    the models on countable nonempty carriers is `nonemptyCarrierPassageTarget`, with their
-    infinitude `templateModelInfiniteTarget`.  The theorem concerns `templateSentence` separately
-    from, and without reference to, `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`;
+    of the language, `baseLanguageCountableTarget`.  The statement is about models coded on `ℕ`;
+    a spectrum statement on all countable carriers is not made here.  This is a distinction of
+    scope, not an obstruction: the empty structure also satisfies `templateSentence`, so an
+    all-carriers formulation would count one further isomorphism class, and the passage from
+    models on countable nonempty carriers to models coded on `ℕ` is proved
+    (`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`).  The theorem concerns
+    `templateSentence` separately from, and without reference to,
+    `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`;
     no spectrum result is transferred between the two sentences.  The first line of this row
     stays S.  Claim 4.37 is
     stated for `M ∈ K_β` and its proof is for `M ∈ K_{-∞}`; the coherence `τ_α(M_β) = M_α` at

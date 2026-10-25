@@ -157,8 +157,11 @@ fidelity:
     Theorem 4.36 of [AFK26] are formalized and proved for the strongly coded template system, its
     classes `K_β` and the repository's transcription `templateSentence` of its sentence, relative
     to the current draft of 7 October 2026; Theorem 4.36 for the models of `templateSentence`
-    coded on ℕ (the statement on all countable carriers is not made: the empty structure satisfies
-    `templateSentence`), as the concrete specialization of the route of Section 2 of [AFK26], whose
+    coded on ℕ (a spectrum statement on all countable carriers is not made here, a distinction of
+    scope, not an obstruction: the empty structure also satisfies `templateSentence`, so an
+    all-carriers formulation would count one further isomorphism class, and the passage from
+    models on countable nonempty carriers to models coded on ℕ is proved), as the concrete
+    specialization of the route of Section 2 of [AFK26], whose
     abstract Theorems 2.25 and 2.27 for arbitrary systems are not formalized.
     `templateSentence` is not identified with `baseLanguage.densitySentence`, and no spectrum
     result is transferred between them. Where the
@@ -329,11 +332,14 @@ alignment:
         `projectedDensityAt_of_satisfiesDensityAt`, `templateBaseModelsTarget`) and the
         countability of the language (`baseLanguageCountableTarget`). The concrete
         template-system specialization of the route of Section 2 of [AFK26]; the abstract
-        Theorems 2.25 and 2.27 for arbitrary systems are not claimed. The statement on all
-        countable carriers is not made (the empty structure satisfies `templateSentence`); the
-        passage to countable nonempty carriers is `nonemptyCarrierPassageTarget`, with
-        `templateModelInfiniteTarget`. The theorem concerns `templateSentence` separately from,
-        and without reference to, `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`;
+        Theorems 2.25 and 2.27 for arbitrary systems are not claimed. The statement is about
+        models coded on ℕ; a spectrum statement on all countable carriers is not made here, a
+        distinction of scope, not an obstruction: the empty structure also satisfies
+        `templateSentence`, so an all-carriers formulation would count one further isomorphism
+        class, and the passage from models on countable nonempty carriers to models coded on ℕ is
+        proved (`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`). The theorem
+        concerns `templateSentence` separately from, and without reference to,
+        `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`;
         no spectrum result is transferred between the two sentences. Relative to the current
         draft of [AFK26] of 7 October 2026 (SHA-256 of its source
         654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published

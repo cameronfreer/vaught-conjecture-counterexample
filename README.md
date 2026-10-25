@@ -172,10 +172,12 @@ the weak-system interface (`templateInvariantSystemTarget`, `templateInvariantSy
 `weakSystemClausesTarget`, `projectedDensityAt_of_satisfiesDensityAt`, and the base as the models
 of `templateSentence` on countable nonempty carriers, `templateBaseModelsTarget`;
 [`Correspondence/TemplateSystem/WeakSystem.lean`](VaughtConjecture/Correspondence/TemplateSystem/WeakSystem.lean));
-and the countability of the language (`baseLanguageCountableTarget`).  The statement on all
-countable carriers is not made: the structure on the empty carrier satisfies `templateSentence`.
-The passage to the models on countable nonempty carriers, which are infinite
-(`templateModelInfiniteTarget`), is `nonemptyCarrierPassageTarget`.  The abstract theorems of
+and the countability of the language (`baseLanguageCountableTarget`).  The statement is about
+models coded on `ℕ`; a spectrum statement on all countable carriers is not made here.  This is a
+distinction of scope, not an obstruction: the empty structure also satisfies `templateSentence`,
+so an all-carriers formulation would count one further isomorphism class, and the passage from
+models on countable nonempty carriers to models coded on `ℕ` is proved
+(`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`).  The abstract theorems of
 Section 2 of [AFK26] for arbitrary systems (Theorems 2.25 and 2.27) are not claimed.  The theorem
 concerns `templateSentence` separately from, and without reference to, the main theorem for
 `baseLanguage.densitySentence` (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`).  As
