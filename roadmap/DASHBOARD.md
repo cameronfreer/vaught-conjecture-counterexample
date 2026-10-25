@@ -305,8 +305,30 @@ Notes on the rows, each with its marker:
   model in `K_β` on every countably infinite carrier, `β < ω₁`, chosen before any chart is named
   (`universalChartModelTarget`, from `stronglyCodedUniversalRealizationTarget` and
   `stronglyCodedUniversalReadingTarget`, with density from universality,
-  `universalityDensityTarget`).  Theorem 4.36 for `templateSentence`: statement pending (not on
-  `main`); unproved; the weak-system and back-and-forth specialization pending.
+  `universalityDensityTarget`).  Theorem 4.36 for `templateSentence` is proved for the same
+  system, relative to the pinned draft (#248, #249, #250; concordance row 47, second line, P;
+  note 47), as the concrete template-system specialization of the route of Section 2 of [AFK26]
+  (the abstract Theorems 2.25 and 2.27 for arbitrary systems are not claimed):
+  `theorem436Target : Theorem436Target`, where
+  `Theorem436Target := MainTheorem.HasThinAlephOneSpectrum templateSentence.{0}`, for the models
+  coded on `ℕ`.  The count, exactly `ℵ₁` isomorphism classes, is
+  `templateSentenceAlephOneTarget` (rank `maximalStageOfClass`, defined using the greatest lift
+  stage rather than the least projection-fixing stage); thinness, no perfect set of pairwise
+  non-isomorphic models coded on `ℕ`, is `thinnessTarget` (from `countableBFClassesTarget`,
+  through `backAndForthCoreTarget`, and `MainTheorem.isThinOnNatModels_of_countable_bfClasses`).
+  Inputs: the four conditions of Definition 2.23, `templateSystemConditionsTarget`
+  (`maximalCoverageTarget`, `uniformMaximalRepresentativesTarget`,
+  `attainedEventualDeterminationTarget`, `invariantOccurrenceTarget`); the weak-system interface
+  (`templateInvariantSystemTarget`, `templateInvariantSystem_projection`,
+  `weakSystemClausesTarget`, `projectedDensityAt_of_satisfiesDensityAt`,
+  `templateBaseModelsTarget`); `baseLanguageCountableTarget`.  The statement is about models
+  coded on `ℕ`; a spectrum statement on all countable carriers is not made here, a distinction
+  of scope, not an obstruction: the empty structure also satisfies `templateSentence`, so an
+  all-carriers formulation would count one further isomorphism class, and the passage from
+  models on countable nonempty carriers to models coded on `ℕ` is proved
+  (`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`).  The theorem concerns
+  `templateSentence` separately from, and without reference to,
+  `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`.
   `templateSentence` is not identified with `densitySentence`, and no spectrum is transferred
   between them; the language `L°`, its sentence
   `σ[L°]` and the dictionary items D4–D7 and the rest of D9 are deferred (concordance note 47).
