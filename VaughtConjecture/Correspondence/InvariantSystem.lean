@@ -86,8 +86,8 @@ the projections along a stage function (`reductionSystem`): `τ_β` is the proje
   support (`Realization.relMap_closed_iff_isSupport`), equivalently a finite closed set of the
   canonical closure (`Realization.relMap_closed_iff_isClosed`).
 * `blockSystem`, the projections to the block stages `λ_ξ`, and `omega0MulSystem`, the projections
-  to the printed stages `ω · β`, are invariant systems, and for `ξ < ω₁`,
-  `omega0MulSystem.τ (1 + ξ)` is `blockSystem.τ ξ` (`omega0MulSystem_τ_one_add`).
+  to the printed stages `ω · β` of the version of 5 October 2026, are invariant systems, and for
+  `ξ < ω₁`, `omega0MulSystem.τ (1 + ξ)` is `blockSystem.τ ξ` (`omega0MulSystem_τ_one_add`).
   `blockSystem` is compatible with `stageDiagram` (`isCompatibleWith_blockSystem`), and
   `omega0MulSystem` is not (`not_isCompatibleWith_omega0MulSystem`): its projection of index `0`,
   to the stage `0`, changes the base relation of a legal one-point type with label `1`.  Every
@@ -97,26 +97,42 @@ the projections along a stage function (`reductionSystem`): `τ_β` is the proje
   which agrees with the printed system at every positive index
   (`omega0MulMaxOneSystem_τ_of_ne_zero`).
 
+In this file "the printed indexing", "the printed index" and "the printed system" refer to the
+indexing `ω · β` of [AFK26, Definitions 3.20 and 4.16] in the version of 5 October 2026.  In the
+current draft and the published v1, Definition 4.16 truncates the templates at `ω + ω · β`, which
+is the block indexing of `blockSystem`; only Definition 3.20, for labelled geometric trees, still
+reads `ω · β`.
+
 **Departures.**
 
 * The invariants are legal stage types, with fixed coded rows and a separate labelling, in place
-  of the templates of [AFK26, Definition 4.6] (concordance row 9).
-* The invariance diagram of the templates [AFK26, Definition 4.18] has the templates as its
-  invariants, and a clause for an order symbol `≤`, carried over from the diagram of trees
-  [AFK26, Definition 3.6], which is not a symbol of the language of templates
-  [AFK26, Definitions 4.15 and 4.17]; `stageDiagram`, the diagram of the legal stage types, is
-  supplied here in its place, and the two are not compared clause by clause.
-* The language `L_c` of [AFK26, Definition 4.17] is printed as `L_a` with the symbols of the
-  invariants fixed by `τ_ω`; here the base relations are the legal stage types at stage `ω`, the
-  invariants fixed by `τ_1` in the printed indexing (by `τ_0` in the block indexing), as in the
-  proof of [AFK26, Lemma 4.22].
+  of the templates of [AFK26, Definition 4.6] in the version of 5 October 2026 (concordance
+  row 9); in the current draft and the published v1 a template is the triple `(c, Σ, p)` of
+  Definition 4.5.
+* In the version of 5 October 2026, the invariance diagram of the templates
+  [AFK26, Definition 4.18] has the templates as its invariants, and a clause for an order symbol
+  `≤`, carried over from the diagram of trees [AFK26, Definition 3.6], which is not a symbol of
+  the language of templates [AFK26, Definitions 4.15 and 4.17].  In the current draft and the
+  published v1, Definition 4.18 has three clauses, for `P_k`, for `Q_{t*}` and for `R_{t⁻}`, and
+  no order symbol.  `stageDiagram`, the diagram of the legal stage types, stands here in its
+  place, and it is not compared clause by clause with either diagram.
+* In the version of 5 October 2026, the language `L_c` of [AFK26, Definition 4.17] is printed as
+  `L_a` with the symbols of the invariants fixed by `τ_ω`; here the base relations are the legal
+  stage types at stage `ω`, the invariants fixed by `τ_1` in the printed indexing (by `τ_0` in
+  the block indexing), as in the proof of [AFK26, Lemma 4.22] of that version (the invariants of
+  rank `1`).  In the current draft and the published v1, Definition 4.17 takes the symbols of the
+  invariants fixed by `τ_0`, the truncation at `ω`, and the proof of Theorem 4.23 (the former
+  Lemma 4.22) uses the invariants fixed by `τ_0`.
 * The printed compatibility of the diagram of the templates with the printed projections
   [AFK26, Lemma 4.19] fails for the stage types, with `stageDiagram`, at the printed index `0`,
   and only there (`not_isCompatibleWith_omega0MulSystem`, `isCompatibleWith_omega0MulMaxOneSystem`;
-  with the printed `L_c` it would fail at every finite index, `IMPLEMENTATION.md`, note 14); it
-  holds with the block indexing (`isCompatibleWith_blockSystem`), whose shift by one at the finite
-  indices is the convention of `blockStage`, not a consequence of compatibility
-  (`VaughtConjecture.Correspondence.StageIndexing`).
+  with the `L_c` of the version of 5 October 2026 it would fail at every finite index,
+  `IMPLEMENTATION.md`, note 14); it holds with the block indexing (`isCompatibleWith_blockSystem`),
+  whose shift by one at the finite indices is the convention of `blockStage`, not a consequence of
+  compatibility (`VaughtConjecture.Correspondence.StageIndexing`).  The printed index `0` is that
+  of the indexing `ω · β` of the version of 5 October 2026; Lemma 4.19 of the current draft and
+  the published v1 concerns the projections at `ω + ω · β` of its Definition 4.16, the block
+  indexing.
 * The projection of a structure and its rank [AFK26, Definition 2.7], and the fact after
   [AFK26, Definition 2.8] that projections preserve compatibility [AFK26, Lemma 2.9], are not
   compiled here.
@@ -1164,7 +1180,9 @@ noncomputable def blockSystem : InvariantSystem.{u} stageSignature.{u} :=
         (lt_add_one o).trans_le (le_blockStage (o + 1))⟩
 
 /-- **The invariant system of the printed indexing**: `τ_β` is the projection to the stage
-`ω · β`, as in [AFK26, Definitions 3.20 and 4.16]. -/
+`ω · β`, as in [AFK26, Definitions 3.20 and 4.16] of the version of 5 October 2026.  In the current
+draft and the published v1 only Definition 3.20 (labelled geometric trees) reads `ω · β`;
+Definition 4.16 truncates at `ω + ω · β`, the indexing of `blockSystem`. -/
 noncomputable def omega0MulSystem : InvariantSystem.{u} stageSignature.{u} :=
   reductionSystem (ω * ·) (fun β ↦ isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right ω β))
     (isNormal_mul_right omega0_pos).strictMono.monotone

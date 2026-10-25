@@ -15,7 +15,9 @@ part) calls a local labelling `r : D↓U → L` at a graded face `U` of a templa
 Availability.  The three clauses are those of the first part of [AFK26, Definition 4.26] (version
 of 5 October 2026), unchanged apart from notation (Locality there reads
 `ℓ_d ⇒ [min {r↾D↓d, r(d)}]`).  The clauses are compared with `CellScheme.Rows.IsLawfulBelow`,
-lawfulness below a pair.
+lawfulness below a pair.  The numbers of the current draft cited in this module (Definitions
+4.2–4.5, 4.26, 4.28 and 4.29) are also those of the published version [AFK26] v1 (the numbering
+map of `milestones/2026-10-25-published-v1-audit.md`).
 
 ## The setting
 

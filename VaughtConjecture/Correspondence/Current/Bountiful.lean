@@ -78,7 +78,9 @@ balls and bountiful rows are in Definition 4.28, which defines `B_γ(q)` for eve
 lets bountifulness quantify over `γ ∈ {-∞} ∪ ω₁ ∪ {∞}`, so the caps `-∞` and `∞` of departures 2
 and 3 are included; with the graded faces of its Definition 4.2, of positive grade, departure 1
 does not arise.  No theorem here states Definition 4.28 of the current draft; the open point is
-then the converse at a single stage (concordance note 44).
+then the converse at a single stage (concordance note 44).  Definitions 4.2 and 4.28 have the
+same numbers in the published version [AFK26] v1 (the numbering map of
+`milestones/2026-10-25-published-v1-audit.md`).
 
 ## Placement
 
