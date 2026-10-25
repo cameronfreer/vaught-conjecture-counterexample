@@ -250,9 +250,12 @@ jobs:
 
   # The Comparator check of `comparator/` (see `comparator/README.md`): the solution module
   # against the reference statement `comparator/Challenge.lean`, through Lean's kernel and
-  # nanoda, with the three expected failures.  `lake comparator`, `leanexport` and `nanoda_bin`
-  # come with the pinned toolchain.  Two jobs, both after `build` (which saves the dependency
-  # cache for the current pins and the root build cache for the commit):
+  # nanoda, with the three expected failures.  The reference is compiled against the outputs of
+  # Mathlib and its dependencies only; the solution's environment also reads TauCeti,
+  # InfinitaryLogic and ComputableModelTheory from the dependency cache.  `lake comparator`,
+  # `leanexport` and `nanoda_bin` come with the pinned toolchain.  Two jobs, both after `build`
+  # (which saves the dependency cache for the current pins and the root build cache for the
+  # commit):
   #   * on pull requests, `comparator-replay` restores the root build that `build` saved for this
   #     exact commit and runs `comparator/check.sh --exact` on it (a few minutes);
   #   * on pushes to `main` and on manual runs, `comparator-clean` runs

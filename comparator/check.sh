@@ -100,7 +100,10 @@ reviewed_declarations=37ea343194108b99620ce478081db4e0ee55f7375974205c2e31e1c3c7
 # InfinitaryLogic or ComputableModelTheory, and not the root module `Mathlib`).  The checks are
 # kept as they are, so that a pinned Mathlib which extends upstream by new files under
 # `Mathlib/ModelTheory/Infinitary` is checked the same way.  The reviewed declarations above are
-# unchanged.
+# unchanged.  The reference reads the outputs of Mathlib and its dependencies only
+# (`reference_roots`); TauCeti, which now provides `BoundedFormulaInf` and its `Realize`, is read
+# only on the solution side (`all_roots`, step 5), together with InfinitaryLogic and
+# ComputableModelTheory.
 mathlib_upstream=2e318faecff7d70d4e0cf8cc875104424a737355
 target=PalomarChallenge.independent_challenge
 

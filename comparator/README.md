@@ -75,10 +75,11 @@ sentence `baseLanguage.densitySentence` of `VaughtConjecture/Language/Density.le
 * *language*: `language R` is `⟨fun _ => Empty, R⟩`; for `R := baseLanguage.{0}.Relations` this is
   definitionally `baseLanguage.{0} : Language.{0, 1}`, whose function symbols are `Empty`;
 * *sentence*: `(language R).Sentenceω` is the restated `BoundedFormulaInf ℕ Empty 0`, which
-  Comparator checks to be identical to the pinned TauCeti's
-  (`TauCeti/ModelTheory/Infinitary/Syntax`, inherited from InfinitaryLogic), the type of
-  `densitySentence`; satisfaction `Satisfies` is TauCeti's `Realize` at the empty valuations,
-  which is `Sentenceω.Realize` of `InfinitaryLogic` by `Iff.rfl`;
+  Comparator checks to be identical to the declaration of the same name in the solution's
+  environment, which comes from the pinned TauCeti (`TauCeti/ModelTheory/Infinitary/Syntax`,
+  inherited from InfinitaryLogic; the reference itself does not import TauCeti), the type of
+  `densitySentence`; satisfaction `Satisfies` is, on the solution side, TauCeti's `Realize` at the
+  empty valuations, which is `Sentenceω.Realize` of `InfinitaryLogic` by `Iff.rfl`;
 * *codes and topology*: `Code R ℕ` is `InfinitaryLogic`'s `StructureSpace` up to unfolding, with
   the same product topology (`Pi.topologicalSpace`);
 * *isomorphism*: the reference uses permutations of `ℕ` preserving every relation coordinate,
@@ -230,8 +231,10 @@ lets `NoFiniteModels` quantify over `Fin (n + 1)`, no longer excluding the empty
   accepted by Lean's kernel and by nanoda (and, with `--paranoid`, by the other bundled
   checkers), and depends on no axiom beyond `propext`, `Quot.sound` and `Classical.choice`.
 * Its statement, and every declaration that statement uses (the restated definitions,
-  `BoundedFormulaInf` and its `Realize` from the pinned TauCeti, and the Mathlib and core
-  declarations below them), are identical to those of the reference statement.
+  `BoundedFormulaInf` and its `Realize`, which in the solution's environment come from the pinned
+  TauCeti, and the Mathlib and core declarations below them), are identical to those of the
+  reference statement, whose environment contains Mathlib, its dependencies and the toolchain
+  only.
 * The reference statement was compiled with a search path of only Mathlib, Mathlib's own
   dependencies and the toolchain; its import closure contains no module of this repository,
   `InfinitaryLogic`, `ComputableModelTheory` or `Mathlib.ModelTheory.Infinitary`; the sources of
@@ -254,14 +257,15 @@ lets `NoFiniteModels` quantify over `Fin (n + 1)`, no longer excluding the empty
 * That the cached build outputs of the dependencies correspond to their sources.  Checking a
   dependency's git revision and tracked files authenticates its sources, not its `.lake/build`
   outputs (Mathlib, TauCeti, `InfinitaryLogic`, `ComputableModelTheory`), which are read as they
-  are.  The
-  kernels re-check every exported proof term, so a wrong dependency output cannot make a false
-  proof pass; but the declarations of the reference statement that come from Mathlib and
-  TauCeti are read from those outputs too.  On a new pin, CI downloads the Mathlib cache artifacts
-  available for the pinned revision (`lake exe cache get`), builds only the outputs missing from
-  them (expected, to be confirmed by the cold CI path: `InfinitaryLogic` with the TauCeti modules
-  it imports, and the classical entry module of `ComputableModelTheory`), and caches the result;
-  later runs reuse that cache.  No run builds all of Mathlib.
+  are.  The kernels re-check every exported proof term, so a wrong dependency output cannot make
+  a false proof pass; but the declarations compared are read from those outputs too: the
+  reference reads the outputs of Mathlib and its dependencies only, while the solution's
+  environment also reads those of TauCeti (where its `BoundedFormulaInf` and `Realize` come from),
+  `InfinitaryLogic` and `ComputableModelTheory`.  On a new pin, CI downloads the Mathlib cache
+  artifacts available for the pinned revision (`lake exe cache get`), builds only the outputs
+  missing from them (expected, to be confirmed by the cold CI path: `InfinitaryLogic` with the
+  TauCeti modules it imports, and the classical entry module of `ComputableModelTheory`), and caches
+  the result; later runs reuse that cache.  No run builds all of Mathlib.
 * That the reference's build is invisible to the solution side: what is checked is that it is
   not on the solution's search path and that `Challenge` is not in the solution's import
   closure.
