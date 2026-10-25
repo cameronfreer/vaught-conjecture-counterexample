@@ -65,7 +65,9 @@ and its citations are to that version.  Definition 4.27 of the current draft of 
 clause "`h` is non-decreasing", asks that `f(k)` be self-visible at `k`, and uses the visibility
 map of its Definition 4.26, which states the corrected clause of row 41; the reversal of
 `Label.exists_printedFrameTransformsTo_not_transformsTo` concerns the earlier text, and no theorem
-here compares Definition 4.27 with `Label.TransformsTo` (concordance note 42).
+here compares Definition 4.27 with `Label.TransformsTo` (concordance note 42).  Definitions 4.26
+and 4.27 have the same numbers in the published version [AFK26] v1 (the numbering map of
+`milestones/2026-10-25-published-v1-audit.md`).
 
 ## Placement
 

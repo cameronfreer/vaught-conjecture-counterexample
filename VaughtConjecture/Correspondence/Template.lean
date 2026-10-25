@@ -9,10 +9,14 @@ import VaughtConjecture.Stage.Basic
 # Templates and the coherent local rows of a labelling
 
 Roadmap, "Manuscript correspondence (required)", item 1, and Layer 2, "The templates of [AFK26]
-and the stage types here"; concordance row 9.
+and the stage types here"; concordance row 9.  The citations of this file are to the version of
+5 October 2026 of [AFK26], whose numbers, and several of whose definitions, differ from those of
+the current draft and the published v1; the current formulation is recorded after the printed
+templates.
 
-**The printed templates.**  A template [AFK26, Definition 4.6] is a frame with a row system: a
-frame [AFK26, Definition 4.4] on a plan `P` [AFK26, Definition 4.1] gives each cell `d` of a set
+**The printed templates (version of 5 October 2026).**  A template [AFK26, Definition 4.6] is a
+frame with a row system: a frame [AFK26, Definition 4.4] on a plan `P` [AFK26, Definition 4.1]
+gives each cell `d` of a set
 `D` a graded face `(B, j)` of `P`, that is `B ∈ P` and `j ≤ |B|`, its scope and grade
 [AFK26, Definition 4.2]; the cells below `d` are those whose scope and grade are at most those of
 `d`; and a row system [AFK26, Definition 4.5] is a local label `ℓ_d` at every cell `d`, a label of
@@ -31,6 +35,17 @@ geometry with exactly two extreme points on every closed set of at least two poi
 [AFK26, Definition 4.10] applies the function of [AFK26, Definitions 3.12 and 4.9], which is the
 stage reduction `Label.reduce β` (`Label.reduce_coe_eq_ite`), to every entry of every local label
 (`Template.reduce`).
+
+**The current formulation.**  In the current draft and in the published v1 of [AFK26], a frame is
+Definition 4.3 and a row system Definition 4.4, whose local labels take values in `{-∞} ∪ ω²`; a
+template is a triple `(c, Σ, p)` of a frame, a row system and a label `p` of the cells
+(Definition 4.5), in place of the pair `(c, Σ)`; a graded face `(B, j)` has `1 ≤ j ≤ |B|`
+(Definition 4.2); a plan is on a non-empty set, and every finite set lies in a closed set
+(Definition 4.1); and the `β`-truncation of a template is `(c, Σ, tr_β ∘ p)`, which truncates
+the label `p` and leaves the rows unchanged (Definition 4.10).  `Template` and `Template.reduce`
+transcribe the definitions of the version of 5 October 2026, not these; the concordance (notes 9
+and 43) reads the triple as the fixed semantic rows of a scheme with a separate labelling, and
+that reading is not compiled in this file.
 
 **Stage types as templates.**  A stage type is a scheme with fixed coded rows (the semantics) and a
 separate lawful labelling `p` of its cells.  Its template (`StageType.toTemplate`) is its frame
@@ -63,12 +78,16 @@ below `d` (`coherentRows`).
 **Departures.**  The cells of a template here are `Fin card`, finitely many, while the printed set
 of cells is arbitrary.  The frames of the stage types are well formed (`Scheme.IsWellFormed`), and
 the well-formed cell schemes are exactly the frames with finitely many cells and positive grades
-(`isWellFormed_iff_isFrame`), while a printed graded face allows the grade `0`; the stage types
+(`isWellFormed_iff_isFrame`), while a printed graded face of the version of 5 October 2026 allows
+the grade `0` (Definition 4.2 of the current draft requires `1 ≤ j`); the stage types
 carry their fixed coded rows, which a printed template does not; the printed restriction keeps
 the points of the closed set, while the restriction here renames them along the embedding `f`;
 and the row systems of the stage types are the coherent ones.  Whether the legal templates
 of [AFK26, Definition 4.27] (with the lawful local labellings and bountiful rows of
-[AFK26, Definition 4.26]) are exactly the coherent ones is not settled by these theorems.
+[AFK26, Definition 4.26]), in the version of 5 October 2026, are exactly the coherent ones is not
+settled by these theorems; nor is the same question for the legal templates of Definition 4.29
+of the current draft and the published v1, with the lawful local labellings and bountiful rows of
+their Definition 4.28.
 
 ## Placement
 
@@ -90,8 +109,9 @@ namespace Correspondence
 
 variable {ι α : Type*} {D : CellScheme ι α}
 
-/-- A **row system** on a cell scheme [AFK26, Definition 4.5]: a local label at every cell `d`, a
-label of each cell below `d`. -/
+/-- A **row system** on a cell scheme [AFK26, Definition 4.5] (version of 5 October 2026): a local
+label at every cell `d`, a label of each cell below `d`.  The row system of the current draft and
+the published v1 (Definition 4.4) also bounds the local labels by `{-∞} ∪ ω²`. -/
 abbrev RowSystem (D : CellScheme ι α) : Type _ :=
   ∀ d : ι, D.below (D.gradedIndex d) → Label.{u}
 
@@ -147,10 +167,12 @@ noncomputable def lawfulRowsEquiv {ι α : Type*} {D : CellScheme ι α} (R : D.
   left_inv p := Subtype.ext (diagonal_coherentRows p.1)
   right_inv r := Subtype.ext r.2.1.coherentRows_diagonal
 
-/-- A cell scheme is a **frame** [AFK26, Definition 4.4] when its faces form a plan on its ground
-set (`Geometry.IsPlan`, for the plan of [AFK26, Definition 4.1]) and every cell is mapped to a
-graded face of the plan [AFK26, Definition 4.2]: its scope is a face, and its grade is at most the
-size of its scope.  The grade `0` is allowed. -/
+/-- A cell scheme is a **frame** [AFK26, Definition 4.4] (version of 5 October 2026; Definition 4.3
+of the current draft) when its faces form a plan on its ground set (`Geometry.IsPlan`, for the
+plan of [AFK26, Definition 4.1]) and every cell is mapped to a graded face of the plan
+[AFK26, Definition 4.2]: its scope is a face, and its grade is at most the size of its scope.
+The grade `0` is allowed, as in the graded faces of the version of 5 October 2026; Definition 4.2
+of the current draft requires `1 ≤ j`. -/
 structure IsFrame [DecidableEq α] (D : CellScheme ι α) : Prop where
   /-- The faces form a plan on the ground set [AFK26, Definition 4.1]. -/
   isPlan : Geometry.IsPlan D.ground D.faces
@@ -165,16 +187,19 @@ theorem isFrame_of_isWellFormed [DecidableEq α] (hD : D.IsWellFormed) : IsFrame
 
 /-- **The well-formed cell schemes are the frames with finitely many cells and positive grades**:
 the laws of a cell scheme here are the printed frame conditions together with the finiteness of
-the cells and the positivity of the grades, where a printed graded face allows the grade `0`. -/
+the cells and the positivity of the grades, where a printed graded face of the version of
+5 October 2026 allows the grade `0` (Definition 4.2 of the current draft requires `1 ≤ j`). -/
 theorem isWellFormed_iff_isFrame [DecidableEq α] :
     D.IsWellFormed ↔ Finite ι ∧ IsFrame D ∧ ∀ d, 0 < D.grade d :=
   ⟨fun hD ↦ ⟨hD.finite, isFrame_of_isWellFormed hD, hD.grade_pos⟩, fun ⟨hf, hD, hpos⟩ ↦
     ⟨hf, hD.isPlan, fun d ↦ ⟨hD.scope_mem d, hpos d, hD.grade_le_card d⟩⟩⟩
 
-/-- A **template** [AFK26, Definition 4.6], one field for each clause: a frame on the points
-`Fin n` with cells `Fin card` ([AFK26, Definition 4.4]: the faces of the cell scheme are the plan,
-and its scopes and grades map the cells to graded faces) and a row system on it
-([AFK26, Definition 4.5]). -/
+/-- A **template** [AFK26, Definition 4.6] (version of 5 October 2026), one field for each clause:
+a frame on the points `Fin n` with cells `Fin card` ([AFK26, Definition 4.4]: the faces of the
+cell scheme are the plan, and its scopes and grades map the cells to graded faces) and a row
+system on it ([AFK26, Definition 4.5]).  In the current draft and the published v1 a template is
+the triple `(c, Σ, p)` of Definition 4.5, with a label `p` of the cells besides the frame and the
+rows. -/
 structure Template (n : ℕ) : Type (u + 1) where
   /-- The number of cells. -/
   card : ℕ
@@ -186,7 +211,9 @@ structure Template (n : ℕ) : Type (u + 1) where
   rows : RowSystem.{u} frame
 
 /-- The **entrywise stage reduction** of a template to `β`, the `β`-truncation of a template of
-[AFK26, Definition 4.10]: every entry of every local label is reduced to `β`. -/
+[AFK26, Definition 4.10] in the version of 5 October 2026: every entry of every local label is
+reduced to `β`.  In the current draft and the published v1, Definition 4.10 truncates the label
+`p` of the triple `(c, Σ, p)` alone, `(c, Σ, tr_β ∘ p)`, and leaves the rows unchanged. -/
 noncomputable def Template.reduce {n : ℕ} (β : Ordinal.{u}) (t : Template.{u} n) :
     Template.{u} n :=
   ⟨t.card, t.frame, t.isFrame, fun d e ↦ Label.reduce β (t.rows d e)⟩
@@ -248,7 +275,8 @@ theorem ofCoherentRows_toTemplate :
   simp only [ofCoherentRows, diagonal_coherentRows]
 
 /-- **Compatibility with projection**: the template of the stage reduction of a stage type is the
-entrywise reduction of its template, the printed truncation [AFK26, Definition 4.10]. -/
+entrywise reduction of its template, the printed truncation [AFK26, Definition 4.10] of the
+version of 5 October 2026. -/
 theorem toTemplate_reduce (hβ : Order.IsSuccPrelimit β) :
     (t.reduce hβ).toTemplate = t.toTemplate.reduce β := by
   -- both templates have the frame of `t`; their rows, by the definitions of `toTemplate`,
