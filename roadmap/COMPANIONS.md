@@ -53,8 +53,10 @@ definability claims (`README.md`, "Status of the optional results").
   for the lower bound (layer 6), and `w_η ∈ Q` its base class; by expansion uniqueness `w_η` lies
   in the loss at `η`.
 
-Upstream names below were checked in the pinned InfinitaryLogic (`eb9f12d`, signatures checked), the
-pinned ComputableModelTheory (`a1fe761`, signatures checked), and Mathlib, except those marked
+Upstream names below were checked in InfinitaryLogic `eb9f12d` and ComputableModelTheory `a1fe761`
+(signatures checked; ancestors of the current pins `004f638` and `5d5f65c`, where the check is open
+until the sketches elaborate; `IMPLEMENTATION.md`, "Dependency pins"), and Mathlib, except those
+marked
 "available upstream" or "prospective" (`README.md`, Layer 0); the sketch `#check`s or applies only
 names available at the current pins.
 
