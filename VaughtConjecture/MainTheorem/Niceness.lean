@@ -33,8 +33,10 @@ is its stage type; the invariant `Q` of a lift at `λ_α` is realized at the sam
 higher stage `λ_{α'}` when that lift evaluates the tuple to `Q` read at `λ_{α'}`
 (`StageType.castLE`, the same scheme and labels): the comparison is in the alphabet of all labels.
 
-**Niceness** [AFK26, Definition 2.19] (numbering of the current draft).  A tuple `u` is **nice at
-the threshold `α` with the invariant `Q`** (`IsNiceTupleAt`) when
+**Niceness** [AFK26, Definition 2.21], called *eventual determination* in the current draft and
+in the published v1; the version of 5 October 2026 calls it *niceness* (its Definition 2.19), with
+the same two clauses.  A tuple `u` is **nice at the threshold `α` with the invariant `Q`**
+(`IsNiceTupleAt`) when
 1. some lift of `M` at `α` realizes `Q` at `u` (`IsNiceTupleAt.exists_lift`), and
 2. every lift of `M` at every countable index `α' > α` realizes `Q` at `u`
    (`IsNiceTupleAt.forall_lift`).
@@ -74,8 +76,9 @@ and the apex coatom extension property at every countable block stage
 (`MainTheorem.exists_maximalRefinement`). It gives `HasTerminalRefinement.{0}` by projection
 (`HasTerminalRefinement.of_hasApexCoatomExtensions`); the arbitrary-universe hypothesis remains.
 
-**Condition (c) of the system** [AFK26, Definition 2.22, clause (c)]: the base reduct of every
-model of the system is nice.  Here, conditional on `HasTerminalRefinement` and
+**Condition (c) of the system** [AFK26, Definition 2.23, clause (c)]: the base reduct of every
+model of the system is nice (Definition 2.22 (c) in the version of 5 October 2026).  Here,
+conditional on `HasTerminalRefinement` and
 `Expansion.NextBlockUniqueness`, explicit in arbitrary carrier universes, the base reduct at a block
 stage on a countable carrier is nice (`Realization.IsModel.isNice_toStructure_reduce`; for a base
 structure with a lift, `isNice_of_hasTerminalRefinement`).  One terminal refinement serves every
@@ -101,7 +104,7 @@ section Niceness
 
 variable (M : Type w) [baseLanguage.{0}.Structure M] {n : ℕ}
 
-/-- **Niceness of a tuple at a threshold** [AFK26, Definition 2.19]: the injective tuple `u` of the
+/-- **Niceness of a tuple at a threshold** [AFK26, Definition 2.21]: the injective tuple `u` of the
 base structure `M` is nice at the threshold `α` with the invariant `Q`, a stage type at `λ_α`.
 One field for each of the two clauses of the definition. -/
 structure IsNiceTupleAt (u : Fin n ↪ M) (α : Ordinal.{0}) (Q : StageType.{0} (blockStage α) n) :
@@ -113,12 +116,12 @@ structure IsNiceTupleAt (u : Fin n ↪ M) (α : Ordinal.{0}) (Q : StageType.{0} 
     ∀ e : ModelExpansion M (blockStage α'),
       e.1.eval u = some (Q.castLE (blockStage_mono h.le))
 
-/-- **A nice tuple** [AFK26, Definition 2.19]: the injective tuple `u` of `M` is nice at some
+/-- **A nice tuple** [AFK26, Definition 2.21]: the injective tuple `u` of `M` is nice at some
 countable threshold `α` with some invariant `Q`. -/
 def IsNiceTuple (u : Fin n ↪ M) : Prop :=
   ∃ α < ω₁, ∃ Q : StageType.{0} (blockStage α) n, IsNiceTupleAt M u α Q
 
-/-- **A nice base structure** [AFK26, Definition 2.19, last sentence]: every closed tuple of `M`,
+/-- **A nice base structure** [AFK26, Definition 2.21, last sentence]: every closed tuple of `M`,
 read as a tuple of positive arity supported in the realization of `M` at `ω`, is nice.  The empty
 tuple, supported in every base structure with a lift, is not closed in [AFK26] and is excluded. -/
 structure IsNice : Prop where
@@ -229,7 +232,7 @@ theorem isNice_of_hasTerminalRefinement (hmax : HasTerminalRefinement.{w})
 
 end Refinement
 
-/-- **Condition (c) of the system** [AFK26, Definition 2.22, clause (c)], conditional on
+/-- **Condition (c) of the system** [AFK26, Definition 2.23, clause (c)], conditional on
 `HasTerminalRefinement` and `Expansion.NextBlockUniqueness`, explicit in universe `w`: the base
 reduct of every model at a block stage on a countable carrier is nice. -/
 theorem Realization.IsModel.isNice_toStructure_reduce (hmax : HasTerminalRefinement.{w})
