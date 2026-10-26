@@ -47,8 +47,12 @@ back-and-forth equivalence (`isoSetoid_refines_bfEquivSetoid`).  The hypothesis 
 axiomatizes the base is not used.
 
 **Theorem 2.19** (`WeakSystem.thinnessTarget`, `WeakSystem.ThinnessTarget`): no perfect set of
-pairwise nonisomorphic models of `φ` coded on `ℕ`, under the same hypotheses
-(`thinnessTarget_of_countableBFClassesTarget` with `countableBFClassesTarget`).
+pairwise nonisomorphic models of `φ` coded on `ℕ`, under the same hypotheses.
+
+Both are proved with no sentence hypothesis, as
+`WeakSystem.countable_bfClasses_of_countable_classesWithoutLift` and
+`WeakSystem.not_hasPerfectSet_of_countable_classesWithoutLift`; the two targets, whose statements
+carry the hypothesis `IsBaseSentence`, are wrappers of them.
 -/
 
 universe w w' wc wc' v
@@ -240,16 +244,18 @@ theorem bfEquivSetoid_r_of_isLiftAt {β : SystemLevel} {c c' : ModelsOf φ}
   rw [hGc, hG'c] at hbf
   exact hbf
 
-/-- **[AFK26, Theorem 2.19], its back-and-forth content, coded** (`CountableBFClassesTarget`): if,
+omit [Countable (Σ n, Lc.Relations n)] in
+/-- **[AFK26, Theorem 2.19], its back-and-forth content, coded, with no sentence hypothesis**: if,
 for every countable `β`, the coded classes with a member without a lift at `β` are countably many,
 then for every `η < ω₁` the models of `φ` coded on `ℕ` fall into countably many classes of
 `bfEquivSetoid φ η`.  At the level `β = η`: the classes whose chosen code has a lift at `β` inject
 into the countable set of `β`-invariants (`exists_relMap_fixed_invariant`,
 `InvariantSystem.countable`, `bfEquivSetoid_r_of_isLiftAt`); the other classes are images of
-classes of `classesWithoutLift E φ β` (`isoSetoid_refines_bfEquivSetoid`).  The hypothesis that
-`φ` axiomatizes the base is not used.  Correspondence with the printed definitions. -/
-theorem countableBFClassesTarget : W.CountableBFClassesTarget E φ := by
-  intro _ hA η hη
+classes of `classesWithoutLift E φ β` (`isoSetoid_refines_bfEquivSetoid`).  No hypothesis that `φ`
+axiomatizes the base.  Correspondence with the printed definitions. -/
+theorem countable_bfClasses_of_countable_classesWithoutLift
+    (hA : ∀ β : SystemLevel, (W.classesWithoutLift E φ β).Countable) (η : Ordinal.{0})
+    (hη : η < ω₁) : Countable (Quotient (bfEquivSetoid φ η)) := by
   let β : SystemLevel := ⟨η, hη⟩
   let toBF : Quotient (isoSetoid φ) → Quotient (bfEquivSetoid φ η) :=
     Quotient.lift (fun c ↦ Quotient.mk (bfEquivSetoid φ η) c)
@@ -284,12 +290,34 @@ theorem countableBFClassesTarget : W.CountableBFClassesTarget E φ := by
     · exact Or.inr ⟨Quotient.mk _ x.out, ⟨x.out, rfl, not_exists.mp h⟩, Quotient.out_eq x⟩
   exact Set.countable_univ_iff.mp ((hAc.union hlow).mono hcover)
 
+/-- **[AFK26, Theorem 2.19], its back-and-forth content, coded** (`CountableBFClassesTarget`): if,
+for every countable `β`, the coded classes with a member without a lift at `β` are countably many,
+then for every `η < ω₁` the models of `φ` coded on `ℕ` fall into countably many classes of
+`bfEquivSetoid φ η`.  A wrapper of `countable_bfClasses_of_countable_classesWithoutLift`: the
+hypothesis that `φ` axiomatizes the base is not used.  Correspondence with the printed
+definitions. -/
+theorem countableBFClassesTarget : W.CountableBFClassesTarget E φ :=
+  fun _ hA ↦ W.countable_bfClasses_of_countable_classesWithoutLift E φ hA
+
+/-- **[AFK26, Theorem 2.19], coded, with no sentence hypothesis**: if, for every countable `β`, the
+coded classes with a member without a lift at `β` are countably many, there is no perfect set of
+pairwise nonisomorphic models of `φ` coded on `ℕ`
+(`countable_bfClasses_of_countable_classesWithoutLift` and
+`MainTheorem.isThinOnNatModels_of_countable_bfClasses`).  Correspondence with the printed
+definitions. -/
+theorem not_hasPerfectSet_of_countable_classesWithoutLift
+    (hA : ∀ β : SystemLevel, (W.classesWithoutLift E φ β).Countable) :
+    ¬ φ.HasPerfectSetOfPairwiseNonisomorphicNatModels :=
+  MainTheorem.isThinOnNatModels_of_countable_bfClasses
+    (W.countable_bfClasses_of_countable_classesWithoutLift E φ hA)
+
 /-- **[AFK26, Theorem 2.19], coded** (`ThinnessTarget`): if, for every countable `β`, the coded
 classes with a member without a lift at `β` are countably many, there is no perfect set of pairwise
-nonisomorphic models of `φ` coded on `ℕ` (`thinnessTarget_of_countableBFClassesTarget` with
-`countableBFClassesTarget`).  Correspondence with the printed definitions. -/
+nonisomorphic models of `φ` coded on `ℕ`.  A wrapper of
+`not_hasPerfectSet_of_countable_classesWithoutLift`: the hypothesis that `φ` axiomatizes the base
+is not used.  Correspondence with the printed definitions. -/
 theorem thinnessTarget : W.ThinnessTarget E φ :=
-  thinnessTarget_of_countableBFClassesTarget E (W.countableBFClassesTarget E φ)
+  fun _ hA ↦ W.not_hasPerfectSet_of_countable_classesWithoutLift E φ hA
 
 end Count
 
