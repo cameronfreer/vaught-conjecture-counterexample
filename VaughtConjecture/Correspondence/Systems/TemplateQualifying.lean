@@ -30,8 +30,13 @@ the base on all countable nonempty carriers (`templateBaseModelsTarget`,
 `templateWeakSystem_isBaseSentenceOnCarriers`), so it is a qualifying sentence for the system
 (`templateQualifyingSystem_isQualifyingSentence`, through InfinitaryLogic's
 `mem_modelsOf_iff_realize`).  Together: `templateQualifyingSentenceTarget`
-(`TemplateQualifyingSentenceTarget`).  No uniqueness of maximal lifts and no Reconstruction for
-`K[L]` enter here.
+(`TemplateQualifyingSentenceTarget`).
+
+**Inputs from `K[L]`.**  Conditions (a) and (c) come from the maximal completion of `K[L]`
+(`maximalCompletionTarget`), whose proof uses Reconstruction (`reconstructionTarget`,
+[AFK26, Proposition 4.34]).  The uniqueness of maximal lifts (`maximalLiftUniqueTarget`) and the
+isomorphism invariance of the maximal stage (`maximalStageInvariantTarget`) are not used, here or
+in any declaration this file depends on.
 -/
 
 namespace VaughtConjecture
