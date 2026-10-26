@@ -137,9 +137,9 @@ theorem fewMaximalCodingTarget (W : WeakSystem.{w, w', 0} D S) : W.FewMaximalCod
     obtain ⟨T', hT'c, hT'⟩ := hnat
     have hcf (n : ℕ) :
         Countable {G : L.Structure (Fin (n + 1)) // G ∈ T n ∧ W.IsMaximalAt β G} :=
-      ((hTc n).mono fun _ hG ↦ hG.1).to_subtype
+      ((hTc n).mono (s₁ := {G | G ∈ T n ∧ W.IsMaximalAt β G}) fun _ hG ↦ hG.1).to_subtype
     have hcn : Countable {G : L.Structure ℕ // G ∈ T' ∧ W.IsMaximalAt β G} :=
-      (hT'c.mono fun _ hG ↦ hG.1).to_subtype
+      (hT'c.mono (s₁ := {G | G ∈ T' ∧ W.IsMaximalAt β G}) fun _ hG ↦ hG.1).to_subtype
     let ι := (Σ n : ℕ, {G : L.Structure (Fin (n + 1)) // G ∈ T n ∧ W.IsMaximalAt β G}) ⊕
       {G : L.Structure ℕ // G ∈ T' ∧ W.IsMaximalAt β G}
     let C : ι → Type := Sum.elim (fun p ↦ Fin (p.1 + 1)) fun _ ↦ ℕ
