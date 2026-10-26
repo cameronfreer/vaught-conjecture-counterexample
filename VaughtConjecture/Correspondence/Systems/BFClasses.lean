@@ -45,6 +45,10 @@ system `W` (`WeakSystem D S`) and a base sublanguage `E`:
 `classesWithoutLift E φ β` (countable by hypothesis) under the passage from isomorphism to
 back-and-forth equivalence (`isoSetoid_refines_bfEquivSetoid`).  The hypothesis that `φ`
 axiomatizes the base is not used.
+
+**Theorem 2.19** (`WeakSystem.thinnessTarget`, `WeakSystem.ThinnessTarget`): no perfect set of
+pairwise nonisomorphic models of `φ` coded on `ℕ`, under the same hypotheses
+(`thinnessTarget_of_countableBFClassesTarget` with `countableBFClassesTarget`).
 -/
 
 universe w w' wc wc' v
@@ -279,6 +283,13 @@ theorem countableBFClassesTarget : W.CountableBFClassesTarget E φ := by
     · exact Or.inl h
     · exact Or.inr ⟨Quotient.mk _ x.out, ⟨x.out, rfl, not_exists.mp h⟩, Quotient.out_eq x⟩
   exact Set.countable_univ_iff.mp ((hAc.union hlow).mono hcover)
+
+/-- **[AFK26, Theorem 2.19], coded** (`ThinnessTarget`): if, for every countable `β`, the coded
+classes with a member without a lift at `β` are countably many, there is no perfect set of pairwise
+nonisomorphic models of `φ` coded on `ℕ` (`thinnessTarget_of_countableBFClassesTarget` with
+`countableBFClassesTarget`).  Correspondence with the printed definitions. -/
+theorem thinnessTarget : W.ThinnessTarget E φ :=
+  thinnessTarget_of_countableBFClassesTarget E (W.countableBFClassesTarget E φ)
 
 end Count
 
