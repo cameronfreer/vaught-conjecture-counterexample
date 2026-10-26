@@ -327,7 +327,8 @@ theorem exists_realization_classReading_eq [Countable M] (hα : Order.IsSuccPrel
     Function.Injective.countable (f := fun e : Fin k ↪ M ↦ (e : Fin k → M)) DFunLike.coe_injective
   have := StageType.countable hcount
   have : Countable {x : Label.{u} // Label.IsPermittedCutoff α x} :=
-    ((Label.countable_setOf_atStage hcount).mono fun _ hx ↦ Or.inl hx.2).to_subtype
+    ((Label.countable_setOf_atStage hcount).mono (s₁ := {x | Label.IsPermittedCutoff α x})
+      fun _ hx ↦ Or.inl hx.2).to_subtype
   let ι := M ⊕ Σ (k m : ℕ), (Fin k ↪ M) × StageType.{u} α m × (Fin k ↪ Fin m) ×
     {x : Label.{u} // Label.IsPermittedCutoff α x}
   let Dense : ι → Set S.Condition := fun i ↦ match i with
