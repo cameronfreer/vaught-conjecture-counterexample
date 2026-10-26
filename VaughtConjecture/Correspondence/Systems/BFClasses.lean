@@ -33,6 +33,18 @@ system `W` (`WeakSystem D S`) and a base sublanguage `E`:
   every member, equivalently some member, has one (`WeakSystem.not_mem_classesWithoutLift_iff`,
   `WeakSystem.not_mem_classesWithoutLift_iff_exists`); so either `q ∈ classesWithoutLift E φ β`
   or every member of `q` has a lift at `β` on `ℕ` (`WeakSystem.mem_classesWithoutLift_or`).
+
+**Theorem 2.19, its back-and-forth content** (`WeakSystem.countableBFClassesTarget`,
+`WeakSystem.CountableBFClassesTarget`): for `η < ω₁`, take the level `β = η`.  A class `x` of
+`bfEquivSetoid φ η` whose chosen code has a lift `G` at `β` on `ℕ`: `G` holds a `β`-invariant
+(`exists_relMap_fixed_invariant`), a member of the countable set of the field
+`InvariantSystem.countable`, and two such classes holding one invariant are equal by
+[AFK26, Proposition 2.18] (`bfEquivOfCommonInvariantTarget`, through
+`WeakSystem.bfEquivSetoid_r_of_isLiftAt`): a common invariant gives back-and-forth equivalence at
+`β = η`, not isomorphism.  A class whose chosen code has no lift at `β` is the image of a class of
+`classesWithoutLift E φ β` (countable by hypothesis) under the passage from isomorphism to
+back-and-forth equivalence (`isoSetoid_refines_bfEquivSetoid`).  The hypothesis that `φ`
+axiomatizes the base is not used.
 -/
 
 universe w w' wc wc' v
@@ -197,6 +209,78 @@ theorem mem_classesWithoutLift_or (q : Quotient (isoSetoid φ)) :
   · exact Or.inr ((W.not_mem_classesWithoutLift_iff E φ β q).mp h)
 
 end Coded
+
+/-! ### Theorem 2.19 -/
+
+section Count
+
+variable [Lc.IsRelational] [Countable (Σ n, Lc.Relations n)]
+variable (W : WeakSystem.{w, w', 0} D S) (φ : Lc.Sentenceω)
+
+omit [Countable (Σ n, Lc.Relations n)] in
+/-- **Coded models with lifts at `β` holding one invariant are back-and-forth equivalent at `β`**:
+if `G` and `G'` are lifts at `β` on `ℕ` of the codes `c` and `c'` and hold one invariant `Q` of
+some tuples, then `c` and `c'` are related by `bfEquivSetoid φ β` ([AFK26, Proposition 2.18],
+`bfEquivOfCommonInvariantTarget`, with the reducts `G↾L_c = c` and `G'↾L_c = c'`).
+Correspondence with the printed definitions. -/
+theorem bfEquivSetoid_r_of_isLiftAt {β : SystemLevel} {c c' : ModelsOf φ}
+    (Q : Σ n, σ.Invariant n)
+    (h : ∃ G : L.Structure ℕ, W.IsLiftAt E β G c.1.toStructure ∧
+      ∃ a : Fin Q.1 → ℕ, RelMap (L := L) (self := G) Q.2.1 a)
+    (h' : ∃ G' : L.Structure ℕ, W.IsLiftAt E β G' c'.1.toStructure ∧
+      ∃ a' : Fin Q.1 → ℕ, RelMap (L := L) (self := G') Q.2.1 a') :
+    (bfEquivSetoid φ β.1).r c c' := by
+  obtain ⟨G, ⟨hG, hGc⟩, a, ha⟩ := h
+  obtain ⟨G', ⟨hG', hG'c⟩, a', ha'⟩ := h'
+  have hbf := W.bfEquivOfCommonInvariantTarget E ℕ ℕ β G G' hG hG' ⟨Q.1, Q.2, a, a', ha, ha'⟩
+  rw [hGc, hG'c] at hbf
+  exact hbf
+
+/-- **[AFK26, Theorem 2.19], its back-and-forth content, coded** (`CountableBFClassesTarget`): if,
+for every countable `β`, the coded classes with a member without a lift at `β` are countably many,
+then for every `η < ω₁` the models of `φ` coded on `ℕ` fall into countably many classes of
+`bfEquivSetoid φ η`.  At the level `β = η`: the classes whose chosen code has a lift at `β` inject
+into the countable set of `β`-invariants (`exists_relMap_fixed_invariant`,
+`InvariantSystem.countable`, `bfEquivSetoid_r_of_isLiftAt`); the other classes are images of
+classes of `classesWithoutLift E φ β` (`isoSetoid_refines_bfEquivSetoid`).  The hypothesis that
+`φ` axiomatizes the base is not used.  Correspondence with the printed definitions. -/
+theorem countableBFClassesTarget : W.CountableBFClassesTarget E φ := by
+  intro _ hA η hη
+  let β : SystemLevel := ⟨η, hη⟩
+  let toBF : Quotient (isoSetoid φ) → Quotient (bfEquivSetoid φ η) :=
+    Quotient.lift (fun c ↦ Quotient.mk (bfEquivSetoid φ η) c)
+      fun _ _ h ↦ Quotient.sound (isoSetoid_refines_bfEquivSetoid _ _ h)
+  -- the classes whose chosen code has no lift at `β`
+  have hlow : (toBF '' W.classesWithoutLift E φ β).Countable := (hA β).image _
+  -- the classes whose chosen code has a lift at `β`
+  let F := {Q : Σ n, σ.Invariant n | S.τ β Q.2 = Q.2}
+  have hF : F.Countable := S.countable β
+  let A := {x : Quotient (bfEquivSetoid φ η) |
+    ∃ G : L.Structure ℕ, W.IsLiftAt E β G x.out.1.toStructure}
+  have hex (x : A) : ∃ Q ∈ F, ∃ G : L.Structure ℕ, W.IsLiftAt E β G x.1.out.1.toStructure ∧
+      ∃ a : Fin Q.1 → ℕ, RelMap (L := L) (self := G) Q.2.1 a := by
+    obtain ⟨G, hG⟩ := x.2
+    obtain ⟨Q, hQ, a, ha⟩ := W.exists_relMap_fixed_invariant hG.1
+    exact ⟨Q, hQ, G, hG, a, ha⟩
+  have hAc : A.Countable := by
+    have := hF.to_subtype
+    refine Set.countable_coe_iff.mp (Function.Injective.countable
+      (f := fun x : A ↦ (⟨(hex x).choose, (hex x).choose_spec.1⟩ : F)) fun x x' hxx' ↦ ?_)
+    have hQ : (hex x).choose = (hex x').choose := congrArg Subtype.val hxx'
+    refine Subtype.ext ?_
+    rw [← Quotient.out_eq x.1, ← Quotient.out_eq x'.1]
+    exact Quotient.sound (W.bfEquivSetoid_r_of_isLiftAt E φ (β := β) _ (hex x).choose_spec.2
+      (hQ ▸ (hex x').choose_spec.2))
+  -- every class is in one of the two parts
+  have hcover : (Set.univ : Set (Quotient (bfEquivSetoid φ η))) ⊆
+      A ∪ toBF '' W.classesWithoutLift E φ β := by
+    rintro x -
+    by_cases h : ∃ G : L.Structure ℕ, W.IsLiftAt E β G x.out.1.toStructure
+    · exact Or.inl h
+    · exact Or.inr ⟨Quotient.mk _ x.out, ⟨x.out, rfl, not_exists.mp h⟩, Quotient.out_eq x⟩
+  exact Set.countable_univ_iff.mp ((hAc.union hlow).mono hcover)
+
+end Count
 
 end WeakSystem
 
