@@ -61,6 +61,15 @@ countable, and a base sublanguage `E`, this file compares tuples pattern-matched
   `BFEquiv ι` in the reducts, by `Ordinal.limitRecOn` on the ordinal of `ι`, with the induction
   hypothesis at `ι` at a successor `ι + 1` and at every `γ < ι` at a limit `ι`.
 
+**The consequences**:
+
+* `WeakSystem.bfEquivOfMatchedTarget` (`WeakSystem.BFEquivOfMatchedTarget`, closed tuples, at
+  `ι = β`);
+* `WeakSystem.bfEquivOfCommonInvariantTarget` (`WeakSystem.BFEquivOfCommonInvariantTarget`,
+  [AFK26, Proposition 2.18] as printed, with `BFEquiv β` at the empty tuple in place of `≡_β`):
+  the empty tuple is pattern-matched at `β` along `Fin.elim0` from tuples realizing the common
+  invariant.
+
 The weak-system fields used are `isCompatible`, `fixed`, `dense` and `projection_mem`; the
 fields `compatibleWith`, `nonempty` and `isoClosed` are not used.
 -/
@@ -426,6 +435,33 @@ theorem bfEquivOfPatternMatchedTarget (W : WeakSystem.{w, w', v} D S) :
     intro γ hγ
     have hγ' : (⟨γ, hγ.trans ho⟩ : SystemLevel) < ⟨o, ho⟩ := hγ
     exact ih γ hγ (hγ.trans ho) (hγ'.le.trans hle) x y (hm.mono hγ'.le)
+
+/-! ### The consequences -/
+
+/-- **[AFK26, Proposition 2.18], for closed tuples** (`BFEquivOfMatchedTarget`): tuples with one
+common invariant in `G ∈ K_β` and `H ∈ K_β` are `BFEquiv β` in the reducts.  Matched tuples are
+pattern-matched along the identity map (`bfEquivOfMatchedTarget_of_patternMatched`), and
+`bfEquivOfPatternMatchedTarget`.  Correspondence with the printed definitions. -/
+theorem bfEquivOfMatchedTarget (W : WeakSystem.{w, w', v} D S) : W.BFEquivOfMatchedTarget E :=
+  bfEquivOfMatchedTarget_of_patternMatched E (W.bfEquivOfPatternMatchedTarget E)
+
+/-- **[AFK26, Proposition 2.18], as printed** (`BFEquivOfCommonInvariantTarget`): if
+`G ∈ K_β` on `M` and `H ∈ K_β` on `N` (countable carriers) realize a common invariant `Q`, then
+`G↾L_c` and `H↾L_c` are `BFEquiv β` at the empty tuple.  `τ_β(G) = G` and `τ_β(H) = H` (`fixed`),
+so the realizing tuples `a`, `b` are matched at `β`; the empty tuples are read from them along
+`Fin.elim0 : Fin 0 → Fin n`, so they are pattern-matched at `β`
+(`bfEquivOfPatternMatchedTarget` at `ι = β`).  Correspondence with the printed definitions. -/
+theorem bfEquivOfCommonInvariantTarget (W : WeakSystem.{w, w', v} D S) :
+    W.BFEquivOfCommonInvariantTarget E := by
+  rintro M N _ _ β G H hG hH ⟨n, Q, a, b, ha, hb⟩
+  have hm : S.IsMatchedAt β G H a b := by
+    refine ⟨Q, ?_, ?_⟩
+    · rw [W.fixed hG]
+      exact ha
+    · rw [W.fixed hH]
+      exact hb
+  exact W.bfEquivOfPatternMatchedTarget E M N β G H hG hH β le_rfl Fin.elim0 Fin.elim0
+    ⟨n, a, b, Fin.elim0, funext fun i ↦ i.elim0, funext fun i ↦ i.elim0, hm⟩
 
 end WeakSystem
 
