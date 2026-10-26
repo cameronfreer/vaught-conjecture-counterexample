@@ -53,6 +53,16 @@ countable, and a base sublanguage `E`, this file compares tuples pattern-matched
   witnessing tuple is answered by the corresponding entry; a genuinely new point by `ι`-density
   of `τ_ι₁(H) ∈ K_ι₁` (`WeakSystem.dense`, `WeakSystem.projection_mem_of_le`);
 * `WeakSystem.back_of_isPatternMatchedAt`: the same, by any point of `N`, by symmetry.
+
+**The induction on levels**:
+
+* `WeakSystem.bfEquivOfPatternMatchedTarget` (`WeakSystem.BFEquivOfPatternMatchedTarget`,
+  [AFK26, Proposition 2.18] for arbitrary tuples): tuples pattern-matched at `ι ≤ β` are
+  `BFEquiv ι` in the reducts, by `Ordinal.limitRecOn` on the ordinal of `ι`, with the induction
+  hypothesis at `ι` at a successor `ι + 1` and at every `γ < ι` at a limit `ι`.
+
+The weak-system fields used are `isCompatible`, `fixed`, `dense` and `projection_mem`; the
+fields `compatibleWith`, `nonempty` and `isoClosed` are not used.
 -/
 
 universe w w' wc wc' v
@@ -366,6 +376,56 @@ theorem back_of_isPatternMatchedAt {M N : Type v} [Countable M] [Countable N]
     ∃ c : M, S.IsPatternMatchedAt ι G H (Fin.snoc x c) (Fin.snoc y d) := by
   obtain ⟨c, h⟩ := forth_of_isPatternMatchedAt hH hG hlt hle hm.symm d
   exact ⟨c, h.symm⟩
+
+/-! ### The induction on levels -/
+
+variable {Lc : Language.{wc, wc'}} (E : σ.BaseSublanguage Lc)
+
+/-- **[AFK26, Proposition 2.18], for arbitrary tuples** (`BFEquivOfPatternMatchedTarget`): for
+`G ∈ K_β` on `M` and `H ∈ K_β` on `N` (countable carriers) and a level `ι ≤ β`, tuples
+pattern-matched at `ι` are back-and-forth equivalent at `ι` in the reducts
+(`BFEquiv ι` of `(G↾L_c, x)` and `(H↾L_c, y)`).  Induction on the ordinal of `ι`
+(`Ordinal.limitRecOn`), for all tuples at once:
+
+* `ι = 0`: `BFEquiv.zero` and atomic agreement (`sameAtomicType_of_isPatternMatchedAt`);
+* `ι + 1 ≤ β`: `BFEquiv.succ`; the first conjunct by the induction hypothesis at `ι` applied to
+  the matching at `ι` (`InvariantSystem.IsPatternMatchedAt.mono`), the forth and back conjuncts by
+  the induction hypothesis at `ι` applied to the extensions (`forth_of_isPatternMatchedAt`,
+  `back_of_isPatternMatchedAt`, with `ι < ι + 1 ≤ β`);
+* `ι` a limit: `BFEquiv.limit`; for `γ < ι`, the induction hypothesis at `γ` applied to the
+  matching at `γ` (`InvariantSystem.IsPatternMatchedAt.mono`).
+
+Correspondence with the printed definitions. -/
+theorem bfEquivOfPatternMatchedTarget (W : WeakSystem.{w, w', v} D S) :
+    W.BFEquivOfPatternMatchedTarget E := by
+  intro M N _ _ β G H hG hH ι
+  obtain ⟨o, ho⟩ := ι
+  revert ho
+  induction o using Ordinal.limitRecOn with
+  | zero =>
+    intro ho hle n x y hm
+    rw [@BFEquiv.zero Lc M (E.reduct G) N (E.reduct H) n x y]
+    exact sameAtomicType_of_isPatternMatchedAt E hG hH hle hm
+  | add_one o ih =>
+    intro ho hle n x y hm
+    have ho' : o < ω₁ := (Order.lt_add_one_iff.mpr le_rfl).trans ho
+    have hlt : (⟨o, ho'⟩ : SystemLevel) < ⟨o + 1, ho⟩ :=
+      show o < o + 1 from Order.lt_add_one_iff.mpr le_rfl
+    have hle' : (⟨o, ho'⟩ : SystemLevel) ≤ β := hlt.le.trans hle
+    change @BFEquiv Lc M (E.reduct G) N (E.reduct H) (o + 1) n x y
+    rw [← Order.succ_eq_add_one, @BFEquiv.succ Lc M (E.reduct G) N (E.reduct H) n o x y]
+    refine ⟨ih ho' hle' x y (hm.mono hlt.le), fun c ↦ ?_, fun d ↦ ?_⟩
+    · obtain ⟨d, h⟩ := forth_of_isPatternMatchedAt hG hH hlt hle hm c
+      exact ⟨d, ih ho' hle' _ _ h⟩
+    · obtain ⟨c, h⟩ := back_of_isPatternMatchedAt hG hH hlt hle hm d
+      exact ⟨c, ih ho' hle' _ _ h⟩
+  | limit o hlim ih =>
+    intro ho hle n x y hm
+    change @BFEquiv Lc M (E.reduct G) N (E.reduct H) o n x y
+    rw [@BFEquiv.limit Lc M (E.reduct G) N (E.reduct H) n o hlim x y]
+    intro γ hγ
+    have hγ' : (⟨γ, hγ.trans ho⟩ : SystemLevel) < ⟨o, ho⟩ := hγ
+    exact ih γ hγ (hγ.trans ho) (hγ'.le.trans hle) x y (hm.mono hγ'.le)
 
 end WeakSystem
 
