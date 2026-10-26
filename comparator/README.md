@@ -57,8 +57,8 @@ topology and `Perfect`.  It does not import `InfinitaryLogic`: the syntax and se
 infinitary formulas (`FirstOrder.Language.BoundedFormulaInf` and its `Realize`, about thirty
 lines) are restated in the file instead.  `check.sh` compiles it in a sandbox whose search path
 (`LEAN_PATH`) consists of Mathlib, the dependencies of Mathlib's own manifest and the toolchain,
-and then checks its whole transitive import closure (2563 modules at the InfinitaryLogic v6.1.0
-pins; not yet counted at the current pins): every module is in `Init`, `Std`,
+and then checks its whole transitive import closure (2758 modules at the current
+pins): every module is in `Init`, `Std`,
 `Lean`, `Lake`, `Mathlib` or a dependency of Mathlib, none is in `Mathlib.ModelTheory.Infinitary`,
 `InfinitaryLogic`, `ComputableModelTheory` or `VaughtConjecture`, and none is a file that the
 pinned Mathlib changes or adds.  The `Lake` modules, like those of `Init`, `Std` and `Lean`, come
