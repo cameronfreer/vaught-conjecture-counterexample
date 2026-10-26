@@ -162,7 +162,7 @@ theorem mirrorLabel_le {AD AC F G Ω : Label.{u}} (hle : AD ≤ AC) {X : Finset 
     simp only [ThinCompletion.thinKind_univ_one, ThinCompletion.thinKind_univ_two,
       ThinCompletion.thinKind_univ_three, ThinCompletion.thinKind_univ_four]
     generalize mirrorKind X = c at h hg
-    fin_cases c <;> first | exact absurd hg (by decide) | exact (h rfl).elim | exact le_rfl | skip
+    fin_cases c <;> try first | exact absurd hg (by decide) | exact le_rfl
   exact hle
 
 /-! ### The layer rows -/
