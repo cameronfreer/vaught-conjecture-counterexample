@@ -97,7 +97,7 @@ by name (both in `MainTheorem/GrowthLevelRoute.lean`).  The full map is
 [`roadmap/README.md`](roadmap/README.md); compiled refutations of candidate statements are in the
 `*Counterexample*.lean` modules, indexed in [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md).
 
-## Propositions 4.32, 4.34 and 4.35 of [AFK26]
+## Propositions 4.32, 4.34 and 4.35, Lemma 4.33, Claim 4.37 and Theorem 4.36 of [AFK26]
 
 For the strongly coded template system, the formal counterparts of three propositions of [AFK26]
 are proved, using at most the three axioms above, relative to the current draft of 7 October 2026
@@ -150,10 +150,51 @@ positionally (`stronglyCodedUniversalRealizationTarget`) and read through its cl
 density; universality gives density at every cutoff below the block stage, zero included
 (`universalityDensityTarget`, with `LegalClass.truncEquiv_project_of_le` for donors of every
 rank) ([`Correspondence/Charts/UniversalTheorem.lean`](VaughtConjecture/Correspondence/Charts/UniversalTheorem.lean)
-and the files `Universal*.lean` beside it).  Theorem 4.36 for `templateSentence`: statement
-pending (not on `main`); unproved; the weak-system and back-and-forth specialization pending.  As
+and the files `Universal*.lean` beside it).
+
+Theorem 4.36 for `templateSentence` is proved for the same system, relative to the same pinned
+draft, using at most the three axioms above, as the concrete template-system specialization of
+the route of Section 2 of [AFK26]: `theorem436Target : Theorem436Target`, where
+`Theorem436Target := MainTheorem.HasThinAlephOneSpectrum templateSentence.{0}`
+([`Correspondence/TemplateSystem/Theorem436.lean`](VaughtConjecture/Correspondence/TemplateSystem/Theorem436.lean)
+and
+[`Correspondence/TemplateSystem/BackAndForth.lean`](VaughtConjecture/Correspondence/TemplateSystem/BackAndForth.lean)).
+It concerns the models of `templateSentence` coded on `ℕ`, and its two conclusions have separate
+proofs.  The count: exactly $\aleph_1$ isomorphism classes of models coded on `ℕ`
+(`templateSentenceAlephOneTarget`,
+[`Correspondence/TemplateSystem/AlephOne.lean`](VaughtConjecture/Correspondence/TemplateSystem/AlephOne.lean)),
+with the maximal stage of a class as the rank (`maximalStageOfClass`), defined using the greatest
+lift stage rather than the least projection-fixing stage.  Thinness: no perfect set of pairwise
+non-isomorphic models coded on `ℕ` (`thinnessTarget`), from countably many back-and-forth classes
+at every level below $\omega_1$ (`countableBFClassesTarget`, through the back-and-forth core
+`backAndForthCoreTarget`) and `MainTheorem.isThinOnNatModels_of_countable_bfClasses`.  The
+inputs: the four conditions of [AFK26, Definition 2.23] for this system,
+`templateSystemConditionsTarget` (`maximalCoverageTarget`, `uniformMaximalRepresentativesTarget`,
+`attainedEventualDeterminationTarget`, `invariantOccurrenceTarget`;
+[`Correspondence/TemplateSystem/Conditions.lean`](VaughtConjecture/Correspondence/TemplateSystem/Conditions.lean));
+the weak-system interface (`templateInvariantSystemTarget`, `templateInvariantSystem_projection`,
+`weakSystemClausesTarget`, `projectedDensityAt_of_satisfiesDensityAt`, and the base as the models
+of `templateSentence` on countable nonempty carriers, `templateBaseModelsTarget`;
+[`Correspondence/TemplateSystem/WeakSystem.lean`](VaughtConjecture/Correspondence/TemplateSystem/WeakSystem.lean));
+and the countability of the language (`baseLanguageCountableTarget`).  The statement is about
+models coded on `ℕ`; a spectrum statement on all countable carriers is not made here.  This is a
+distinction of scope, not an obstruction: the empty structure also satisfies `templateSentence`,
+so an all-carriers formulation would count one further isomorphism class, and the passage from
+models on countable nonempty carriers to models coded on `ℕ` is proved
+(`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`).  The abstract theorems of
+Section 2 of [AFK26] for arbitrary systems (Theorems 2.25 and 2.27) are not claimed.  The theorem
+concerns `templateSentence` separately from, and without reference to, the main theorem for
+`baseLanguage.densitySentence` (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`).  As
 above, no identification of `templateSentence` with `baseLanguage.densitySentence`, and no
 transfer of the spectrum between them, is claimed.
+
+The statements of [AFK26] audited against its published version on 25 October 2026, Definitions
+2.6–2.8, 2.10, 2.17, 2.20, 2.21 and 2.23, Proposition 2.18, Theorems 2.19, 2.25 and 2.27,
+Definitions 4.6, 4.11, 4.13, 4.16, 4.20–4.22, 4.29 and 4.31, Propositions 4.30, 4.32, 4.34 and
+4.35, Lemma 4.33, Theorem 4.36 and Claim 4.37 (every statement named in this section among them),
+read identically, in number and text, in the pinned draft and in [AFK26] v1,
+[hexagon:2610.00188v1](https://hexagonmath.org/2610.00188v1)
+([`milestones/2026-10-25-published-v1-audit.md`](milestones/2026-10-25-published-v1-audit.md)).
 
 ## Citation
 

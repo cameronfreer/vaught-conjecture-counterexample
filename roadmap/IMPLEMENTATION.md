@@ -1312,8 +1312,15 @@ access record"), and every number in the table not marked with an earlier date i
 that version has adopted a correction recorded here, the row says so ("adopted in [AFK26] of
 7 October") and its note keeps the earlier text as history, cited as the version of 5 October 2026
 with that version's numbers.  An adoption changes no status letter: the letters record the
-comparisons made here, and a row becomes P only by the comparison described above.  Rows 48–56, and
-the second lines of rows 46 and 47, are rows new to the concordance (rows 49, 50 and 52 concern
+comparisons made here, and a row becomes P only by the comparison described above.  The
+statements audited on 25 October 2026, Definitions 2.6–2.8, 2.10, 2.17, 2.20, 2.21 and 2.23,
+Proposition 2.18, Theorems 2.19, 2.25 and 2.27, Definitions 4.6, 4.11, 4.13, 4.16, 4.20–4.22, 4.29
+and 4.31, Propositions 4.30, 4.32, 4.34 and 4.35, Lemma 4.33, Theorem 4.36 and Claim 4.37, read
+identically, in number and text, in the hash-pinned source draft and in the published version
+[AFK26] v1, [hexagon:2610.00188v1](https://hexagonmath.org/2610.00188v1) (PDF SHA-256
+`2b3f3aa14c32174a8dae4e343f234cb08ea1027031a14dcd7c651ab6b7d8668d`, retrieved 25 October 2026;
+method, coverage and numbering map in `milestones/2026-10-25-published-v1-audit.md`).  Rows 48–56,
+and the second lines of rows 46 and 47, are rows new to the concordance (rows 49, 50 and 52 concern
 statements already in earlier versions); each first line is S, and its note gives the status of the
 corresponding declarations here: compiled in this repository (theorem named), compiled conditionally
 (the hypotheses named), informal and not compiled, or prospective.  [AFK26] states Propositions
@@ -1324,9 +1331,10 @@ classes `K_β` of the template system of the current draft (`templateStageClass`
 Lemma 4.33 (row 54, P line: `universalChartModelTarget`), Claim 4.37 (row 47, third line:
 `maximalCompletionTarget`, `maximalCompletionUniqueTarget`, `sentenceMaximalLiftTarget`) and
 Definition 2.21 for the models of `templateSentence` (row 30, second line:
-`sentenceEventualDeterminationTarget`); Theorem 4.36 for `templateSentence` is not (its statement
-pending, not on `main`; unproved; the weak-system and back-and-forth specialization pending; the
-second line of row 47 stays S).  It also states that the proof that its system `K[L]` is a
+`sentenceEventualDeterminationTarget`), and so is Theorem 4.36 for `templateSentence`, for its
+models coded on `ℕ`, as the concrete template-system specialization of the route of Section 2 of
+[AFK26] (row 47, second line, P: `theorem436Target`; Theorems 2.25 and 2.27 for arbitrary
+systems are not claimed; note 47).  It also states that the proof that its system `K[L]` is a
 Knight system has been formalized; in this repository the main theorem is compiled with no
 hypothesis (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`) for the repository's own
 sentence `densitySentence`, not for the system `K[L]` (note 47), by the receiving-models route,
@@ -1337,15 +1345,27 @@ whose three hypotheses are compiled: (R4) for receiving models
 terminal-classification route remain conditional on named hypotheses, at fewest the four of
 `DASHBOARD.md` (hypotheses 2 and 4–6), or hypotheses derived from them; hypothesis 8 is compiled
 in this repository (theorem named) (`StageType.hasApexCoatomExtensions`).  The docstrings of
-`VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026, with two
-exceptions: the two citation groups of statements unchanged since, lawful local labellings
-(Definition 4.28 of the current draft) and the cells `D↓U` below a graded face (Definition 4.3 of
-the current draft), which are marked "(current draft)"; and the modules of
-`Correspondence/Charts`, which cite the current draft throughout (their clauses were compared
-with the text of the draft of 10 October 2026, which has the same numbers), as do those of
-`Correspondence/Density`, `Correspondence/Sentence`, `Correspondence/Boundedness`,
-`Correspondence/Reconstruction`, `Correspondence/Limits`, `Correspondence/Presentation`,
-`Correspondence/Maximality` and `Correspondence/Proposition434`.
+`Correspondence/Template`, `Correspondence/InvariantSystem` (its departures and
+`omega0MulSystem`), `Correspondence/StageIndexing` and the modules of `Correspondence/Current`
+cite the numbering of the version of 5 October 2026, marked as such, and give beside it the
+current formulation, with its number, where the two differ, with two exceptions: the two citation
+groups of statements unchanged since, lawful local labellings (Definition 4.28 of the current
+draft) and the cells `D↓U` below a graded face (Definition 4.3 of the current draft), which are
+marked "(current draft)".  The modules of `Correspondence/Charts` cite the current draft
+throughout (their clauses were compared with the text of the draft of 10 October 2026, which has
+the same numbers), as do those of `Correspondence/Density`, `Correspondence/Sentence`,
+`Correspondence/Boundedness`, `Correspondence/Reconstruction`, `Correspondence/Limits`,
+`Correspondence/Presentation`, `Correspondence/Maximality`, `Correspondence/TemplateSystem`,
+`Correspondence/Proposition434` and `Correspondence/StronglyCodedOccurrence`; the other modules
+of `VaughtConjecture/Correspondence` cite no numbered statement of [AFK26].  Outside
+`Correspondence`, `MainTheorem/StronglyCodedTerminalCount` cites the current draft (Proposition
+4.35); `MainTheorem/Niceness` cites the current draft, with the numbers of the version of
+5 October 2026 beside them (Definitions 2.21 and 2.23 of the current draft, Definitions 2.19 and
+2.22 of the earlier version); and `MainTheorem/LowPaddedRoute` cites the version of 5 October
+2026, marked as such, with the corresponding statements of the current draft (Theorem 4.36 and
+Definition 4.29).  The
+current-numbering citations are to the hash-pinned source draft, whose numbers are those of
+[AFK26] v1 throughout §§1–4; the numbers of the version of 5 October 2026 are not.
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
@@ -1406,7 +1426,7 @@ with the text of the draft of 10 October 2026, which has the same numbers), as d
 | 46 | [AFK26] | a template system of legal templates, Proposition 4.30 (statement) | S |
 | | | its proof in [AFK26] (clauses (d) and (g) of Definition 4.11) | S |
 | 47 | [AFK26] | the counterexample, Theorem 4.36 (statement) | S |
-| | | its proof from Propositions 4.32, 4.34, 4.35 and Lemma 4.33; Claim 4.37 | S |
+| | | its proof from Propositions 4.32, 4.34, 4.35 and Lemma 4.33; Claim 4.37; current draft, for `K[L]` and `templateSentence`, as `theorem436Target` (the count `templateSentenceAlephOneTarget`, thinness `thinnessTarget`), with Definition 2.23 (a)–(d) as `templateSystemConditionsTarget` | P (models coded on `ℕ`; the concrete template-system specialization, not Theorems 2.25 and 2.27 for arbitrary systems) |
 | | | Claim 4.37, current draft, for `K[L]`, as `maximalCompletionTarget`, `maximalCompletionUniqueTarget` and `lowerLiftsAreProjectionsTarget`, and for `templateSentence` as `sentenceMaximalLiftTarget` | P (countable carriers, `β < ω₁`; the sentence form: nonempty carriers) |
 | 48 | [AFK26] | weak Knight systems and perfect sets of models, Theorem 2.19 | S |
 | 49 | [AFK26] | the lower bound in the proof of Theorem 2.25 (bounded levels) | S |
@@ -2389,8 +2409,36 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     `maximalCompletionTarget`, `maximalCompletionUniqueTarget`, `lowerLiftsAreProjectionsTarget`,
     and for `templateSentence`, `sentenceMaximalLiftTarget`; note 56) and Definition 2.21 for the
     models of `templateSentence` (row 30, second line, `sentenceEventualDeterminationTarget`;
-    note 56).  Theorem 4.36 for `templateSentence`: statement pending (not on `main`); unproved;
-    the weak-system and back-and-forth specialization pending; so the second line of this row
+    note 56).  *Theorem 4.36 for `templateSentence`* (the second line of this row, P,
+    `Correspondence/TemplateSystem`).  `theorem436Target : Theorem436Target`, where
+    `Theorem436Target := MainTheorem.HasThinAlephOneSpectrum templateSentence.{0}`, is proved
+    (`Correspondence/TemplateSystem/BackAndForth`), for the models of `templateSentence` coded on
+    `ℕ`; it is the concrete template-system specialization of the route of Section 2 of [AFK26],
+    and the abstract Theorems 2.25 and 2.27 for arbitrary systems are not claimed.  Its two
+    conclusions are distinct.  The count, exactly `ℵ₁` isomorphism classes of models coded on `ℕ`,
+    is `templateSentenceAlephOneTarget` (`Correspondence/TemplateSystem/AlephOne`), with the rank
+    `maximalStageOfClass`, defined using the greatest lift stage rather than the least
+    projection-fixing stage (no relation between the two is asserted).  Thinness, no perfect set
+    of pairwise non-isomorphic models coded on `ℕ`, is `thinnessTarget`, from countably many
+    back-and-forth classes at every level below `ω₁` (`countableBFClassesTarget`, through the
+    back-and-forth core `backAndForthCoreTarget`, Proposition 2.18 and Theorem 2.19 for `K[L]`
+    only) and `MainTheorem.isThinOnNatModels_of_countable_bfClasses`.  The inputs: the four
+    conditions of Definition 2.23 (a)–(d) for `K[L]`, `templateSystemConditionsTarget`
+    (`maximalCoverageTarget`, `uniformMaximalRepresentativesTarget`,
+    `attainedEventualDeterminationTarget`, `invariantOccurrenceTarget`;
+    `Correspondence/TemplateSystem/Conditions`); the weak-system interface of Theorem 4.23
+    (`templateInvariantSystemTarget`, `templateInvariantSystem_projection`,
+    `weakSystemClausesTarget`, `projectedDensityAt_of_satisfiesDensityAt`,
+    `templateBaseModelsTarget`; `Correspondence/TemplateSystem/WeakSystem`); and the countability
+    of the language, `baseLanguageCountableTarget`.  The statement is about models coded on `ℕ`;
+    a spectrum statement on all countable carriers is not made here.  This is a distinction of
+    scope, not an obstruction: the empty structure also satisfies `templateSentence`, so an
+    all-carriers formulation would count one further isomorphism class, and the passage from
+    models on countable nonempty carriers to models coded on `ℕ` is proved
+    (`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`).  The theorem concerns
+    `templateSentence` separately from, and without reference to,
+    `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`;
+    no spectrum result is transferred between the two sentences.  The first line of this row
     stays S.  Claim 4.37 is
     stated for `M ∈ K_β` and its proof is for `M ∈ K_{-∞}`; the coherence `τ_α(M_β) = M_α` at
     limits is used without comment and follows from Reconstruction (the formal Claim 4.37 is
@@ -2401,7 +2449,8 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     conditionally; the composition into `FullPresentations` (row 27) is prospective.  [AFK26]
     states that this proof has been formalized; in this repository the main theorem is compiled
     with no hypothesis (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`) for
-    `densitySentence`, not for `K[L]` or `σ[L]`, by the receiving-models route, whose three
+    `densitySentence`, not for `K[L]` or `σ[L]` (Theorem 4.36 for `templateSentence` is the
+    separate `theorem436Target`, above), by the receiving-models route, whose three
     hypotheses are compiled: (R4) for receiving models
     (`Expansion.receivingStableCappedReceiving_levels`), (R2) for receiving models
     (`Realization.receivingResidualReceiving_of_padded`), and (R3) for receiving models
@@ -2580,7 +2629,8 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     (`universalityDensityTarget`, with the passage `LegalClass.truncEquiv_project_of_le`).  Not
     stated: uniqueness of `G` up to isomorphism, and ultrahomogeneity; the native counterparts of
     the first line remain conditional as above.  Condition (d) of Definition 2.23 for `K[L]`, from
-    this lemma, is pending (not on `main`).
+    this lemma, is proved (`invariantOccurrenceTarget`, `Correspondence/TemplateSystem/Conditions`;
+    note 47).
 55. [AFK26, Proposition 4.34], stated without proof, for every `β` and every model `M` of
     `σ[L]`: Boundedness (the ranks of the lifts of `M` in `K` form a countable set),
     Reconstruction (two lifts of `M` in `K_β` are equal), and Limits (at a limit `β`, lifts at
@@ -2735,8 +2785,12 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     threshold is the least stage at which any lift has the invariant (the printed definition asks
     for some stage), and the conclusion covers every `ζ` with `ξ ≤ ζ` (the printed definition has
     `ζ > ξ`).  No recursion on stages and no rank is used, and no rank is identified with a stage.
-    Theorem 4.36 for `templateSentence`: statement pending (not on `main`); unproved; the
-    weak-system and back-and-forth specialization pending.
+    Theorem 4.36 for `templateSentence`, for its models coded on `ℕ`, is proved
+    (`theorem436Target`; note 47): the count `templateSentenceAlephOneTarget` uses the countable
+    sets of (b), `uniformMaximalRepresentativesTarget`, from `maximalCountTarget` above, and the
+    rank `maximalStageOfClass`, the stage of the unique maximal lift `sentenceMaximalLiftTarget`;
+    condition (c) of Definition 2.23 is `attainedEventualDeterminationTarget`, from
+    `eventualDeterminationTarget`.
 
 57. [Kni26, Definition 3.2.5 and Lemma 3.2.6]: the value `𝔐(Σ)` of an element `Σ` of the domain of a
     type of a model, allotted by the model as a whole and well defined by consistency.  Here the
