@@ -59,9 +59,13 @@ lines) are restated in the file instead.  `check.sh` compiles it in a sandbox wh
 (`LEAN_PATH`) consists of Mathlib, the dependencies of Mathlib's own manifest and the toolchain,
 and then checks its whole transitive import closure (2563 modules at the InfinitaryLogic v6.1.0
 pins; not yet counted at the current pins): every module is in `Init`, `Std`,
-`Lean`, `Mathlib` or a dependency of Mathlib, none is in `Mathlib.ModelTheory.Infinitary`,
+`Lean`, `Lake`, `Mathlib` or a dependency of Mathlib, none is in `Mathlib.ModelTheory.Infinitary`,
 `InfinitaryLogic`, `ComputableModelTheory` or `VaughtConjecture`, and none is a file that the
-pinned Mathlib changes or adds.  The pinned Mathlib is upstream mathlib4 itself, at `2e318fa`;
+pinned Mathlib changes or adds.  The `Lake` modules, like those of `Init`, `Std` and `Lean`, come
+with the pinned Lean toolchain; they enter the reference closure only through Mathlib's pinned
+dependency ImportGraph (`Mathlib.Init` imports `ImportGraph.Tools`), and at the current pins they
+are `Lake.Config.Glob`, `Lake.Util.String`, `Lake.Util.Date`, `Lake.Util.Version` and
+`Lake.Build.Trace`.  The pinned Mathlib is upstream mathlib4 itself, at `2e318fa`;
 `check.sh` verifies with git that its sources are those of upstream mathlib4 `2e318fa` plus, at
 most, files added under `Mathlib/ModelTheory/Infinitary` (none at the current pin), so the source
 of every module the reference statement imports is byte for byte that of upstream mathlib4

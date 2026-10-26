@@ -290,9 +290,10 @@ reference_read=("${reference_roots[@]}" "$challenge")
 run_in reference_read "$reference_path" "$closure_runner" -- \
   "$tools/lean" --run "$closure_runner/ImportClosure.lean" Challenge \
   > "$out/challenge-import-closure.txt" || fail "reading the reference's import closure failed"
-# Every module is in Init, Std, Lean, Mathlib or one of Mathlib's own dependencies, and none is
-# in a part of Mathlib that the pinned fork changes or adds.
-allowed='^(Challenge|Init|Std|Lean|Mathlib|Batteries|Aesop|Qq|Plausible|ProofWidgets'
+# Every module is in Init, Std, Lean, Lake (all four from the toolchain), Mathlib or one of
+# Mathlib's own dependencies, and none is in a part of Mathlib that the pinned fork changes or
+# adds.  Lake modules enter only through Mathlib's dependency ImportGraph (see the README).
+allowed='^(Challenge|Init|Std|Lean|Lake|Mathlib|Batteries|Aesop|Qq|Plausible|ProofWidgets'
 allowed+='|LeanSearchClient|ImportGraph)(\.|$)'
 if grep -vE "$allowed" "$out/challenge-import-closure.txt"; then
   fail "the reference statement imports a module outside Mathlib and its dependencies"
