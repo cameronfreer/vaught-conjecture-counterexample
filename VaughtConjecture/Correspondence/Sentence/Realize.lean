@@ -166,7 +166,7 @@ variable (M)
 
 theorem realize_geometryDistinctClause : geometryDistinctClause.{u}.Realize M ↔
     ∀ (n : ℕ) (x : Fin (n + 1) → M), ClosedRel.{u} n.succ_pos x → ∀ i j, i < j → x i ≠ x j := by
-  simp [geometryDistinctClause, Sentenceω.realize_def, realize_ciInf]
+  simp [geometryDistinctClause, Sentenceω.realize_def, realize_ciInf, -BoundedFormulaInf.alls_succ]
 
 theorem realize_geometryPermClause : geometryPermClause.{u}.Realize M ↔
     ∀ (n : ℕ) (x : Fin (n + 1) → M) (σ : Equiv.Perm (Fin (n + 1))),
@@ -180,7 +180,7 @@ theorem realize_geometryExtensionClause : geometryExtensionClause.{u}.Realize M 
       ∃ (k : ℕ) (y : Fin k → M),
         ClosedRel.{u} (Nat.lt_add_right k n.succ_pos) (Fin.append x y) := by
   simp [geometryExtensionClause, Sentenceω.realize_def, realize_ciInf, realize_ciSup,
-    realize_existsBlock]
+    realize_existsBlock, -BoundedFormulaInf.alls_succ]
 
 theorem realize_geometryIntersectionClause : geometryIntersectionClause.{u}.Realize M ↔
     ∀ (n₀ n₁ k : ℕ) (x : Fin (n₀ + 1) → M) (y : Fin (n₁ + 1) → M) (z : Fin (k + 1) → M),
