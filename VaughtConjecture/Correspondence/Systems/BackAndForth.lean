@@ -42,6 +42,17 @@ countable, and a base sublanguage `E`, this file compares tuples pattern-matched
   it);
 * `WeakSystem.sameAtomicType_of_isPatternMatchedAt`: `SameAtomicType` of `x` and `y` in the
   reducts, for tuples pattern-matched at any `ι ≤ β`.
+
+**Forth and back**, for levels `ι < ι₁ ≤ β` (BFEquiv's successor clause uses `ι₁ = ι + 1`):
+
+* `InvarianceDiagram.IsCompatible.exists_extension`: in a structure compatible with `D`, a tuple
+  `a` with an invariant `Q` and a point `c` not among its entries extend to a tuple `w` with an
+  invariant `P`, `a` kept literally and `c` at one new place, with `(P(x̄ ȳ), Q(x̄))` a pair of `D`;
+* `WeakSystem.forth_of_isPatternMatchedAt`: tuples pattern-matched at `ι₁` extend, by any point
+  of `M` and a suitable point of `N`, to tuples pattern-matched at `ι`.  An entry of the
+  witnessing tuple is answered by the corresponding entry; a genuinely new point by `ι`-density
+  of `τ_ι₁(H) ∈ K_ι₁` (`WeakSystem.dense`, `WeakSystem.projection_mem_of_le`);
+* `WeakSystem.back_of_isPatternMatchedAt`: the same, by any point of `N`, by symmetry.
 -/
 
 universe w w' wc wc' v
@@ -222,6 +233,139 @@ theorem sameAtomicType_of_isPatternMatchedAt {M N : Type v} [Countable M] [Count
   cases idx with
   | eq i j => exact eq_iff_of_isPatternMatchedAt hG hH hι hm i j
   | rel r g => exact relMap_reduct_iff_of_isPatternMatchedAt E hG hH hι hm r g
+
+
+end WeakSystem
+
+/-! ### Forth and back -/
+
+/-- **An invariant along an equality of arities**: an invariant holding of `z` on `n` places gives
+an invariant holding of `z ∘ Fin.cast e.symm` on `n'` places, for `e : n = n'`.  Native
+construction. -/
+theorem exists_relMap_invariant_cast {M : Type v}
+    {G : L.Structure M} {n n' : ℕ} (e : n = n') (P : σ.Invariant n) {z : Fin n → M}
+    (hz : RelMap (L := L) (self := G) P.1 z) :
+    ∃ P' : σ.Invariant n', RelMap (L := L) (self := G) P'.1 (z ∘ Fin.cast e.symm) := by
+  subst e
+  exact ⟨P, hz⟩
+
+/-- **The closed extension of a tuple with an invariant by a new point**: in a structure `G'`
+compatible with `D`, if `G' ⊨ Q(a)` and `c` is not an entry of `a`, there are `l`, a tuple `w` on
+`k + (l + 1)` places extending `a` literally (`w ∘ Fin.castAdd (l + 1) = a`) with `c` at the place
+`Fin.natAdd k 0`, and an invariant `P` with `G' ⊨ P(w)` such that `(P(x̄ ȳ), Q(x̄))` is a pair of
+`D`.  Route: `Fin.snoc a c` is injective (`a` is, by
+`InvarianceDiagram.IsCompatible.injective_of_relMap_invariant`); the second clause of
+[AFK26, Definition 2.1] extends it to a tuple with `P_{k+1+l}`, which carries an invariant
+([AFK26, Definition 2.2 (b)]), recast along `k + 1 + l = k + (l + 1)`
+(`exists_relMap_invariant_cast`); of `(P(x̄ ȳ), Q(x̄))` and `(P(x̄ ȳ), ¬Q(x̄))` exactly one is
+a pair of `D`, and the second would contradict `G' ⊨ Q(a)`.  Correspondence with the printed
+definitions. -/
+theorem InvarianceDiagram.IsCompatible.exists_extension {D : InvarianceDiagram σ} {M : Type v}
+    {G : L.Structure M} (hG : @InvarianceDiagram.IsCompatible L σ D M G) {k : ℕ}
+    (Q : σ.Invariant k) {a : Fin k → M} (ha : RelMap (L := L) (self := G) Q.1 a) {c : M}
+    (hc : c ∉ Set.range a) :
+    ∃ (l : ℕ) (w : Fin (k + (l + 1)) → M) (P : σ.Invariant (k + (l + 1))),
+      w ∘ Fin.castAdd (l + 1) = a ∧ w (Fin.natAdd k 0) = c ∧
+        RelMap (L := L) (self := G) P.1 w ∧
+        (⟨k + (l + 1), P.1, atom Q.1 (Fin.castAdd (l + 1))⟩ : DiagramPair L) ∈ D.pairs := by
+  have hinj : Function.Injective (Fin.snoc a c : Fin (k + 1) → M) :=
+    Fin.snoc_injective_of_injective (hG.injective_of_relMap_invariant Q ha) hc
+  obtain ⟨l, z, hz, hzP⟩ :=
+    hG.isStructuredGeometry.isGeometry.exists_closed (Nat.succ_pos k) _ hinj
+  obtain ⟨P₀, hP₀, hzP₀⟩ := (hG.isStructuredGeometry.closed_iff _ z).mp hzP
+  have e : k + 1 + l = k + (l + 1) := by omega
+  obtain ⟨P, hw⟩ := exists_relMap_invariant_cast (G := G) e ⟨P₀, hP₀⟩ hzP₀
+  have hwa : z ∘ Fin.cast e.symm ∘ Fin.castAdd (l + 1) = a := by
+    funext i
+    have hi : Fin.cast e.symm (Fin.castAdd (l + 1) i) = Fin.castAdd l (Fin.castSucc i) :=
+      Fin.ext rfl
+    have := congrFun hz (Fin.castSucc i)
+    simp only [Function.comp_apply, Fin.snoc_castSucc] at this
+    simp only [Function.comp_apply, hi, this]
+  have hwc : (z ∘ Fin.cast e.symm) (Fin.natAdd k 0) = c := by
+    have hi : Fin.cast e.symm (Fin.natAdd k (0 : Fin (l + 1))) = Fin.castAdd l (Fin.last k) :=
+      Fin.ext rfl
+    have := congrFun hz (Fin.last k)
+    simp only [Function.comp_apply, Fin.snoc_last] at this
+    simp only [Function.comp_apply, hi, this]
+  refine ⟨l, z ∘ Fin.cast e.symm, P, hwa, hwc, hw, ?_⟩
+  rcases (D.exactlyOne P.1 Q.1 (Fin.castAdd (l + 1)) P.2).or with h | h
+  · exact h
+  · refine ((@Formula.realize_not L M G _ _ _).mp (hG.satisfiesPairs _ h _ hw)
+      ((@realize_atom_iff L M G _ _ Q.1 _ _).mpr ?_)).elim
+    rw [Function.comp_assoc, hwa]
+    exact ha
+
+namespace WeakSystem
+
+variable {D : InvarianceDiagram σ} {S : InvariantSystem.{0} σ} {W : WeakSystem.{w, w', v} D S}
+
+/-- **The forth step**: for `G ∈ K_β` on `M` and `H ∈ K_β` on `N` (countable carriers), levels
+`ι < ι₁ ≤ β`, and tuples `x`, `y` pattern-matched at `ι₁`, every point `c` of `M` has a point `d`
+of `N` such that `Fin.snoc x c` and `Fin.snoc y d` are pattern-matched at `ι`; the old tuples are
+kept literally.  Write `x = a ∘ f`, `y = b ∘ f` with `τ_ι₁(G) ⊨ Q(a)` and `τ_ι₁(H) ⊨ Q(b)`.
+
+* **`c` is an entry `a p` of the witnessing tuple**: `d = b p`, the same tuples `a`, `b` read
+  along `Fin.snoc f p`, matched at `ι` by `τ_ι(Q)` (`InvariantSystem.IsMatchedAt.mono`).
+* **`c` is a genuinely new point**: `τ_ι₁(G)` is compatible with `D`
+  (`isCompatible_projection_of_le`), so `a` extends to `w` on `k + (l + 1)` places with `c` at
+  `Fin.natAdd k 0`, an invariant `P` with `τ_ι₁(G) ⊨ P(w)`, and the pair `(P(x̄ ȳ), Q(x̄))` of `D`
+  (`InvarianceDiagram.IsCompatible.exists_extension`).  `τ_ι₁(H) ∈ K_ι₁`
+  (`projection_mem_of_le`) is `ι`-dense (`dense`, `ι < ι₁`), which gives `y'` and an invariant
+  `P'` with `τ_ι(P') = τ_ι(P)` and `τ_ι₁(H) ⊨ P'(Fin.append b y')`, the old tuple `b` kept
+  literally.  Then `d = Fin.append b y' (Fin.natAdd k 0)`, and `w`, `Fin.append b y'` are matched
+  at `ι` by `τ_ι(P)`, read along `Fin.snoc (Fin.castAdd (l + 1) ∘ f) (Fin.natAdd k 0)`.
+
+Correspondence with the printed definitions. -/
+theorem forth_of_isPatternMatchedAt {M N : Type v} [Countable M] [Countable N]
+    {β : SystemLevel} {G : L.Structure M} {H : L.Structure N} (hG : G ∈ W.K β M)
+    (hH : H ∈ W.K β N) {ι ι₁ : SystemLevel} (hlt : ι < ι₁) (hle : ι₁ ≤ β) {n : ℕ}
+    {x : Fin n → M} {y : Fin n → N} (hm : S.IsPatternMatchedAt ι₁ G H x y) (c : M) :
+    ∃ d : N, S.IsPatternMatchedAt ι G H (Fin.snoc x c) (Fin.snoc y d) := by
+  obtain ⟨k, a, b, f, rfl, rfl, Q, ha, hb⟩ := hm
+  by_cases hc : c ∈ Set.range a
+  · -- the point is already an entry of the witnessing tuple
+    obtain ⟨p, rfl⟩ := hc
+    refine ⟨b p, k, a, b, Fin.snoc f p, ?_, ?_,
+      InvariantSystem.IsMatchedAt.mono hlt.le ⟨Q, ha, hb⟩⟩
+    · funext i
+      refine Fin.lastCases ?_ (fun j ↦ ?_) i <;> simp
+    · funext i
+      refine Fin.lastCases ?_ (fun j ↦ ?_) i <;> simp
+  · -- a genuinely new point
+    obtain ⟨l, w, P, hwa, hwc, hw, hpair⟩ :=
+      (W.isCompatible_projection_of_le hle hG).exists_extension Q ha hc
+    obtain ⟨y', P', hP', hP'b⟩ := W.dense hlt (W.projection_mem_of_le hle hH) P Q hpair b hb
+    -- the old tuple is kept literally
+    have hold : Fin.append b y' ∘ Fin.castAdd (l + 1) = b :=
+      funext fun i ↦ Fin.append_left b y' i
+    refine ⟨Fin.append b y' (Fin.natAdd k 0), k + (l + 1), w, Fin.append b y',
+      Fin.snoc (Fin.castAdd (l + 1) ∘ f) (Fin.natAdd k 0), ?_, ?_, S.τ ι P,
+      InvariantSystem.relMap_projection_τ_of_le hlt.le G P hw, ?_⟩
+    · funext i
+      refine Fin.lastCases ?_ (fun j ↦ ?_) i
+      · simp [hwc]
+      · simpa using (congrFun hwa (f j)).symm
+    · funext i
+      refine Fin.lastCases ?_ (fun j ↦ ?_) i
+      · simp
+      · simp only [Fin.snoc_castSucc, Function.comp_apply]
+        exact (congrFun hold (f j)).symm
+    · rw [← hP']
+      exact InvariantSystem.relMap_projection_τ_of_le hlt.le H P' hP'b
+
+/-- **The back step**: under the hypotheses of `forth_of_isPatternMatchedAt`, every point `d` of
+`N` has a point `c` of `M` such that `Fin.snoc x c` and `Fin.snoc y d` are pattern-matched at
+`ι`.  The forth step with the roles of `(M, G)` and `(N, H)` exchanged
+(`InvariantSystem.IsPatternMatchedAt.symm`); its two cases (an entry of the witnessing tuple, a
+genuinely new point) are those of the forth step.  Correspondence with the printed definitions. -/
+theorem back_of_isPatternMatchedAt {M N : Type v} [Countable M] [Countable N]
+    {β : SystemLevel} {G : L.Structure M} {H : L.Structure N} (hG : G ∈ W.K β M)
+    (hH : H ∈ W.K β N) {ι ι₁ : SystemLevel} (hlt : ι < ι₁) (hle : ι₁ ≤ β) {n : ℕ}
+    {x : Fin n → M} {y : Fin n → N} (hm : S.IsPatternMatchedAt ι₁ G H x y) (d : N) :
+    ∃ c : M, S.IsPatternMatchedAt ι G H (Fin.snoc x c) (Fin.snoc y d) := by
+  obtain ⟨c, h⟩ := forth_of_isPatternMatchedAt hH hG hlt hle hm.symm d
+  exact ⟨c, h.symm⟩
 
 end WeakSystem
 
