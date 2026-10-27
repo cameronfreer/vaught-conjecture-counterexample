@@ -16,8 +16,9 @@ contract, items 3–4.
 `ω · n + i` with `i ≤ g + 1`, the bound of the range clause of [AFK26, Definition "legal"]).  This
 is a class of stage types of this repository, defined natively.  Whether the legal templates of
 [AFK26] are exactly these stage types (in the fixed-rows reading of roadmap, Correspondence,
-item 1), and how their charts and embeddings correspond to stage types and face maps, is open and
-not addressed here.  Legality (`Scheme.IsLegal`) is not changed.
+item 1), and how their charts and embeddings correspond to stage types and face maps, is not
+addressed here; the first is proved in `VaughtConjecture.Correspondence.Charts.LegalTemplate`
+(`StageType.isLegalTemplate_iff`).  Legality (`Scheme.IsLegal`) is not changed.
 
 **Closure.**  The class is closed under the coatom extension construction, and has the
 hereditary, joint embedding, and amalgamation properties inside the class at every stage that is
@@ -45,9 +46,10 @@ construction of `StageType.exists_amalgam`, except that the row of the apex is t
 encoding of the labels.
 
 **Not proved here.**  The identification of the legal templates of [AFK26] with these stage
-types; the correspondence between these stage types and the charts of [AFK26] (their language,
-embeddings, and truncation); and the Fraïssé limit of the age of their charts.  No statement here
-is a statement about the charts of [AFK26].
+types (proved in `VaughtConjecture.Correspondence.Charts.LegalTemplate`); the correspondence
+between these stage types and the charts of [AFK26] (their language, embeddings, and truncation);
+and the Fraïssé limit of the age of their charts.  No statement here is a statement about the
+charts of [AFK26].
 
 ## References
 
@@ -89,8 +91,12 @@ theorem isStronglyCoded_of_restrictFace_of_surjective {t : StageType.{u} α n}
 
 /-- A stage type is **strongly coded legal** when it is legal and its rows are strongly coded: every
 row entry at a cell of grade `g` is bottom or `ω · n + i` with `i ≤ g + 1`, the bound of the range
-clause of [AFK26, Definition "legal"].  It is a native class; its identification with the legal
-templates of [AFK26] is not proved. -/
+clause of [AFK26, Definition "legal"].  It is a native class.  Its identification with the legal
+templates of [AFK26, Definition 4.29] is proved: at a limit stage `θ ≥ ω ^ 2`, a stage type is a
+legal template with labels at stage `θ` exactly when it is strongly coded legal with labels at
+stage `θ` (`StageType.isLegalTemplate_iff`), and a stage type at a stage at most `ω₁` is a legal
+template with labels in `{-∞} ∪ ω₁ ∪ {∞}` exactly when it is strongly coded legal
+(`StageType.isLegalTemplate_omega_one_iff_of_le`). -/
 def IsStronglyCodedLegal (t : StageType.{u} α n) : Prop := t.IsLegal ∧ t.rows.IsStronglyCoded
 
 variable (α) in
