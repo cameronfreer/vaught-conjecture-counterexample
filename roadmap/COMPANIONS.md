@@ -755,8 +755,11 @@ is compiled conditionally on block determination (below).  None is an input to t
   classes and countable ordinals (`README.md`, "Reduction to full presentations", "Bounded levels"),
   from a bound, for each class, on the fixing ranks of the charts realized in all presentations of
   that class.  In the terms of Knight systems, (iii) and (iv) are the lower bound in the proof of
-  [AFK26, Theorem 2.25], argued there and not formalized (`IMPLEMENTATION.md`, concordance
-  row 49).  The bound of (iv) is the only place where termination can enter.  Its conditional
+  [AFK26, Theorem 2.25] (`IMPLEMENTATION.md`, concordance row 49).  That lower bound is proved for
+  an arbitrary qualifying system, `QualifyingSystem.aleph_one_le_mk_baseClasses` (with the count
+  `QualifyingSystem.mkBaseClassesEqAlephOneTarget`, `Correspondence/Systems/Count`); the native
+  argument (i)–(iv) of this section is separate and is not completed by it.  The bound of (iv) is
+  the only place where termination can enter.  Its conditional
   form is the uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5,
   "Uniform fixing bounds from positive niceness" (prospective), which uses no termination; there
   termination can enter only through the construction of positive niceness (milestone 2): as

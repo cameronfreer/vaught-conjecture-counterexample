@@ -96,8 +96,10 @@ status:
     Claim 4.37 and Theorem 4.36 of [AFK26] for the strongly coded template system are proved,
     relative to the current draft of 7 October 2026 (`alignment`); Theorem 4.36 is proved for the
     models of `templateSentence` coded on ℕ, as the concrete template-system specialization of
-    the route of Section 2 of [AFK26], not as the abstract Theorems 2.25 and 2.27 for arbitrary
-    systems.
+    the route of Section 2 of [AFK26], and a second time, separately, by that route: Proposition
+    2.18 and Theorems 2.19, 2.25 and 2.27 are proved for arbitrary weak and qualifying systems
+    (Theorem 2.27 in a form coded on ℕ, under the explicit premise that the members on countable
+    carriers are infinite) and applied to `K[L]` as an instance.
     Open mathematics outside the main theorem (the hypotheses (R1) and (R2) for every model, and
     other correspondence questions) is recorded in `roadmap/`.
   sorry_count: 0
@@ -161,8 +163,14 @@ fidelity:
     scope, not an obstruction: the empty structure also satisfies `templateSentence`, so an
     all-carriers formulation would count one further isomorphism class, and the passage from
     models on countable nonempty carriers to models coded on ℕ is proved), as the concrete
-    specialization of the route of Section 2 of [AFK26], whose
-    abstract Theorems 2.25 and 2.27 for arbitrary systems are not formalized.
+    specialization of the route of Section 2 of [AFK26]. That route is also formalized for
+    arbitrary systems: Proposition 2.18 and Theorem 2.19 for weak systems, Theorem 2.25 for
+    qualifying systems (the count on the carriers `Fin (n + 1)` and ℕ, finite carriers included,
+    with no infiniteness premise) and Theorem 2.27 in a form coded on ℕ, under the explicit
+    premise `CountableMembersInfinite`; the printed back-and-forth systems and their relation
+    `≡_β` are replaced by InfinitaryLogic's `BFEquiv` and `bfEquivSetoid`, with no correspondence
+    claimed. Applied to `K[L]`, it gives a second, separately stated proof of Theorem 4.36
+    (`theorem436Target_abstract`).
     `templateSentence` is not identified with `baseLanguage.densitySentence`, and no spectrum
     result is transferred between them. Where the
     formal route differs from the manuscript (for example, receiving models in place of
@@ -331,8 +339,9 @@ alignment:
         `templateInvariantSystem_projection`, `weakSystemClausesTarget`,
         `projectedDensityAt_of_satisfiesDensityAt`, `templateBaseModelsTarget`) and the
         countability of the language (`baseLanguageCountableTarget`). The concrete
-        template-system specialization of the route of Section 2 of [AFK26]; the abstract
-        Theorems 2.25 and 2.27 for arbitrary systems are not claimed. The statement is about
+        template-system specialization of the route of Section 2 of [AFK26], not a statement about
+        arbitrary systems; the abstract route is the separate second proof
+        `theorem436Target_abstract` (the last entry below). The statement is about
         models coded on ℕ; a spectrum statement on all countable carriers is not made here, a
         distinction of scope, not an obstruction: the empty structure also satisfies
         `templateSentence`, so an all-carriers formulation would count one further isomorphism
@@ -342,6 +351,138 @@ alignment:
         `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`;
         no spectrum result is transferred between the two sentences. Relative to the current
         draft of [AFK26] of 7 October 2026 (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version.
+
+    - source: "[AFK26], Proposition 2.18, for an arbitrary weak system"
+      lean:
+        - Correspondence.WeakSystem.bfEquivOfCommonInvariantTarget
+        - Correspondence.WeakSystem.bfEquivOfPatternMatchedTarget
+      module: VaughtConjecture/Correspondence/Systems/BackAndForth.lean
+      status: proved
+      note: >-
+        For a weak system (`Correspondence.WeakSystem`, Definition 2.17) of an arbitrary geometry
+        signature, invariance diagram and invariant system, and members of `K_β` on countable
+        carriers that realize a common invariant, the base reducts are back-and-forth equivalent
+        at level `β` at the empty tuple (`BFEquiv β`), in place of the printed `≡_β`. From the
+        form for tuples matched through a common pattern of invariants at every level `ι ≤ β`
+        (`bfEquivOfPatternMatchedTarget`), by induction on `ι`. The printed back-and-forth systems
+        and `≡_β` are not formalized; InfinitaryLogic's `BFEquiv` is used in their place, and no
+        correspondence between `BFEquiv β` and `≡_β` is claimed. Relative to the current draft
+        of [AFK26] of 7 October 2026 (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version.
+    - source: "[AFK26], Theorem 2.19, for an arbitrary weak system"
+      lean:
+        - Correspondence.WeakSystem.countableBFClassesTarget
+        - Correspondence.WeakSystem.countable_bfClasses_of_countable_classesWithoutLift
+        - Correspondence.WeakSystem.thinnessTarget
+      module: VaughtConjecture/Correspondence/Systems/BFClasses.lean
+      status: proved
+      note: >-
+        Coded on ℕ: for a weak system with carriers in universe `0` and a sentence `φ` of the
+        base sublanguage, if for every countable `β` the classes of models of `φ` coded on ℕ with
+        a member that has no lift in `K_β` are countably many, then at every level `η < ω₁` the
+        coded models fall into countably many classes of `bfEquivSetoid φ η`, and there is no
+        perfect set of pairwise non-isomorphic coded models (`thinnessTarget`). The stronger
+        `countable_bfClasses_of_countable_classesWithoutLift` has no premise that `φ` axiomatizes
+        the base; the targets carry that premise and do not use it. The last step uses
+        `MainTheorem.isThinOnNatModels_of_countable_bfClasses` in place of Proposition 2.16.
+        Relative to the current draft of [AFK26] of 7 October 2026 (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version.
+    - source: "[AFK26], Theorem 2.25 (a), general form, for an arbitrary qualifying system"
+      lean: Correspondence.QualifyingSystem.mkBaseClassesEqAlephOneTarget
+      module: VaughtConjecture/Correspondence/Systems/Count.lean
+      status: proved
+      note: >-
+        For a qualifying system (`Correspondence.QualifyingSystem`: a weak system with the four
+        conditions (a)–(d) of Definition 2.23, the manuscript's "Knight system"; Reconstruction
+        and the uniqueness of maximal lifts are not fields), carriers in universe `0`: the
+        isomorphism classes of the base on the carriers `Fin (n + 1)` and ℕ
+        (`WeakSystem.BaseClasses`), which represent its members on countable nonempty carriers,
+        number exactly ℵ₁. Finite carriers are counted, and there is no infiniteness premise. At
+        most ℵ₁ from conditions (a) and (b); at least ℵ₁ from Lemma 2.22, condition (d) and an
+        invariant not fixed at a given countable level. Relative to the current draft of [AFK26]
+        of 7 October 2026 (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version.
+    - source: "[AFK26], Theorem 2.25 (a), for a sentence, for an arbitrary qualifying system"
+      lean: Correspondence.QualifyingSystem.mkModelClassesEqAlephOneTarget
+      module: VaughtConjecture/Correspondence/Systems/Spectrum.lean
+      status: proved
+      note: >-
+        For a sentence axiomatizing the base on all countable nonempty carriers
+        (`WeakSystem.IsBaseSentenceOnCarriers`), its models coded on every `Fin (n + 1)` and on ℕ
+        have exactly ℵ₁ isomorphism classes; finite carriers are kept, and there is no
+        infiniteness premise. The specializations coded on ℕ alone are separate:
+        `mkClassesLeAlephOneTarget` (at most ℵ₁, no infiniteness premise) and
+        `mkClassesEqAlephOneTarget` (exactly ℵ₁, under the explicit premise
+        `CountableMembersInfinite`); they do not replace the general form. Relative to the current
+        draft of [AFK26] of 7 October 2026 (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version.
+    - source: "[AFK26], Theorem 2.25 (b), for an arbitrary qualifying system"
+      lean: Correspondence.QualifyingSystem.noPerfectSetTarget
+      module: VaughtConjecture/Correspondence/Systems/Thinness.lean
+      status: proved
+      note: >-
+        For a qualifying sentence (its models coded on ℕ are the members of the base on ℕ), no
+        perfect set of pairwise non-isomorphic models coded on ℕ, with no infiniteness premise:
+        Theorem 2.19 with the countable part `countableClassesWithoutLiftTarget` (conditions (a)
+        and (b)). Relative to the current draft of [AFK26] of 7 October 2026 (SHA-256 of its
+        source 654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a
+        published version.
+    - source: "[AFK26], Theorem 2.27, coded on ℕ, for an arbitrary qualifying system"
+      lean: Correspondence.QualifyingSystem.hasThinAlephOneSpectrumTarget
+      module: VaughtConjecture/Correspondence/Systems/Spectrum.lean
+      status: proved
+      note: >-
+        For a qualifying sentence `φ` of a countable relational base sublanguage in the universes
+        `Language.{0, 1}`, under the explicit extra premise `CountableMembersInfinite` (every
+        member of `K` on a countable carrier is infinite; not a field and not a printed
+        condition), `MainTheorem.HasThinAlephOneSpectrum φ`: exactly ℵ₁ classes of models coded
+        on ℕ and no perfect set. The premise removes the finite carriers from the count. This
+        form coded on ℕ is distinct from the general count of Theorem 2.25 (a)
+        (`mkBaseClassesEqAlephOneTarget`, `mkModelClassesEqAlephOneTarget`), which keeps the
+        finite carriers and has no infiniteness premise, and does not replace it. Relative to the
+        current draft of [AFK26] of 7 October 2026 (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version.
+    - source: "[AFK26], Definition 2.23 and Theorem 4.23, K[L] as a qualifying system"
+      lean:
+        - templateQualifyingSystem
+        - templateQualifyingSentenceTarget
+      module: VaughtConjecture/Correspondence/Systems/TemplateQualifying.lean
+      status: proved
+      note: >-
+        The template system `K[L]` (`templateStageClass`, carriers in universe `0`) as a
+        qualifying system, with the base sublanguage `templateBaseSublanguage` and the weak system
+        `templateWeakSystem`; its members on countable carriers are infinite, and
+        `templateSentence` is a qualifying sentence for it. Conditions (a) and (c) come from the
+        maximal completion (`maximalCompletionTarget`), whose proof uses Reconstruction
+        (`reconstructionTarget`); the uniqueness of maximal lifts (`maximalLiftUniqueTarget`) and
+        the isomorphism invariance of the maximal stage (`maximalStageInvariantTarget`) are not
+        used. Relative to the current draft of [AFK26] of 7 October 2026 (SHA-256 of its source
+        654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
+        version.
+    - source: "[AFK26], Theorem 4.36, by the abstract route"
+      lean: theorem436Target_abstract
+      module: VaughtConjecture/Correspondence/Systems/Theorem436.lean
+      status: proved
+      note: >-
+        `theorem436Target_abstract : Theorem436Target`, a second proof of Theorem 4.36 for
+        `templateSentence` and its models coded on ℕ: the abstract Theorem 2.27
+        (`Correspondence.QualifyingSystem.hasThinAlephOneSpectrumTarget`) applied to `K[L]` as a
+        qualifying system (`templateQualifyingSentenceTarget`). Stated separately from
+        `theorem436Target`, which it does not replace. The concrete proof uses Reconstruction for
+        `K[L]`, the uniqueness of maximal lifts and the isomorphism invariance of the maximal
+        stage; the abstract theorems assume neither Reconstruction nor the uniqueness of maximal
+        lifts, and the instance uses Reconstruction through the maximal completion in conditions
+        (a) and (c), but neither the uniqueness of maximal lifts nor the isomorphism invariance of
+        the maximal stage. `templateSentence` is not identified with
+        `baseLanguage.densitySentence`, and no spectrum result is transferred between them.
+        Relative to the current draft of [AFK26] of 7 October 2026 (SHA-256 of its source
         654b2780d08e9aee902d0553576c8f58f82730ccba7f4926757e45b1c02a755f), not to a published
         version.
 

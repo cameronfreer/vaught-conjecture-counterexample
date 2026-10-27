@@ -11,9 +11,16 @@ import VaughtConjecture.Correspondence.TemplateSystem.WeakSystem
 Numbering as in the current draft of [AFK26] (the published v1 reads identically).  This file and
 the other files of `VaughtConjecture.Correspondence.Systems` state the abstract objects of
 [AFK26, §2.4–2.6] for an **arbitrary** geometry signature `σ` on a language `L`, invariance
-diagram `D` and invariant system `S` (`VaughtConjecture.Correspondence.InvariantSystem`).  Only
-definitions, structures and the statements of theorems (as `…Target` propositions) are given;
-nothing about them is proved here.
+diagram `D` and invariant system `S` (`VaughtConjecture.Correspondence.InvariantSystem`).  This
+file gives only definitions, structures and the statements of theorems (as `…Target`
+propositions); nothing about them is proved in it.  The statements are proved in the other files
+of the directory: `Projection` and `Rank` (projections, `CountableRelationsTarget` and
+`FixedAtIffRankLeTarget`), `Maximality` (the coding passage for few maximal models), `RankBound`
+(Lemma 2.22), `BackAndForth` (Proposition 2.18), `BFClasses` (Theorem 2.19), `Thinness`
+(Theorem 2.25 (b)), `Representation` (the canonical carriers), `Count` (Theorem 2.25 (a)),
+`Spectrum` (Theorem 2.25 (a) for a sentence and Theorem 2.27), `TemplateBase`, `TemplateWeak`
+and `TemplateQualifying` (`K[L]` as a qualifying system, with the targets of `TemplateInstance`),
+and `Theorem436` (Theorem 4.36 by the abstract route).
 
 **Statements in this file.**
 
