@@ -93,7 +93,7 @@ by name (both in `MainTheorem/GrowthLevelRoute.lean`).  The full map is
 [`roadmap/README.md`](roadmap/README.md); compiled refutations of candidate statements are in the
 `*Counterexample*.lean` modules, indexed in [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md).
 
-## Propositions 4.32, 4.34 and 4.35, Lemma 4.33, Claim 4.37 and Theorem 4.36 of [AFK26]
+## Propositions 4.32, 4.34 and 4.35, Lemma 4.33, Claim 4.37, Theorem 4.36 and Section 2 of [AFK26]
 
 For the strongly coded template system, the formal counterparts of three propositions of [AFK26]
 are proved, using at most the three axioms above, relative to the current draft of 7 October 2026
@@ -177,12 +177,65 @@ models coded on `ℕ`; a spectrum statement on all countable carriers is not mad
 distinction of scope, not an obstruction: the empty structure also satisfies `templateSentence`,
 so an all-carriers formulation would count one further isomorphism class, and the passage from
 models on countable nonempty carriers to models coded on `ℕ` is proved
-(`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`).  The abstract theorems of
-Section 2 of [AFK26] for arbitrary systems (Theorems 2.25 and 2.27) are not claimed.  The theorem
+(`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`).  `theorem436Target` is not
+itself a statement about arbitrary systems; Proposition 2.18 and Theorems 2.19, 2.25 and 2.27 of
+[AFK26] for arbitrary systems, and a second proof of Theorem 4.36 through them, are the next two
+paragraphs.  The theorem
 concerns `templateSentence` separately from, and without reference to, the main theorem for
 `baseLanguage.densitySentence` (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`).  As
 above, no identification of `templateSentence` with `baseLanguage.densitySentence`, and no
 transfer of the spectrum between them, is claimed.
+
+Proposition 2.18 and Theorems 2.19, 2.25 and 2.27 of Section 2 of [AFK26] are proved for arbitrary
+systems, relative to the same pinned draft, using at most the three axioms above, in
+[`Correspondence/Systems`](VaughtConjecture/Correspondence/Systems) (namespace
+`VaughtConjecture.Correspondence`; the statements are collected in `Targets.lean`): weak systems
+(Definition 2.17, `WeakSystem`) and qualifying systems (Definition 2.23, `QualifyingSystem`; the
+manuscript's term is "Knight system") for an arbitrary geometry signature, invariance diagram and
+invariant system.  Proposition 2.18: on countable carriers, members of `K_β` that realize a common
+invariant have base reducts back-and-forth equivalent at level `β`
+(`WeakSystem.bfEquivOfCommonInvariantTarget`, from the form for tuples matched through a common
+pattern, `WeakSystem.bfEquivOfPatternMatchedTarget`).  Theorem 2.19: for a sentence `φ`, if at
+every countable level `β` the classes of models of `φ` coded on `ℕ` that contain a model with no
+lift in `K_β` are countably many, then at every level below $\omega_1$ the models of `φ` coded on
+`ℕ` fall into countably many back-and-forth classes (`WeakSystem.countableBFClassesTarget`, and
+the stronger `WeakSystem.countable_bfClasses_of_countable_classesWithoutLift`, with no premise
+that the sentence axiomatizes the base), so there is no perfect set of pairwise non-isomorphic
+coded models (`WeakSystem.thinnessTarget`).  Theorem 2.25 (a), in its general form: the base of a
+qualifying system has exactly $\aleph_1$ isomorphism classes on the carriers `Fin (n + 1)` and
+`ℕ`, finite carriers included and with no infiniteness premise
+(`QualifyingSystem.mkBaseClassesEqAlephOneTarget`); for a sentence axiomatizing the base on all
+countable nonempty carriers, its models coded on every `Fin (n + 1)` and on `ℕ` have exactly
+$\aleph_1$ classes (`QualifyingSystem.mkModelClassesEqAlephOneTarget`).  Theorem 2.25 (b): no
+perfect set of pairwise non-isomorphic models coded on `ℕ` of a qualifying sentence, with no
+infiniteness premise (`QualifyingSystem.noPerfectSetTarget`).  Theorem 2.27 is proved only in a
+form coded on `ℕ`, which is distinct from the general count:
+`QualifyingSystem.hasThinAlephOneSpectrumTarget` gives `MainTheorem.HasThinAlephOneSpectrum φ`
+for a qualifying sentence `φ` under the explicit extra premise `CountableMembersInfinite` (every
+member of `K` on a countable carrier is infinite), which removes the finite carriers from the
+count; it is a specialization and does not replace Theorem 2.25 (a).  The printed back-and-forth
+systems and their relation `≡_β` are not formalized: InfinitaryLogic's `BFEquiv` and
+`bfEquivSetoid` are used in their place, and no correspondence between `BFEquiv β` and `≡_β` is
+claimed.  Neither Reconstruction nor the uniqueness of maximal lifts is a field or a premise of
+any of these abstract theorems.
+
+`K[L]` is an instance: `templateQualifyingSystem` is a qualifying system whose classes are
+`templateStageClass`, and `templateQualifyingSentenceTarget` proves that its members on countable
+carriers are infinite and that `templateSentence` is a qualifying sentence for it
+([`Correspondence/Systems/TemplateQualifying.lean`](VaughtConjecture/Correspondence/Systems/TemplateQualifying.lean)).
+The abstract Theorem 2.27 applied to this instance is a second proof of Theorem 4.36,
+`theorem436Target_abstract : Theorem436Target`
+([`Correspondence/Systems/Theorem436.lean`](VaughtConjecture/Correspondence/Systems/Theorem436.lean)),
+stated separately from `theorem436Target`, which it does not replace.  The two proofs depend on
+different results about `K[L]`.  The concrete proof uses Reconstruction (`reconstructionTarget`),
+the uniqueness of maximal lifts (`maximalLiftUniqueTarget`) and the isomorphism invariance of the
+maximal stage (`maximalStageInvariantTarget`).  The abstract theorems assume neither
+Reconstruction nor the uniqueness of maximal lifts; the `K[L]` instance uses Reconstruction
+through the maximal completion (`maximalCompletionTarget`) in conditions (a) and (c), and uses
+neither the uniqueness of maximal lifts nor the isomorphism invariance of the maximal stage.  Both
+proofs concern `templateSentence` and its models coded on `ℕ`; neither identifies
+`templateSentence` with `baseLanguage.densitySentence`, and no spectrum result is transferred
+between them.
 
 The statements of [AFK26] audited against its published version on 25 October 2026, Definitions
 2.6–2.8, 2.10, 2.17, 2.20, 2.21 and 2.23, Proposition 2.18, Theorems 2.19, 2.25 and 2.27,
