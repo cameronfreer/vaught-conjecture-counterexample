@@ -75,9 +75,12 @@ Fraïssé interfaces, factorization of tuples through age representatives, orbit
 and prime structures).  Mathlib is inherited from InfinitaryLogic's manifest (upstream
 `leanprover-community/mathlib4` at `2e318fa`), so `lake exe cache get` is expected to cover all
 of it (to be confirmed by the cold CI path); the
-syntax of infinitary formulas comes from [TauCeti](https://github.com/TauCetiProject/TauCeti)
-(`971a6dd`), also inherited from InfinitaryLogic's manifest.  CI runs the
-same commands on every push to `main` and every pull request.
+syntax of infinitary formulas comes from [TauCeti](https://github.com/TauCetiProject/TauCeti),
+taken at `330da7f` (later than the `971a6dd` of InfinitaryLogic's manifest; it exposes the body
+of `BoundedFormulaInf.Realize`) with this repository's Mathlib `2e318fa`, which differs from the
+Mathlib recorded in TauCeti's own manifest at that commit (`2cabef9`).  Compatibility is claimed
+for the dependency closure built and checked here only, not for the whole TauCeti library.  CI
+runs the same commands on every push to `main` and every pull request.
 
 The main theorem is also checked against an external reference statement with Comparator
 (`bash comparator/check.sh --exact`; [`comparator/README.md`](comparator/README.md)), and the
