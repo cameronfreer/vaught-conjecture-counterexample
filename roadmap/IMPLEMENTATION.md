@@ -1292,7 +1292,7 @@ transcriptions and theorems of `VaughtConjecture/Correspondence` (`Density`, `Se
 strongly coded legal templates of the current draft; the first lines of these rows record the
 comparisons with the native classes and keep their status.  The third line of row 24 is C, and the
 third lines of rows 30, 65 and 66, the fourth line of row 47 and the second lines of rows 48, 49
-and 62–67 are P (the second lines of rows 64 and 65 with countability as a premise, C), by the
+and 62–67 are P (the second lines of rows 64 and 65 restricted to countable carriers), by the
 statements and theorems of `VaughtConjecture/Correspondence/Systems` named in notes 24, 30, 47–49
 and 62–67: the statements of §2 of the current draft for an arbitrary weak or qualifying system,
 and `K[L]` as an instance.  Row 6 is S: `IsBountiful` is the printed
@@ -1408,7 +1408,7 @@ current-numbering citations are to the hash-pinned source draft, whose numbers a
 | | | the same, current version: Definitions 2.2 and 2.6 | P (row 14) |
 | 24 | [AFK26] | back-and-forth systems, 1 October 2026 version: Definition 4.1, Theorem 4.2 | C |
 | | | the same, current version: Definition 2.15, Proposition 2.18 | C (starting match specified) |
-| | | Proposition 2.18, current draft, for an arbitrary weak system, with `BFEquiv β` in place of `≡_β`, as `WeakSystem.bfEquivOfCommonInvariantTarget` (from `WeakSystem.bfEquivOfPatternMatchedTarget`) | C (Definition 2.15 replaced by `BFEquiv`; no correspondence claimed) |
+| | | Proposition 2.18, current draft, for an arbitrary weak system, with `BFEquiv β` in place of `≡_β`, as `WeakSystem.bfEquivOfCommonInvariantTarget` (from `WeakSystem.bfEquivOfPatternMatchedTarget`) | C (`BFEquiv β` explicitly substituted for `≡_β`; correspondence with Definition 2.15 not proved; the substitution does not establish an error in [AFK26]) |
 | 25 | [AFK26] | density at an observation, two-index form (item 3; no numbered statement) | S |
 | 26 | [AFK26] | comparison of models with a common invariant (item 4; no numbered statement) | S |
 | 27 | [AFK26] | maximal presentations, class–level incidence (item 5; no numbered statement) | S |
@@ -1437,6 +1437,8 @@ current-numbering citations are to the hash-pinned source draft, whose numbers a
 | | | the same, current draft, as `StageType.IsLegalTemplate` (fixed rows) | P (strongly coded legal stage types) |
 | 46 | [AFK26] | a template system of legal templates, Proposition 4.30 (statement) | S |
 | | | its proof in [AFK26] (clauses (d) and (g) of Definition 4.11) | S |
+| | | the positional statement, current draft, as `proposition430Target`: clauses (a)–(g) of Definition 4.11 for `LegalTemplates` (points `Fin n`, cells `Fin t.card`) and the representative selection `chosenLegalTemplates` (`IsTemplateSystemOver`) | P (positional; closure of the printed collection, with arbitrary finite subsets of `ℕ` and unrenumbered cells, under every clause not stated) |
+| | | the full-carrier results, current draft, as `proposition430FintypeTarget` and `proposition430FinsetNatTarget`: the positional statement with the second bullet for legal templates on a finite type of points and on finite subsets of `ℕ` | P (isomorphism to a renaming of a member of `chosenLegalTemplates`; not every literal closure clause for arbitrary finite subsets with unrenumbered cells) |
 | 47 | [AFK26] | the counterexample, Theorem 4.36 (statement) | S |
 | | | its proof from Propositions 4.32, 4.34, 4.35 and Lemma 4.33; Claim 4.37; current draft, for `K[L]` and `templateSentence`, as `theorem436Target` (the count `templateSentenceAlephOneTarget`, thinness `thinnessTarget`), with Definition 2.23 (a)–(d) as `templateSystemConditionsTarget` | P (models coded on `ℕ`; the concrete template-system specialization, not Theorems 2.25 and 2.27 for arbitrary systems) |
 | | | Claim 4.37, current draft, for `K[L]`, as `maximalCompletionTarget`, `maximalCompletionUniqueTarget` and `lowerLiftsAreProjectionsTarget`, and for `templateSentence` as `sentenceMaximalLiftTarget` | P (countable carriers, `β < ω₁`; the sentence form: nonempty carriers) |
@@ -1471,9 +1473,9 @@ current-numbering citations are to the hash-pinned source draft, whose numbers a
 | 63 | [AFK26] | `(α, β)`-density, Definition 2.10 | S |
 | | | clause (c) at `β = ω₁`, current draft, as `InvarianceDiagram.IsDenseAt` | P (`β = ω₁`, the form used in Definition 2.17) |
 | 64 | [AFK26] | weak systems ("weak Knight systems"), Definition 2.17; maximality and few maximal models, Definition 2.20 | S |
-| | | the same, current draft, for arbitrary `D` and `S`, as `WeakSystem` (with `WeakSystem.IsLiftAt` and `WeakSystem.IsInBase`), `WeakSystem.IsMaximalAt` and `WeakSystem.HasFewMaximal` | P; countability as a premise: C |
+| | | the same, current draft, for arbitrary `D` and `S`, as `WeakSystem` (with `WeakSystem.IsLiftAt` and `WeakSystem.IsInBase`), `WeakSystem.IsMaximalAt` and `WeakSystem.HasFewMaximal` | P, restricted to countable carriers |
 | 65 | [AFK26] | qualifying systems ("Knight systems"), Definition 2.23 | S |
-| | | the same, current draft, as `QualifyingSystem`, one field for each of (a)–(d), with qualifying sentences `QualifyingSystem.IsQualifyingSentence` | P (the sentence read on the codes on `ℕ`); countability as a premise: C |
+| | | the same, current draft, as `QualifyingSystem`, one field for each of (a)–(d), with qualifying sentences `QualifyingSystem.IsQualifyingSentence` | P, restricted to countable carriers (the sentence read on the codes on `ℕ`) |
 | | | `K[L]` as a qualifying system with qualifying sentence `templateSentence`, as `templateQualifyingSystem` and `templateQualifyingSentenceTarget` | P (carriers in universe `0`) |
 | 66 | [AFK26] | `ℵ₁` countable models and no perfect set for a qualifying system, Theorem 2.25 | S |
 | | | (a), current draft, for an arbitrary qualifying system, as `QualifyingSystem.mkBaseClassesEqAlephOneTarget` and, for a sentence, `QualifyingSystem.mkModelClassesEqAlephOneTarget` | P (the classes on `Fin (n + 1)` and `ℕ`; finite carriers counted; no infiniteness premise) |
@@ -1928,8 +1930,10 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     `isCompatible`, `fixed`, `dense` and `projection_mem`.  Definition 2.15 and Proposition 2.16 are
     not formalized for these systems: InfinitaryLogic's `BFEquiv` and `bfEquivSetoid` are used in
     their place (the printed `≡_β` need not be an equivalence relation, as [AFK26] remarks after
-    Definition 2.15), and no correspondence between `BFEquiv β` and `≡_β` is claimed or stated;
-    hence C, with the theorem about the replaced statement named.
+    Definition 2.15), and no correspondence between `BFEquiv β` and `≡_β` is claimed or stated.
+    The status C records this explicit substitution, with the theorem about the substituted
+    statement named; the correspondence with Definition 2.15 remains unproved, and the substitution
+    does not by itself establish an error in [AFK26].
 25. Prospective; ingredient `StageType.reduce_eq_of_mem_receivingFamily` (`Realization/Expansion`).
 26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions` and,
     from an arbitrary common chart, `ModelExpansion.bfEquiv_comp_of_covers` and its formula form
@@ -2388,7 +2392,8 @@ zero or a limit (`StageType.hasCoatomExtensions`).
 46. Statement: [AFK26, Proposition 4.30], a template system `L` whose templates are finite legal
     templates and which represents every finite legal template up to isomorphism and relabelling.
     A proof is given in [AFK26] of 7 October (in the version of 5 October 2026 it was Lemma 4.28,
-    with no proof).  *The formal counterpart* (`Correspondence/TemplateSystem/LegalSystem` and
+    with no proof).  *The formal counterpart* (the third line of the row, P, positional; the
+    fourth line, P, full-carrier; `Correspondence/TemplateSystem/LegalSystem` and
     `Correspondence/TemplateSystem/LegalCarrier`; record in
     `milestones/2026-10-25-proposition-4-30.md`).  Compiled in this repository (theorem named):
     `proposition430Target : Proposition430Target`, positional: a template on `[n]` is a stage type
@@ -2431,9 +2436,16 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     labelling) is not strongly coded (compiled examples, `Extension/CodingExamples`), so in the
     reading of note 43 a literal identification of `L` with all legal stage types is still ruled out
     (informal; not compiled).  What remains is (a) with strong coding: a proof that the legal stage
-    types with strongly coded rows suffice for the main theorem (strong coding is not known to be
-    preserved by the coatom amalgam and the completion, and legality may not be strengthened,
-    `README.md`, Layer 3, checkpoint 2.2). Under the coherent-rows reading of row 9 the effect of
+    types with strongly coded rows suffice for the main theorem (for a seed `I : Seed α m`, whose
+    two coatom types are legal by its fields, the amalgam is strongly coded when both coatom types
+    are, `Seed.isStronglyCoded_amalgam`, with the hypotheses `I.left.rows.IsStronglyCoded` and
+    `I.right.rows.IsStronglyCoded`; and when the amalgam is strongly coded, some completion below
+    the full grade is, `Seed.exists_completionBelowFullGrade_isStronglyCoded`, with the hypothesis
+    `I.amalgam.rows.IsStronglyCoded` and the conclusion
+    `∃ F : CompletionBelowFullGrade I, F.scheme.rows.IsStronglyCoded`; both compiled in this
+    repository (theorem named), `Extension/StronglyCodedCompletion`; legality may not be
+    strengthened, `README.md`, Layer 3, checkpoint 2.2). Under the coherent-rows reading of row 9
+    the effect of
     clause 5 is not recorded.  That the legal stage types with strongly coded rows form a template
     system of [AFK26] representing every legal template up to relabelling isomorphism is now
     `proposition430Target` with its full-carrier forms (above).  *Its proof* (the second line of the
@@ -3087,10 +3099,12 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     for an unchanged higher lift) and `WeakSystem.IsMaximal`, few maximal models
     `WeakSystem.HasFewMaximal` (finite carriers allowed, as printed), with the passage to the
     carriers `Fin (n + 1)` and `ℕ` proved (`WeakSystem.fewMaximalCodingTarget`,
-    `Correspondence/Systems/Maximality`).  Corrected reading (C): countability is not a clause of
-    `K_β` but a premise of every membership assertion and every theorem (`isoClosed` and
-    `projection_mem` carry `[Countable _]`); a printed system is then an instance, and so is `K[L]`,
-    whose classes do not contain countability (informal; not compiled as a comparison).
+    `Correspondence/Systems/Maximality`).  P, restricted to countable carriers: the printed
+    standing convention that the structures of `K_β` are countable is made explicit, as a premise
+    of every membership assertion and every theorem (`isoClosed` and `projection_mem` carry
+    `[Countable _]`) rather than a clause of `K_β`; this is not a correction of [AFK26].  A printed
+    system is then an instance, and so is `K[L]`, whose classes do not contain countability
+    (informal; not compiled as a comparison).
     Nonemptiness is the field `nonempty` ([AFK26, §1]).  For `K[L]`: `templateWeakSystem`, whose
     classes are `templateStageClass` (`Correspondence/Systems/TemplateWeak`), with its base and
     maximality those of `K[L]` (`templateWeakSystem_isInBase_iff`,
@@ -3103,7 +3117,7 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     with one field per condition: `base_maximal` (a) (the reverse inclusion holds for every weak
     system), `fewMaximal` (b), `eventuallyDetermined` (c), `invariant_occurs` (d), the printed
     existential occurrence on a countable nonempty carrier, with no infiniteness.  Countability is
-    an explicit premise of (a) and (c) and part of the witness of (d) (C, as in note 64).  A
+    an explicit premise of (a) and (c) and part of the witness of (d) (as in note 64).  A
     qualifying sentence is `QualifyingSystem.IsQualifyingSentence`: the models of `φ` coded on `ℕ`
     are the members of the base on `ℕ` (`WeakSystem.IsBaseSentence`); the reading on all countable
     nonempty carriers is `WeakSystem.IsBaseSentenceOnCarriers`, which implies it

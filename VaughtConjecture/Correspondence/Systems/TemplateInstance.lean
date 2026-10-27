@@ -36,8 +36,9 @@ declarations provide each field.
 * `WeakSystem.dense`: `weakSystemClausesTarget` and `TemplateDensityTranslationTarget`.
 * `WeakSystem.IsMaximalAt`: `IsMaximalAt` (after `templateInvariantSystem_projection`).
 * `QualifyingSystem.base_maximal`: `maximalCoverageBaseTarget`.
-* `QualifyingSystem.fewMaximal`: `maximalCountTarget`, `uniformMaximalRepresentativesTarget`
-  (representatives on `ℕ`).
+* `QualifyingSystem.fewMaximal`: `maximalCountTarget` alone (its countable set of
+  representatives on `ℕ` at each level, reindexed by `WeakSystem.hasFewMaximal_of_family`, in
+  `templateWeakSystem_hasFewMaximal`).
 * `QualifyingSystem.eventuallyDetermined`: `eventualDeterminationOfBaseTarget` (its `ξ ≤ ζ`
   gives the printed `ζ > ξ`).
 * `QualifyingSystem.invariant_occurs`: `invariantOccurrenceTarget` at `ℕ`, with

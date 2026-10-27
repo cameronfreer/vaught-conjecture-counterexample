@@ -133,9 +133,15 @@ reads `ω · β`.
   of the indexing `ω · β` of the version of 5 October 2026; Lemma 4.19 of the current draft and
   the published v1 concerns the projections at `ω + ω · β` of its Definition 4.16, the block
   indexing.
-* The projection of a structure and its rank [AFK26, Definition 2.7], and the fact after
-  [AFK26, Definition 2.8] that projections preserve compatibility [AFK26, Lemma 2.9], are not
-  compiled here.
+* The projection of a structure and its rank [AFK26, Definition 2.7] are not compiled here; they
+  are compiled elsewhere: the projection `InvariantSystem.projection`
+  (`VaughtConjecture.Correspondence.TemplateSystem.WeakSystem`), fixed structures
+  `InvariantSystem.IsFixedAt` and the ranks `InvariantSystem.invariantRank` and
+  `InvariantSystem.structureRank` (`VaughtConjecture.Correspondence.Systems.Base`), and, for a
+  structure fixed at some countable level, the equivalence of being fixed at `β` with having rank
+  at most `β` (`InvariantSystem.fixedAtIffRankLeTarget`,
+  `VaughtConjecture.Correspondence.Systems.Rank`).  The fact after [AFK26, Definition 2.8] that
+  projections preserve compatibility [AFK26, Lemma 2.9] is not compiled.
 
 ## Placement
 
