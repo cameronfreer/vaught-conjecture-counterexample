@@ -308,7 +308,14 @@ Notes on the rows, each with its marker:
   `universalityDensityTarget`).  Theorem 4.36 for `templateSentence` is proved for the same
   system, relative to the pinned draft (#248, #249, #250; concordance row 47, second line, P;
   note 47), as the concrete template-system specialization of the route of Section 2 of [AFK26]
-  (the abstract Theorems 2.25 and 2.27 for arbitrary systems are not claimed):
+  (`theorem436Target` itself is not a statement about arbitrary systems; Proposition 2.18 and
+  Theorems 2.19, 2.25 and 2.27 for arbitrary weak and qualifying systems are proved separately in
+  `Correspondence/Systems`: `WeakSystem.bfEquivOfCommonInvariantTarget`,
+  `WeakSystem.countableBFClassesTarget`, `QualifyingSystem.mkBaseClassesEqAlephOneTarget`,
+  `QualifyingSystem.noPerfectSetTarget`, and Theorem 2.27 only in a form coded on `ℕ` under the
+  explicit premise `CountableMembersInfinite`, `QualifyingSystem.hasThinAlephOneSpectrumTarget`;
+  through them, the second proof `theorem436Target_abstract`; concordance rows 24, 47, 48 and
+  62–67):
   `theorem436Target : Theorem436Target`, where
   `Theorem436Target := MainTheorem.HasThinAlephOneSpectrum templateSentence.{0}`, for the models
   coded on `ℕ`.  The count, exactly `ℵ₁` isomorphism classes, is
