@@ -79,7 +79,9 @@ rev = "5d5f65cef1e47776f0e3e60b3bacfda507f00aed"
 # (the merge of its #21452, which exposes the body of `BoundedFormulaInf.Realize`, so that its
 # matcher has the public name `BoundedFormulaInf.Realize.match_1`), taken with the Mathlib
 # `2e318fa` below, which differs from the Mathlib `2cabef9` recorded in TauCeti's own manifest at
-# that commit.  Compatibility verification is pending (see `README.md`).
+# that commit.  Compatibility of TauCeti `330da7f` with Mathlib `2e318fa` is claimed for the
+# dependency closure this repository builds and checks at these pins only, not for the whole
+# TauCeti library (see `README.md`).
 [[require]]
 name = "TauCeti"
 git = "https://github.com/TauCetiProject/TauCeti"

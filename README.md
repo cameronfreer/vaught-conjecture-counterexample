@@ -79,8 +79,9 @@ ComputableModelTheory's own manifests pin), so `lake exe cache get` is expected 
 [TauCeti](https://github.com/TauCetiProject/TauCeti), also a direct root pin, at `330da7f`
 (later than the `971a6dd` of InfinitaryLogic's manifest; it exposes the body of
 `BoundedFormulaInf.Realize`), taken with this Mathlib `2e318fa`, which differs from the Mathlib
-recorded in TauCeti's own manifest at that commit (`2cabef9`).  Compatibility verification is
-pending; once it passes, the claim covers the dependency closure built and checked here only, not
+recorded in TauCeti's own manifest at that commit (`2cabef9`).  Compatibility of TauCeti `330da7f`
+with Mathlib `2e318fa` is claimed for the dependency closure this repository builds and checks
+at these pins only (the build, `scripts/check.sh` and `comparator/check.sh --exact` pass), not for
 the whole TauCeti library.  CI runs the same commands on every push to `main` and every pull
 request.
 
