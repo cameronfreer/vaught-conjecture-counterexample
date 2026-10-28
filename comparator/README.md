@@ -110,8 +110,9 @@ and `φ := baseLanguage.densitySentence.{0}` from the three clauses of
 (`VaughtConjecture/MainTheorem/GrowthLevelRoute.lean`).  Neither file imports `Challenge.lean`:
 the reference's build directory is not on the search path (`LEAN_PATH`) of any solution-side
 compilation or export, and `check.sh` checks that `Challenge` is not in the solution's import
-closure (4879 modules, the solution closure measured at the recorded head and pins; the number
-changes as further mathematics lands).  The reference's build directory is not otherwise
+closure (4878 modules, measured by `check.sh --exact` at commit `428c9df` with Lean v4.36.0-rc1,
+InfinitaryLogic `004f638`, ComputableModelTheory `5d5f65c`, Mathlib `2e318fa` and TauCeti
+`330da7f`; the number changes as further mathematics lands).  The reference's build directory is not otherwise
 hidden: when the outputs are inside the checkout, the read-only view of the checkout includes
 it.  `Challenge.lean` imports nothing of this repository.  `SolutionDefinitions.lean` restates the definitions of the reference statement
 declaration for declaration; Comparator checks each against the reference.
