@@ -20,11 +20,12 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Mathlib is upstream leanprover-community/mathlib4, inherited from InfinitaryLogic's
-    # manifest, so the public Mathlib cache is expected to cover all of it (to be confirmed by
-    # the cold CI path).  InfinitaryLogic, the TauCeti modules it imports and
-    # ComputableModelTheory are built once per dependency pin and then carried between runs by
-    # the `deps` GitHub cache below; a cold run (new pin) is slow, a warm run takes minutes.
+    # Mathlib is upstream leanprover-community/mathlib4, a direct root pin in lakefile.toml (the
+    # commit InfinitaryLogic's manifest pins), so the public Mathlib cache is expected to cover all
+    # of it (to be confirmed by the cold CI path).  InfinitaryLogic, the TauCeti modules it
+    # imports and ComputableModelTheory are built once per dependency pin and then carried
+    # between runs by the `deps` GitHub cache below; a cold run (new pin) is slow, a warm run
+    # takes minutes.
     timeout-minutes: 150
     steps:
       - uses: actions/checkout@v7

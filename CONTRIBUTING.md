@@ -40,10 +40,14 @@ bash scripts/check.sh --no-build
 
 ## Dependency pins and upgrades
 
-The only pins are `lean-toolchain` and the [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) and
-[ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory) revisions in `lakefile.toml`.  Mathlib is not required directly: it is inherited from InfinitaryLogic's
-manifest (an upstream `leanprover-community/mathlib4` commit, with TauCeti beside it), and the
-toolchain must equal InfinitaryLogic's
+The only pins are `lean-toolchain` and the
+[InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic),
+[ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory), Mathlib (an
+upstream `leanprover-community/mathlib4` commit, the one InfinitaryLogic's own manifest pins) and
+[TauCeti](https://github.com/TauCetiProject/TauCeti) revisions in `lakefile.toml`.  Mathlib and
+TauCeti are direct root pins, so a bump of InfinitaryLogic moves neither; the `mathlib` `require`
+comes last, because Lake resolves the later `require`s first and Mathlib's own dependencies must
+come from Mathlib's manifest.  The toolchain must equal InfinitaryLogic's
 (`scripts/check.sh` checks this).
 
 To bump InfinitaryLogic: change its `rev` in `lakefile.toml`, run `lake update InfinitaryLogic`,

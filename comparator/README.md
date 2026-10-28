@@ -80,8 +80,8 @@ sentence `baseLanguage.densitySentence` of `VaughtConjecture/Language/Density.le
   definitionally `baseLanguage.{0} : Language.{0, 1}`, whose function symbols are `Empty`;
 * *sentence*: `(language R).Sentenceω` is the restated `BoundedFormulaInf ℕ Empty 0`, which
   Comparator checks to be identical to the declaration of the same name in the solution's
-  environment, which comes from the pinned TauCeti (`TauCeti/ModelTheory/Infinitary/Syntax`,
-  inherited from InfinitaryLogic; the reference itself does not import TauCeti), the type of
+  environment, which comes from the pinned TauCeti (`TauCeti/ModelTheory/Infinitary/Syntax`, a
+  direct root pin at `330da7f`; the reference itself does not import TauCeti), the type of
   `densitySentence`; satisfaction `Satisfies` is, on the solution side, TauCeti's `Realize` at the
   empty valuations, which is `Sentenceω.Realize` of `InfinitaryLogic` by `Iff.rfl`;
 * *codes and topology*: `Code R ℕ` is `InfinitaryLogic`'s `StructureSpace` up to unfolding, with

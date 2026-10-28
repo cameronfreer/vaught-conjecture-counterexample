@@ -50,12 +50,13 @@ below.  The companion milestones are summarized under "Companion boundaries".
 
 ## Environment
 
-Lean `v4.36.0-rc1`; InfinitaryLogic and ComputableModelTheory at the revisions pinned in
-`lakefile.toml` (`004f638` and `5d5f65c`); Mathlib (upstream mathlib4 `2e318fa`) inherited from
-InfinitaryLogic's manifest; TauCeti taken at `330da7f` (later than the `971a6dd` of
-InfinitaryLogic's manifest) with this Mathlib `2e318fa`, which differs from the Mathlib recorded
-in TauCeti's own manifest at that commit (`2cabef9`); compatibility is claimed for the dependency
-closure built and checked here only, not for the whole TauCeti library.
+Lean `v4.36.0-rc1`; InfinitaryLogic, ComputableModelTheory, Mathlib and TauCeti at the revisions
+pinned directly in `lakefile.toml` (`004f638`, `5d5f65c`, upstream mathlib4 `2e318fa` and
+`330da7f`).  Mathlib `2e318fa` is the commit InfinitaryLogic's and ComputableModelTheory's own
+manifests pin; TauCeti `330da7f` is later than the `971a6dd` of InfinitaryLogic's manifest and is
+taken with this Mathlib, which differs from the Mathlib recorded in TauCeti's own manifest at that
+commit (`2cabef9`).  Compatibility verification is pending; once it passes, the claim covers the
+dependency closure built and checked here only, not the whole TauCeti library.
 Nothing else is imported.
 Search the pinned libraries first and delete any local lemma that duplicates one already
 upstream.
@@ -3460,11 +3461,14 @@ named (`README.md`, Layer 0):
   the revision pinned here (at `a1fe761` it was `6480603`, the release v6.0.0); this repository's
   manifest governs (see the next item).
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.36.0-rc1` at
-  present) and one Mathlib commit (at present upstream mathlib4 `2e318fa`, inherited from
-  InfinitaryLogic, which replaced the fork commit `346a4bd`); TauCeti is taken at `330da7f`, later
-  than the `971a6dd` of InfinitaryLogic's manifest, with this Mathlib `2e318fa` (TauCeti's own
-  manifest at that commit records `2cabef9`; compatibility is claimed for the dependency closure
-  built and checked here only).  The manifest holds one revision of each dependency, so
+  present) and one Mathlib commit (at present upstream mathlib4 `2e318fa`, a direct root pin in
+  `lakefile.toml`, the same commit InfinitaryLogic's and ComputableModelTheory's own manifests pin,
+  which replaced the fork commit `346a4bd`); TauCeti is a direct root pin as well, at `330da7f`,
+  later than the `971a6dd` of InfinitaryLogic's manifest, with this Mathlib `2e318fa` (TauCeti's
+  own manifest at that commit records `2cabef9`; compatibility verification is pending, and once
+  it passes the claim covers the dependency closure built and checked here only).  The root pins
+  govern, so a bump of InfinitaryLogic moves neither Mathlib nor TauCeti.  The manifest holds one
+  revision of each dependency, so
   ComputableModelTheory
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.

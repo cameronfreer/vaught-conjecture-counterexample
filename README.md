@@ -72,15 +72,17 @@ The library builds on [Mathlib](https://github.com/leanprover-community/mathlib4
 $L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting), and
 [ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory) (classical
 Fraïssé interfaces, factorization of tuples through age representatives, orbit isolation, atomic
-and prime structures).  Mathlib is inherited from InfinitaryLogic's manifest (upstream
-`leanprover-community/mathlib4` at `2e318fa`), so `lake exe cache get` is expected to cover all
-of it (to be confirmed by the cold CI path); the
-syntax of infinitary formulas comes from [TauCeti](https://github.com/TauCetiProject/TauCeti),
-taken at `330da7f` (later than the `971a6dd` of InfinitaryLogic's manifest; it exposes the body
-of `BoundedFormulaInf.Realize`) with this repository's Mathlib `2e318fa`, which differs from the
-Mathlib recorded in TauCeti's own manifest at that commit (`2cabef9`).  Compatibility is claimed
-for the dependency closure built and checked here only, not for the whole TauCeti library.  CI
-runs the same commands on every push to `main` and every pull request.
+and prime structures).  Mathlib is a direct root pin in `lakefile.toml` (upstream
+`leanprover-community/mathlib4` at `2e318fa`, the same commit InfinitaryLogic's and
+ComputableModelTheory's own manifests pin), so `lake exe cache get` is expected to cover all of it
+(to be confirmed by the cold CI path); the syntax of infinitary formulas comes from
+[TauCeti](https://github.com/TauCetiProject/TauCeti), also a direct root pin, at `330da7f`
+(later than the `971a6dd` of InfinitaryLogic's manifest; it exposes the body of
+`BoundedFormulaInf.Realize`), taken with this Mathlib `2e318fa`, which differs from the Mathlib
+recorded in TauCeti's own manifest at that commit (`2cabef9`).  Compatibility verification is
+pending; once it passes, the claim covers the dependency closure built and checked here only, not
+the whole TauCeti library.  CI runs the same commands on every push to `main` and every pull
+request.
 
 The main theorem is also checked against an external reference statement with Comparator
 (`bash comparator/check.sh --exact`; [`comparator/README.md`](comparator/README.md)), and the
