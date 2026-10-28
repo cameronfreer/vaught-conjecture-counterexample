@@ -1295,7 +1295,12 @@ status.  The second lines of rows 51, 52, 55 and 56 and the third line of row 52
 transcriptions and theorems of `VaughtConjecture/Correspondence` (`Density`, `Sentence`,
 `Proposition434`, `Maximality`) named in notes 51, 52, 55 and 56, for the template system of
 strongly coded legal templates of the current draft; the first lines of these rows record the
-comparisons with the native classes and keep their status.  Row 6 is S: `IsBountiful` is the printed
+comparisons with the native classes and keep their status.  The third line of row 24 is C, and the
+third lines of rows 30, 65 and 66, the fourth line of row 47 and the second lines of rows 48, 49
+and 62–67 are P (the second lines of rows 64 and 65 restricted to countable carriers), by the
+statements and theorems of `VaughtConjecture/Correspondence/Systems` named in notes 24, 30, 47–49
+and 62–67: the statements of §2 of the current draft for an arbitrary weak or qualifying system,
+and `K[L]` as an instance.  Row 6 is S: `IsBountiful` is the printed
 definition required at every stage that is zero or a limit (note 6), and at `ω₁` only the
 implication from `IsBountiful` is proved.  Row 57 is S: native cell coherence is compiled, the coded
 domains are not reconstructed (note 57).  Row 58 is C: the top label of the anchor made explicit,
@@ -1323,8 +1328,9 @@ and 4.31, Propositions 4.30, 4.32, 4.34 and 4.35, Lemma 4.33, Theorem 4.36 and C
 identically, in number and text, in the hash-pinned source draft and in the published version
 [AFK26] v1, [hexagon:2610.00188v1](https://hexagonmath.org/2610.00188v1) (PDF SHA-256
 `2b3f3aa14c32174a8dae4e343f234cb08ea1027031a14dcd7c651ab6b7d8668d`, retrieved 25 October 2026;
-method, coverage and numbering map in `milestones/2026-10-25-published-v1-audit.md`).  Rows 48–56,
-and the second lines of rows 46 and 47, are rows new to the concordance (rows 49, 50 and 52 concern
+method, coverage and numbering map in `milestones/2026-10-25-published-v1-audit.md`).  Rows 48–56
+and 62–67, and the second lines of rows 46 and 47, are rows new to the concordance (rows 49, 50
+and 52 concern
 statements already in earlier versions); each first line is S, and its note gives the status of the
 corresponding declarations here: compiled in this repository (theorem named), compiled conditionally
 (the hypotheses named), informal and not compiled, or prospective.  [AFK26] states Propositions
@@ -1337,9 +1343,13 @@ Lemma 4.33 (row 54, P line: `universalChartModelTarget`), Claim 4.37 (row 47, th
 Definition 2.21 for the models of `templateSentence` (row 30, second line:
 `sentenceEventualDeterminationTarget`), and so is Theorem 4.36 for `templateSentence`, for its
 models coded on `ℕ`, as the concrete template-system specialization of the route of Section 2 of
-[AFK26] (row 47, second line, P: `theorem436Target`; Theorems 2.25 and 2.27 for arbitrary
-systems are not claimed; note 47).  It also states that the proof that its system `K[L]` is a
-Knight system has been formalized; in this repository the main theorem is compiled with no
+[AFK26] (row 47, second line, P: `theorem436Target`; note 47).  Proposition 2.18 and Theorems
+2.19, 2.25 and 2.27 are proved for an arbitrary weak or qualifying system (rows 24, 48, 66 and 67;
+Theorem 2.27 in a form coded on `ℕ`, under the explicit extra premise `CountableMembersInfinite`),
+and through them, with `K[L]` as an instance, Theorem 4.36 for `templateSentence` a second time
+(row 47, fourth line, P: `theorem436Target_abstract`, separate from `theorem436Target`; note 47).
+[AFK26] also states that the proof that its system `K[L]` is a Knight system has been
+formalized; in this repository the main theorem is compiled with no
 hypothesis (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`) for the repository's own
 sentence `densitySentence`, not for the system `K[L]` (note 47), by the receiving-models route,
 whose three hypotheses are compiled: (R4) for receiving models
@@ -1360,8 +1370,9 @@ throughout (their clauses were compared with the text of the draft of 10 October
 the same numbers), as do those of `Correspondence/Density`, `Correspondence/Sentence`,
 `Correspondence/Boundedness`, `Correspondence/Reconstruction`, `Correspondence/Limits`,
 `Correspondence/Presentation`, `Correspondence/Maximality`, `Correspondence/TemplateSystem`,
-`Correspondence/Proposition434` and `Correspondence/StronglyCodedOccurrence`; the other modules
-of `VaughtConjecture/Correspondence` cite no numbered statement of [AFK26].  Outside
+`Correspondence/Proposition434`, `Correspondence/StronglyCodedOccurrence` and
+`Correspondence/Systems`; the other modules of `VaughtConjecture/Correspondence` cite no numbered
+statement of [AFK26].  Outside
 `Correspondence`, `MainTheorem/StronglyCodedTerminalCount` cites the current draft (Proposition
 4.35); `MainTheorem/Niceness` cites the current draft, with the numbers of the version of
 5 October 2026 beside them (Definitions 2.21 and 2.23 of the current draft, Definitions 2.19 and
@@ -1402,6 +1413,7 @@ current-numbering citations are to the hash-pinned source draft, whose numbers a
 | | | the same, current version: Definitions 2.2 and 2.6 | P (row 14) |
 | 24 | [AFK26] | back-and-forth systems, 1 October 2026 version: Definition 4.1, Theorem 4.2 | C |
 | | | the same, current version: Definition 2.15, Proposition 2.18 | C (starting match specified) |
+| | | Proposition 2.18, current draft, for an arbitrary weak system, with `BFEquiv β` in place of `≡_β`, as `WeakSystem.bfEquivOfCommonInvariantTarget` (from `WeakSystem.bfEquivOfPatternMatchedTarget`) | C (`BFEquiv β` explicitly substituted for `≡_β`; correspondence with Definition 2.15 not proved; the substitution does not establish an error in [AFK26]) |
 | 25 | [AFK26] | density at an observation, two-index form (item 3; no numbered statement) | S |
 | 26 | [AFK26] | comparison of models with a common invariant (item 4; no numbered statement) | S |
 | 27 | [AFK26] | maximal presentations, class–level incidence (item 5; no numbered statement) | S |
@@ -1410,6 +1422,7 @@ current-numbering citations are to the hash-pinned source draft, whose numbers a
 | 29 | [AFK26] | closed tuples as supported tuples, Definition 2.1 (item 2) | P |
 | 30 | [AFK26] | niceness, Definition 2.21; condition (c) of Definition 2.23 (current draft) | S |
 | | | eventual determination, Definition 2.21, current draft, for the closed tuples of the models of `templateSentence` with respect to `K[L]`, as `sentenceEventualDeterminationTarget` (from `eventualDeterminationTarget`) | P (countable nonempty carriers) |
+| | | eventual determination, Definition 2.21, current draft, for an arbitrary weak system, as `WeakSystem.IsEventuallyDetermined`, with Lemma 2.22 as `WeakSystem.existsRankBoundTarget` | P (strict inequality as printed; countable carriers) |
 | 31 | [AFK26] | a uniform fixing stage of a family (item 5; no numbered statement) | S |
 | 32 | [AFK26] | the bound of serving indices under strictness (item 5; no numbered statement) | S |
 | 33 | [AFK26] | maximal presentations of a literal base (item 5; no numbered statement) | S |
@@ -1429,11 +1442,16 @@ current-numbering citations are to the hash-pinned source draft, whose numbers a
 | | | the same, current draft, as `StageType.IsLegalTemplate` (fixed rows) | P (strongly coded legal stage types) |
 | 46 | [AFK26] | a template system of legal templates, Proposition 4.30 (statement) | S |
 | | | its proof in [AFK26] (clauses (d) and (g) of Definition 4.11) | S |
+| | | the positional statement, current draft, as `proposition430Target`: clauses (a)–(g) of Definition 4.11 for `LegalTemplates` (points `Fin n`, cells `Fin t.card`) and the representative selection `chosenLegalTemplates` (`IsTemplateSystemOver`) | P (positional; closure of the printed collection, with arbitrary finite subsets of `ℕ` and unrenumbered cells, under every clause not stated) |
+| | | the full-carrier results, current draft, as `proposition430FintypeTarget` and `proposition430FinsetNatTarget`: the positional statement with the second bullet for legal templates on a finite type of points and on finite subsets of `ℕ` | P (isomorphism to a renaming of a member of `chosenLegalTemplates`; not every literal closure clause for arbitrary finite subsets with unrenumbered cells) |
 | 47 | [AFK26] | the counterexample, Theorem 4.36 (statement) | S |
 | | | its proof from Propositions 4.32, 4.34, 4.35 and Lemma 4.33; Claim 4.37; current draft, for `K[L]` and `templateSentence`, as `theorem436Target` (the count `templateSentenceAlephOneTarget`, thinness `thinnessTarget`), with Definition 2.23 (a)–(d) as `templateSystemConditionsTarget` | P (models coded on `ℕ`; the concrete template-system specialization, not Theorems 2.25 and 2.27 for arbitrary systems) |
 | | | Claim 4.37, current draft, for `K[L]`, as `maximalCompletionTarget`, `maximalCompletionUniqueTarget` and `lowerLiftsAreProjectionsTarget`, and for `templateSentence` as `sentenceMaximalLiftTarget` | P (countable carriers, `β < ω₁`; the sentence form: nonempty carriers) |
+| | | its proof, current draft, by the abstract route: Theorem 2.27 for `K[L]` as a qualifying system with qualifying sentence `templateSentence`, as `theorem436Target_abstract` | P (models coded on `ℕ`; a second proof, separate from `theorem436Target`) |
 | 48 | [AFK26] | weak Knight systems and perfect sets of models, Theorem 2.19 | S |
+| | | the same, current draft, for an arbitrary weak system, coded on `ℕ`, as `WeakSystem.thinnessTarget`, with its back-and-forth content `WeakSystem.countableBFClassesTarget` (and the stronger `WeakSystem.countable_bfClasses_of_countable_classesWithoutLift`) | P (coded on `ℕ`; `BFEquiv` in place of Proposition 2.16) |
 | 49 | [AFK26] | the lower bound in the proof of Theorem 2.25 (bounded levels) | S |
+| | | the same, current draft, for an arbitrary qualifying system, as `QualifyingSystem.aleph_one_le_mk_baseClasses` | P (the classes of the base on `Fin (n + 1)` and `ℕ`) |
 | 50 | [AFK26] | plans as the models of `ThPlan`, Definition 4.13 and Lemma 4.14 | S |
 | 51 | [AFK26] | the classes `K_β` as density classes, Definitions 4.20 and 4.21 | S |
 | | | the same, current draft, as `templateStageClass` and `SatisfiesDensityAt` | P (nonempty carriers) |
@@ -1455,6 +1473,20 @@ current-numbering citations are to the hash-pinned source draft, whose numbers a
 | 60 | [AFK26] | templates, Definitions 4.1–4.5, and positional stage types | P (finite lawful templates) |
 | 61 | [AFK26] | cell renaming, Definition 4.6 | P |
 | | | classes fixed by the projection `τ_γ`, Definition 4.16 | P (`γ ≤ ω₁`) |
+| 62 | [AFK26] | the projection of a structure and its rank, Definition 2.7 | S |
+| | | the same, current draft, for an arbitrary invariant system, as `InvariantSystem.projection`, `InvariantSystem.IsFixedAt`, `InvariantSystem.invariantRank` and `InvariantSystem.structureRank`, at the levels `SystemLevel` | P (rank at most `β` read as `IsFixedAt`) |
+| 63 | [AFK26] | `(α, β)`-density, Definition 2.10 | S |
+| | | clause (c) at `β = ω₁`, current draft, as `InvarianceDiagram.IsDenseAt` | P (`β = ω₁`, the form used in Definition 2.17) |
+| 64 | [AFK26] | weak systems ("weak Knight systems"), Definition 2.17; maximality and few maximal models, Definition 2.20 | S |
+| | | the same, current draft, for arbitrary `D` and `S`, as `WeakSystem` (with `WeakSystem.IsLiftAt` and `WeakSystem.IsInBase`), `WeakSystem.IsMaximalAt` and `WeakSystem.HasFewMaximal` | P, restricted to countable carriers |
+| 65 | [AFK26] | qualifying systems ("Knight systems"), Definition 2.23 | S |
+| | | the same, current draft, as `QualifyingSystem`, one field for each of (a)–(d), with qualifying sentences `QualifyingSystem.IsQualifyingSentence` | P, restricted to countable carriers (the sentence read on the codes on `ℕ`) |
+| | | `K[L]` as a qualifying system with qualifying sentence `templateSentence`, as `templateQualifyingSystem` and `templateQualifyingSentenceTarget` | P (carriers in universe `0`) |
+| 66 | [AFK26] | `ℵ₁` countable models and no perfect set for a qualifying system, Theorem 2.25 | S |
+| | | (a), current draft, for an arbitrary qualifying system, as `QualifyingSystem.mkBaseClassesEqAlephOneTarget` and, for a sentence, `QualifyingSystem.mkModelClassesEqAlephOneTarget` | P (the classes on `Fin (n + 1)` and `ℕ`; finite carriers counted; no infiniteness premise) |
+| | | (b), current draft, for an arbitrary qualifying system, as `QualifyingSystem.noPerfectSetTarget` | P (coded on `ℕ`; no infiniteness premise) |
+| 67 | [AFK26] | qualifying sentences are counterexamples, Theorem 2.27 | S |
+| | | the same, current draft, coded on `ℕ`, as `QualifyingSystem.hasThinAlephOneSpectrumTarget` | P (coded on `ℕ`; the explicit extra premise `CountableMembersInfinite`) |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -1728,7 +1760,7 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     where the version of 5 October 2026 compared here had `L = L_a ∪ L_b ∪ L_c`; since
     `L_a ⊆ L_c`, the two are the same language, and the clauses are otherwise relettered and
     reworded (an informal comparison; not compiled).  Definition 2.7 (the projection of a
-    structure and its rank) and
+    structure and its rank): row 62.
     Lemma 2.9 (projections preserve compatibility): not compiled.  For the base language and the
     realizations, compiled in this repository (theorem named), with the diagram supplied here: the
     invariance diagram of the legal stage types at stage `ω₁` with the base relations at `ω`
@@ -1888,7 +1920,25 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     tuple is not closed, as the remark after the definition says); a specified starting match is
     used here, and the conclusion of Proposition 2.18 (whose hypothesis (c) asks for one invariant
     realized in both structures) is read for these systems.  Both corrections are
-    recorded in `LITERATURE.md`, §9.
+    recorded in `LITERATURE.md`, §9.  *Current draft, for an arbitrary weak system* (the third line
+    of the row, C; `Correspondence/Systems/BackAndForth`, namespace
+    `VaughtConjecture.Correspondence`).  For `G ∈ K_β` and `H ∈ K_β` on countable carriers that
+    realize a common invariant, the base reducts are `BFEquiv β` at the empty tuple
+    (`WeakSystem.bfEquivOfCommonInvariantTarget`), in place of the printed
+    `G↾L_c ≡_β H↾L_c`.  It is derived from the form for arbitrary tuples,
+    `WeakSystem.bfEquivOfPatternMatchedTarget`: tuples read along one map of positions from tuples
+    with a common invariant in `τ_ι(G)` and `τ_ι(H)` (`InvariantSystem.IsPatternMatchedAt`, the
+    printed relation `I_ι` extended to tuples with repeated entries and the empty tuple) are
+    `BFEquiv ι` in the reducts, for every `ι ≤ β`, by induction on `ι`; the forth step uses the
+    `ι`-density of `τ_ι₁(H) ∈ K_ι₁` (`WeakSystem.forth_of_isPatternMatchedAt`), as printed.  The
+    closed-tuple form is `WeakSystem.bfEquivOfMatchedTarget`.  The weak-system fields used are
+    `isCompatible`, `fixed`, `dense` and `projection_mem`.  Definition 2.15 and Proposition 2.16 are
+    not formalized for these systems: InfinitaryLogic's `BFEquiv` and `bfEquivSetoid` are used in
+    their place (the printed `≡_β` need not be an equivalence relation, as [AFK26] remarks after
+    Definition 2.15), and no correspondence between `BFEquiv β` and `≡_β` is claimed or stated.
+    The status C records this explicit substitution, with the theorem about the substituted
+    statement named; the correspondence with Definition 2.15 remains unproved, and the substitution
+    does not by itself establish an error in [AFK26].
 25. Prospective; ingredient `StageType.reduce_eq_of_mem_receivingFamily` (`Realization/Expansion`).
 26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions` and,
     from an arbitrary common chart, `ModelExpansion.bfEquiv_comp_of_covers` and its formula form
@@ -1964,6 +2014,17 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     the template classes, not the raw base encoding of the first line, and no comparison with
     `IsNiceTuple` is made; the details, with the two strengthenings (a least threshold, and
     `ξ ≤ ζ` for the printed `ζ > ξ`), are in note 56.
+    *Current draft, for an arbitrary weak system* (the third line, P;
+    `Correspondence/Systems/WeakSystem` and `Correspondence/Systems/RankBound`).  Definition 2.21 is
+    `WeakSystem.IsEventuallyDeterminedTuple` (a threshold `α`, an invariant `Q`, a lift in `K_α`
+    with `Q(ā)`, and `Q(ā)` in every lift in `K_α*` for every `α* > α`, strictly, as printed) and
+    `WeakSystem.IsEventuallyDetermined` (every closed tuple, `BaseSublanguage.IsClosedTuple`, that
+    is every tuple with `P_n`, `n ≥ 1`).  Lemma 2.22, a countable bound on the ranks of all lifts of
+    an eventually determined structure on a countable carrier, is `WeakSystem.existsRankBoundTarget`
+    (compiled in this repository (theorem named)), with the bound `sup (α_ā + 1)` over the countably
+    many closed tuples; it uses the countability of the carrier directly.  For `K[L]` the threshold
+    of the second line serves for every `ζ ≥ ξ`, so for every `ζ > ξ`
+    (`templateWeakSystem_eventuallyDetermined`, note 65).
 31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
@@ -2336,12 +2397,38 @@ zero or a limit (`StageType.hasCoatomExtensions`).
 46. Statement: [AFK26, Proposition 4.30], a template system `L` whose templates are finite legal
     templates and which represents every finite legal template up to isomorphism and relabelling.
     A proof is given in [AFK26] of 7 October (in the version of 5 October 2026 it was Lemma 4.28,
-    with no proof); our compiled statements are unchanged.  Compiled in this repository (theorem
-    named), in `Stage/Legal`: the legal stage types are closed under the face maps
-    (`StageType.IsLegal.restrictFace`), reindexing (`StageType.IsLegal.reindex`), and stage
-    reduction (`StageType.isLegal_reduce_iff`), and there are countably many on `n` points at a
-    countable stage (`StageType.countable_setOf_isLegal`); the base language has one relation symbol
-    for each legal stage type at `ω` (`baseLanguage`, `Language/Basic`).  *History.*  Under the
+    with no proof).  *The formal counterpart* (the third line of the row, P, positional; the
+    fourth line, P, full-carrier; `Correspondence/TemplateSystem/LegalSystem` and
+    `Correspondence/TemplateSystem/LegalCarrier`; record in
+    `milestones/2026-10-25-proposition-4-30.md`).  Compiled in this repository (theorem named):
+    `proposition430Target : Proposition430Target`, positional: a template on `[n]` is a stage type
+    `StageType ω₁ n`, a legal template is `StageType.IsLegalTemplate ω₁` (the five clauses of
+    Definition 4.29), and `LegalTemplates n` is the set of legal templates on `n > 0` points.  The
+    clauses (a)–(g) of Definition 4.11 hold for `LegalTemplates` (`TemplateSystemClauses`: (a) by
+    typing; (b)–(g) by `reindexClause_legalTemplates`, `faceClause_legalTemplates`,
+    `projectClause_legalTemplates`, `projectNeClause_legalTemplates`, `arityClause_legalTemplates`
+    and `truncRepairClause_legalTemplates`, the last from the repair of a prescribed root stated
+    literally, `truncRepairTarget`).  The representative selection `chosenLegalTemplates`, one
+    chosen representative (`Quotient.out`) of each legal class, satisfies the four clauses on `T*`
+    (`IsTemplateSystemOver LegalTemplates chosenLegalTemplates`, by
+    `isTemplateSystemOver_chosenLegalTemplates`); its field `subset` is the first bullet of the
+    proposition.  The second bullet for legal templates whose points are not `Fin n`:
+    `proposition430FintypeTarget` (the underlying set all of a finite type) and
+    `proposition430FinsetNatTarget` (the underlying set and the cells finite subsets of `ℕ`,
+    Definition 4.11 (a)), each the positional statement together with: every such legal template
+    is isomorphic to a renaming of a member of `chosenLegalTemplates`.  Clauses (b)–(d) go through
+    the identification of the legal templates at `ω₁` with the strongly coded legal stage types
+    (`StageType.isLegalTemplate_omega_one_iff_of_le`, from `StageType.isLegalTemplate_iff`;
+    note 45).  Not stated, as the record lists: closure of the printed collection `T` itself (points
+    and cells arbitrary finite subsets of `ℕ`, with their literal cells) under (b)–(g); the system
+    `L` is the one family `chosenLegalTemplates`; the template language, `templateSentence` and
+    `theorem436Target` are built on the legal classes, not on the chosen representatives, and do not
+    use this result.  The earlier closure lemmas of the legal stage types (strong coding not
+    assumed) remain, in `Stage/Legal`: closure under the face maps
+    (`StageType.IsLegal.restrictFace`), reindexing (`StageType.IsLegal.reindex`) and stage
+    reduction (`StageType.isLegal_reduce_iff`), and countably many on `n` points at a countable
+    stage (`StageType.countable_setOf_isLegal`); the base language has one relation symbol for each
+    legal stage type at `ω` (`baseLanguage`, `Language/Basic`).  *History.*  Under the
     reading of note 43 and with the legality definition of the version of 5 October 2026, the first
     clause of its Lemma 4.28 (all templates in `L` are legal templates) fails for the legal stage
     types here as they stand: at every stage there is a legal stage type on a scheme violating its
@@ -2354,12 +2441,20 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     labelling) is not strongly coded (compiled examples, `Extension/CodingExamples`), so in the
     reading of note 43 a literal identification of `L` with all legal stage types is still ruled out
     (informal; not compiled).  What remains is (a) with strong coding: a proof that the legal stage
-    types with strongly coded rows suffice for the main theorem (strong coding is not known to be
-    preserved by the coatom amalgam and the completion, and legality may not be strengthened,
-    `README.md`, Layer 3, checkpoint 2.2). Under the coherent-rows reading of row 9 the effect of
+    types with strongly coded rows suffice for the main theorem (for a seed `I : Seed α m`, whose
+    two coatom types are legal by its fields, the amalgam is strongly coded when both coatom types
+    are, `Seed.isStronglyCoded_amalgam`, with the hypotheses `I.left.rows.IsStronglyCoded` and
+    `I.right.rows.IsStronglyCoded`; and when the amalgam is strongly coded, some completion below
+    the full grade is, `Seed.exists_completionBelowFullGrade_isStronglyCoded`, with the hypothesis
+    `I.amalgam.rows.IsStronglyCoded` and the conclusion
+    `∃ F : CompletionBelowFullGrade I, F.scheme.rows.IsStronglyCoded`; both compiled in this
+    repository (theorem named), `Extension/StronglyCodedCompletion`; legality may not be
+    strengthened, `README.md`, Layer 3, checkpoint 2.2). Under the coherent-rows reading of row 9
+    the effect of
     clause 5 is not recorded.  That the legal stage types with strongly coded rows form a template
-    system of [AFK26] representing every legal template up to relabelling isomorphism is still to be
-    proved.  *Its proof* (the second line of the row).  [AFK26] calls clauses (a)–(c), (e) and (f)
+    system of [AFK26] representing every legal template up to relabelling isomorphism is now
+    `proposition430Target` with its full-carrier forms (above).  *Its proof* (the second line of the
+    row).  [AFK26] calls clauses (a)–(c), (e) and (f)
     of Definition 4.11 straightforward and argues (d) and (g).  (e) needs, for every `β`, a legal
     template with an ordinal label at least `ω + ω · β`; (f) needs legal templates of every size
     (bottom rows are bountiful, `CellScheme.Rows.isBountiful_bot`, compiled in this repository
@@ -2372,7 +2467,10 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     larger template; its counterpart is `CellScheme.Rows.IsBountiful.cappedLift`
     (`Scheme/Bountiful`, compiled), and the new clause 2 of Definition 4.29 makes the lifted
     template legal.  The proof uses "`u` extends `trunc_λ(t)`" for templates, a notion [AFK26]
-    defines for labelled trees only (Definition 3.4).  Argued in [AFK26]; not formalized here.
+    defines for labelled trees only (Definition 3.4).  Argued in [AFK26]; formalized here for
+    `LegalTemplates`, (d) by `projectClause_legalTemplates` and (g) by `truncRepairTarget` (the
+    capped lift at a cap `c` with `δ < c < λ`, self-visible at the size of the larger template;
+    `milestones/2026-10-25-proposition-4-30.md`).
 47. Statement: [AFK26, Theorem 4.36], "`σ[L]` has `ℵ₁`-many countable models up to isomorphism and
     does not contain a perfect set of countable models.  In particular `σ[L]` is a
     counter-example to Vaught's conjecture for `L_{ω₁ω}`."  In the version of 5 October 2026 it
@@ -2418,7 +2516,8 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     `Theorem436Target := MainTheorem.HasThinAlephOneSpectrum templateSentence.{0}`, is proved
     (`Correspondence/TemplateSystem/BackAndForth`), for the models of `templateSentence` coded on
     `ℕ`; it is the concrete template-system specialization of the route of Section 2 of [AFK26],
-    and the abstract Theorems 2.25 and 2.27 for arbitrary systems are not claimed.  Its two
+    not a statement about arbitrary systems (the abstract route is the separate second proof,
+    below).  Its two
     conclusions are distinct.  The count, exactly `ℵ₁` isomorphism classes of models coded on `ℕ`,
     is `templateSentenceAlephOneTarget` (`Correspondence/TemplateSystem/AlephOne`), with the rank
     `maximalStageOfClass`, defined using the greatest lift stage rather than the least
@@ -2442,7 +2541,24 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     (`nonemptyCarrierPassageTarget`, `templateModelInfiniteTarget`).  The theorem concerns
     `templateSentence` separately from, and without reference to,
     `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels`;
-    no spectrum result is transferred between the two sentences.  The first line of this row
+    no spectrum result is transferred between the two sentences.  *Theorem 4.36 by the abstract
+    route* (the fourth line of this row, P, `Correspondence/Systems/Theorem436`).
+    `theorem436Target_abstract : Theorem436Target` is a second, separately stated proof: the
+    abstract Theorem 2.27 (`QualifyingSystem.hasThinAlephOneSpectrumTarget`, note 67) applied to
+    `K[L]` as a qualifying system with qualifying sentence `templateSentence`
+    (`templateQualifyingSentenceTarget`, note 65), composed by
+    `theorem436Target_of_qualifyingSentenceTarget`.  It does not replace `theorem436Target`, and
+    the dependencies differ.  `theorem436Target` uses Reconstruction for `K[L]`
+    (`reconstructionTarget`, Proposition 4.34), the uniqueness of maximal lifts
+    (`maximalLiftUniqueTarget`) and the isomorphism invariance of the maximal stage
+    (`maximalStageInvariantTarget`).  The abstract theorems assume neither Reconstruction nor the
+    uniqueness of maximal lifts (neither is a field of `QualifyingSystem` or a premise of its
+    theorems); the `K[L]` instance uses Reconstruction through the maximal completion
+    (`maximalCompletionTarget`) in conditions (a) and (c) (`maximalCoverageBaseTarget`,
+    `eventualDeterminationOfBaseTarget`), and uses neither `maximalLiftUniqueTarget` nor
+    `maximalStageInvariantTarget`.  The second proof also concerns `templateSentence` and its
+    models coded on `ℕ`; no identification with `densitySentence` and no spectrum transfer is
+    claimed.  The first line of this row
     stays S.  Claim 4.37 is
     stated for `M ∈ K_β` and its proof is for `M ∈ K_{-∞}`; the coherence `τ_α(M_β) = M_α` at
     limits is used without comment and follows from Reconstruction (the formal Claim 4.37 is
@@ -2473,7 +2589,23 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     reduction (`README.md`, conditions 1 and 2) in place of the hypothesis on lifts; and, for the
     last step (Proposition 2.16), `isThinOn_of_countable_bfClasses` (`MainTheorem/Scatteredness`,
     compiled in this repository (theorem named), for `BFEquiv` in place of the `≡_β` of
-    Definition 2.15).
+    Definition 2.15).  *Current draft, for an arbitrary weak system* (the second line, P;
+    `Correspondence/Systems/BFClasses`).  Coded on `ℕ`: for a weak system with carriers in
+    universe `0` and a sentence `φ` of `L_c`, if for every countable `β` the classes of models of
+    `φ` coded on `ℕ` with a member that has no lift in `K_β` on `ℕ`
+    (`WeakSystem.classesWithoutLift`, the printed hypothesis (b)) are countably many, then for every
+    `η < ω₁` the coded models fall into countably many classes of `bfEquivSetoid φ η`
+    (`WeakSystem.countable_bfClasses_of_countable_classesWithoutLift`) and there is no perfect set
+    of pairwise non-isomorphic coded models
+    (`WeakSystem.not_hasPerfectSet_of_countable_classesWithoutLift`).  The targets
+    `WeakSystem.countableBFClassesTarget` and `WeakSystem.thinnessTarget` add the
+    premise that `φ` axiomatizes the base on `ℕ` (`WeakSystem.IsBaseSentence`), which their proofs
+    do not use.  The route is the printed one with `BFEquiv` in place of `≡_β`: at the level
+    `β = η`, a class whose chosen code has a lift in `K_β` holds a `β`-invariant
+    (`WeakSystem.exists_relMap_fixed_invariant`), of which there are countably many
+    (`InvariantSystem.countable`), and classes holding one invariant are equal by Proposition 2.18
+    (row 24, third line); the last step, in place of Proposition 2.16, is
+    `MainTheorem.isThinOnNatModels_of_countable_bfClasses`.
 49. The lower bound in the proof of [AFK26, Theorem 2.25]: for each `M` in the base, the ordinal
     `α_M` of Lemma 2.22 bounds the ranks of the lifts of `M`; every invariant is realized in a
     member of `K` (Definition 2.23(d)), and there are invariants of arbitrarily large rank, so
@@ -2482,7 +2614,20 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     stated in the proof of Lemma 2.22 for the tuples only.  This is the bounded-levels criterion
     of `README.md` ("Reduction to full presentations", "Bounded levels"; a statement still to be
     proved), argued abstractly in [AFK26]; argued, not formalized (informal; not compiled).  It
-    is step (iv) of `COMPANIONS.md`, "An alternative route to the lower bound".
+    is step (iv) of `COMPANIONS.md`, "An alternative route to the lower bound".  *Current draft,
+    for an arbitrary qualifying system* (the second line, P; `Correspondence/Systems/Count`).
+    `QualifyingSystem.aleph_one_le_mk_baseClasses`: the classes of the base on the carriers
+    `Fin (n + 1)` and `ℕ` (`WeakSystem.BaseClasses`) number at least `ℵ₁`.  The dependence of `α_M`
+    on the isomorphism class of `M` is proved for the structure: the rank bound is transported along
+    isomorphisms of the base (`WeakSystem.isFixedAt_of_isLiftAt_of_equiv`, from the isomorphism
+    closure of each `K_β`).  If the classes were countably many, the bounds of Lemma 2.22 for their
+    representatives (`WeakSystem.existsRankBoundTarget`, condition (c)) would have a countable
+    supremum `α*`; an invariant not fixed by `τ_α*` (`InvariantSystem.ne_univ`) holds in a member
+    of `K` on a countable nonempty carrier (condition (d)), whose reduct is isomorphic to a class
+    representative, so the member is fixed at `α*` and the invariant is in the image of `τ_α*`,
+    hence fixed by it (`InvariantSystem.comp`), a contradiction.  The member of condition (d) may
+    be finite; no infiniteness is assumed.  The criteria of `README.md` and `COMPANIONS.md` named
+    above concern the native classes and are not changed by this line.
 50. [AFK26, Lemma 4.14]: an `L_a`-structure is a plan (Definition 4.12) exactly when it satisfies
     `ThPlan`, the `L_{ω₁ω}` axiomatization of Definition 4.13; stated as immediate, with no
     proof.  Counterpart here: `Geometry.IsPlan` (`Geometry/Plan`), whose comparison with
@@ -2918,6 +3063,119 @@ zero or a limit (`StageType.hasCoatomExtensions`).
     fixed by the projection to a stage `γ ≤ ω₁` that is zero or a limit are those whose labels lie
     at stage `γ` (`TemplateClass.project_toClass_eq_iff`, compiled in this repository (theorem
     named)).
+62. [AFK26, Definition 2.7]: the projection `τ_β(G)` of a structure (a symbol of `L_c` holds as in
+    `G`; an invariant `R` holds of `x` exactly when some `R*` with `τ_β(R*) = R` does) and the rank
+    of a structure.  The declarations of notes 62–67 are in the namespace
+    `VaughtConjecture.Correspondence`, for an arbitrary geometry signature `σ`, invariance diagram
+    `D` and invariant system `S`, and cite the current draft.  The projection is
+    `InvariantSystem.projection` (`Correspondence/TemplateSystem/WeakSystem`); compiled in this
+    repository (theorem named), in `Correspondence/Systems/Projection`: its two clauses
+    (`InvariantSystem.relMap_projection_of_not_isInvariant`,
+    `InvariantSystem.relMap_projection_of_isInvariant`), `τ_α ∘ τ_β = τ_β ∘ τ_α = τ_α` on
+    structures for `α ≤ β` (`InvariantSystem.projection_projection_of_le`,
+    `InvariantSystem.projection_projection_of_ge`), and the reduct to `L_c` unchanged
+    (`BaseSublanguage.reduct_projection`).  The levels are `SystemLevel`, the countable ordinals
+    `{β : Ordinal.{0} // β < ω₁}`, the index type of `InvariantSystem.{0}` (Definition 2.6,
+    row 14); `L_c` is `GeometrySignature.BaseSublanguage` (Convention 2.3), whose countability is
+    proved (`BaseSublanguage.countableRelationsTarget`).  "Rank at most `β`" is read as
+    `InvariantSystem.IsFixedAt β G`, that is `τ_β(G) = G`; the ranks as least levels are
+    `InvariantSystem.invariantRank` and `InvariantSystem.structureRank`, and for a structure fixed
+    at some countable level, being fixed at `β` is having rank at most `β`
+    (`InvariantSystem.fixedAtIffRankLeTarget`, `Correspondence/Systems/Rank`, compiled in this
+    repository (theorem named)).
+63. [AFK26, Definition 2.10]: the `(α, β)`-density theory, for `α < β ≤ ω₁`; clauses (a) and (b) are
+    compatibility with the diagram, clause (c) the extension clause, with an uncountable
+    disjunction over the invariants `Q*` with `τ_α(Q*) = τ_α(Q)`.  `InvarianceDiagram.IsDenseAt`
+    (`Correspondence/Systems/Base`) states clause (c) at `β = ω₁` (where `L_b[τ, ω₁] = L_b`), the
+    form used in Definition 2.17, by its satisfaction: whenever `(Q(x̄ ȳ), R(x̄))` is a pair of
+    `D`, every `x̄` with `G ⊨ R(x̄)` extends to `x̄ ȳ` with `G ⊨ Q*(x̄ ȳ)` for an invariant `Q*`
+    with `τ_α(Q*) = τ_α(Q)`.  Clauses (a) and (b) are the separate field `WeakSystem.isCompatible`.
+    The forms at `β < ω₁` are not stated.  For `K[L]`, `IsDenseAt` is `ProjectedDensityAt`
+    (`templateDensityTranslationTarget`, `Correspondence/Systems/TemplateWeak`, compiled in this
+    repository (theorem named)).
+64. [AFK26, Definitions 2.17 and 2.20]: a weak system (the manuscript's "weak Knight system") is a
+    sequence `⟨K_β⟩_{β < ω₁}` of isomorphism-closed collections of countable structures compatible
+    with `D` and of rank at most `β`, `α`-dense for `α < β`, with `τ_α(K_β) ⊆ K_α`; its base
+    `K_{-∞}` is the class of reducts to `L_c`; maximality at `β` and few maximal models are
+    Definition 2.20.  `WeakSystem D S` (`Correspondence/Systems/WeakSystem`) has one field for each
+    printed requirement (`compatibleWith`, `nonempty`, `isoClosed`, `isCompatible`, `fixed`,
+    `dense`, `projection_mem`, the inequality `α < β` as printed), with lifts `WeakSystem.IsLiftAt`
+    and the base `WeakSystem.IsInBase`; maximality is `WeakSystem.IsMaximalAt` (with its allowance
+    for an unchanged higher lift) and `WeakSystem.IsMaximal`, few maximal models
+    `WeakSystem.HasFewMaximal` (finite carriers allowed, as printed), with the passage to the
+    carriers `Fin (n + 1)` and `ℕ` proved (`WeakSystem.fewMaximalCodingTarget`,
+    `Correspondence/Systems/Maximality`).  P, restricted to countable carriers: the printed
+    standing convention that the structures of `K_β` are countable is made explicit, as a premise
+    of every membership assertion and every theorem (`isoClosed` and `projection_mem` carry
+    `[Countable _]`) rather than a clause of `K_β`; this is not a correction of [AFK26].  A printed
+    system is then an instance, and so is `K[L]`, whose classes do not contain countability
+    (informal; not compiled as a comparison).
+    Nonemptiness is the field `nonempty` ([AFK26, §1]).  For `K[L]`: `templateWeakSystem`, whose
+    classes are `templateStageClass` (`Correspondence/Systems/TemplateWeak`), with its base and
+    maximality those of `K[L]` (`templateWeakSystem_isInBase_iff`,
+    `templateWeakSystem_isMaximalAt_iff`).
+65. [AFK26, Definition 2.23]: a weak system is a "Knight system" (here: a qualifying system) under
+    the conditions (a) the base is the class of reducts of the maximal structures, (b) few maximal
+    models, (c) every member of the base is eventually determined, (d) every invariant occurs in a
+    member of `K`; a "Knight class" and a "Knight sentence" are Definitions 2.24 and 2.26.
+    `QualifyingSystem D S E` (`Correspondence/Systems/QualifyingSystem`) extends `WeakSystem D S`
+    with one field per condition: `base_maximal` (a) (the reverse inclusion holds for every weak
+    system), `fewMaximal` (b), `eventuallyDetermined` (c), `invariant_occurs` (d), the printed
+    existential occurrence on a countable nonempty carrier, with no infiniteness.  Countability is
+    an explicit premise of (a) and (c) and part of the witness of (d) (as in note 64).  A
+    qualifying sentence is `QualifyingSystem.IsQualifyingSentence`: the models of `φ` coded on `ℕ`
+    are the members of the base on `ℕ` (`WeakSystem.IsBaseSentence`); the reading on all countable
+    nonempty carriers is `WeakSystem.IsBaseSentenceOnCarriers`, which implies it
+    (`WeakSystem.isBaseSentence_of_isBaseSentenceOnCarriers`).  Reconstruction, the uniqueness of
+    maximal lifts and successor strictness are not fields and not premises of any abstract
+    statement.  *`K[L]` as an instance* (the third line, P; `Correspondence/Systems/TemplateBase`,
+    `TemplateWeak`, `TemplateQualifying`).  `templateQualifyingSystem`, with the base sublanguage
+    `templateBaseSublanguage`, carriers in universe `0`: (a) from `maximalCoverageBaseTarget`, (b)
+    from `maximalCountTarget`, (c) from `eventualDeterminationOfBaseTarget`, (d) from
+    `invariantOccurrenceTarget`; its members on countable carriers are infinite
+    (`templateQualifyingSystem_countableMembersInfinite`, from `infinitudeTarget`), and
+    `templateSentence` axiomatizes its base on all countable nonempty carriers
+    (`templateWeakSystem_isBaseSentenceOnCarriers`, from `templateBaseModelsTarget`), so it is a
+    qualifying sentence; together `templateQualifyingSentenceTarget`.  Conditions (a) and (c) come
+    from the maximal completion (`maximalCompletionTarget`), whose proof uses Reconstruction
+    (`reconstructionTarget`); `maximalLiftUniqueTarget` and `maximalStageInvariantTarget` are not
+    used (note 47).
+66. [AFK26, Theorem 2.25]: for a qualifying system, (a) the base has exactly `ℵ₁` countable models
+    up to isomorphism, (b) no perfect set of non-isomorphic models.  *(a), general form* (the second
+    line, P; `Correspondence/Systems/Representation`, `Count`, `Spectrum`).  The classes of the base
+    on the carriers `Fin (n + 1)` and `ℕ` (`WeakSystem.BaseClasses`), which represent the members
+    of the base on countable nonempty carriers up to isomorphism
+    (`WeakSystem.baseClassesRepresentTarget`), number exactly `ℵ₁`
+    (`QualifyingSystem.mkBaseClassesEqAlephOneTarget`), with no infiniteness premise: finite
+    carriers are counted with `ℕ`, by the same argument.  At most `ℵ₁`
+    (`QualifyingSystem.mk_baseClasses_le_aleph_one`) by conditions (a) and (b), as printed; at least
+    `ℵ₁` (`QualifyingSystem.aleph_one_le_mk_baseClasses`) by Lemma 2.22, condition (d) and
+    `InvariantSystem.ne_univ` (note 49).  For a sentence axiomatizing the base on all countable
+    nonempty carriers, its models coded on every `Fin (n + 1)` and on `ℕ` have exactly `ℵ₁` classes
+    (`QualifyingSystem.mkModelClassesEqAlephOneTarget`).  The specializations coded on `ℕ` alone,
+    for a qualifying sentence: at most `ℵ₁` classes, with no infiniteness premise
+    (`QualifyingSystem.mkClassesLeAlephOneTarget`), and exactly `ℵ₁` under the explicit extra
+    premise `CountableMembersInfinite` (`QualifyingSystem.mkClassesEqAlephOneTarget`); they do not
+    replace the general form.  *(b)* (the third line, P; `Correspondence/Systems/Thinness`).  For a
+    qualifying sentence, no perfect set of pairwise non-isomorphic models coded on `ℕ`
+    (`QualifyingSystem.noPerfectSetTarget`), with no infiniteness premise: Theorem 2.19 (note 48)
+    with the countable part `QualifyingSystem.countableClassesWithoutLiftTarget` (conditions (a)
+    and (b); a code without a lift in `K_β` is the reduct of a structure maximal below `β`).
+67. [AFK26, Theorem 2.27]: a "Knight sentence" has `ℵ₁` countable models up to isomorphism and no
+    perfect set of non-isomorphic models.  *Coded on `ℕ`* (the second line, P;
+    `Correspondence/Systems/Spectrum`).  `QualifyingSystem.hasThinAlephOneSpectrumTarget`: for a
+    qualifying sentence `φ` of a countable relational `L_c` in the universes `Language.{0, 1}`, and
+    under the explicit extra premise `CountableMembersInfinite` (every member of `K` on a countable
+    carrier is infinite; `WeakSystem.CountableMembersInfinite`, not a field and not a printed
+    condition), `MainTheorem.HasThinAlephOneSpectrum φ`: exactly `ℵ₁` classes of models coded on
+    `ℕ` and no perfect set (`QualifyingSystem.hasThinAlephOneSpectrumTarget_of`, from
+    `mkClassesEqAlephOneTarget` and `noPerfectSetTarget`).  The premise removes the finite carriers
+    from the count (`QualifyingSystem.isEmpty_finClasses`).  This form is distinct from the
+    general count of Theorem 2.25 (a) (note 66), which keeps the finite carriers and has no
+    infiniteness premise; the printed count on all countable carriers, for a sentence, is
+    `mkModelClassesEqAlephOneTarget`, and no single theorem combines it with
+    `noPerfectSetTarget`.  For `K[L]` the premise holds (`infinitudeTarget`), which gives
+    `theorem436Target_abstract` (note 47).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
