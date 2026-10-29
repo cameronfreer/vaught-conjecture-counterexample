@@ -82,8 +82,10 @@ equivalent in the base language at every ordinal (`CoverMatch.bfEquiv`, Infinita
 `PotentialIso.family_bfEquiv`) and satisfy the same infinitary formulas of the base language,
 over any branching carrier (`CoverMatch.realize_formulaInf_iff`, InfinitaryLogic's
 `BFEquiv_implies_agreeQR`).  Root compatibility of matched tuples, `a i = x₀ j ↔ b i = y₀ j`, is
-stated (`Realization.CoverMatchRootCompatibleTarget`).  Countability is used only afterwards, to
-obtain isomorphisms.
+proved (`CoverMatch.root_compatible`, `Realization.coverMatchRootCompatibleTarget`).  Countability
+is used only afterwards, to obtain isomorphisms: the pointed comparison applies InfinitaryLogic's
+countable back-and-forth construction to the rooted family and reads the core off its graph by
+root compatibility.
 
 Age inclusion is needed: exact receiving within a family missing the actual types is no
 constraint at all (the empty family, `VaughtConjecture.Continuation.ExactAgeExamples`).  A root
@@ -294,12 +296,25 @@ theorem CoverMatch.root {p : StageType.{u} α k₀} (h₀ : R.Covers p x₀) (h�
 
 /-- **Target: root compatibility of matched tuples.**  If `a` and `b` are matched through covers
 at the cores `x₀` and `y₀`, then a coordinate `a i` is the core point `x₀ j` exactly when `b i` is
-the core point `y₀ j`.  No countability, expansion, age or receiving hypothesis enters.  Stated. -/
+the core point `y₀ j`.  No countability, expansion, age or receiving hypothesis enters.  Proved
+(`Realization.coverMatchRootCompatibleTarget`). -/
 def CoverMatchRootCompatibleTarget : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type v⦄ ⦃N : Type w⦄ ⦃k₀ : ℕ⦄ (R : Realization.{u, v} α M)
     (R' : Realization.{u, w} α N) (x₀ : Fin k₀ → M) (y₀ : Fin k₀ → N) ⦃n : ℕ⦄ ⦃a : Fin n → M⦄
     ⦃b : Fin n → N⦄, CoverMatch R R' x₀ y₀ n a b →
       ∀ (i : Fin n) (j : Fin k₀), a i = x₀ j ↔ b i = y₀ j
+
+/-- **Root compatibility of matched tuples**: a coordinate `a i` is the core point `x₀ j` exactly
+when `b i` is the core point `y₀ j`.  Both sides say that the selector sends `i` to the position
+of the core point `j`, by injectivity of the two covers. -/
+theorem CoverMatch.root_compatible {n : ℕ} {a : Fin n → M} {b : Fin n → N}
+    (h : CoverMatch R R' x₀ y₀ n a b) (i : Fin n) (j : Fin k₀) : a i = x₀ j ↔ b i = y₀ j := by
+  obtain ⟨k, t, x, y, ι, s, hx, hy, rfl, rfl, rfl, rfl⟩ := h
+  exact hx.injective.eq_iff.trans hy.injective.eq_iff.symm
+
+/-- **Root compatibility of matched tuples**, the target form (`CoverMatch.root_compatible`). -/
+theorem coverMatchRootCompatibleTarget : CoverMatchRootCompatibleTarget.{u, v, w} :=
+  fun _ _ _ _ _ _ _ _ _ _ _ h ↦ h.root_compatible
 
 /-- Matching is symmetric. -/
 theorem CoverMatch.symm {n : ℕ} {a : Fin n → M} {b : Fin n → N}
@@ -462,21 +477,10 @@ theorem exists_equiv_comp_eq_of_exactReceivingWithinAt {p : StageType.{u} α k�
     (hr : R.ExactReceivingWithinAt x₀ A) (hr' : R'.ExactReceivingWithinAt y₀ A)
     (h₀ : R.Covers p x₀) (h₀' : R'.Covers p y₀) :
     ∃ e : M ≃[baseLanguage.{u}] N, ⇑e ∘ x₀ = y₀ := by
-  let P : PotentialIso baseLanguage.{u} M N :=
-    PotentialIso.ofExtensionFamily (CoverMatch R R' x₀ y₀) (CoverMatch.zero h₀ h₀')
-      (fun h ↦ h.sameAtomicType he he')
-      (fun h m ↦ h.exists_snoc he.isModel.isConsistent he.isModel.isCovering hage hr' m)
-      (fun h m' ↦ (h.symm.exists_snoc he'.isModel.isConsistent he'.isModel.isCovering hage' hr
-        m').imp fun _ h' ↦ h'.symm)
-  obtain ⟨e, hgraph⟩ := P.countable_toEquiv_graph
+  obtain ⟨e, hgraph⟩ := (rootedPotentialIso he he' hage hage' hr hr' h₀ h₀').countable_toEquiv_graph
   refine ⟨e, funext fun j ↦ ?_⟩
   obtain ⟨⟨n, a, b⟩, hp, i, hai, hbi⟩ := hgraph (x₀ j)
-  obtain ⟨k, t, x, y, ι, s, hx, hy, hxι, hyι, ha, hb⟩ := hp
-  simp only at hai hbi ha hb
-  have hsi : s i = ι j :=
-    hx.injective ((congrFun ha i).symm.trans (hai.trans (congrFun hxι j).symm))
-  rw [Function.comp_apply, ← hbi, congrFun hb i, ← congrFun hyι j]
-  exact congrArg y hsi
+  exact hbi.symm.trans ((CoverMatch.root_compatible hp i j).mp hai)
 
 /-- **The exact-age comparison, rooted.**  Two expansions of countable base structures at a
 common stage, whose actual types all lie in `A`, with exact receiving within `A`, and with covers
