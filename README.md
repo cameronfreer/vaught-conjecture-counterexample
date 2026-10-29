@@ -19,8 +19,9 @@ templates.
 The main theorem is proved, with no hypotheses:
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_levels : HasThinAlephOneSpectrum baseLanguage.densitySentence`.
 Axioms: `propext`, `Classical.choice`, `Quot.sound` (audited in CI).  Pinned: Lean
-`v4.35.0-rc3`, [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) `eb9f12d`,
-[ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory) `a1fe761`.
+`v4.36.0-rc1`, [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) `004f638`
+(v7.0.0), [ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory)
+`5d5f65c`.
 Not covered: the first-order Vaught conjecture.  Statements the proof does not use, among them
 (R1) and (R2) for every model, remain open; see [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md).
 
@@ -71,9 +72,18 @@ The library builds on [Mathlib](https://github.com/leanprover-community/mathlib4
 $L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting), and
 [ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory) (classical
 Fraïssé interfaces, factorization of tuples through age representatives, orbit isolation, atomic
-and prime structures).  Mathlib is inherited from InfinitaryLogic's manifest (the fork
-`cameronfreer/mathlib4` at `346a4bd`), so `lake exe cache get` covers only part of it.  CI runs the
-same commands on every push to `main` and every pull request.
+and prime structures).  Mathlib is a direct root pin in `lakefile.toml` (upstream
+`leanprover-community/mathlib4` at `2e318fa`, the same commit InfinitaryLogic's and
+ComputableModelTheory's own manifests pin), so `lake exe cache get` is expected to cover all of it
+(to be confirmed by the cold CI path); the syntax of infinitary formulas comes from
+[TauCeti](https://github.com/TauCetiProject/TauCeti), also a direct root pin, at `330da7f`
+(later than the `971a6dd` of InfinitaryLogic's manifest; it exposes the body of
+`BoundedFormulaInf.Realize`), taken with this Mathlib `2e318fa`, which differs from the Mathlib
+recorded in TauCeti's own manifest at that commit (`2cabef9`).  Compatibility of TauCeti `330da7f`
+with Mathlib `2e318fa` is claimed for the dependency closure this repository builds and checks
+at these pins only (the build, `scripts/check.sh` and `comparator/check.sh --exact` pass), not for
+the whole TauCeti library.  CI runs the same commands on every push to `main` and every pull
+request.
 
 The main theorem is also checked against an external reference statement with Comparator
 (`bash comparator/check.sh --exact`; [`comparator/README.md`](comparator/README.md)), and the

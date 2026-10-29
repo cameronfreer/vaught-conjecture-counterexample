@@ -18,9 +18,12 @@ as well.
 
 This file does not import `comparator/Challenge.lean`, and that file imports nothing of this
 repository.  The syntax and semantics of infinitary formulas are not restated here but come from
-the pinned Mathlib (`Mathlib.ModelTheory.Infinitary`), through `VaughtConjecture`.  Comparator
-checks that every declaration the reference statement uses, including
-`FirstOrder.Language.BoundedFormulaInf` and its `Realize`, is identical in the two environments.
+TauCeti (`TauCeti.ModelTheory.Infinitary.Syntax` and `.Semantics`).  Two separate facts: the
+TauCeti revision is pinned directly by this repository (`lakefile.toml`), and the modules are
+imported through InfinitaryLogic, which `VaughtConjecture` imports (this repository imports no
+TauCeti module itself).  Comparator checks that every declaration the reference statement uses,
+including `FirstOrder.Language.BoundedFormulaInf` and its `Realize`, is identical in the two
+environments.
 
 The count of isomorphism classes and the absence of a perfect antichain come from
 `HasThinAlephOneSpectrum`, and the absence of finite models from the clause `Infinite M`.  The

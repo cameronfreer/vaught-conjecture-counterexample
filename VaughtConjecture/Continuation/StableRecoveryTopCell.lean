@@ -588,7 +588,7 @@ theorem isLegal_topScheme : topScheme.{u}.IsLegal where
     · refine hrow h2 fun d hd ↦ ?_
       fin_cases d <;> first | exact absurd hd (by decide) | rfl
     · refine hrow h0 fun d hd ↦ ?_
-      fin_cases d <;> first | exact absurd hd (by decide) | rfl
+      fin_cases d <;> rfl
   isBountiful _ _ _ _ h := cappedLift_topScheme h
   -- complete: one cell at each graded face
   isComplete X hX := by

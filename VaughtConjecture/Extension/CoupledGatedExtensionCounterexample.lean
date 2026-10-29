@@ -382,7 +382,7 @@ private theorem topShifter_one :
     isWitness_topShifter (antitone_constStepSuppressor _ _)
       (isSelfVisible_constStepSuppressor (by simp)), fun d ↦ ?_⟩
   obtain ⟨d, hd⟩ := d
-  fin_cases d <;> first | exact absurd hd (by decide) |
+  fin_cases d <;>
     simp [lab, rows, rowValue, code, topShifter, constStepSuppressor, cells, cellGrade,
       omegaAdd_ne_bot]
 

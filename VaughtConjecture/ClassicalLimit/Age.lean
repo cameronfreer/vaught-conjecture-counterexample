@@ -116,7 +116,7 @@ noncomputable abbrev topFreeChart (α : Ordinal.{u}) (i : TopFreeIndex.{u} α) :
 
 /-- The **age of top-free charts** at stage `α`: the structures of the hull language isomorphic to
 a top-free chart, the representative class of the top-free charts. -/
-def topFreeAge (α : Ordinal.{u}) : Set (Bundled.{0} (hullLanguage.{u} α).Structure) :=
+noncomputable def topFreeAge (α : Ordinal.{u}) : Set (Bundled.{0} (hullLanguage.{u} α).Structure) :=
   representativeClass (topFreeChart α)
 
 namespace TopFreeIndex
@@ -219,7 +219,7 @@ noncomputable abbrev legalChart (α : Ordinal.{u}) (i : LegalIndex.{u} α) :
 
 /-- The **age of legal charts** at stage `α`: the structures of the hull language isomorphic to a
 legal chart. -/
-def legalAge (α : Ordinal.{u}) : Set (Bundled.{0} (hullLanguage.{u} α).Structure) :=
+noncomputable def legalAge (α : Ordinal.{u}) : Set (Bundled.{0} (hullLanguage.{u} α).Structure) :=
   representativeClass (legalChart α)
 
 /-- A legal chart belongs to the age of legal charts. -/

@@ -94,8 +94,8 @@ private theorem liveD_four : ∀ Y ∈ liveD, (4 : Fin 5) ∈ Y.1 := by decide
 theorem snd_eq_kindGrade {X : Finset (Fin 5) × ℕ} (hX : thinKind X ≠ 0) :
     X.2 = kindGrade (thinKind X) := by
   unfold thinKind at hX ⊢
-  split_ifs at hX ⊢ with h1 h2 h3 h4 h5 h6 <;> try first | rfl | exact (hX rfl).elim
-  all_goals first | exact h2 | exact h3 | exact h4 | exact h5 | exact h6 | skip
+  split_ifs at hX ⊢ with h1 h2 h3 h4 h5 h6 <;> try exact (hX rfl).elim
+  all_goals try first | exact h2 | exact h3 | exact h4 | exact h5 | exact h6
   unfold tripleKind at hX ⊢
   split_ifs at hX ⊢ with hC hC1 hD hD1 hG
   · exact hC1
@@ -217,7 +217,7 @@ variable {I}
 theorem gradedIndex_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4) :
     (thinScheme I).toCellScheme.gradedIndex (newCell I k) = (univ, k) := by
   rcases k with _ | _ | _ | _ | _ | k
-  all_goals first | omega | skip
+  all_goals try omega
   all_goals simp only [newCell, Scheme.appendFullCellScheme_gradedIndex_castSucc]
   all_goals exact Scheme.appendFullCellScheme_gradedIndex_last _ _
 
@@ -478,7 +478,7 @@ theorem thinLabel_le {AC AD F G Ω : Label.{u}} (hle : AC ≤ AD) {X : Finset (F
   all_goals
     simp only [thinKind_univ_one, thinKind_univ_two, thinKind_univ_three, thinKind_univ_four]
     generalize thinKind X = c at h hg
-    fin_cases c <;> first | exact absurd hg (by decide) | exact (h rfl).elim | exact le_rfl | skip
+    fin_cases c <;> try first | exact absurd hg (by decide) | exact le_rfl
   exact hle
 
 /-- A cell below the new cell at `(univ, k)` has grade at most `k`. -/

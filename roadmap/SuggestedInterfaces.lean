@@ -148,8 +148,10 @@ theorem countable_truth_side (θ : Sent) :
   have hc := F.complement_countable η
   by_cases h : ∃ q ∈ F.domain η, truth θ q
   · obtain ⟨q, hq, ht⟩ := h
-    exact Or.inr (hc.mono fun p hp hpd => hp ((hh p hpd q hq).mpr ht))
-  · exact Or.inl (hc.mono fun q hq hqd => h ⟨q, hqd, hq⟩)
+    refine Or.inr (hc.mono ?_)
+    exact fun p hp hpd => hp ((hh p hpd q hq).mpr ht)
+  · refine Or.inl (hc.mono ?_)
+    exact fun q hq hqd => h ⟨q, hqd, hq⟩
 
 end SentenceAgreementDomains
 

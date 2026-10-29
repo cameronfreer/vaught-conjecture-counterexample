@@ -50,8 +50,13 @@ below.  The companion milestones are summarized under "Companion boundaries".
 
 ## Environment
 
-Lean `v4.35.0-rc3`; InfinitaryLogic and ComputableModelTheory at the revisions pinned in
-`lakefile.toml` (`eb9f12d` and `a1fe761`); Mathlib inherited from InfinitaryLogic's manifest.
+Lean `v4.36.0-rc1`; InfinitaryLogic, ComputableModelTheory, Mathlib and TauCeti at the revisions
+pinned directly in `lakefile.toml` (`004f638`, `5d5f65c`, upstream mathlib4 `2e318fa` and
+`330da7f`).  Mathlib `2e318fa` is the commit InfinitaryLogic's and ComputableModelTheory's own
+manifests pin; TauCeti `330da7f` is later than the `971a6dd` of InfinitaryLogic's manifest and is
+taken with this Mathlib, which differs from the Mathlib recorded in TauCeti's own manifest at that
+commit (`2cabef9`).  Compatibility of TauCeti `330da7f` with Mathlib `2e318fa` is claimed for the
+dependency closure built and checked here at these pins only, not the whole TauCeti library.
 Nothing else is imported.
 Search the pinned libraries first and delete any local lemma that duplicates one already
 upstream.
@@ -3566,8 +3571,13 @@ name and its signature at the pin; it does not assert that the hypotheses hold i
 this roadmap.  An application is claimed only where a compiled theorem applying the statement is
 named (`README.md`, Layer 0):
 
-- **InfinitaryLogic**: the current pin is `eb9f12d` (infinitary-logic's release v6.1.0, the merge
-  of its pull request #172), reached from `e460cb6` (the merge of its pull request #162) by this
+- **InfinitaryLogic**: the current pin is `004f638` (infinitary-logic's release v7.0.0, the merge
+  of its pull request #183: upstream Mathlib `2e318fa`, TauCeti `971a6dd`, Lean `v4.36.0-rc1`),
+  reached from `eb9f12d` by this repository's repin to v7.0.0.  `eb9f12d` is an ancestor of
+  `004f638`; the names recorded below as available at `eb9f12d` (signatures checked) were checked
+  at `eb9f12d`, and their check at `004f638` is open until the sketches elaborate at the current
+  pins.  `eb9f12d` (infinitary-logic's release v6.1.0, the merge of its pull request #172) was
+  reached from `e460cb6` (the merge of its pull request #162) by this
   repository's pull request #209, with the toolchain and Mathlib unchanged; `e460cb6` was reached
   from `cf80917` (the merge of its pull request #156) by this repository's pull request #97;
   `cf80917` was reached from `def5cc0` (the merge of its pull request #152) by this repository's
@@ -3675,8 +3685,13 @@ named (`README.md`, Layer 0):
   `InfinitaryLogic.Scott.IsolatingLevel`, `InfinitaryLogic.UniformFixation`,
   `InfinitaryLogic.Topology.Perfect`, and the others the sketch names), never
   `InfinitaryLogic.All`.
-- **ComputableModelTheory**: the current pin is `a1fe761`, the merge of its pull request #58,
-  reached from `3a8f630` (the merge of its pull request #57) by this repository's pull request
+- **ComputableModelTheory**: the current pin is `5d5f65c`, the merge of its pull request #59 (its
+  InfinitaryLogic repin to v7.0.0; between `a1fe761` and `5d5f65c` no statement of the entry
+  module changed: proof edits in `ModelTheory/OrbitIsolation` and
+  `ModelTheory/Computable/InitialSegmentPresentation`, docstrings, and a new utility module),
+  reached from `a1fe761` by this repository's repin to v7.0.0.  `a1fe761`, the merge of its pull
+  request #58, was reached from `3a8f630` (the merge of its pull request #57) by this
+  repository's pull request
   #97; `3a8f630` was reached from `0e9935b` (the merge of its pull request #53) by this
   repository's pull request #63; `0e9935b` was reached from `37f6c42` (the merge of its pull
   request #51) by this repository's pull request #49, and `37f6c42` from `0401c95` (the merge of
@@ -3700,12 +3715,20 @@ named (`README.md`, Layer 0):
   and the audit module changed, and the entry module imports neither; between `3a8f630` and
   `a1fe761` (its pull request #58) no declaration changed: only its InfinitaryLogic pin and the
   docstrings of `ModelTheory/Computable/InfinitaryBridge` and its audit, outside the entry
-  module's imports.  Its own InfinitaryLogic pin is `6480603` (infinitary-logic's release v6.0.0,
-  the merge of its pull request #161), an ancestor of the revision `eb9f12d` pinned here; this
-  repository's manifest governs (see the next item).
-- **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
-  present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
-  InfinitaryLogic).  The manifest holds one revision of each dependency, so ComputableModelTheory
+  module's imports.  Its own InfinitaryLogic pin is `004f638` (infinitary-logic's release v7.0.0),
+  the revision pinned here (at `a1fe761` it was `6480603`, the release v6.0.0); this repository's
+  manifest governs (see the next item).
+- **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.36.0-rc1` at
+  present) and one Mathlib commit (at present upstream mathlib4 `2e318fa`, a direct root pin in
+  `lakefile.toml`, the same commit InfinitaryLogic's and ComputableModelTheory's own manifests pin,
+  which replaced the fork commit `346a4bd`); TauCeti is a direct root pin as well, at `330da7f`,
+  later than the `971a6dd` of InfinitaryLogic's manifest, with this Mathlib `2e318fa` (TauCeti's
+  own manifest at that commit records `2cabef9`; compatibility of TauCeti `330da7f` with Mathlib
+  `2e318fa` is claimed for the dependency closure built and checked here at these pins only, not
+  the whole TauCeti library).  The root pins
+  govern, so a bump of InfinitaryLogic moves neither Mathlib nor TauCeti.  The manifest holds one
+  revision of each dependency, so
+  ComputableModelTheory
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
@@ -3813,8 +3836,9 @@ local statements compiled in place of the greatest-stage statement and of Scott 
 "Placement record"; their replacement by quotations is not a planned change.
 
 **Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, none
-(after the release v6.1.0 its `master` changes only its own CI scripts); of ComputableModelTheory,
-none (its `main` is the pin `a1fe761`).  A statement merged upstream after the pins above is
+(after the release v7.0.0 its `master` changes only its own check scripts); of
+ComputableModelTheory, none (its `main` is the pin `5d5f65c`).  A statement merged upstream after
+the pins above is
 listed here, recorded here only and never `#check`ed in the sketches, until a repin containing it
 is recorded in this subsection.
 

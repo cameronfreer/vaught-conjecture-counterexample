@@ -349,10 +349,11 @@ noncomputable def requestsCP : CapRequests (Fin ((seedCP α hα).doubledLower rf
   marker := leftCP α hα 4
 
 /-- The private copies: the cells of the bottom class. -/
-def classCellsCP : Set (Fin ((seedCP α hα).doubledLower rfl).card) := Set.range (leftCP α hα)
+noncomputable def classCellsCP : Set (Fin ((seedCP α hα).doubledLower rfl).card) :=
+  Set.range (leftCP α hα)
 
 /-- The bottom class: `⊥` exactly at the private copies of the dead cells. -/
-def classBotCP : Set (Fin ((seedCP α hα).doubledLower rfl).card) :=
+noncomputable def classBotCP : Set (Fin ((seedCP α hα).doubledLower rfl).card) :=
   {leftCP α hα 0, leftCP α hα 1}
 
 private theorem lowerCell_leftCP (z : Fin 5) :

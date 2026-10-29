@@ -2,7 +2,7 @@
 
 This directory checks the main theorem of the repository against an external statement with
 [Comparator](https://github.com/leanprover/comparator), the proof judge bundled with the pinned
-toolchain (`lake comparator`, Lean `v4.35.0-rc3`).  Comparator replays the exported proof through
+toolchain (`lake comparator`, Lean `v4.36.0-rc1`).  Comparator replays the exported proof through
 Lean's kernel and through nanoda, allows only the axioms `propext`, `Quot.sound` and
 `Classical.choice`, and checks that the solution's theorem has the same statement as the
 reference, with every declaration that statement uses identical in both environments.
@@ -57,14 +57,19 @@ topology and `Perfect`.  It does not import `InfinitaryLogic`: the syntax and se
 infinitary formulas (`FirstOrder.Language.BoundedFormulaInf` and its `Realize`, about thirty
 lines) are restated in the file instead.  `check.sh` compiles it in a sandbox whose search path
 (`LEAN_PATH`) consists of Mathlib, the dependencies of Mathlib's own manifest and the toolchain,
-and then checks its whole transitive import closure (2563 modules at the current pins): every module is in `Init`, `Std`,
-`Lean`, `Mathlib` or a dependency of Mathlib, none is in `Mathlib.ModelTheory.Infinitary`,
+and then checks its whole transitive import closure (2758 modules at the current
+pins): every module is in `Init`, `Std`,
+`Lean`, `Lake`, `Mathlib` or a dependency of Mathlib, none is in `Mathlib.ModelTheory.Infinitary`,
 `InfinitaryLogic`, `ComputableModelTheory` or `VaughtConjecture`, and none is a file that the
-pinned Mathlib changes or adds.  The pinned Mathlib (`cameronfreer/mathlib4` at `346a4bd`) is
-upstream mathlib4 at `c55e6e7` plus three commits that only add `Mathlib/ModelTheory/Infinitary`
-(and its tests and the umbrella file `Mathlib.lean`); `check.sh` verifies this with git, so the
-source of every module the reference statement imports is byte for byte that of upstream mathlib4
-`c55e6e7`.  This is a statement about sources: the compiled Mathlib that the reference is built
+pinned Mathlib changes or adds.  The `Lake` modules, like those of `Init`, `Std` and `Lean`, come
+with the pinned Lean toolchain; they enter the reference closure only through Mathlib's pinned
+dependency ImportGraph (`Mathlib.Init` imports `ImportGraph.Tools`), and at the current pins they
+are `Lake.Config.Glob`, `Lake.Util.String`, `Lake.Util.Date`, `Lake.Util.Version` and
+`Lake.Build.Trace`.  The pinned Mathlib is upstream mathlib4 itself, at `2e318fa`;
+`check.sh` verifies with git that its sources are those of upstream mathlib4 `2e318fa` plus, at
+most, files added under `Mathlib/ModelTheory/Infinitary` (none at the current pin), so the source
+of every module the reference statement imports is byte for byte that of upstream mathlib4
+`2e318fa`.  This is a statement about sources: the compiled Mathlib that the reference is built
 against is the cached build output of the dependency, which is not authenticated against these
 sources (see below).
 
@@ -74,8 +79,10 @@ sentence `baseLanguage.densitySentence` of `VaughtConjecture/Language/Density.le
 * *language*: `language R` is `⟨fun _ => Empty, R⟩`; for `R := baseLanguage.{0}.Relations` this is
   definitionally `baseLanguage.{0} : Language.{0, 1}`, whose function symbols are `Empty`;
 * *sentence*: `(language R).Sentenceω` is the restated `BoundedFormulaInf ℕ Empty 0`, which
-  Comparator checks to be identical to the pinned Mathlib's (`Mathlib/ModelTheory/Infinitary`),
-  the type of `densitySentence`; satisfaction `Satisfies` is the pinned Mathlib's `Realize` at the
+  Comparator checks to be identical to the declaration of the same name in the solution's
+  environment, which comes from the pinned TauCeti (`TauCeti/ModelTheory/Infinitary/Syntax`, a
+  direct root pin at `330da7f`; the reference itself does not import TauCeti), the type of
+  `densitySentence`; satisfaction `Satisfies` is, on the solution side, TauCeti's `Realize` at the
   empty valuations, which is `Sentenceω.Realize` of `InfinitaryLogic` by `Iff.rfl`;
 * *codes and topology*: `Code R ℕ` is `InfinitaryLogic`'s `StructureSpace` up to unfolding, with
   the same product topology (`Pi.topologicalSpace`);
@@ -103,7 +110,9 @@ and `φ := baseLanguage.densitySentence.{0}` from the three clauses of
 (`VaughtConjecture/MainTheorem/GrowthLevelRoute.lean`).  Neither file imports `Challenge.lean`:
 the reference's build directory is not on the search path (`LEAN_PATH`) of any solution-side
 compilation or export, and `check.sh` checks that `Challenge` is not in the solution's import
-closure (4795 modules at the current pins).  The reference's build directory is not otherwise
+closure (4878 modules, measured by `check.sh --exact` at commit `428c9df` with Lean v4.36.0-rc1,
+InfinitaryLogic `004f638`, ComputableModelTheory `5d5f65c`, Mathlib `2e318fa` and TauCeti
+`330da7f`; the number changes as further mathematics lands).  The reference's build directory is not otherwise
 hidden: when the outputs are inside the checkout, the read-only view of the checkout includes
 it.  `Challenge.lean` imports nothing of this repository.  `SolutionDefinitions.lean` restates the definitions of the reference statement
 declaration for declaration; Comparator checks each against the reference.
@@ -155,7 +164,7 @@ order, it
 1. records the mode, the commit, the toolchain, the inventory of the inputs, and the SHA-256 of
    these tools, and of nothing else:
    * `TOOL-SHA256SUMS`, with paths relative to the toolchain: every executable file and every
-     `*.so` directly in the toolchain's `bin/` and `lib/lean/`.  For v4.35.0-rc3 these are
+     `*.so` directly in the toolchain's `bin/` and `lib/lean/`.  For v4.36.0-rc1 these are
      `bin/` `cadical`, `clang`, `con-leche`, `con-ron`, `lake`, `ld.lld`, `lean`, `lean4lean`,
      `leanc`, `leanchecker`, `leanchecker-paranoid`, `leanexport`, `leanir`, `leanmake`,
      `leantar`, `llvm-ar`, `nanoda_bin`, and `lib/lean/` `libInit_shared.so`,
@@ -228,12 +237,14 @@ lets `NoFiniteModels` quantify over `Fin (n + 1)`, no longer excluding the empty
   accepted by Lean's kernel and by nanoda (and, with `--paranoid`, by the other bundled
   checkers), and depends on no axiom beyond `propext`, `Quot.sound` and `Classical.choice`.
 * Its statement, and every declaration that statement uses (the restated definitions,
-  `BoundedFormulaInf` and its `Realize` from the pinned Mathlib, and the Mathlib and core
-  declarations below them), are identical to those of the reference statement.
+  `BoundedFormulaInf` and its `Realize`, which in the solution's environment come from the pinned
+  TauCeti, and the Mathlib and core declarations below them), are identical to those of the
+  reference statement, whose environment contains Mathlib, its dependencies and the toolchain
+  only.
 * The reference statement was compiled with a search path of only Mathlib, Mathlib's own
   dependencies and the toolchain; its import closure contains no module of this repository,
   `InfinitaryLogic`, `ComputableModelTheory` or `Mathlib.ModelTheory.Infinitary`; the sources of
-  the Mathlib modules it imports are identical to upstream mathlib4 `c55e6e7`; and it has the
+  the Mathlib modules it imports are identical to upstream mathlib4 `2e318fa`; and it has the
   declarations of the reviewed specification.
 * `Challenge` is not on the search path of the solution and not in its import closure.
 * In the exact-commit mode, all of this is about the commit `HEAD`; with `clean_check.sh` and on
@@ -251,14 +262,16 @@ lets `NoFiniteModels` quantify over `Fin (n + 1)`, no longer excluding the empty
   `lake build` and the axiom audit of `scripts/check.sh`, not by Comparator.
 * That the cached build outputs of the dependencies correspond to their sources.  Checking a
   dependency's git revision and tracked files authenticates its sources, not its `.lake/build`
-  outputs (Mathlib, `InfinitaryLogic`, `ComputableModelTheory`), which are read as they are.  The
-  kernels re-check every exported proof term, so a wrong dependency output cannot make a false
-  proof pass; but the declarations of the reference statement that come from Mathlib are read
-  from those outputs too.  On a new pin, CI downloads the Mathlib cache artifacts available for
-  the pinned revision (`lake exe cache get`), builds only the outputs missing from them
-  (the Mathlib modules the public cache does not have for the fork, `InfinitaryLogic` and the
-  classical entry module of `ComputableModelTheory`), and caches the result; later runs reuse
-  that cache.  No run builds all of Mathlib.
+  outputs (Mathlib, TauCeti, `InfinitaryLogic`, `ComputableModelTheory`), which are read as they
+  are.  The kernels re-check every exported proof term, so a wrong dependency output cannot make
+  a false proof pass; but the declarations compared are read from those outputs too: the
+  reference reads the outputs of Mathlib and its dependencies only, while the solution's
+  environment also reads those of TauCeti (where its `BoundedFormulaInf` and `Realize` come from),
+  `InfinitaryLogic` and `ComputableModelTheory`.  On a new pin, CI downloads the Mathlib cache
+  artifacts available for the pinned revision (`lake exe cache get`), builds only the outputs
+  missing from them (expected, to be confirmed by the cold CI path: `InfinitaryLogic` with the
+  TauCeti modules it imports, and the classical entry module of `ComputableModelTheory`), and caches
+  the result; later runs reuse that cache.  No run builds all of Mathlib.
 * That the reference's build is invisible to the solution side: what is checked is that it is
   not on the solution's search path and that `Challenge` is not in the solution's import
   closure.

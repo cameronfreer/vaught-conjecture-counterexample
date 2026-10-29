@@ -87,7 +87,8 @@ theorem aleph_one_le_mk_of_cofinal {X : Type u} {D : Ordinal.{0} → Set X} (hD 
     (S := {ξ | ξ < ω₁ ∧ (D ξ \ D (ξ + 1)).Nonempty}) fun ξ hξ ↦ hξ.2
   rw [aleph_one_le_iff, ← not_le, mk_le_aleph0_iff]
   intro hX
-  refine not_countable_of_cofinal (fun ξ hξ ↦ hξ.1) (fun β hβ ↦ ?_) hf.countable
+  refine not_countable_of_cofinal ?_ (fun β hβ ↦ ?_) hf.countable
+  · exact fun ξ hξ ↦ hξ.1
   obtain ⟨ξ, hβξ, hξ, hne⟩ := hloss β hβ
   exact ⟨ξ, ⟨hξ, hne⟩, hβξ⟩
 

@@ -171,7 +171,7 @@ theorem kindLabel4_le {AC AD F : Label.{u}} (hle : AC ≤ AD) {X : Finset (Fin 5
     simp only [kind4_univ_one, kind4_univ_two, kind4_univ_three]
     have h3 := kind4_le_three X
     generalize kind4 X = c at h hg h3
-    fin_cases c <;> first | exact absurd hg (by decide) | exact (h rfl).elim | exact le_rfl | skip
+    fin_cases c <;> try first | exact absurd hg (by decide) | exact le_rfl
   all_goals exact hle
 
 /-! ### The layer rows -/

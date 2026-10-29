@@ -6,14 +6,22 @@ defaultTargets = ["VaughtConjecture"]
 # A pure Lean package: cached module outputs are reusable across platforms.
 platformIndependent = true
 
-# The only pins are `lean-toolchain` and the two revisions below.  Mathlib is NOT
-# required directly: it is inherited from InfinitaryLogic's manifest (the `cameronfreer/mathlib4`
-# fork commit carrying the in-flight ModelTheory/Infinitary and Ordinal.lift PR stack), and the
-# toolchain must equal InfinitaryLogic's (checked by `scripts/check.sh`).  To bump: change
-# `rev`, run `lake update InfinitaryLogic`, copy its `lean-toolchain`, and commit the manifest (when
-# its toolchain and Mathlib are unchanged, the `rev` and `inputRev` of the manifest may instead be
-# edited by hand, as for the last two repins).
-# Pinned to cameronfreer/infinitary-logic's release v6.1.0, the merge commit of its #172 (the
+# The only pins are `lean-toolchain` and the four revisions below.  Mathlib and TauCeti are
+# required directly at fixed revisions (the last two `require`s; Mathlib last, since Lake resolves
+# the later `require`s first and the dependencies of Mathlib, such as aesop and batteries, must
+# come from Mathlib's manifest, not from TauCeti's): Mathlib at upstream
+# `leanprover-community/mathlib4` `2e318fa`, the Mathlib that InfinitaryLogic's and
+# ComputableModelTheory's own manifests pin, and TauCeti at `330da7f`, which overrides the
+# `971a6dd` of InfinitaryLogic's manifest.  These root pins govern: a bump of InfinitaryLogic no
+# longer moves Mathlib or TauCeti, which move only when their own `rev` is changed, and the
+# toolchain must equal InfinitaryLogic's (checked by `scripts/check.sh`).  To bump InfinitaryLogic:
+# change its `rev`, run `lake update InfinitaryLogic`, copy its `lean-toolchain`, check that the
+# Mathlib and TauCeti pins below still fit it, and commit the manifest (when its toolchain and
+# Mathlib are unchanged, the `rev` and `inputRev` of the manifest may instead be edited by hand, as
+# for earlier repins).
+# Pinned to cameronfreer/infinitary-logic's release v7.0.0 (`004f638`: upstream Mathlib `2e318fa`,
+# TauCeti `971a6dd` and Lean v4.36.0-rc1), which contains its release v6.1.0, the merge commit of
+# its #172 (the
 # per-level Silver step of `Conditional/MorleyPerfect` as one lemma), which includes #171
 # (`BoundedFormulaω.realize_equiv` moved to `Lomega1omega/Semantics` and `modelsOf_mem_iff_of_equiv`
 # to `Descriptive/SatisfactionBorel`, same names and statements), #170 and #165 (the greatest
@@ -41,14 +49,16 @@ platformIndependent = true
 [[require]]
 name = "InfinitaryLogic"
 git = "https://github.com/cameronfreer/infinitary-logic"
-rev = "eb9f12dc983778eec067c0875170798efd34c7f0"
+rev = "004f63817589d1308c834d2511576bbb173b50ef"
 
 # Classical first-order model theory (Fraïssé limits, atomic and prime structures).  Its own
-# manifest pins an InfinitaryLogic revision that is an ancestor of the revision above; this
+# manifest pins the InfinitaryLogic revision above; this
 # manifest's pin governs.  To bump: change `rev`, run `lake update ComputableModelTheory`, and
 # commit the manifest.
-# Pinned to cameronfreer/computable-model-theory at the merge of its #58 (its InfinitaryLogic repin
-# to the infinitary-logic release v6.0.0, `6480603`; no declaration changed), which includes #57
+# Pinned to cameronfreer/computable-model-theory at the merge of its #59 (its InfinitaryLogic repin
+# to the infinitary-logic release v7.0.0: upstream Mathlib, TauCeti and Lean v4.36.0-rc1), which
+# includes #58 (its InfinitaryLogic repin to the release v6.0.0, `6480603`; no declaration changed),
+# #57
 # (the audit of finite diagrams against rooted extension), #56 and #55 (its InfinitaryLogic repins
 # to infinitary-logic `9ab398a` and `def5cc0`), #54 (attachments and their transport along
 # connecting data), #53 (the audit of finite elimination), #52 (finite elimination: the fixed-prefix
@@ -62,7 +72,28 @@ rev = "eb9f12dc983778eec067c0875170798efd34c7f0"
 [[require]]
 name = "ComputableModelTheory"
 git = "https://github.com/cameronfreer/computable-model-theory"
-rev = "a1fe76155a98f03933f7de0811e03b2473dd2e21"
+rev = "5d5f65cef1e47776f0e3e60b3bacfda507f00aed"
+
+# Infinitary syntax and semantics (`BoundedFormulaInf`, `Realize`), required directly to override
+# the revision `971a6dd` of InfinitaryLogic's manifest.  Pinned to TauCetiProject/TauCeti `330da7f`
+# (the merge of its #21452, which exposes the body of `BoundedFormulaInf.Realize`, so that its
+# matcher has the public name `BoundedFormulaInf.Realize.match_1`), taken with the Mathlib
+# `2e318fa` below, which differs from the Mathlib `2cabef9` recorded in TauCeti's own manifest at
+# that commit.  Compatibility of TauCeti `330da7f` with Mathlib `2e318fa` is claimed for the
+# dependency closure this repository builds and checks at these pins only, not for the whole
+# TauCeti library (see `README.md`).
+[[require]]
+name = "TauCeti"
+git = "https://github.com/TauCetiProject/TauCeti"
+rev = "330da7fe53677e67643acface66a2ed799c37088"
+
+# Mathlib, required directly so that the root pin governs every resolution: upstream mathlib4
+# `2e318fa`, the revision InfinitaryLogic's and ComputableModelTheory's own manifests pin.  Without
+# it, a resolution reaching TauCeti first takes the Mathlib of TauCeti's manifest (`2cabef9`).
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "2e318faecff7d70d4e0cf8cc875104424a737355"
 
 # Authoritative: every module under `VaughtConjecture/` is built whether or not the root re-exports it,
 # so an orphan file cannot escape the build or the audits.  The root `VaughtConjecture.lean` is

@@ -400,7 +400,8 @@ theorem countable_setOf_lt_omega0_sq :
   have h : (Set.Iio (ω ^ 2 : Ordinal.{u})).Countable := by
     rw [← le_aleph0_iff_set_countable, Cardinal.mk_Iio_ordinal, pow_two, card_mul, card_omega0]
     simp [aleph0_mul_aleph0]
-  exact (countable_setOf_atStage h).mono fun _ hx ↦ .inl hx
+  refine (countable_setOf_atStage h).mono ?_
+  exact fun _ hx ↦ Or.inl hx
 
 end Countability
 

@@ -20,10 +20,12 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Mathlib is the cameronfreer/mathlib4 fork required by InfinitaryLogic, so the public
-    # Mathlib cache misses the ~2100 modules downstream of the fork's changes.  Those, plus
-    # InfinitaryLogic itself, are built once per dependency pin and then carried between runs
-    # by the `deps` GitHub cache below; a cold run (new pin) is slow, a warm run takes minutes.
+    # Mathlib is upstream leanprover-community/mathlib4, a direct root pin in lakefile.toml (the
+    # commit InfinitaryLogic's manifest pins), so the public Mathlib cache is expected to cover all
+    # of it (to be confirmed by the cold CI path).  InfinitaryLogic, the TauCeti modules it
+    # imports and ComputableModelTheory are built once per dependency pin and then carried
+    # between runs by the `deps` GitHub cache below; a cold run (new pin) is slow, a warm run
+    # takes minutes.
     timeout-minutes: 150
     steps:
       - uses: actions/checkout@v7
@@ -45,7 +47,7 @@ jobs:
           lean --version
           lake --version
 
-      # Dependency outputs (`.lake/packages`: Mathlib fork, InfinitaryLogic,
+      # Dependency outputs (`.lake/packages`: Mathlib, InfinitaryLogic, TauCeti,
       # ComputableModelTheory, and the small libraries), keyed on the two pins only.  Any
       # branch restores the newest cache for its pins; it is saved by whichever run first
       # builds a new pin.  A pull request's cache lives under `refs/pull/<n>/merge` and is
@@ -127,9 +129,9 @@ jobs:
           restore-keys: |
             build-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
-      # Only on a cold dependency cache: fetch the public Mathlib cache for the modules the
-      # fork shares with upstream, then compile InfinitaryLogic, the classical entry module of
-      # ComputableModelTheory, and the uncached Mathlib modules they need, so that
+      # Only on a cold dependency cache: fetch the public Mathlib cache of the pinned upstream
+      # commit, then compile InfinitaryLogic (with the TauCeti modules it imports) and the
+      # classical entry module of ComputableModelTheory, so that
       # the saved dependency cache is complete.  (The main build only compiles what the library
       # imports, which would leave later runs rebuilding whatever this commit happened not to
       # import.)
@@ -164,9 +166,10 @@ jobs:
       #     the `.hash` files beside them and never reads them, and nothing on the warm path
       #     compiles C or queries references.  They are therefore emptied, not deleted (deleting
       #     them makes Lake rebuild every dependency).
-      # Measured on the pins of this cache key: 7.7 GiB on disk before, 6.4 GiB after; the
-      # zstd archive 1.9 GiB before, 1.8 GiB after.  The tree is pruned in place, so the
-      # run that saves it goes on to the sketch checks and the audits against the pruned tree.
+      # Measured on the InfinitaryLogic v6.1.0 pins (not yet measured again on the current
+      # pins): 7.7 GiB on disk before, 6.4 GiB after; the zstd archive 1.9 GiB before, 1.8 GiB
+      # after.  The tree is pruned in place, so the run that saves it goes on to the sketch
+      # checks and the audits against the pruned tree.
       - name: Prune dependency outputs the warm path does not read
         if: steps.deps-cache.outputs.cache-hit != 'true'
         run: |
@@ -248,9 +251,12 @@ jobs:
 
   # The Comparator check of `comparator/` (see `comparator/README.md`): the solution module
   # against the reference statement `comparator/Challenge.lean`, through Lean's kernel and
-  # nanoda, with the three expected failures.  `lake comparator`, `leanexport` and `nanoda_bin`
-  # come with the pinned toolchain.  Two jobs, both after `build` (which saves the dependency
-  # cache for the current pins and the root build cache for the commit):
+  # nanoda, with the three expected failures.  The reference is compiled against the outputs of
+  # Mathlib and its dependencies only; the solution's environment also reads TauCeti,
+  # InfinitaryLogic and ComputableModelTheory from the dependency cache.  `lake comparator`,
+  # `leanexport` and `nanoda_bin` come with the pinned toolchain.  Two jobs, both after `build`
+  # (which saves the dependency cache for the current pins and the root build cache for the
+  # commit):
   #   * on pull requests, `comparator-replay` restores the root build that `build` saved for this
   #     exact commit and runs `comparator/check.sh --exact` on it (a few minutes);
   #   * on pushes to `main` and on manual runs, `comparator-clean` runs

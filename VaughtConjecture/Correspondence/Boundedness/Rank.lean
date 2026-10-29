@@ -102,7 +102,7 @@ theorem liftRanks_countable_and_bounded_of_liftStages_bounded
   have hR : ∀ ρ ∈ liftRanks M B, ρ < A := fun ρ hρ ↦ by
     obtain ⟨β, hβ, hρβ⟩ := exists_mem_liftStages_le_of_mem_liftRanks hρ
     exact hρβ.trans_lt (hS β hβ)
-  exact ⟨(Cardinal.countable_Iio_of_lt_omega_one hA).mono hR, hR⟩
+  exact ⟨(Cardinal.countable_Iio_of_lt_omega_one hA).mono (s₂ := Set.Iio A) hR, hR⟩
 
 end
 

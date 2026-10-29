@@ -172,7 +172,7 @@ variable {I ρ}
 theorem gradedIndex_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4) :
     (layerScheme I ρ).toCellScheme.gradedIndex (newCell I ρ k) = (univ, k) := by
   rcases k with _ | _ | _ | _ | _ | k
-  all_goals first | omega | skip
+  all_goals try omega
   all_goals simp only [newCell, Scheme.appendFullCellScheme_gradedIndex_castSucc]
   all_goals exact Scheme.appendFullCellScheme_gradedIndex_last _ _
 

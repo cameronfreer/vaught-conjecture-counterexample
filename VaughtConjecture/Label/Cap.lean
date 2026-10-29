@@ -135,7 +135,7 @@ theorem IsPermittedCutoff.exists_min_eq_min_reduce_ne (h : IsPermittedCutoff α 
 /-- The permitted cutoffs at stage `ω` are countably many: they are the natural numbers. -/
 instance countable_permittedCutoff :
     Countable {c : Label.{u} // IsPermittedCutoff Ordinal.omega0.{u} c} :=
-  Set.Countable.to_subtype <|
+  Set.Countable.to_subtype (s := {c | IsPermittedCutoff Ordinal.omega0.{u} c}) <|
     (Set.countable_range fun k : ℕ ↦ ((k : Ordinal.{u}) : Label.{u})).mono fun _ hc ↦ by
       obtain ⟨δ, hδ, rfl⟩ := isPermittedCutoff_iff.mp hc
       obtain ⟨k, rfl⟩ := Ordinal.lt_omega0.mp hδ

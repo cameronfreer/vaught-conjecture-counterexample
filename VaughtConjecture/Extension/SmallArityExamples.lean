@@ -738,7 +738,7 @@ theorem exists_lift_fourCellSeed (α : Ordinal.{u})
 
 /-- The inclusion of the cells below `({0}, 1)` among those below `(univ, 1)` in the canonical
 layer over `fourCellSeed`. -/
-private abbrev inclZero (α : Ordinal.{u}) :
+private noncomputable abbrev inclZero (α : Ordinal.{u}) :
     (fourCellSeed α).fieldLayerZero.toCellScheme.below (({0} : Finset (Fin 2)), 1) →
       (fourCellSeed α).fieldLayerZero.toCellScheme.below (univ, 1) :=
   Set.inclusion (CellScheme.below_mono _ lift_le)
