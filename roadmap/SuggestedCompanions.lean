@@ -82,7 +82,8 @@ theorem truth_iff_mem_cocountableTheory {Sent : Type u} {Q : Type v} (truth : Se
     truth θ w ↔ θ ∈ cocountableTheory truth := by
   constructor
   · intro ht
-    exact hcompl.mono fun q hq hqD => hq ((hagree w hw q hqD).mp ht)
+    refine hcompl.mono ?_
+    exact fun q hq hqD => hq ((hagree w hw q hqD).mp ht)
   · intro hc
     by_contra hf
     have hD : D.Countable := hc.mono fun q hqD => fun ht => hf ((hagree w hw q hqD).mpr ht)

@@ -296,10 +296,11 @@ theorem countable_split_of_uniform_domain {Q : Type u} (D : Set Q)
   by_cases hex : ∃ q ∈ D, P q
   · obtain ⟨q, hq, hp⟩ := hex
     right
-    exact Set.Countable.mono
-      (fun s hs hsd => hs ((huniform q hq s hsd).mp hp)) hsmall
+    refine Set.Countable.mono ?_ hsmall
+    exact fun s hs hsd => hs ((huniform q hq s hsd).mp hp)
   · left
-    exact Set.Countable.mono (fun q hq hqd => hex ⟨q, hqd, hq⟩) hsmall
+    refine Set.Countable.mono ?_ hsmall
+    exact fun q hq hqd => hex ⟨q, hqd, hq⟩
 
 /-- The lower bound does not use small losses or logical comparison.
 Proved in the library, for any linear successor order and any set of indices with nonempty
