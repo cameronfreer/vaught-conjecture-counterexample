@@ -73,6 +73,18 @@ because every matched pair does
 (`exists_equiv_comp_eq_of_exactReceivingWithin`, `nonempty_equiv_of_exactReceivingWithin`) starts
 from any two covers of one common type.
 
+**The rooted back-and-forth family.**  The matched tuples form, before any countability enters,
+a potential isomorphism of the base structures (`Realization.rootedPotentialIso`, whose
+family is `Realization.CoverMatch`, `Realization.mem_rootedPotentialIso_family`); its empty pair
+is `CoverMatch.zero`, and the cores themselves form one of its pairs (`CoverMatch.root`).  The
+carriers may lie in different universes.  Directly from it, matched tuples are back-and-forth
+equivalent in the base language at every ordinal (`CoverMatch.bfEquiv`, InfinitaryLogic's
+`PotentialIso.family_bfEquiv`) and satisfy the same infinitary formulas of the base language,
+over any branching carrier (`CoverMatch.realize_formulaInf_iff`, InfinitaryLogic's
+`BFEquiv_implies_agreeQR`).  Root compatibility of matched tuples, `a i = x₀ j ↔ b i = y₀ j`, is
+stated (`Realization.CoverMatchRootCompatibleTarget`).  Countability is used only afterwards, to
+obtain isomorphisms.
+
 Age inclusion is needed: exact receiving within a family missing the actual types is no
 constraint at all (the empty family, `VaughtConjecture.Continuation.ExactAgeExamples`).  A root
 whose type lies outside a face-closed family has no coface in it, so the forth step has no donor.
@@ -274,6 +286,21 @@ theorem CoverMatch.zero {p : StageType.{u} α k₀} (h₀ : R.Covers p x₀) (h�
   ⟨k₀, p, x₀, y₀, Function.Embedding.refl _, Fin.elim0, h₀, h₀', rfl, rfl,
     funext fun i ↦ i.elim0, funext fun i ↦ i.elim0⟩
 
+/-- The cores themselves are matched, once they cover a common type: the covers are the cores,
+and the selector is the identity. -/
+theorem CoverMatch.root {p : StageType.{u} α k₀} (h₀ : R.Covers p x₀) (h₀' : R'.Covers p y₀) :
+    CoverMatch R R' x₀ y₀ k₀ x₀ y₀ :=
+  ⟨k₀, p, x₀, y₀, Function.Embedding.refl _, id, h₀, h₀', rfl, rfl, rfl, rfl⟩
+
+/-- **Target: root compatibility of matched tuples.**  If `a` and `b` are matched through covers
+at the cores `x₀` and `y₀`, then a coordinate `a i` is the core point `x₀ j` exactly when `b i` is
+the core point `y₀ j`.  No countability, expansion, age or receiving hypothesis enters.  Stated. -/
+def CoverMatchRootCompatibleTarget : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type v⦄ ⦃N : Type w⦄ ⦃k₀ : ℕ⦄ (R : Realization.{u, v} α M)
+    (R' : Realization.{u, w} α N) (x₀ : Fin k₀ → M) (y₀ : Fin k₀ → N) ⦃n : ℕ⦄ ⦃a : Fin n → M⦄
+    ⦃b : Fin n → N⦄, CoverMatch R R' x₀ y₀ n a b →
+      ∀ (i : Fin n) (j : Fin k₀), a i = x₀ j ↔ b i = y₀ j
+
 /-- Matching is symmetric. -/
 theorem CoverMatch.symm {n : ℕ} {a : Fin n → M} {b : Fin n → N}
     (h : CoverMatch R R' x₀ y₀ n a b) : CoverMatch R' R y₀ x₀ n b a := by
@@ -330,6 +357,86 @@ theorem CoverMatch.exists_snoc (hR : R.IsConsistent) (hc : R.IsCovering)
   · rw [Fin.comp_snoc, ← Function.comp_assoc, hgu']
 
 end Match
+
+/-! ### The rooted back-and-forth family -/
+
+section Rooted
+
+universe uι uβ
+
+variable [baseLanguage.{u}.Structure M] [baseLanguage.{u}.Structure N]
+  {R : Realization.{u, v} α M} {R' : Realization.{u, w} α N} {x₀ : Fin k₀ → M} {y₀ : Fin k₀ → N}
+  {p : StageType.{u} α k₀} {A : ∀ m, (Fin k₀ ↪ Fin m) → Set (StageType.{u} α m)}
+
+/-- **The rooted back-and-forth family** of two expansions at a common stage, as a potential
+isomorphism of the base structures: its family is the tuples matched through covers at the cores
+`x₀` and `y₀` (`Realization.CoverMatch`).  The empty pair is in it because the cores cover the
+common type `p` (`CoverMatch.zero`); its pairs have the same atomic type in the base language
+(`CoverMatch.sameAtomicType`); forth is age inclusion for `R` with exact receiving for `R'`, and
+back is the converse (`CoverMatch.exists_snoc`).  No countability of the carriers is assumed, and
+the carriers may lie in different universes. -/
+def rootedPotentialIso (he : R.IsExpansionOf) (he' : R'.IsExpansionOf)
+    (hage : ∀ ⦃m : ℕ⦄ (s : Fin m ↪ M) (ι : Fin k₀ ↪ Fin m) (D : StageType.{u} α m),
+      R.eval s = some D → ⇑s ∘ ι = x₀ → D ∈ A m ι)
+    (hage' : ∀ ⦃m : ℕ⦄ (s : Fin m ↪ N) (ι : Fin k₀ ↪ Fin m) (D : StageType.{u} α m),
+      R'.eval s = some D → ⇑s ∘ ι = y₀ → D ∈ A m ι)
+    (hr : R.ExactReceivingWithinAt x₀ A) (hr' : R'.ExactReceivingWithinAt y₀ A)
+    (h₀ : R.Covers p x₀) (h₀' : R'.Covers p y₀) : PotentialIso baseLanguage.{u} M N :=
+  PotentialIso.ofExtensionFamily (CoverMatch R R' x₀ y₀) (CoverMatch.zero h₀ h₀')
+    (fun h ↦ h.sameAtomicType he he')
+    (fun h m ↦ h.exists_snoc he.isModel.isConsistent he.isModel.isCovering hage hr' m)
+    (fun h m' ↦ (h.symm.exists_snoc he'.isModel.isConsistent he'.isModel.isCovering hage' hr
+      m').imp fun _ h' ↦ h'.symm)
+
+variable (he : R.IsExpansionOf) (he' : R'.IsExpansionOf)
+  (hage : ∀ ⦃m : ℕ⦄ (s : Fin m ↪ M) (ι : Fin k₀ ↪ Fin m) (D : StageType.{u} α m),
+    R.eval s = some D → ⇑s ∘ ι = x₀ → D ∈ A m ι)
+  (hage' : ∀ ⦃m : ℕ⦄ (s : Fin m ↪ N) (ι : Fin k₀ ↪ Fin m) (D : StageType.{u} α m),
+    R'.eval s = some D → ⇑s ∘ ι = y₀ → D ∈ A m ι)
+  (hr : R.ExactReceivingWithinAt x₀ A) (hr' : R'.ExactReceivingWithinAt y₀ A)
+  (h₀ : R.Covers p x₀) (h₀' : R'.Covers p y₀)
+
+/-- The family of the rooted back-and-forth family is the matching through covers. -/
+theorem rootedPotentialIso_family :
+    (rootedPotentialIso he he' hage hage' hr hr' h₀ h₀').family =
+      {q | CoverMatch R R' x₀ y₀ q.1 q.2.1 q.2.2} :=
+  rfl
+
+/-- Membership in the rooted back-and-forth family is matching through covers. -/
+@[simp] theorem mem_rootedPotentialIso_family {n : ℕ} {a : Fin n → M} {b : Fin n → N} :
+    (⟨n, a, b⟩ : Σ n : ℕ, (Fin n → M) × (Fin n → N)) ∈
+        (rootedPotentialIso he he' hage hage' hr hr' h₀ h₀').family ↔
+      CoverMatch R R' x₀ y₀ n a b :=
+  Iff.rfl
+
+/-- The cores form a pair of the rooted back-and-forth family (`CoverMatch.root`). -/
+theorem root_mem_rootedPotentialIso_family :
+    (⟨k₀, x₀, y₀⟩ : Σ n : ℕ, (Fin n → M) × (Fin n → N)) ∈
+      (rootedPotentialIso he he' hage hage' hr hr' h₀ h₀').family :=
+  CoverMatch.root h₀ h₀'
+
+include he he' hage hage' hr hr' h₀ h₀' in
+/-- **Back-and-forth equivalence of matched tuples** in the base language, at every ordinal of
+every universe (InfinitaryLogic's `PotentialIso.family_bfEquiv` for the rooted back-and-forth
+family).  The carriers may lie in different universes; no countability is assumed. -/
+theorem CoverMatch.bfEquiv {n : ℕ} {a : Fin n → M} {b : Fin n → N}
+    (h : CoverMatch R R' x₀ y₀ n a b) (β : Ordinal.{uβ}) :
+    BFEquiv (L := baseLanguage.{u}) β n a b :=
+  (rootedPotentialIso he he' hage hage' hr hr' h₀ h₀').family_bfEquiv β h
+
+include he he' hage hage' hr hr' h₀ h₀' in
+/-- **Infinitary agreement of matched tuples**: matched tuples satisfy the same infinitary
+formulas of the base language, with free variables the coordinates, branching over any carrier
+`ι` in any universe.  This is InfinitaryLogic's forward Karp lemma (`BFEquiv_implies_agreeQR`)
+at the quantifier rank of the formula, applied to `CoverMatch.bfEquiv`.  The carriers may lie in
+different universes; no countability is assumed. -/
+theorem CoverMatch.realize_formulaInf_iff {ι : Type uι} {n : ℕ} {a : Fin n → M}
+    {b : Fin n → N} (h : CoverMatch R R' x₀ y₀ n a b)
+    (φ : baseLanguage.{u}.BoundedFormulaInf ι (Fin n) 0) :
+    FormulaInf.Realize φ a ↔ FormulaInf.Realize φ b :=
+  BFEquiv_implies_agreeQR φ.qrank a b (h.bfEquiv he he' hage hage' hr hr' h₀ h₀' φ.qrank) φ le_rfl
+
+end Rooted
 
 /-! ### The exact-age comparison -/
 
