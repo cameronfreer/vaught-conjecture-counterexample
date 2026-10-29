@@ -3577,8 +3577,9 @@ named (`README.md`, Layer 0):
   of its pull request #183: upstream Mathlib `2e318fa`, TauCeti `971a6dd`, Lean `v4.36.0-rc1`),
   reached from `eb9f12d` by this repository's repin to v7.0.0.  `eb9f12d` is an ancestor of
   `004f638`; the names recorded below as available at `eb9f12d` (signatures checked) were checked
-  at `eb9f12d`, and their check at `004f638` is open until the sketches elaborate at the current
-  pins.  `eb9f12d` (infinitary-logic's release v6.1.0, the merge of its pull request #172) was
+  at `eb9f12d`, and the three roadmap sketches elaborate at the current pins (`004f638`,
+  `5d5f65c`, Mathlib `2e318fa`, TauCeti `330da7f`): the `build` job of the pull-request run of the
+  repin (run 40902785115 at `4aeb557`, the head of #269) checks them with CI's options and passed.  `eb9f12d` (infinitary-logic's release v6.1.0, the merge of its pull request #172) was
   reached from `e460cb6` (the merge of its pull request #162) by this
   repository's pull request #209, with the toolchain and Mathlib unchanged; `e460cb6` was reached
   from `cf80917` (the merge of its pull request #156) by this repository's pull request #97;
