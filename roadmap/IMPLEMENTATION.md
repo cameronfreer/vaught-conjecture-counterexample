@@ -379,8 +379,10 @@ Layer 3 of `README.md`) and the cap-to-model theorem of checkpoint 4.  The calib
 checkpoint 4 are built here, after the structural candidate.  Keep positive-root requirements
 and the empty-root base case explicit.
 
-Use selected-chart rooted back-and-forth, not a second fair-chain comparison.  The coreless
-comparisons are instances of one exact-age comparison theorem (same exact age, exact receiving);
+Use selected-chart rooted back-and-forth, not a second fair-chain comparison.  Construct the
+rooted back-and-forth family before invoking countability. Use it directly for infinitary
+agreement; use countability separately to obtain isomorphisms.  The coreless comparisons are
+instances of one exact-age comparison theorem (same exact age, exact receiving);
 the rigid-core case is treated in the language naming the core by constants, where the analogues
 of B2 and B3.1–B3.2, B3.4 of companion milestone B are stated, from the exact receiving over roots
 containing the core (not from top-freeness); the rank bound B3.3 needs a relational language, so
