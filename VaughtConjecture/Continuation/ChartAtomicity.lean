@@ -38,9 +38,19 @@ mention the complete theory of the reference add `Nonempty M`.  The theory is th
 complete theory of the chart structure of `R`, `(stageChartLanguage α).completeTheory M`
 (`FirstOrder.Language.completeTheory`); atomicity and isolation are ComputableModelTheory's
 `FirstOrder.Language.IsAtomic` and `FirstOrder.Language.IsolatesTuple`, with modelhood of the
-theory stated separately (`N ⊨ T`).  No countability of the carriers or of the language is assumed
-anywhere in this file, and the carriers compared may lie in different universes.  The age family is
-general; strongly coded legal types are the specialization at the universal realization.
+theory stated separately (`N ⊨ T`).  The age family is general; strongly coded legal types are
+the specialization at the universal realization.
+
+**Countability.**  Three kinds of statements are kept apart.  The general results (the rooted chart
+family, agreement of matched tuples, isolation, atomicity, coverage, and the potential isomorphism
+of atomic models) assume no countability of the carriers or of the language, and the carriers
+compared may lie in different universes.  The countable conclusions of the general section assume
+countable carriers: primeness of a countable atomic structure (`[Countable M]` for the source only;
+the target is any model of the theory, in any universe) and isomorphism of two countable atomic
+models (`[Countable M]`, `[Countable N]`, both carriers in one universe).  The existence statement
+at the universal realization (`Realization.UniversalChartAtomicityTarget`) assumes `[Countable M]`,
+`Infinite M` and `β < ω₁`, the hypotheses of `exists_stronglyCodedUniversalRealization`; the
+statement for every realization in the strongly coded receiving class assumes none of them.
 
 **The rooted chart family.**  The matching is `Realization.CoverMatch` of the exact-age comparison
 (`VaughtConjecture.Continuation.ExactAge`), which mentions no language: `a = x ∘ s` and `b = y ∘ s`
@@ -87,7 +97,10 @@ structure's own complete theory, without automorphisms
 (`IsolatesTupleOfSameFormulaTypeTarget`); an isolating formula isolates each of its realizations in
 every model of the theory (`IsolatesTupleOfRealizeTarget`); two atomic models of one complete
 theory are potentially isomorphic through the tuples of the same first-order type
-(`AtomicModelsPotentialIsoTarget`).
+(`AtomicModelsPotentialIsoTarget`).  Separately, the countable conclusions: a countable atomic
+structure embeds elementarily in every model of its complete theory
+(`CountableAtomicPrimeTarget`), and two countable atomic models of one complete theory, in one
+universe, are isomorphic (`CountableAtomicIsomorphismTarget`).
 
 **The universal realization.**  At `α = blockStage β` with the strongly coded legal types as age:
 atomicity and coverage for every realization in the strongly coded receiving class with exact
@@ -100,12 +113,13 @@ choice is made), the same for a realization on every countably infinite carrier 
 **What is not stated here.**  Descent to a base language is a separate later question, for each of
 the two bases: the base language `baseLanguage` of the four-family sentence (where charts are
 infinitary block formulas) and the base template language `baseTemplateLanguage`.  No first-order
-atomicity is claimed for either reduct.  Countable conclusions, namely primeness of the reference
-among the models of its theory, isomorphism of countable atomic models with it, and chart formulas
-as automorphism orbit formulas, are later and separate from the arbitrary-carrier statements of
-this file (agreement of matched tuples, isolation, atomicity, coverage), which assert no
-isomorphism.  Scott sentences, ranks, class-level matching in `templateLanguage` and the
-countability of the stage chart language are not stated.
+atomicity is claimed for either reduct.  The countable conclusions specific to a reference model
+(its primeness among the models of its theory and the isomorphism of countable chart-covered
+models with it, both instances of the countable statements of the general section, and chart
+formulas as automorphism orbit formulas) are later; the arbitrary-carrier statements of this file
+(agreement of matched tuples, isolation, atomicity, coverage) assert no isomorphism.  Scott
+sentences, ranks, class-level matching in `templateLanguage` and the countability of the stage
+chart language are not stated.
 
 ## Placement
 
@@ -152,6 +166,30 @@ def AtomicModelsPotentialIsoTarget : Prop :=
     [L.Structure N], Nonempty M → N ⊨ L.completeTheory M → IsAtomic (L.completeTheory M) M →
       IsAtomic (L.completeTheory M) N →
         ∃ P : PotentialIso L M N, P.family = {q | SameFormulaType (L := L) q.2.1 q.2.2}
+
+/-! #### Countable conclusions
+
+The two statements below assume countable carriers; they are kept apart from the arbitrary-carrier
+statements above. -/
+
+/-- **Target: a countable atomic structure is prime.**  A countable nonempty structure `M` of any
+first-order language, atomic over its complete theory, embeds elementarily in every model `N` of
+that theory, on a carrier in any universe, with no countability of `N` or of the language.
+Countability is assumed of the source only.  The intended input is ComputableModelTheory's
+`FirstOrder.Language.exists_elementaryEmbedding_of_countable_atomic`.  Stated; open. -/
+def CountableAtomicPrimeTarget : Prop :=
+  ∀ ⦃L : Language.{u₁, v₁}⦄ ⦃M : Type w⦄ [L.Structure M] [Countable M], Nonempty M →
+    IsAtomic (L.completeTheory M) M →
+      ∀ (N : Type w') [L.Structure N], N ⊨ L.completeTheory M → Nonempty (M ↪ₑ[L] N)
+
+/-- **Target: countable atomic models of one complete theory are isomorphic.**  Let `M` be a
+countable nonempty structure of any first-order language and `N` a countable model of the complete
+theory of `M`, both carriers in one universe.  If both are atomic over that theory, they are
+isomorphic.  Stated; open. -/
+def CountableAtomicIsomorphismTarget : Prop :=
+  ∀ ⦃L : Language.{u₁, v₁}⦄ ⦃M N : Type w⦄ [L.Structure M] [L.Structure N] [Countable M]
+    [Countable N], Nonempty M → N ⊨ L.completeTheory M → IsAtomic (L.completeTheory M) M →
+      IsAtomic (L.completeTheory M) N → Nonempty (M ≃[L] N)
 
 end General
 
