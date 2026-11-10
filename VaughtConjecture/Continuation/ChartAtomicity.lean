@@ -47,10 +47,11 @@ of atomic models) assume no countability of the carriers or of the language, and
 compared may lie in different universes.  The countable conclusions of the general section assume
 countable carriers: primeness of a countable atomic structure (`[Countable M]` for the source only;
 the target is any model of the theory, in any universe) and isomorphism of two countable atomic
-models (`[Countable M]`, `[Countable N]`, both carriers in one universe).  The existence statement
-at the universal realization (`Realization.UniversalChartAtomicityTarget`) assumes `[Countable M]`,
-`Infinite M` and `β < ω₁`, the hypotheses of `exists_stronglyCodedUniversalRealization`; the
-statement for every realization in the strongly coded receiving class assumes none of them.
+models of a relational language (`[Countable M]`, `[Countable N]`, both carriers in one
+universe).  The existence statement at the universal realization
+(`Realization.UniversalChartAtomicityTarget`) assumes `[Countable M]`, `Infinite M` and `β < ω₁`,
+the hypotheses of `exists_stronglyCodedUniversalRealization`; the statement for every realization
+in the strongly coded receiving class assumes none of them.
 
 **The rooted chart family.**  The matching is `Realization.CoverMatch` of the exact-age comparison
 (`VaughtConjecture.Continuation.ExactAge`), which mentions no language: `a = x ∘ s` and `b = y ∘ s`
@@ -99,8 +100,8 @@ every model of the theory (`IsolatesTupleOfRealizeTarget`); two atomic models of
 theory are potentially isomorphic through the tuples of the same first-order type
 (`AtomicModelsPotentialIsoTarget`).  Separately, the countable conclusions: a countable atomic
 structure embeds elementarily in every model of its complete theory
-(`CountableAtomicPrimeTarget`), and two countable atomic models of one complete theory, in one
-universe, are isomorphic (`CountableAtomicIsomorphismTarget`).
+(`CountableAtomicPrimeTarget`), and two countable atomic models of one complete theory of a
+relational language, in one universe, are isomorphic (`CountableAtomicIsomorphismTarget`).
 
 **The universal realization.**  At `α = blockStage β` with the strongly coded legal types as age:
 atomicity and coverage for every realization in the strongly coded receiving class with exact
@@ -183,13 +184,13 @@ def CountableAtomicPrimeTarget : Prop :=
       ∀ (N : Type w') [L.Structure N], N ⊨ L.completeTheory M → Nonempty (M ↪ₑ[L] N)
 
 /-- **Target: countable atomic models of one complete theory are isomorphic.**  Let `M` be a
-countable nonempty structure of any first-order language and `N` a countable model of the complete
+countable nonempty structure of a relational language and `N` a countable model of the complete
 theory of `M`, both carriers in one universe.  If both are atomic over that theory, they are
 isomorphic.  Stated; open. -/
 def CountableAtomicIsomorphismTarget : Prop :=
-  ∀ ⦃L : Language.{u₁, v₁}⦄ ⦃M N : Type w⦄ [L.Structure M] [L.Structure N] [Countable M]
-    [Countable N], Nonempty M → N ⊨ L.completeTheory M → IsAtomic (L.completeTheory M) M →
-      IsAtomic (L.completeTheory M) N → Nonempty (M ≃[L] N)
+  ∀ ⦃L : Language.{u₁, v₁}⦄ [L.IsRelational] ⦃M N : Type w⦄ [L.Structure M] [L.Structure N]
+    [Countable M] [Countable N], Nonempty M → N ⊨ L.completeTheory M →
+      IsAtomic (L.completeTheory M) M → IsAtomic (L.completeTheory M) N → Nonempty (M ≃[L] N)
 
 end General
 
