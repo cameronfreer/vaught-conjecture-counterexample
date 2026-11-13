@@ -42,7 +42,7 @@ rank at most `ω · η`; a selection of their coordinates is defined by the exte
   model expansion at `ω₁`.  Given-model statement.
 * `ExistsIsTopFreeReduceBlockStageTarget` (proved): a top-free type at `ω₁` has a top-free
   reduction to some countable block stage.
-* `ChartSelectionFormulaTarget` (stated; open): for a top-free `p` at `ω₁` and a selector `f`, one
+* `ChartSelectionFormulaTarget` (proved): for a top-free `p` at `ω₁` and a selector `f`, one
   base formula of rank `< ω₁` defines the selections along `f` of the covers of `p`, in every
   receiving model expansion at `ω₁`.  The formula is chosen before the model.
 
@@ -145,12 +145,36 @@ rank.**  For a top-free stage type `p` at `ω₁` on `m` points and a selector `
 (not necessarily injective), some base-language formula of quantifier rank below `ω₁` holds of a
 tuple `b`, in every receiving model expansion at `ω₁`, exactly when `b` is the selection along `f`
 of a cover of `p`.  The formula is chosen before the model.  Given-model statement (uniform in the
-model).  Stated; open. -/
+model).  Proved (`chartSelectionFormulaTarget`). -/
 def ChartSelectionFormulaTarget : Prop :=
   ∀ ⦃m : ℕ⦄ (p : StageType.{0} ω₁ m), p.IsTopFree → ∀ ⦃n : ℕ⦄ (f : Fin n → Fin m),
     ∃ φ : baseLanguage.{0}.Formulaω (Fin n), φ.qrank < ω₁ ∧
       ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁),
         R.1.IsReceivingModel → ∀ b : Fin n → M,
           (φ.Realize b ↔ ∃ a : Fin m → M, R.1.Covers p a ∧ a ∘ f = b)
+
+/-- The selections of a top-free chart at `ω₁` are defined by one formula of countable rank: the
+extension formula (`extendFormula`) along `f` of the formula of the reduction of `p` to a countable
+block stage `λ_η` where it is top-free (`existsIsTopFreeReduceBlockStageTarget`).  The covers of
+the reduction in the reduction of `R` are the covers of `p` in `R`
+(`StageType.eq_of_reduce_eq_of_isTopFree`); the rank is at most `ω · η + m < ω₁`. -/
+theorem chartSelectionFormulaTarget : ChartSelectionFormulaTarget.{w} := by
+  intro m p hp n f
+  obtain ⟨η, hη, hpη⟩ := existsIsTopFreeReduceBlockStageTarget p hp
+  have hω : IsSuccLimit (ω₁ : Ordinal.{0}) := Cardinal.isSuccLimit_omega 1
+  refine ⟨extendFormula
+    (blockFormula forcingThresholds η hη (p.reduce (isSuccPrelimit_blockStage η))) f, ?_, ?_⟩
+  · rw [qrank_extendFormula]
+    refine (add_le_add (qrank_blockFormula_le _ hη _) le_rfl).trans_lt ?_
+    exact hω.isSuccPrelimit.add_natCast_lt
+      ((le_add_self : ω * η ≤ ω + ω * η).trans_lt (blockStage_lt_omega_one hη)) m
+  · intro M _ R hR b
+    rw [realize_extendFormula]
+    refine exists_congr fun a ↦ ?_
+    rw [realizeBlockFormulaOfIsReceivingModelTarget R hR hη, and_comm]
+    refine and_congr_left fun _ ↦ ⟨fun ⟨ha, he⟩ ↦ ?_, fun h ↦ h.reduce _⟩
+    rw [Realization.reduce_eval, Option.map_eq_some_iff] at he
+    obtain ⟨q, hq, hqp⟩ := he
+    exact ⟨ha, hq.trans (congrArg some (StageType.eq_of_reduce_eq_of_isTopFree _ hqp hpη))⟩
 
 end VaughtConjecture
