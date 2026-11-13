@@ -89,7 +89,8 @@ def ExistsOnePointPairTarget : Prop :=
     ∃ d₁ d₂ : StageType.{u} α 1, d₁.IsLegal ∧ d₂.IsLegal ∧ d₁.IsTopFree ∧ d₂.IsTopFree ∧
       d₁.toScheme = d₂.toScheme ∧ d₁ ≠ d₂ ∧ d₁.reduce hβ = d₂.reduce hβ
 
-/-- A one-point pair above every cutoff: the capped pair at `β + 2` and `β + 4`. -/
+/-- A one-point pair above every cutoff: the capped pair at two successive self-visible labels
+above the cutoff (`exists_lt_lt_isSelfVisible`, twice). -/
 theorem existsOnePointPairTarget : ExistsOnePointPairTarget.{u} := by
   intro α β hα hβ hβα
   obtain ⟨c₁, hβc₁, hc₁α, hc₁⟩ := exists_lt_lt_isSelfVisible hα hβα 1

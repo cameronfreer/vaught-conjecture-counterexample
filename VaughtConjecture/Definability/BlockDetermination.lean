@@ -32,6 +32,10 @@ depend only on the finite data `(q, f, p, d)`.
   `forcingDonors_blockStage`).  It is the threshold
   lemma (`Realization.le_label_iff_exists_forcesThreshold`) applied to a model expansion to
   `λ_{η+1}`, whose reduction to `λ_η` is the reduction of the expansion.
+* `forcingThresholds_determinesAt`: block determination for the forcing thresholds at one
+  realization at `λ_{η+1}` (`CoverThresholds.DeterminesAt`), conditional on its exact consistency,
+  legal types and finite-extension receiving, and on forcing donors at `η`;
+  `forcingThresholds_determines` is this lemma at every model expansion.
 * `realize_blockFormula_forcingThresholds_iff`: the chart formulas built from the forcing thresholds
   hold of exactly the covers in every model expansion to `λ_η`, under the same hypotheses at every
   block index below `η`.
@@ -66,6 +70,16 @@ def forcingThresholds (η : Ordinal.{0}) : CoverThresholds η := fun _ p d n ↦
   {x | StageType.ForcesThreshold (blockStage (η + 1)) (isSuccPrelimit_blockStage η) x.2.1 x.2.2 p
     d n}
 
+/-- **Block determination by the forcing thresholds at a given realization**, conditional on
+finite-extension receiving of that realization and on forcing donors at `η` (compiled in this
+repository (theorem named) at every block index, `forcingDonors_blockStage`). -/
+theorem forcingThresholds_determinesAt {η : Ordinal.{0}} {M : Type w}
+    {R : Realization.{0, w} (blockStage (η + 1)) M} (hR : R.IsConsistent)
+    (hl : R.HasLegalTypes) (hrec : R.HasFiniteExtensionReceiving) (hF : ForcingDonors.{0} η) :
+    (forcingThresholds η).DeterminesAt R :=
+  -- Membership in `forcingThresholds η p d n` is `StageType.ForcesThreshold` by definition.
+  fun _ _ _ hc d hd n ↦ Realization.le_label_iff_exists_forcesThreshold hR hl hrec hF hc d hd n
+
 /-- **Block determination by the forcing thresholds**, conditional on finite-extension receiving of
 every model expansion to `λ_{η+1}` (from (R1), still to be proved) and on forcing donors at `η`
 (compiled in this repository (theorem named) at every block index, `forcingDonors_blockStage`). -/
@@ -73,11 +87,8 @@ theorem forcingThresholds_determines {η : Ordinal.{0}}
     (hrec : ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M]
       (R : ModelExpansion M (blockStage (η + 1))), R.1.HasFiniteExtensionReceiving)
     (hF : ForcingDonors.{0} η) : (forcingThresholds η).Determines.{w} :=
-  -- Both sides agree by definition: the realization of `R.reduceBlock le_self_add` is
-  -- `R.1.reduce (isSuccPrelimit_blockStage η)` (`ModelExpansion.reduceBlock_val`), and membership
-  -- in `forcingThresholds η p d n` is `StageType.ForcesThreshold`.
-  fun _ _ R _ _ _ hc d hd n ↦ Realization.le_label_iff_exists_forcesThreshold
-    R.2.isModel.isConsistent R.2.isModel.hasLegalTypes (hrec R) hF hc d hd n
+  fun _ _ R ↦ forcingThresholds_determinesAt R.2.isModel.isConsistent R.2.isModel.hasLegalTypes
+    (hrec R) hF
 
 /-- **Correctness of the chart formulas built from the forcing thresholds**, conditional on
 finite-extension receiving of the model expansions to `λ_{ξ+1}` (from (R1), still to be proved) and

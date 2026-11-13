@@ -82,7 +82,10 @@ Here block determination is a hypothesis.
   (`BlockRecursion.realize_succFormula_of_determinesAt`) needs block determination at that
   realization only (`CoverThresholds.DeterminesAt`); block
   determination is block determination at every model expansion
-  (`CoverThresholds.determines_iff_forall_determinesAt`).
+  (`CoverThresholds.determines_iff_forall_determinesAt`), and the successor step above is this one
+  at the given expansion.  The recursion likewise needs block determination only at the stage
+  reductions of the given expansion to the block stages `λ_{ξ+1}`, `ξ < η`
+  (`realize_blockFormula_iff_of_determinesAt`).
 * Corollaries, under the same hypothesis: **uniqueness** of the model expansion to `λ_η` on a fixed
   carrier (`ModelExpansion.eq_of_determines`); **lifting along an isomorphism of base structures**
   by the same bijection (`ModelExpansion.map_eq_of_determines`), with `Equiv.refl` giving uniqueness
@@ -439,25 +442,8 @@ theorem BlockRecursion.realize_succFormula {η : Ordinal.{0}} {V : CoverThreshol
     (hF : ∀ m (q : StageType.{0} (blockStage η) m) (s : Fin m → M),
       (F m q).Realize s ↔ (R.reduceBlock le_self_add).1.Covers q s)
     (t : StageType.{0} (blockStage (η + 1)) k) (c : Fin k → M) :
-    (succFormula V hη F t).Realize c ↔ R.1.Covers t c := by
-  have hthr := realize_thresholdFormula V hη hF (c := c)
-  have hcl (d : Fin t.card) (n : ℕ) : (labelClause V hη F t d n).Realize c ↔
-      (((blockStage η + n : Ordinal.{0}) : Label.{0}) ≤ t.label d ↔
-        ∃ x ∈ V (t.reduce (isSuccPrelimit_blockStage η)) d n,
-          (R.reduceBlock le_self_add).1.ExtendsToCover c x) := by
-    unfold labelClause
-    split_ifs with h
-    · exact (hthr _ _ _).trans (iff_true_left h).symm
-    · exact (Formulaω.realize_not.trans (not_congr (hthr _ _ _))).trans (iff_false_left h).symm
-  simp only [succFormula, Formulaω.realize_inf, Formulaω.realize_einf, hF, Subtype.forall, hcl]
-  refine ⟨fun ⟨⟨hc, he⟩, hl⟩ ↦ ?_, fun hcov ↦ ⟨hcov.reduce _, fun d hd n ↦ hV R t c hcov d hd n⟩⟩
-  rw [ModelExpansion.reduceBlock_val, Realization.reduce_eval, Option.map_eq_some_iff] at he
-  obtain ⟨t', ht', hred⟩ := he
-  have hcov : R.1.Covers t' c := ⟨hc, ht'⟩
-  suffices t' = t from this ▸ hcov
-  refine StageType.eq_of_reduce_eq_of_threshold_iff hred fun i j hij hi n ↦ ?_
-  rw [hV R t' c hcov i hi n, hl j ((StageType.label_congr hred hij).symm.trans hi) n,
-    V.apply_congr hred hij n]
+    (succFormula V hη F t).Realize c ↔ R.1.Covers t c :=
+  realize_succFormula_of_determinesAt hη R.1 (hV R) hF t c
 
 /-- The limit step: if, for every `ξ < η`, the formulas at `λ_ξ` hold of exactly the covers in the
 reduction of `R` to `λ_ξ`, then the formula of `t` at the limit `λ_η` holds of exactly the covers
@@ -502,6 +488,38 @@ theorem realize_blockFormula_iff {η : Ordinal.{0}} (hU : ∀ ξ < η, (U ξ).De
     rw [blockFormula_limit _ hl]
     exact realize_limitFormula hl hη R
       (fun ξ hξ m q s ↦ ih ξ hξ (fun ζ hζ ↦ hU ζ (hζ.trans hξ)) _ _ q s) t c
+
+/-- **Correctness of the formulas at a given model expansion**, conditional on block determination
+at the stage reductions of that expansion only (`CoverThresholds.DeterminesAt`): in a model
+expansion `R` to `λ_η` whose reduction to each `λ_{ξ+1}`, `ξ < η`, has block determination for
+`U ξ`, the formula of `t` holds of a tuple exactly when the tuple covers `t` in `R`.  The recursion
+of `realize_blockFormula_iff`, with the induction hypothesis applied to the reductions of `R`, whose
+own reductions are reductions of `R` (`Realization.reduce_reduce`). -/
+theorem realize_blockFormula_iff_of_determinesAt {η : Ordinal.{0}} (hη : η < ω₁)
+    (R : ModelExpansion M (blockStage η))
+    (hU : ∀ ξ < η, (U ξ).DeterminesAt (R.1.reduce (isSuccPrelimit_blockStage (ξ + 1))))
+    (t : StageType.{0} (blockStage η) k) (c : Fin k → M) :
+    (blockFormula U η hη t).Realize c ↔ R.1.Covers t c := by
+  induction η using Ordinal.limitRecOn generalizing k with
+  | zero =>
+    rw [blockFormula_zero]
+    exact realize_chartAtom R t c
+  | add_one η ih =>
+    rw [blockFormula_add_one]
+    have hV : (U η).DeterminesAt R.1 := by
+      simpa only [Realization.reduce_self] using hU η (lt_add_one η)
+    refine realize_succFormula_of_determinesAt _ R.1 hV (fun m q s ↦ ?_) t c
+    refine ih _ (R.reduceBlock le_self_add) (fun ξ hξ ↦ ?_) q s
+    rw [ModelExpansion.reduceBlock_val, Realization.reduce_reduce _ _ _
+      (blockStage_mono (Order.add_one_le_of_lt hξ))]
+    exact hU ξ (hξ.trans (lt_add_one η))
+  | limit η hl ih =>
+    rw [blockFormula_limit _ hl]
+    refine realize_limitFormula hl hη R (fun ξ hξ m q s ↦ ?_) t c
+    refine ih ξ hξ _ (R.reduceBlock hξ.le) (fun ζ hζ ↦ ?_) q s
+    rw [ModelExpansion.reduceBlock_val, Realization.reduce_reduce _ _ _
+      (blockStage_mono (Order.add_one_le_of_lt hζ))]
+    exact hU ζ (hζ.trans hξ)
 
 end Correctness
 
