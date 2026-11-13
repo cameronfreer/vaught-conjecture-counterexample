@@ -40,7 +40,7 @@ rank at most `ω · η`; a selection of their coordinates is defined by the exte
   structure, `Realization.IsReceivingModel.realize_blockFormula_iff`): the formulas of the forcing
   thresholds at `λ_η`, `η < ω₁`, hold of exactly the covers in the reduction to `λ_η` of a receiving
   model expansion at `ω₁`.  Given-model statement.
-* `ExistsIsTopFreeReduceBlockStageTarget` (stated; open): a top-free type at `ω₁` has a top-free
+* `ExistsIsTopFreeReduceBlockStageTarget` (proved): a top-free type at `ω₁` has a top-free
   reduction to some countable block stage.
 * `ChartSelectionFormulaTarget` (stated; open): for a top-free `p` at `ω₁` and a selector `f`, one
   base formula of rank `< ω₁` defines the selections along `f` of the covers of `p`, in every
@@ -119,10 +119,26 @@ theorem Realization.IsReceivingModel.realize_blockFormula_iff {M : Type w}
   realizeBlockFormulaOfIsReceivingModelTarget ⟨R, hR.1, rfl⟩ hR hη t c
 
 /-- **Target: a top-free type at `ω₁` has a top-free reduction to a countable block stage.**
-Stated; open. -/
+Proved (`existsIsTopFreeReduceBlockStageTarget`). -/
 def ExistsIsTopFreeReduceBlockStageTarget : Prop :=
   ∀ ⦃n : ℕ⦄ (p : StageType.{0} ω₁ n), p.IsTopFree →
     ∃ η < (ω₁ : Ordinal.{0}), (p.reduce (isSuccPrelimit_blockStage η)).IsTopFree
+
+/-- A top-free type at `ω₁` has a top-free reduction to a countable block stage: each label is
+below `ω₁`, hence below some countable block stage (`Label.exists_lt_blockStage_of_lt`), and the
+largest of these finitely many block indices serves for all cells. -/
+theorem existsIsTopFreeReduceBlockStageTarget : ExistsIsTopFreeReduceBlockStageTarget := by
+  intro n p hp
+  have hω : IsSuccLimit (ω₁ : Ordinal.{0}) := Cardinal.isSuccLimit_omega 1
+  have h (d : Fin p.card) : ∃ ξ < (ω₁ : Ordinal.{0}), p.label d < (blockStage ξ : Label.{0}) := by
+    have hd : p.label d < ((ω₁ : Ordinal.{0}) : Label.{0}) := (p.atStage d).resolve_right (hp d)
+    exact Label.exists_lt_blockStage_of_lt hω (hd.trans_le (by exact_mod_cast le_blockStage _))
+  choose ξ hξ hlt using h
+  refine ⟨Finset.univ.sup ξ, (Finset.sup_lt_iff hω.bot_lt).mpr fun d _ ↦ hξ d, fun d ↦ ?_⟩
+  change Label.reduce _ (p.label d) ≠ ⊤
+  rw [Label.reduce_of_lt ((hlt d).trans_le ?_)]
+  · exact hp d
+  · exact_mod_cast blockStage_mono (Finset.le_sup (f := ξ) (Finset.mem_univ d))
 
 /-- **Target: the selections of a top-free chart at `ω₁` are defined by one formula of countable
 rank.**  For a top-free stage type `p` at `ω₁` on `m` points and a selector `f : Fin n → Fin m`
