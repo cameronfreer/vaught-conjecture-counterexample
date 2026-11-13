@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Definability.ReceivingBlockFormulas
+import VaughtConjecture.Extension.ForcingDonorsCoatom
+import VaughtConjecture.Extension.ProfileTowerCompletion
 import VaughtConjecture.Realization.ReceivingLimit
 
 /-!
@@ -34,7 +36,8 @@ rank at most `ω · η`; a selection of their coordinates is defined by the exte
 **Results.**
 
 * `StageType.eq_of_reduce_eq_of_isTopFree` (proved).
-* `RealizeBlockFormulaOfIsReceivingModelTarget` (stated; open): the formulas of the forcing
+* `RealizeBlockFormulaOfIsReceivingModelTarget` (proved; also for a realization with its own base
+  structure, `Realization.IsReceivingModel.realize_blockFormula_iff`): the formulas of the forcing
   thresholds at `λ_η`, `η < ω₁`, hold of exactly the covers in the reduction to `λ_η` of a receiving
   model expansion at `ω₁`.  Given-model statement.
 * `ExistsIsTopFreeReduceBlockStageTarget` (stated; open): a top-free type at `ω₁` has a top-free
@@ -73,12 +76,47 @@ theorem StageType.eq_of_reduce_eq_of_isTopFree {α β : Ordinal.{u}} {n : ℕ}
 `M` and a model expansion `R` of `M` to `ω₁` that is a receiving model, at every countable block
 index `η`, the formula of the forcing thresholds of a stage type `t` at `λ_η` holds of a tuple
 exactly when the tuple covers `t` in the reduction of `R` to `λ_η`.  No hypothesis on other models.
-Given-model statement.  Stated; open. -/
+Given-model statement.  Proved (`realizeBlockFormulaOfIsReceivingModelTarget`). -/
 def RealizeBlockFormulaOfIsReceivingModelTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁), R.1.IsReceivingModel →
     ∀ ⦃η : Ordinal.{0}⦄ (hη : η < ω₁) ⦃k : ℕ⦄ (t : StageType.{0} (blockStage η) k) (c : Fin k → M),
       (blockFormula forcingThresholds η hη t).Realize c ↔
         (R.1.reduce (isSuccPrelimit_blockStage η)).Covers t c
+
+/-- Chart definability in a receiving model expansion at `ω₁`: the general correctness at a given
+expansion (`realize_blockFormula_iff_of_determinesAt`) for the reduction of `R` to `λ_η`, whose
+reductions to `λ_{ξ+1}` are reductions of `R` (`Realization.reduce_reduce`), hence receiving models
+(`Realization.IsReceivingModel.reduce`) with finite-extension receiving at a limit stage, hence have
+block determination for the forcing thresholds (`forcingThresholds_determinesAt`, with forcing
+donors from the coatom extension property with apex at `λ_{ξ+1}`). -/
+theorem realizeBlockFormulaOfIsReceivingModelTarget :
+    RealizeBlockFormulaOfIsReceivingModelTarget.{w} := by
+  intro M _ R hR η hη k t c
+  have hω : IsSuccLimit (ω₁ : Ordinal.{0}) := Cardinal.isSuccLimit_omega 1
+  refine realize_blockFormula_iff_of_determinesAt forcingThresholds hη
+    (R.reduce hω.isSuccPrelimit (isSuccLimit_blockStage η) (omega0_le_blockStage η)
+      (blockStage_lt_omega_one hη).le) (fun ξ hξ ↦ ?_) t c
+  rw [ModelExpansion.reduce_val, Realization.reduce_reduce _ _ _
+    (blockStage_mono (Order.add_one_le_of_lt hξ))]
+  have hS := hR.reduce hω.isSuccPrelimit (isSuccLimit_blockStage (ξ + 1))
+    (blockStage_lt_omega_one (hω.succ_lt (hξ.trans hη))).le
+  exact forcingThresholds_determinesAt hS.1.isConsistent hS.1.hasLegalTypes
+    (hS.2.hasFiniteExtensionReceiving hS.1.isConsistent (isSuccPrelimit_blockStage (ξ + 1)))
+    (forcingDonors_of_hasApexCoatomExtensions
+      (StageType.hasApexCoatomExtensions (isSuccPrelimit_blockStage (ξ + 1))))
+
+/-- **Chart definability in a receiving model at `ω₁` with its own base structure**: the base
+structure of a realization `R` at `ω₁` is the structure of its reduction to `ω`; for a receiving
+model, the formula of the forcing thresholds of `t` at `λ_η`, `η < ω₁`, holds in that structure of
+exactly the covers of `t` in the reduction of `R` to `λ_η`. -/
+theorem Realization.IsReceivingModel.realize_blockFormula_iff {M : Type w}
+    {R : Realization.{0, w} ω₁ M} (hR : R.IsReceivingModel) {η : Ordinal.{0}} (hη : η < ω₁)
+    {k : ℕ} (t : StageType.{0} (blockStage η) k) (c : Fin k → M) :
+    letI := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
+    (blockFormula forcingThresholds η hη t).Realize c ↔
+      (R.reduce (isSuccPrelimit_blockStage η)).Covers t c :=
+  letI := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
+  realizeBlockFormulaOfIsReceivingModelTarget ⟨R, hR.1, rfl⟩ hR hη t c
 
 /-- **Target: a top-free type at `ω₁` has a top-free reduction to a countable block stage.**
 Stated; open. -/
