@@ -15,7 +15,7 @@ import VaughtConjecture.Realization.Expansion
 * `AlephOne.alephOneLeMkOfIsModelTarget`: a model at stage `ω₁` has at least `ℵ₁` points, since a
   model on a countable carrier has a countable stage (`Realization.IsModel.lt_omega_one`).
 * `AlephOne.mkEqAlephOneTarget`: every receiving model at stage `ω₁` with top-free types has
-  exactly `ℵ₁` points (the upper bound is `AlephOne.mk_le_aleph_one_of_isCovering`).
+  exactly `ℵ₁` points (the upper bound is `Realization.mkLeAlephOneTarget`).
 * The base interpretation of every receiving model at stage `ω₁` satisfies the density sentence
   (`AlephOne.realizeDensitySentenceTarget`, in `VaughtConjecture.AlephOne.Construction`).
 
