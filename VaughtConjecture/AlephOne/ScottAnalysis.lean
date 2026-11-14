@@ -15,10 +15,12 @@ import VaughtConjecture.Language.Density
 # Scott analysis of receiving models at `ω₁`
 
 Companion programme over the density sentence: Scott ranks of the receiving model expansions at
-stage `ω₁` all of whose types are top-free.  Every statement here is a **given-model statement**:
-it is about every model expansion (or realization) in the class, and asserts the existence of no
-model.  The class is `IsReceivingModel` together with top-freeness of every type of the
-realization, written inline as `∀ ⦃n⦄ (t : Fin n ↪ M) p, R.eval t = some p → p.IsTopFree`.
+stage `ω₁` all of whose types are top-free.  Every statement here except the last is a
+**given-model statement**: it is about every model expansion (or realization) in the class, and
+asserts the existence of no model.  The exception is the combined target
+`ExistsAlephOneModelScottRankOmegaOneTarget`, an existence statement.  The class is
+`IsReceivingModel` together with top-freeness of every type of the realization, written inline
+as `∀ ⦃n⦄ (t : Fin n ↪ M) p, R.eval t = some p → p.IsTopFree`.
 
 **Back-and-forth types, not orbits.**  Chart definability together with the comparison
 theorem determines the back-and-forth type of a tuple (its class under back-and-forth
@@ -68,11 +70,14 @@ class (`ReceivingModelsScottProcessEqTarget`).
   `realize_chartSelectionFormula_iff` (proved): the formula of `ChartSelectionFormulaTarget`,
   named, so that one formula serves models on carriers in different universes.
 * `BFEquivAllOfBFEquivLtOmegaOneTarget` (proved).
+* `ReceivingModelsScottProcessEqTarget` (proved), with the form
+  `ReceivingModelsScottProcessEqOfModelTarget` (proved) that derives the `Infinite` instances
+  from the models.
 * `OrbitRankLtOmegaOneTarget`, `ExistsBFEquivNotBFEquivTarget`, `ExistsOrbitRankGtTarget`,
-  `InternalScottRankEqOmegaOneTarget`, `ScottProcessIsRankOmegaOneTarget`,
-  `ReceivingModelsScottProcessEqTarget` (stated).
-* For a realization with its own base structure: `RealizationScottRankOmegaOneTarget` and
-  `RealizationsScottProcessEqTarget` (stated).
+  `InternalScottRankEqOmegaOneTarget`, `ScottProcessIsRankOmegaOneTarget` (stated).
+* For a realization with its own base structure: `RealizationScottRankOmegaOneTarget` (stated)
+  and `RealizationsScottProcessEqTarget` (proved), with `RealizationsScottProcessEqOfModelTarget`
+  (proved).
 * `ExistsAlephOneModelScottRankOmegaOneTarget` (stated): the combined shape, an existence
   statement, to be assembled from an existence theorem for the class and the given-model
   statements here.
@@ -262,7 +267,8 @@ def ScottProcessIsRankOmegaOneTarget : Prop :=
 
 /-- **Target: one Scott process for the class.**  Any two model expansions to `ω₁` in the class,
 on carriers in any two universes, have the same semantic Scott process of every positive length.
-No countability, cardinality or rank hypothesis.  Given-model statement.  Stated. -/
+No countability, cardinality or rank hypothesis.  Given-model statement.  Proved
+(`receivingModelsScottProcessEqTarget`). -/
 def ReceivingModelsScottProcessEqTarget : Prop :=
   ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
     [Infinite M] [Infinite N] (R : ModelExpansion M ω₁) (S : ModelExpansion N ω₁),
@@ -270,6 +276,35 @@ def ReceivingModelsScottProcessEqTarget : Prop :=
     S.1.IsReceivingModel → (∀ ⦃n : ℕ⦄ (t : Fin n ↪ N) p, S.1.eval t = some p → p.IsTopFree) →
       ∀ ⦃δ : Ordinal.{0}⦄ (hδ : 0 < δ),
         scottProcessOf baseLanguage.{0} M δ hδ = scottProcessOf baseLanguage.{0} N δ hδ
+
+/-- One Scott process for the class: the potential isomorphism of the class
+(`receivingModelsPotentialIsoTarget`) and `Comparison.scottProcessOf_eq_of_potentialIso`. -/
+theorem receivingModelsScottProcessEqTarget : ReceivingModelsScottProcessEqTarget.{w, w'} := by
+  intro M N _ _ _ _ R S hR htR hS htS δ hδ
+  obtain ⟨P, -⟩ := receivingModelsPotentialIsoTarget R S hR htR hS htS
+  exact Comparison.scottProcessOf_eq_of_potentialIso P hδ
+
+/-- **Target: one Scott process for the class, with the carriers' infinitude from the models.**
+`ReceivingModelsScottProcessEqTarget` without the `Infinite` binders: the carriers of model
+expansions at the nonzero stage `ω₁` are infinite (`Realization.IsModel.infinite`).  Given-model
+statement.  Proved (`receivingModelsScottProcessEqOfModelTarget`). -/
+def ReceivingModelsScottProcessEqOfModelTarget : Prop :=
+  ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
+    (R : ModelExpansion M ω₁) (S : ModelExpansion N ω₁),
+    R.1.IsReceivingModel → (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.1.eval t = some p → p.IsTopFree) →
+    S.1.IsReceivingModel → (∀ ⦃n : ℕ⦄ (t : Fin n ↪ N) p, S.1.eval t = some p → p.IsTopFree) →
+      ∀ ⦃δ : Ordinal.{0}⦄ (hδ : 0 < δ),
+        letI : Infinite M := R.2.isModel.infinite (Ordinal.omega_pos 1)
+        letI : Infinite N := S.2.isModel.infinite (Ordinal.omega_pos 1)
+        scottProcessOf baseLanguage.{0} M δ hδ = scottProcessOf baseLanguage.{0} N δ hδ
+
+/-- One Scott process for the class, with the carriers' infinitude from the models. -/
+theorem receivingModelsScottProcessEqOfModelTarget :
+    ReceivingModelsScottProcessEqOfModelTarget.{w, w'} := by
+  intro M N _ _ R S hR htR hS htS δ hδ
+  let : Infinite M := R.2.isModel.infinite (Ordinal.omega_pos 1)
+  let : Infinite N := S.2.isModel.infinite (Ordinal.omega_pos 1)
+  exact receivingModelsScottProcessEqTarget R S hR htR hS htS hδ
 
 /-! ### Realizations with their own base structure -/
 
@@ -289,7 +324,7 @@ def RealizationScottRankOmegaOneTarget : Prop :=
 /-- **Target: one Scott process, for realizations with their own base structures.**  Two
 realizations at `ω₁` on infinite carriers in any two universes, both receiving models all of
 whose types are top-free, have base structures with the same semantic Scott process of every
-positive length.  Given-model statement.  Stated. -/
+positive length.  Given-model statement.  Proved (`realizationsScottProcessEqTarget`). -/
 def RealizationsScottProcessEqTarget : Prop :=
   ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ [Infinite M] [Infinite N] (R : Realization.{0, w} ω₁ M)
     (S : Realization.{0, w'} ω₁ N), R.IsReceivingModel →
@@ -299,6 +334,37 @@ def RealizationsScottProcessEqTarget : Prop :=
         letI := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
         letI := (S.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
         scottProcessOf baseLanguage.{0} M δ hδ = scottProcessOf baseLanguage.{0} N δ hδ
+
+/-- One Scott process, for realizations with their own base structures: the model expansions
+`⟨R, hR.1, rfl⟩` and `⟨S, hS.1, rfl⟩` of the base structures. -/
+theorem realizationsScottProcessEqTarget : RealizationsScottProcessEqTarget.{w, w'} := by
+  intro M N _ _ R S hR htR hS htS δ hδ
+  let := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
+  let := (S.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
+  exact receivingModelsScottProcessEqTarget ⟨R, hR.1, rfl⟩ ⟨S, hS.1, rfl⟩ hR htR hS htS hδ
+
+/-- **Target: one Scott process, for realizations, with the carriers' infinitude from the
+models.**  `RealizationsScottProcessEqTarget` without the `Infinite` binders
+(`Realization.IsModel.infinite` at the nonzero stage `ω₁`).  Given-model statement.  Proved
+(`realizationsScottProcessEqOfModelTarget`). -/
+def RealizationsScottProcessEqOfModelTarget : Prop :=
+  ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ (R : Realization.{0, w} ω₁ M) (S : Realization.{0, w'} ω₁ N)
+    (hR : R.IsReceivingModel), (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.eval t = some p → p.IsTopFree) →
+    ∀ (hS : S.IsReceivingModel), (∀ ⦃n : ℕ⦄ (t : Fin n ↪ N) p, S.eval t = some p → p.IsTopFree) →
+      ∀ ⦃δ : Ordinal.{0}⦄ (hδ : 0 < δ),
+        letI := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
+        letI := (S.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
+        letI : Infinite M := hR.1.infinite (Ordinal.omega_pos 1)
+        letI : Infinite N := hS.1.infinite (Ordinal.omega_pos 1)
+        scottProcessOf baseLanguage.{0} M δ hδ = scottProcessOf baseLanguage.{0} N δ hδ
+
+/-- One Scott process, for realizations, with the carriers' infinitude from the models. -/
+theorem realizationsScottProcessEqOfModelTarget :
+    RealizationsScottProcessEqOfModelTarget.{w, w'} := by
+  intro M N R S hR htR hS htS δ hδ
+  let : Infinite M := hR.1.infinite (Ordinal.omega_pos 1)
+  let : Infinite N := hS.1.infinite (Ordinal.omega_pos 1)
+  exact realizationsScottProcessEqTarget R S hR htR hS htS hδ
 
 /-! ### The combined shape -/
 
