@@ -3,7 +3,8 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.AlephOne.Construction
+import VaughtConjecture.AlephOne.ReceivingModel
+import VaughtConjecture.AlephOne.Schedule
 import VaughtConjecture.Realization.Expansion
 
 /-!
@@ -56,5 +57,27 @@ theorem alephOneLeMkOfIsModelTarget : AlephOneLeMkOfIsModelTarget.{v} := by
 form. -/
 theorem mkEqAlephOneTarget : MkEqAlephOneTarget.{v} :=
   mkEqAlephOneTarget_of alephOneLeMkOfIsModelTarget
+
+/-! ### Existence -/
+
+/-- **A receiving model with top-free types at stage `ω₁` on the carrier**, the target form. -/
+theorem existsReceivingModelTarget : ExistsReceivingModelTarget :=
+  existsReceivingModelTarget_of existsUnboundedScheduleTarget onePointExtensionTarget
+    isReceivingModelOfExactReceivingTarget
+
+/-- **Target: a model of the density sentence of cardinality `ℵ₁`.**  Some structure of the base
+language on a carrier in `Type` satisfies the density sentence and has exactly `ℵ₁` points.
+Existence statement.  Proved (`AlephOne.existsAlephOneModelTarget`). -/
+def ExistsAlephOneModelTarget : Prop :=
+  ∃ (M : Type) (_ : baseLanguage.{0}.Structure M),
+    baseLanguage.densitySentence.{0}.Realize M ∧ Cardinal.mk M = Cardinal.aleph 1
+
+/-- **A model of the density sentence of cardinality `ℵ₁`**: the base interpretation of the
+receiving model of `AlephOne.existsReceivingModelTarget` (`AlephOne.realizeDensitySentenceTarget`),
+on the carrier `ω₁.ToType` of cardinality `ℵ₁` (`AlephOne.mk_carrier`). -/
+theorem existsAlephOneModelTarget : ExistsAlephOneModelTarget := by
+  obtain ⟨R, hR, -⟩ := existsReceivingModelTarget
+  exact ⟨Carrier, (R.reduce Ordinal.isSuccLimit_omega0.isSuccPrelimit).toStructure,
+    realizeDensitySentenceTarget R hR, mk_carrier⟩
 
 end VaughtConjecture.AlephOne
