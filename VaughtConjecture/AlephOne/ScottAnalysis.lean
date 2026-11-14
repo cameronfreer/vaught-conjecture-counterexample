@@ -73,7 +73,8 @@ class (`ReceivingModelsScottProcessEqTarget`).
 * `ReceivingModelsScottProcessEqTarget` (proved), with the form
   `ReceivingModelsScottProcessEqOfModelTarget` (proved) that derives the `Infinite` instances
   from the models.
-* `OrbitRankLtOmegaOneTarget`, `ExistsBFEquivNotBFEquivTarget`, `ExistsOrbitRankGtTarget`,
+* `OrbitRankLtOmegaOneTarget` (proved).
+* `ExistsBFEquivNotBFEquivTarget`, `ExistsOrbitRankGtTarget`,
   `InternalScottRankEqOmegaOneTarget`, `ScottProcessIsRankOmegaOneTarget` (stated).
 * For a realization with its own base structure: `RealizationScottRankOmegaOneTarget` (stated)
   and `RealizationsScottProcessEqTarget` (proved), with `RealizationsScottProcessEqOfModelTarget`
@@ -88,6 +89,13 @@ universe u w w'
 namespace VaughtConjecture
 
 open Ordinal Order FirstOrder Language InfinitaryLogic.ScottProcess.Semantic
+
+/-- **The two readings of `Ordinal.lift.{w} ω₁`.**  In the rank statements below, the expected
+type `Ordinal.{w}` makes `Ordinal.lift.{w} ω₁` elaborate as the lift of `ω₁ : Ordinal.{w}` to its
+own universe; it is the lift of `ω₁ : Ordinal.{0}` (`Ordinal.lift_id`, `Ordinal.lift_omega`). -/
+theorem lift_omega_one_eq :
+    Ordinal.lift.{w, w} (ω₁ : Ordinal.{w}) = Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0}) := by
+  rw [Ordinal.lift_id, Ordinal.lift_omega, Ordinal.lift_one]
 
 /-! ### The comparison within the class -/
 
@@ -219,11 +227,22 @@ theorem bfEquivAllOfBFEquivLtOmegaOneTarget : BFEquivAllOfBFEquivLtOmegaOneTarge
 every tuple has orbit rank (InfinitaryLogic's `orbitRank`: the least level at which equivalence
 with the tuple is equivalence at every level) below `ω₁`, lifted to the carrier universe.  The
 statement of step 1 within one model, in InfinitaryLogic's vocabulary.  Given-model statement.
-Stated. -/
+Proved (`orbitRankLtOmegaOneTarget`). -/
 def OrbitRankLtOmegaOneTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁), R.1.IsReceivingModel →
     (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.1.eval t = some p → p.IsTopFree) →
       ∀ ⦃n : ℕ⦄ (a : Fin n → M), orbitRank (L := baseLanguage.{0}) a < Ordinal.lift.{w} ω₁
+
+/-- Every orbit rank is below `ω₁`: step 1 with `S = R` makes the lift of the countable level `ξ`
+of `a` a level at which equivalence with `a` is equivalence at every level (`orbitStable`), with
+`BFEquiv.toOrdinalLift` from the lifted level to `ξ`. -/
+theorem orbitRankLtOmegaOneTarget : OrbitRankLtOmegaOneTarget.{w} := by
+  intro M _ R hR htR n a
+  obtain ⟨ξ, hξ, h⟩ := bfEquivAllOfBFEquivLtOmegaOneTarget.{w, w, w} R hR htR a
+  refine (orbitRank_le_of_mem (α := Ordinal.lift.{w} ξ) fun b hb γ ↦
+    h R hR htR b hb.toOrdinalLift γ).trans_lt ?_
+  rw [lift_omega_one_eq.{w}]
+  exact Ordinal.lift_lt.2 hξ
 
 /-! ### Step 2: unbounded stabilization below `ω₁` -/
 
