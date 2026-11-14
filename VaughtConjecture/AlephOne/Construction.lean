@@ -37,7 +37,8 @@ Stage 3 of the `ℵ₁` companion construction, on the conditions of
 * `AlephOne.FullHeightExactReceivingTarget`: a condition of full domain for an unbounded schedule
   has exact top-free receiving, from the served requests.  Proved.
 * `AlephOne.IsReceivingModelOfExactReceivingTarget` (given-model: exact top-free receiving makes a
-  receiving model, by capping and cap-to-model; stated, open), and the composition
+  receiving model, by capping and cap-to-model; proved in
+  `VaughtConjecture.AlephOne.ReceivingModel`), and the composition
   `AlephOne.FullHeightIsReceivingModelTarget` (proved from it,
   `AlephOne.fullHeightIsReceivingModelTarget_of`).
 * `AlephOne.ExistsReceivingModelTarget`: some realization on the carrier is in the class; proved
@@ -210,7 +211,9 @@ theorem fullHeightExactReceivingTarget : FullHeightExactReceivingTarget := by
 limit stage, an exactly consistent covering realization on a nonempty carrier with legal top-free
 types and exact receiving within the legal top-free stage types is a receiving model: finite-cut
 receiving by capping each coface at an ordinal above the cutoff and the labels of the occurrence,
-then modelhood by `Realization.isModel_of_hasFiniteCutReceiving`.  Stated; open. -/
+then modelhood by `Realization.isModel_of_hasFiniteCutReceiving`.  Proved
+(`AlephOne.isReceivingModelOfExactReceivingTarget`, in `VaughtConjecture.AlephOne.ReceivingModel`).
+-/
 def IsReceivingModelOfExactReceivingTarget : Prop :=
   ∀ ⦃α : Ordinal.{0}⦄ ⦃M : Type v⦄, Order.IsSuccLimit α → ∀ R : Realization.{0, v} α M,
     Nonempty M → R.IsConsistent → R.IsCovering → R.HasLegalTypes → R.HasTopFreeTypes →
