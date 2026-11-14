@@ -74,8 +74,8 @@ class (`ReceivingModelsScottProcessEqTarget`).
   `ReceivingModelsScottProcessEqOfModelTarget` (proved) that derives the `Infinite` instances
   from the models.
 * `OrbitRankLtOmegaOneTarget` (proved).
-* `ExistsBFEquivNotBFEquivTarget`, `ExistsOrbitRankGtTarget`,
-  `InternalScottRankEqOmegaOneTarget`, `ScottProcessIsRankOmegaOneTarget` (stated).
+* `ExistsBFEquivNotBFEquivTarget`, `ExistsOrbitRankGtTarget` (proved).
+* `InternalScottRankEqOmegaOneTarget`, `ScottProcessIsRankOmegaOneTarget` (stated).
 * For a realization with its own base structure: `RealizationScottRankOmegaOneTarget` (stated)
   and `RealizationsScottProcessEqTarget` (proved), with `RealizationsScottProcessEqOfModelTarget`
   (proved).
@@ -249,19 +249,61 @@ theorem orbitRankLtOmegaOneTarget : OrbitRankLtOmegaOneTarget.{w} := by
 /-- **Target: pairs equivalent at `ξ` and not at every level.**  In a receiving model expansion
 `R` to `ω₁`, for every countable `ξ`, some two points are back-and-forth equivalent at `ξ` in the
 base language and not back-and-forth equivalent at some countable level.  Top-freeness of the
-types of `R` is not assumed.  Given-model statement.  Stated. -/
+types of `R` is not assumed.  Given-model statement.  Proved
+(`existsBFEquivNotBFEquivTarget`). -/
 def ExistsBFEquivNotBFEquivTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁), R.1.IsReceivingModel →
     ∀ ⦃ξ : Ordinal.{0}⦄, ξ < ω₁ → ∃ a₁ a₂ : M, BFEquiv (L := baseLanguage.{0}) ξ 1 ![a₁] ![a₂] ∧
       ∃ γ < (ω₁ : Ordinal.{0}), ¬ BFEquiv (L := baseLanguage.{0}) γ 1 ![a₁] ![a₂]
 
+/-- Pairs equivalent at `ξ` and not at every level: the two points `a₁` and `a₂` of a one-point
+pair above `λ_ξ` (`onePointPairOccursTarget`), with types `d₁ ≠ d₂` of equal reductions to `λ_ξ`.
+They cover one stage type in the reduction of `R` to `λ_ξ`, a receiving model expansion, so they
+are equivalent at `ξ` (`ModelExpansion.bfEquiv_comp_of_covers_of_hasFiniteCutReceiving`).  At the
+rank `γ < ω₁` of the chart selection formula of `d₁`, equivalence would carry that formula from
+`![a₁]` to `![a₂]` (`BFEquiv_implies_agreeQR`), making `![a₂]` a cover of `d₁`
+(`realize_chartSelectionFormula_iff`), against `d₁ ≠ d₂`. -/
+theorem existsBFEquivNotBFEquivTarget : ExistsBFEquivNotBFEquivTarget.{w} := by
+  intro M _ R hR ξ hξ
+  have hω : IsSuccLimit (ω₁ : Ordinal.{0}) := Cardinal.isSuccLimit_omega 1
+  obtain ⟨d₁, d₂, -, -, ht₁, -, -, hne, hr, a₁, a₂, h₁, h₂⟩ := onePointPairOccursTarget R.1 hR hξ
+  let e := R.reduce hω.isSuccPrelimit (isSuccLimit_blockStage ξ) (omega0_le_blockStage ξ)
+    (blockStage_lt_omega_one hξ).le
+  have he : e.1.HasFiniteCutReceiving :=
+    (hR.reduce hω.isSuccPrelimit (isSuccLimit_blockStage ξ) (blockStage_lt_omega_one hξ).le).2
+  have h₂' : e.1.Covers (d₁.reduce (isSuccPrelimit_blockStage ξ)) ![a₂] := by
+    rw [hr]
+    exact h₂.reduce _
+  have hbf := ModelExpansion.bfEquiv_comp_of_covers_of_hasFiniteCutReceiving hξ e e he he
+    (h₁.reduce (isSuccPrelimit_blockStage ξ)) h₂' id
+  obtain ⟨η, hη, hpη⟩ := existsIsTopFreeReduceBlockStageTarget d₁ ht₁
+  refine ⟨a₁, a₂, hbf, _, qrank_chartSelectionFormula_lt hη d₁ id, fun hb ↦ hne ?_⟩
+  have hφ₁ : (chartSelectionFormula hη d₁ id).Realize ![a₁] :=
+    (realize_chartSelectionFormula_iff hη hpη id R hR _).2 ⟨_, h₁, rfl⟩
+  obtain ⟨c, hc, hcb⟩ := (realize_chartSelectionFormula_iff hη hpη id R hR _).1
+    ((BFEquiv_implies_agreeQR _ _ _ hb _ le_rfl).1 hφ₁)
+  have hc₂ : c = ![a₂] := hcb
+  subst hc₂
+  exact Option.some_injective _ (hc.eval_eq.symm.trans h₂.eval_eq)
+
 /-- **Target: orbit ranks are unbounded below `ω₁`.**  In a receiving model expansion `R` to
 `ω₁`, for every countable `ξ`, some tuple has orbit rank above `ξ`, lifted to the carrier
-universe.  Given-model statement.  Stated. -/
+universe.  Given-model statement.  Proved
+(`existsOrbitRankGtTarget`). -/
 def ExistsOrbitRankGtTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁), R.1.IsReceivingModel →
     ∀ ⦃ξ : Ordinal.{0}⦄, ξ < ω₁ →
       ∃ (n : ℕ) (a : Fin n → M), Ordinal.lift.{w} ξ < orbitRank (L := baseLanguage.{0}) a
+
+/-- Orbit ranks are unbounded below `ω₁`: for the pair of `existsBFEquivNotBFEquivTarget`, an
+orbit rank of `![a₁]` at most the lift of `ξ` would make `![a₁]` and `![a₂]` equivalent at every
+level (`bfEquiv_all_of_bfEquiv_orbitRank`), in particular at the separating level. -/
+theorem existsOrbitRankGtTarget : ExistsOrbitRankGtTarget.{w} := by
+  intro M _ R hR ξ hξ
+  obtain ⟨a₁, a₂, hbf, γ, -, hγ⟩ := existsBFEquivNotBFEquivTarget R hR hξ
+  refine ⟨1, ![a₁], lt_of_not_ge fun hle ↦ hγ ?_⟩
+  exact BFEquiv.toOrdinalLift
+    (bfEquiv_all_of_bfEquiv_orbitRank (BFEquiv.monotone hle hbf.ofOrdinalLift) _)
 
 /-! ### Step 3: the ranks and the common process -/
 
