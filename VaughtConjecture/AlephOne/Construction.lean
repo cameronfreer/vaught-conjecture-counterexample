@@ -20,8 +20,8 @@ Stage 3 of the `ℵ₁` companion construction, on the conditions of
 **Existence (construction).**
 
 * `AlephOne.ExistsUnboundedScheduleTarget`: an unbounded schedule of requests exists (from
-  `AlephOne.RequestCardinalityTarget`, at most `ℵ₁` requests, and a pairing of `ω₁` with
-  `ω₁ × ω₁`).  Stated; open.
+  `AlephOne.RequestCardinalityTarget`, at most `ℵ₁` requests, and a bijection of the carrier with
+  the pairs of a request and a point).  Both proved in `VaughtConjecture.AlephOne.Schedule`.
 * `AlephOne.InitialConditionTarget` and `AlephOne.ChainUnionTarget`: the initial condition, and the
   union of a nonempty chain of conditions as an upper bound with the union of the domains as its
   domain, for chains of any length.  Proved.
@@ -71,12 +71,14 @@ open Ordinal Set Realization FirstOrder Language
 /-! ### Requests and schedules -/
 
 /-- **Target: at most `ℵ₁` requests.**  Tuples of the carrier and stage types at `ω₁` on finitely
-many points are at most `ℵ₁` many each.  Stated; open. -/
+many points are at most `ℵ₁` many each.  Proved (`AlephOne.requestCardinalityTarget`, in
+`VaughtConjecture.AlephOne.Schedule`). -/
 def RequestCardinalityTarget : Prop :=
   Cardinal.mk Request ≤ Cardinal.aleph 1
 
 /-- **Target: an unbounded schedule exists**: some schedule schedules every request at points above
-every point of the carrier.  Stated; open. -/
+every point of the carrier.  Proved (`AlephOne.existsUnboundedScheduleTarget`, in
+`VaughtConjecture.AlephOne.Schedule`). -/
 def ExistsUnboundedScheduleTarget : Prop :=
   ∃ s : Carrier → Request, IsUnboundedSchedule s
 
