@@ -66,9 +66,6 @@ class (`ReceivingModelsScottProcessEqTarget`).
 **Results.**
 
 * `ReceivingModelsPotentialIsoTarget` (proved).
-* `chartSelectionFormula`, with `qrank_chartSelectionFormula_lt` and
-  `realize_chartSelectionFormula_iff` (proved): the formula of `ChartSelectionFormulaTarget`,
-  named, so that one formula serves models on carriers in different universes.
 * `BFEquivAllOfBFEquivLtOmegaOneTarget` (proved).
 * `ReceivingModelsScottProcessEqTarget` (proved), with the form
   `ReceivingModelsScottProcessEqOfModelTarget` (proved) that derives the `Infinite` instances
@@ -80,8 +77,6 @@ class (`ReceivingModelsScottProcessEqTarget`).
 * For a realization with its own base structure: `RealizationScottRankOmegaOneTarget` and
   `RealizationsScottProcessEqTarget` (proved), with `RealizationScottRankOmegaOneOfModelTarget`
   and `RealizationsScottProcessEqOfModelTarget` (proved).
-* `lift_omega_one_eq` (proved): in the rank statements, `Ordinal.lift.{w} ω₁` elaborates as the
-  lift of `ω₁ : Ordinal.{w}` to its own universe, which is the lift of `ω₁ : Ordinal.{0}`.
 * `ExistsAlephOneModelScottRankOmegaOneTarget` (stated): the combined shape, an existence
   statement, to be assembled from an existence theorem for the class and the given-model
   statements here.
@@ -89,16 +84,9 @@ class (`ReceivingModelsScottProcessEqTarget`).
 
 universe u w w'
 
-namespace VaughtConjecture
+namespace VaughtConjecture.AlephOne
 
 open Ordinal Order FirstOrder Language InfinitaryLogic.ScottProcess.Semantic
-
-/-- **The two readings of `Ordinal.lift.{w} ω₁`.**  In the rank statements below, the expected
-type `Ordinal.{w}` makes `Ordinal.lift.{w} ω₁` elaborate as the lift of `ω₁ : Ordinal.{w}` to its
-own universe; it is the lift of `ω₁ : Ordinal.{0}` (`Ordinal.lift_id`, `Ordinal.lift_omega`). -/
-theorem lift_omega_one_eq :
-    Ordinal.lift.{w, w} (ω₁ : Ordinal.{w}) = Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0}) := by
-  rw [Ordinal.lift_id, Ordinal.lift_omega, Ordinal.lift_one]
 
 /-! ### The comparison within the class -/
 
@@ -142,43 +130,6 @@ theorem receivingModelsPotentialIsoTarget : ReceivingModelsPotentialIsoTarget.{w
     fun k p x y hx hy n s ↦ ?_⟩
   exact ⟨k, p, x, y, Function.Embedding.ofIsEmpty, s, hx, hy, funext fun i ↦ i.elim0,
     funext fun i ↦ i.elim0, rfl, rfl⟩
-
-/-! ### Chart selection formulas, uniformly in the carrier universe -/
-
-/-- **The chart selection formula** of a stage type `p` at `ω₁` along a selector `f`, read at a
-countable block index `η`: the extension formula along `f` of the formula of the forcing
-thresholds of the reduction of `p` to `λ_η`.  It is the formula of `ChartSelectionFormulaTarget`;
-it does not depend on a carrier universe. -/
-noncomputable def chartSelectionFormula {η : Ordinal.{0}} (hη : η < ω₁) {m : ℕ}
-    (p : StageType.{0} ω₁ m) {n : ℕ} (f : Fin n → Fin m) : baseLanguage.{0}.Formulaω (Fin n) :=
-  extendFormula (blockFormula forcingThresholds η hη (p.reduce (isSuccPrelimit_blockStage η))) f
-
-/-- The chart selection formula has rank below `ω₁`: at most `ω · η + m`. -/
-theorem qrank_chartSelectionFormula_lt {η : Ordinal.{0}} (hη : η < ω₁) {m : ℕ}
-    (p : StageType.{0} ω₁ m) {n : ℕ} (f : Fin n → Fin m) :
-    (chartSelectionFormula hη p f).qrank < ω₁ := by
-  have hω : IsSuccLimit (ω₁ : Ordinal.{0}) := Cardinal.isSuccLimit_omega 1
-  rw [chartSelectionFormula, qrank_extendFormula]
-  refine (add_le_add (qrank_blockFormula_le _ hη _) le_rfl).trans_lt ?_
-  exact hω.isSuccPrelimit.add_natCast_lt
-    ((le_add_self : ω * η ≤ ω + ω * η).trans_lt (blockStage_lt_omega_one hη)) m
-
-/-- **The chart selection formula defines the selections**: if the reduction of `p` to `λ_η` is
-top-free, the chart selection formula holds of `b`, in a receiving model expansion at `ω₁` on a
-carrier in any universe, exactly when `b` is the selection along `f` of a cover of `p`.  The
-argument of `chartSelectionFormulaTarget`. -/
-theorem realize_chartSelectionFormula_iff {η : Ordinal.{0}} (hη : η < ω₁) {m : ℕ}
-    {p : StageType.{0} ω₁ m} (hpη : (p.reduce (isSuccPrelimit_blockStage η)).IsTopFree) {n : ℕ}
-    (f : Fin n → Fin m) {M : Type w} [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁)
-    (hR : R.1.IsReceivingModel) (b : Fin n → M) :
-    (chartSelectionFormula hη p f).Realize b ↔ ∃ a : Fin m → M, R.1.Covers p a ∧ a ∘ f = b := by
-  rw [chartSelectionFormula, realize_extendFormula]
-  refine exists_congr fun a ↦ ?_
-  rw [realizeBlockFormulaOfIsReceivingModelTarget R hR hη, and_comm]
-  refine and_congr_left fun _ ↦ ⟨fun ⟨ha, he⟩ ↦ ?_, fun h ↦ h.reduce _⟩
-  rw [Realization.reduce_eval, Option.map_eq_some_iff] at he
-  obtain ⟨q, hq, hqp⟩ := he
-  exact ⟨ha, hq.trans (congrArg some (StageType.eq_of_reduce_eq_of_isTopFree _ hqp hpη))⟩
 
 /-! ### Step 1: back-and-forth types are determined below `ω₁` -/
 
@@ -234,7 +185,8 @@ Proved (`orbitRankLtOmegaOneTarget`). -/
 def OrbitRankLtOmegaOneTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁), R.1.IsReceivingModel →
     (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.1.eval t = some p → p.IsTopFree) →
-      ∀ ⦃n : ℕ⦄ (a : Fin n → M), orbitRank (L := baseLanguage.{0}) a < Ordinal.lift.{w} ω₁
+      ∀ ⦃n : ℕ⦄ (a : Fin n → M),
+        orbitRank (L := baseLanguage.{0}) a < Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0})
 
 /-- Every orbit rank is below `ω₁`: step 1 with `S = R` makes the lift of the countable level `ξ`
 of `a` a level at which equivalence with `a` is equivalence at every level (`orbitStable`), with
@@ -244,7 +196,6 @@ theorem orbitRankLtOmegaOneTarget : OrbitRankLtOmegaOneTarget.{w} := by
   obtain ⟨ξ, hξ, h⟩ := bfEquivAllOfBFEquivLtOmegaOneTarget.{w, w, w} R hR htR a
   refine (orbitRank_le_of_mem (α := Ordinal.lift.{w} ξ) fun b hb γ ↦
     h R hR htR b hb.toOrdinalLift γ).trans_lt ?_
-  rw [lift_omega_one_eq.{w}]
   exact Ordinal.lift_lt.2 hξ
 
 /-! ### Step 2: unbounded stabilization below `ω₁` -/
@@ -317,7 +268,7 @@ Scott rank (InfinitaryLogic's `internalScottRank`, the supremum of `orbitRank a 
 def InternalScottRankEqOmegaOneTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁), R.1.IsReceivingModel →
     (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.1.eval t = some p → p.IsTopFree) →
-      internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w} ω₁
+      internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0})
 
 /-- Internal Scott rank `ω₁`, by InfinitaryLogic's exact-rank criterion
 (`internalScottRank_eq_iff`): every `orbitRank a + 1` is below the limit `ω₁`
@@ -325,12 +276,10 @@ def InternalScottRankEqOmegaOneTarget : Prop :=
 (`existsOrbitRankGtTarget`). -/
 theorem internalScottRankEqOmegaOneTarget : InternalScottRankEqOmegaOneTarget.{w} := by
   intro M _ R hR htR
-  rw [lift_omega_one_eq.{w}]
   have hω : IsSuccLimit (Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0})) :=
     Ordinal.isSuccLimit_lift.2 (Cardinal.isSuccLimit_omega 1)
   refine internalScottRank_eq_iff.2 ⟨fun n a ↦ ?_, fun γ hγ ↦ ?_⟩
   · have h := orbitRankLtOmegaOneTarget R hR htR a
-    rw [lift_omega_one_eq.{w}] at h
     rw [← Order.succ_eq_add_one]
     exact (hω.succ_lt h).le
   · obtain ⟨ξ, hξ, rfl⟩ := Ordinal.lt_lift_iff.1 hγ
@@ -356,7 +305,6 @@ def ScottProcessIsRankOmegaOneTarget : Prop :=
 theorem scottProcessIsRankOmegaOneTarget : ScottProcessIsRankOmegaOneTarget.{w} := by
   intro M _ _ R hR htR δ hδ
   have hS := internalScottRankEqOmegaOneTarget R hR htR
-  rw [lift_omega_one_eq.{w}] at hS
   have hlim : IsSuccLimit (internalScottRank (L := baseLanguage.{0}) M) :=
     hS ▸ Ordinal.isSuccLimit_lift.2 (Cardinal.isSuccLimit_omega 1)
   exact (isRank_iff_lift_eq_internalScottRank_of_isSuccLimit hlim).2 ⟨hδ, hS.symm⟩
@@ -431,7 +379,7 @@ def RealizationScottRankOmegaOneTarget : Prop :=
   ∀ ⦃M : Type w⦄ [Infinite M] (R : Realization.{0, w} ω₁ M), R.IsReceivingModel →
     (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.eval t = some p → p.IsTopFree) →
       letI := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
-      internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w} ω₁ ∧
+      internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0}) ∧
         ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
           (scottProcessOf baseLanguage.{0} M δ (zero_le.trans_lt hδ)).IsRank ω₁
 
@@ -452,7 +400,7 @@ def RealizationScottRankOmegaOneOfModelTarget : Prop :=
     (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.eval t = some p → p.IsTopFree) →
       letI := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
       letI : Infinite M := hR.1.infinite (Ordinal.omega_pos 1)
-      internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w} ω₁ ∧
+      internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0}) ∧
         ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
           (scottProcessOf baseLanguage.{0} M δ (zero_le.trans_lt hδ)).IsRank ω₁
 
@@ -522,4 +470,4 @@ def ExistsAlephOneModelScottRankOmegaOneTarget : Prop :=
       ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
         (scottProcessOf baseLanguage.{0} M δ (zero_le.trans_lt hδ)).IsRank ω₁
 
-end VaughtConjecture
+end VaughtConjecture.AlephOne
