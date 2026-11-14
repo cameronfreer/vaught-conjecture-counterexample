@@ -27,7 +27,8 @@ Stage 3 of the `ℵ₁` companion construction, on the conditions of
   domain, for chains of any length.  Proved.
 * `AlephOne.OnePointExtensionTarget`: a condition of countable domain extends by one point
   (the exact one-point attachment `Realization.optionAttachmentTarget` on the domain, transported
-  along the bijection of `Option dom` with the domain and its least missing point).  Stated; open.
+  along the bijection of `Option dom` with the domain and its least missing point).  Proved in
+  `VaughtConjecture.AlephOne.OnePointExtension` (`AlephOne.onePointExtensionTarget`).
 * `AlephOne.MaximalFullHeightTarget` (a maximal condition has the whole carrier as its domain) and
   `AlephOne.ExistsFullHeightConditionTarget`: proved from `AlephOne.OnePointExtensionTarget`
   (`AlephOne.maximalFullHeightTarget_of_onePointExtension`) with Zorn's lemma
@@ -113,8 +114,8 @@ whose domain is the old domain with one more point.  The intended proof: the dom
 request scheduled at `x`, if its tuple lies in the domain and its donor is a top-free coface of
 the type of the tuple, gives the occurrence and the donor, and otherwise the bottom one-point type
 over the empty occurrence does; `Realization.optionAttachmentTarget` (countability of the domain)
-attaches the new point, and the result is transported along `Option dom ≃ insert x dom`.  Stated;
-open. -/
+attaches the new point, and the result is transported along `Option dom ≃ insert x dom`.  Proved
+(`AlephOne.onePointExtensionTarget`, in `VaughtConjecture.AlephOne.OnePointExtension`). -/
 def OnePointExtensionTarget : Prop :=
   ∀ (s : Carrier → Request) (c : Condition s), c.dom.Countable →
     ∃ c' : Condition s, c ≤ c' ∧ ∃ x ∉ c.dom, c'.dom = insert x c.dom
