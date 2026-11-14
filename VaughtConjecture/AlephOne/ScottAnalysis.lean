@@ -75,10 +75,13 @@ class (`ReceivingModelsScottProcessEqTarget`).
   from the models.
 * `OrbitRankLtOmegaOneTarget` (proved).
 * `ExistsBFEquivNotBFEquivTarget`, `ExistsOrbitRankGtTarget` (proved).
-* `InternalScottRankEqOmegaOneTarget`, `ScottProcessIsRankOmegaOneTarget` (stated).
-* For a realization with its own base structure: `RealizationScottRankOmegaOneTarget` (stated)
-  and `RealizationsScottProcessEqTarget` (proved), with `RealizationsScottProcessEqOfModelTarget`
-  (proved).
+* `InternalScottRankEqOmegaOneTarget`, `ScottProcessIsRankOmegaOneTarget` (proved), with
+  `ScottProcessIsRankOmegaOneOfModelTarget` (proved).
+* For a realization with its own base structure: `RealizationScottRankOmegaOneTarget` and
+  `RealizationsScottProcessEqTarget` (proved), with `RealizationScottRankOmegaOneOfModelTarget`
+  and `RealizationsScottProcessEqOfModelTarget` (proved).
+* `lift_omega_one_eq` (proved): in the rank statements, `Ordinal.lift.{w} ω₁` elaborates as the
+  lift of `ω₁ : Ordinal.{w}` to its own universe, which is the lift of `ω₁ : Ordinal.{0}`.
 * `ExistsAlephOneModelScottRankOmegaOneTarget` (stated): the combined shape, an existence
   statement, to be assembled from an existence theorem for the class and the given-model
   statements here.
@@ -309,22 +312,71 @@ theorem existsOrbitRankGtTarget : ExistsOrbitRankGtTarget.{w} := by
 
 /-- **Target: internal Scott rank `ω₁`.**  A model expansion to `ω₁` in the class has internal
 Scott rank (InfinitaryLogic's `internalScottRank`, the supremum of `orbitRank a + 1`) equal to
-`ω₁`, lifted to the carrier universe.  Given-model statement.  Stated. -/
+`ω₁`, lifted to the carrier universe.  Given-model statement.  Proved
+(`internalScottRankEqOmegaOneTarget`). -/
 def InternalScottRankEqOmegaOneTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁), R.1.IsReceivingModel →
     (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.1.eval t = some p → p.IsTopFree) →
       internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w} ω₁
 
+/-- Internal Scott rank `ω₁`, by InfinitaryLogic's exact-rank criterion
+(`internalScottRank_eq_iff`): every `orbitRank a + 1` is below the limit `ω₁`
+(`orbitRankLtOmegaOneTarget`), and every level below `ω₁` is exceeded by an orbit rank
+(`existsOrbitRankGtTarget`). -/
+theorem internalScottRankEqOmegaOneTarget : InternalScottRankEqOmegaOneTarget.{w} := by
+  intro M _ R hR htR
+  rw [lift_omega_one_eq.{w}]
+  have hω : IsSuccLimit (Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0})) :=
+    Ordinal.isSuccLimit_lift.2 (Cardinal.isSuccLimit_omega 1)
+  refine internalScottRank_eq_iff.2 ⟨fun n a ↦ ?_, fun γ hγ ↦ ?_⟩
+  · have h := orbitRankLtOmegaOneTarget R hR htR a
+    rw [lift_omega_one_eq.{w}] at h
+    rw [← Order.succ_eq_add_one]
+    exact (hω.succ_lt h).le
+  · obtain ⟨ξ, hξ, rfl⟩ := Ordinal.lt_lift_iff.1 hγ
+    obtain ⟨n, a, ha⟩ := existsOrbitRankGtTarget R hR hξ
+    exact ⟨n, a, ha.trans (lt_add_one _)⟩
+
 /-- **Target: the semantic Scott process has rank `ω₁`.**  For a model expansion to `ω₁` in the
 class, the semantic Scott process of the base structure (InfinitaryLogic's `scottProcessOf`) of
 every length `δ > ω₁ + 1` has rank `ω₁` (`ScottProcess.IsRank`: the least level at which it
 stabilizes).  The carrier is infinite for every model in the class (`Realization.IsModel.infinite`);
-the instance is a binder because the process needs it.  Given-model statement.  Stated. -/
+the instance is a binder because the process needs it.  Given-model statement.  Proved
+(`scottProcessIsRankOmegaOneTarget`). -/
 def ScottProcessIsRankOmegaOneTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] [Infinite M] (R : ModelExpansion M ω₁),
     R.1.IsReceivingModel → (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.1.eval t = some p → p.IsTopFree) →
       ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
         (scottProcessOf baseLanguage.{0} M δ (zero_le.trans_lt hδ)).IsRank ω₁
+
+/-- The semantic Scott process has rank `ω₁`: the internal Scott rank is the limit `ω₁`
+(`internalScottRankEqOmegaOneTarget`), so InfinitaryLogic's comparison
+`isRank_iff_lift_eq_internalScottRank_of_isSuccLimit` reads the rank off it, given
+`ω₁ + 1 < δ`. -/
+theorem scottProcessIsRankOmegaOneTarget : ScottProcessIsRankOmegaOneTarget.{w} := by
+  intro M _ _ R hR htR δ hδ
+  have hS := internalScottRankEqOmegaOneTarget R hR htR
+  rw [lift_omega_one_eq.{w}] at hS
+  have hlim : IsSuccLimit (internalScottRank (L := baseLanguage.{0}) M) :=
+    hS ▸ Ordinal.isSuccLimit_lift.2 (Cardinal.isSuccLimit_omega 1)
+  exact (isRank_iff_lift_eq_internalScottRank_of_isSuccLimit hlim).2 ⟨hδ, hS.symm⟩
+
+/-- **Target: the semantic Scott process has rank `ω₁`, with the carrier's infinitude from the
+model.**  `ScottProcessIsRankOmegaOneTarget` without the `Infinite` binder: the carrier of a model
+expansion at the nonzero stage `ω₁` is infinite (`Realization.IsModel.infinite`).  Given-model
+statement.  Proved (`scottProcessIsRankOmegaOneOfModelTarget`). -/
+def ScottProcessIsRankOmegaOneOfModelTarget : Prop :=
+  ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁),
+    R.1.IsReceivingModel → (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.1.eval t = some p → p.IsTopFree) →
+      ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
+        letI : Infinite M := R.2.isModel.infinite (Ordinal.omega_pos 1)
+        (scottProcessOf baseLanguage.{0} M δ (zero_le.trans_lt hδ)).IsRank ω₁
+
+/-- The semantic Scott process has rank `ω₁`, with the carrier's infinitude from the model. -/
+theorem scottProcessIsRankOmegaOneOfModelTarget : ScottProcessIsRankOmegaOneOfModelTarget.{w} := by
+  intro M _ R hR htR δ hδ
+  let : Infinite M := R.2.isModel.infinite (Ordinal.omega_pos 1)
+  exact scottProcessIsRankOmegaOneTarget R hR htR hδ
 
 /-- **Target: one Scott process for the class.**  Any two model expansions to `ω₁` in the class,
 on carriers in any two universes, have the same semantic Scott process of every positive length.
@@ -373,7 +425,8 @@ theorem receivingModelsScottProcessEqOfModelTarget :
 at `ω₁` on an infinite carrier, a receiving model all of whose types are top-free, the base
 structure (the structure of the reduction of `R` to `ω`) has internal Scott rank `ω₁`, and its
 semantic Scott process of every length `δ > ω₁ + 1` has rank `ω₁`.  Given-model statement.
-Stated. -/
+Proved
+(`realizationScottRankOmegaOneTarget`). -/
 def RealizationScottRankOmegaOneTarget : Prop :=
   ∀ ⦃M : Type w⦄ [Infinite M] (R : Realization.{0, w} ω₁ M), R.IsReceivingModel →
     (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.eval t = some p → p.IsTopFree) →
@@ -381,6 +434,34 @@ def RealizationScottRankOmegaOneTarget : Prop :=
       internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w} ω₁ ∧
         ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
           (scottProcessOf baseLanguage.{0} M δ (zero_le.trans_lt hδ)).IsRank ω₁
+
+/-- The ranks, for a realization with its own base structure: the model expansion
+`⟨R, hR.1, rfl⟩` of the base structure. -/
+theorem realizationScottRankOmegaOneTarget : RealizationScottRankOmegaOneTarget.{w} := by
+  intro M _ R hR htR
+  let := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
+  exact ⟨internalScottRankEqOmegaOneTarget ⟨R, hR.1, rfl⟩ hR htR,
+    fun _ hδ ↦ scottProcessIsRankOmegaOneTarget ⟨R, hR.1, rfl⟩ hR htR hδ⟩
+
+/-- **Target: the ranks, for a realization, with the carrier's infinitude from the model.**
+`RealizationScottRankOmegaOneTarget` without the `Infinite` binder
+(`Realization.IsModel.infinite` at the nonzero stage `ω₁`).  Given-model statement.  Proved
+(`realizationScottRankOmegaOneOfModelTarget`). -/
+def RealizationScottRankOmegaOneOfModelTarget : Prop :=
+  ∀ ⦃M : Type w⦄ (R : Realization.{0, w} ω₁ M) (hR : R.IsReceivingModel),
+    (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) p, R.eval t = some p → p.IsTopFree) →
+      letI := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
+      letI : Infinite M := hR.1.infinite (Ordinal.omega_pos 1)
+      internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w} ω₁ ∧
+        ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
+          (scottProcessOf baseLanguage.{0} M δ (zero_le.trans_lt hδ)).IsRank ω₁
+
+/-- The ranks, for a realization, with the carrier's infinitude from the model. -/
+theorem realizationScottRankOmegaOneOfModelTarget :
+    RealizationScottRankOmegaOneOfModelTarget.{w} := by
+  intro M R hR htR
+  let : Infinite M := hR.1.infinite (Ordinal.omega_pos 1)
+  exact realizationScottRankOmegaOneTarget R hR htR
 
 /-- **Target: one Scott process, for realizations with their own base structures.**  Two
 realizations at `ω₁` on infinite carriers in any two universes, both receiving models all of
