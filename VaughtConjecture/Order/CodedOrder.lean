@@ -52,10 +52,10 @@ on a final segment.
 * `tailIsoRankEventuallyTarget`, `tailIsoBitsEventuallyTarget`,
   `tailEquivalentBitsEventuallyTarget`, `tailEquivalentInjectiveTarget` (proved): the recovery
   chain.
-* `CountableIioTarget`, `CardEqTarget`: cardinality facts.  Stated; open.
-* `ExistsUnboundedFibresOmegaOneTarget`, `OmegaOneSpectrumTarget`: at `I = J = ω₁`, `2 ^ ℵ₁`
-  parameters with pairwise tail-inequivalent coded orders of cardinality `ℵ₁` all of whose proper
-  initial segments are countable.  Stated; open.
+* `countableIioTarget`, `cardEqTarget` (proved): cardinality facts.
+* `existsUnboundedFibresOmegaOneTarget`, `omegaOneSpectrumTarget` (proved): at `I = J = ω₁`,
+  `2 ^ ℵ₁` parameters with pairwise tail-inequivalent coded orders of cardinality `ℵ₁` all of whose
+  proper initial segments are countable.
 -/
 
 universe u v
@@ -393,27 +393,101 @@ theorem tailEquivalentInjectiveTarget : TailEquivalentInjectiveTarget.{u, v} := 
 
 /-- **Target: proper initial segments are countable.**  If every proper initial segment of `I`
 is countable, then so is every proper initial segment `Set.Iio x` of a coded order over `I` (it
-lies in the countably many blocks of rank at most `rank x`).  Stated; open. -/
+lies in the countably many blocks of rank at most `rank x`).  Proved
+(`CodedOrder.countableIioTarget`). -/
 def CountableIioTarget : Prop :=
   ∀ ⦃I : Type u⦄ [LinearOrder I], (∀ i : I, (Set.Iio i).Countable) →
     ∀ (b : I → Bool) (x : CodedOrder b), (Set.Iio x).Countable
 
+/-- **Proper initial segments are countable**, the target form: `y ↦ (rank y, pos y)` is
+injective and maps `Set.Iio x` into `Set.Iic (rank x) ×ˢ univ`. -/
+theorem countableIioTarget : CountableIioTarget.{u} := by
+  intro I _ hI b x
+  have hIic : (Set.Iic (rank x)).Countable := by
+    rw [← Set.Iio_insert]
+    exact (hI _).insert _
+  exact Set.MapsTo.countable_of_injOn (f := fun y : CodedOrder b ↦ (rank y, pos y))
+    (t := Set.Iic (rank x) ×ˢ Set.univ) (fun y hy ↦ ⟨rank_mono (Set.mem_Iio.mp hy).le, trivial⟩)
+    (fun _ _ _ _ h ↦ ext_rank_pos (congrArg Prod.fst h) (congrArg Prod.snd h))
+    (hIic.prod Set.countable_univ)
+
 /-- **Target: the cardinality of a coded order.**  Over an infinite `I`, a coded order has the
-cardinality of `I` (each of its `#I` blocks is countably infinite).  Stated; open. -/
+cardinality of `I` (each of its `#I` blocks is countably infinite).  Proved
+(`CodedOrder.cardEqTarget`). -/
 def CardEqTarget : Prop :=
   ∀ ⦃I : Type u⦄ [LinearOrder I], Infinite I → ∀ b : I → Bool, #(CodedOrder b) = #I
 
+/-- **The cardinality of a coded order**, the target form: it injects into `I × ℤ` and contains
+the points `(i, 0)`. -/
+theorem cardEqTarget : CardEqTarget.{u} := by
+  intro I _ hI b
+  refine le_antisymm ?_ ?_
+  · calc #(CodedOrder b) ≤ #(I × ℤ) :=
+          mk_le_of_injective (f := fun y : CodedOrder b ↦ (rank y, pos y))
+            fun _ _ h ↦ ext_rank_pos (congrArg Prod.fst h) (congrArg Prod.snd h)
+      _ = #I := by
+          simp only [mk_prod, Cardinal.lift_uzero, mk_int, lift_aleph0]
+          exact mul_aleph0_eq (aleph0_le_mk I)
+  · exact mk_le_of_injective (f := fun i : I ↦ (mk i 0 fun _ ↦ le_rfl : CodedOrder b))
+      fun _ _ h ↦ congrArg rank h
+
 /-! ### At `ω₁` -/
 
+/-- Countable sets of countable ordinals are bounded above. -/
+theorem omegaOne_bddAbove {s : Set (ω₁ : Ordinal.{0}).ToType} (hs : s.Countable) : BddAbove s := by
+  have : Countable s := hs.to_subtype
+  let f : s → Ordinal.{0} := fun x ↦ (ToType.mk.symm (x : (ω₁ : Ordinal.{0}).ToType) : Ordinal)
+  have hlt : ⨆ x, f x < ω₁ := Ordinal.iSup_lt_omega_one fun x ↦ (ToType.mk.symm x.1).2
+  refine ⟨ToType.mk ⟨⨆ x, f x, hlt⟩, fun x hx ↦ ?_⟩
+  calc x = ToType.mk (ToType.mk.symm x) := (ToType.mk.apply_symm_apply x).symm
+    _ ≤ ToType.mk ⟨⨆ x, f x, hlt⟩ := ToType.mk.monotone
+        (show ToType.mk.symm x ≤ ⟨⨆ x, f x, hlt⟩ from Ordinal.le_iSup f ⟨x, hx⟩)
+
+/-- Proper initial segments of the countable ordinals are countable. -/
+theorem omegaOne_countable_Iio (x : (ω₁ : Ordinal.{0}).ToType) : (Set.Iio x).Countable :=
+  Set.MapsTo.countable_of_injOn
+    (f := fun y : (ω₁ : Ordinal.{0}).ToType ↦ (ToType.mk.symm y : Ordinal.{0}))
+    (t := Set.Iio (ToType.mk.symm x : Ordinal)) (fun _ hy ↦ ToType.mk.symm.strictMono hy)
+    (fun _ _ _ _ h ↦ ToType.mk.symm.injective (Subtype.ext h))
+    (countable_Iio_of_lt_omega_one (ToType.mk.symm x).2)
+
+/-- There are `ℵ₁` countable ordinals. -/
+theorem mk_omegaOne : #(ω₁ : Ordinal.{0}).ToType = aleph 1 := by
+  rw [mk_toType, card_omega]
+
 /-- **Target: a repetition scheme on `ω₁`.**  Some map from the countable ordinals to themselves
-has unbounded fibres.  Stated; open. -/
+has unbounded fibres.  Proved (`CodedOrder.existsUnboundedFibresOmegaOneTarget`). -/
 def ExistsUnboundedFibresOmegaOneTarget : Prop :=
   ∃ r : (ω₁ : Ordinal.{0}).ToType → (ω₁ : Ordinal.{0}).ToType, HasUnboundedFibres r
+
+/-- **A repetition scheme on `ω₁`**, the target form: the first projection after a bijection
+`ω₁ ≃ ω₁ × ω₁`.  A fibre bounded by `i` would lie in the countable set `Set.Iic i`, while each
+fibre is in bijection with `ω₁`. -/
+theorem existsUnboundedFibresOmegaOneTarget : ExistsUnboundedFibresOmegaOneTarget := by
+  have hinf : ℵ₀ ≤ #(ω₁ : Ordinal.{0}).ToType := mk_omegaOne ▸ aleph0_lt_aleph_one.le
+  obtain ⟨E⟩ : Nonempty ((ω₁ : Ordinal.{0}).ToType ≃
+      (ω₁ : Ordinal.{0}).ToType × (ω₁ : Ordinal.{0}).ToType) := by
+    refine Cardinal.eq.mp ?_
+    simp only [mk_prod, Cardinal.lift_id]
+    exact (mul_eq_self hinf).symm
+  refine ⟨fun k ↦ (E k).1, fun j i ↦ ?_⟩
+  by_contra! h
+  have huniv : (Set.univ : Set (ω₁ : Ordinal.{0}).ToType).Countable := by
+    refine Set.MapsTo.countable_of_injOn (f := fun m ↦ E.symm (j, m)) (t := Set.Iic i)
+      (fun m _ ↦ ?_) (fun m _ m' _ hmm ↦ ?_) ?_
+    · by_contra hlt
+      exact h _ (not_le.mp hlt) (by simp)
+    · simpa using congrArg (fun k ↦ (E k).2) hmm
+    · rw [← Set.Iio_insert]
+      exact (omegaOne_countable_Iio i).insert i
+  have hle := mk_le_aleph0_iff.mpr (Set.countable_univ_iff.mp huniv)
+  rw [mk_omegaOne] at hle
+  exact not_le.mpr aleph0_lt_aleph_one hle
 
 /-- **Target: `2 ^ ℵ₁` pairwise tail-inequivalent coded orders.**  There is a repetition scheme
 `r` on `ω₁` such that the coded orders of the parameters `A : ω₁ → Bool` (there are `2 ^ ℵ₁` of
 them) are pairwise tail-inequivalent, each of cardinality `ℵ₁` with every proper initial segment
-countable.  Stated; open. -/
+countable.  Proved (`CodedOrder.omegaOneSpectrumTarget`). -/
 def OmegaOneSpectrumTarget : Prop :=
   ∃ r : (ω₁ : Ordinal.{0}).ToType → (ω₁ : Ordinal.{0}).ToType, HasUnboundedFibres r ∧
     (∀ A A' : (ω₁ : Ordinal.{0}).ToType → Bool,
@@ -421,6 +495,18 @@ def OmegaOneSpectrumTarget : Prop :=
     (∀ A : (ω₁ : Ordinal.{0}).ToType → Bool,
       #(CodedOrder (A ∘ r)) = aleph 1 ∧ ∀ x : CodedOrder (A ∘ r), (Set.Iio x).Countable) ∧
     #((ω₁ : Ordinal.{0}).ToType → Bool) = 2 ^ aleph 1
+
+/-- **`2 ^ ℵ₁` pairwise tail-inequivalent coded orders**, the target form, assembled from
+`existsUnboundedFibresOmegaOneTarget`, `tailEquivalentInjectiveTarget`, `cardEqTarget` and
+`countableIioTarget` at the countable ordinals. -/
+theorem omegaOneSpectrumTarget : OmegaOneSpectrumTarget := by
+  obtain ⟨r, hr⟩ := existsUnboundedFibresOmegaOneTarget
+  have hinf : Infinite (ω₁ : Ordinal.{0}).ToType :=
+    Cardinal.infinite_iff.mpr (mk_omegaOne ▸ aleph0_lt_aleph_one.le)
+  refine ⟨r, hr, fun A A' h ↦ tailEquivalentInjectiveTarget (fun _ hs ↦ omegaOne_bddAbove hs)
+    hr A A' h, fun A ↦ ⟨?_, countableIioTarget omegaOne_countable_Iio _⟩, ?_⟩
+  · rw [cardEqTarget hinf, mk_omegaOne]
+  · simp
 
 end CodedOrder
 
