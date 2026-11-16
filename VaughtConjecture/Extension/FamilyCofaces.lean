@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.Apex
 import VaughtConjecture.Extension.PinnedExtension
 import VaughtConjecture.Realization.Families
+import VaughtConjecture.Stage.Cap
 
 /-!
 # Nonempty uniformity and dominance instances from coatom extensions
@@ -33,6 +34,10 @@ labelled `⊤`, and then capped at `c` ([Kni26, Lemma 2.5.8],
 (`Scheme.onePoint`) does not do: a cell whose row is bottom at itself has the bottom label in every
 lawful section (`CellScheme.Rows.IsLawful.eq_bot_of_row_self_eq_bot`), so the one-point extension
 `StageType.exists_extension` gives no control over labels.
+
+The same construction is exposed as a definition: the one-point apex type
+(`StageType.onePointApex`) capped at `c` (`StageType.cap`), whose scheme is the same for every `c`
+and whose single cell carries the label `c` (`StageType.onePointApex_cap_label`).
 
 **Uniformity.**  The exact pinned extension (`StageType.exists_pinned_extension`) of `p` over the
 empty face, with the donor of a label `c ∈ (γ, γ + ω)`, is a coface of `p` whose face along the new
@@ -87,6 +92,42 @@ theorem isLegalBelowFullGrade_cellless : cellless.{u}.IsLegalBelowFullGrade wher
   isBountiful := CellScheme.Rows.isBountiful_bot
   grade_lt d := d.elim0
   exists_gradedIndex_eq _ hX hX1 := absurd hX.2.1 (by omega)
+
+/-- **The one-point apex type**: the cell-less stage type on one point (legal below the full
+grade), with the apex added (`StageType.addApex`), a single cell of full scope and grade `1`
+labelled with the formal top.  Its scheme does not depend on any label. -/
+noncomputable def onePointApex : StageType.{u} α 1 :=
+  StageType.addApex (t := ⟨cellless, fun _ ↦ ⊥, isLegalBelowFullGrade_cellless.isWellFormed,
+    isLegalBelowFullGrade_cellless.isCoded, CellScheme.Rows.isLawful_const_bot,
+    fun _ ↦ atStage_bot⟩) isLegalBelowFullGrade_cellless one_pos
+
+/-- The one-point apex type has a single cell. -/
+@[simp] theorem card_onePointApex : (onePointApex (α := α)).card = 1 :=
+  rfl
+
+/-- The one-point apex type is legal. -/
+theorem isLegal_onePointApex : (onePointApex (α := α)).IsLegal :=
+  isLegal_addApex _ one_pos
+
+/-- The single cell of the one-point apex type has grade `1`. -/
+theorem onePointApex_grade (i : Fin (onePointApex (α := α)).card) :
+    (onePointApex (α := α)).toCellScheme.grade i = 1 := by
+  obtain rfl : i = Fin.last _ := Fin.ext (Nat.lt_one_iff.mp i.2)
+  exact Scheme.appendFullCellScheme_grade_last _ _
+
+/-- The single cell of the one-point apex type is labelled with the formal top. -/
+@[simp] theorem onePointApex_label (i : Fin (onePointApex (α := α)).card) :
+    (onePointApex (α := α)).label i = ⊤ := by
+  obtain rfl : i = Fin.last _ := Fin.ext (Nat.lt_one_iff.mp i.2)
+  exact addApex_label_last _ _
+
+/-- **The one-point apex type capped at `c`**, for `c < α` self-visible at `1`: the scheme of the
+one-point apex type with its single cell labelled `c` (`StageType.cap`). -/
+@[simp] theorem onePointApex_cap_label {c : Ordinal.{u}} (hc : IsSelfVisible 1 (c : Label.{u}))
+    (hcα : c < α) (i : Fin ((onePointApex (α := α)).cap c hc hcα).card) :
+    ((onePointApex (α := α)).cap c hc hcα).label i = c :=
+  -- the cell of the capped type is the cell of the apex type (`StageType.cap_toScheme`)
+  (congrArg (min · (c : Label.{u})) (onePointApex_label (α := α) i)).trans (min_top_left _)
 
 /-- **A legal one-point stage type with a prescribed label**: for `c < α` self-visible at `1`,
 some legal stage type on one point has a cell of grade `1` labelled `c`. -/
