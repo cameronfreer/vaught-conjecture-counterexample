@@ -24,8 +24,10 @@ coordinate and `CodedOrder.block b i` the points of rank `i`.
 **Parameters and repetition.**  A parameter is a map `A : J → Bool`.  A **repetition scheme** is
 a map `r : I → J` all of whose fibres are unbounded in `I` (`CodedOrder.HasUnboundedFibres`); the
 coded order of `A` along `r` is `CodedOrder (A ∘ r)`, so every input bit `A j` is the bit of
-unboundedly many blocks.  For `I = J = ω₁` a scheme exists: `I ≃ I × I` followed by the first
-projection has fibres of size `ℵ₁`, while bounded sets are countable.
+unboundedly many blocks.  Repetition makes eventual agreement recover the entire parameter,
+avoiding any additional cardinal-arithmetic assumption.  For `I = J = ω₁` a scheme exists:
+`I ≃ I × I` followed by the first projection has fibres of size `ℵ₁`, while bounded sets are
+countable.
 
 **Recovery.**  The blocks are the classes of finite-interval equivalence (`Order.FiniteInterval`),
 so an order isomorphism preserves them; an `ℕ`-block has a least point and a `ℤ`-block does not.
@@ -34,20 +36,22 @@ Models determine their exterior order only up to a change of root, that is, up t
 coded orders over an `ω₁`-like well-order `I` (well-founded, countable sets bounded above) induces
 an isomorphism between final segments of `I` (the ranks of points of `U` and of `V`), which is the
 identity on a whole final segment `Set.Ici γ` (proved: `Order.iciIsoEventuallyIdTarget`).
-Above `γ` and above the bottom ranks of `U` and `V` (where the first block of a tail may be cut),
-every block of `U` is carried onto the block of the same rank in `V`, so the bits agree on all
-ranks `> γ`.  Since every fibre of the scheme meets every final segment, the parameters are
-equal.  Agreement on a closed unbounded set of ranks would not suffice, as fibres of the scheme
-are only unbounded; the proof gives agreement on a final segment.
+Above `γ` and strictly above the bottom ranks of both `U` and `V`, every block of `U` is a whole
+block, carried onto the whole block of the same rank in `V`, so the least-point test gives
+agreement of the bits on all those ranks.  The bottom blocks are excluded on both sides: a tail
+may cut its first block, and a cut `ℤ`-block can have a least point.  Since every fibre of the
+scheme meets every final segment, the parameters are equal.  Agreement on a closed unbounded set
+of ranks would not suffice, as fibres of the scheme are only unbounded; the proof gives agreement
+on a final segment.
 
 **Statements.**
 * `finiteIntervalIffRankEqTarget` (proved): finite-interval classes are the blocks.
 * `blockHasLeastIffTarget` (proved): a block has a least point exactly when its bit is `false`.
 * `blockSubsetOfRankLtTarget` (proved): a tail contains every block above the rank of one of its
   points.
-* `TailIsoRankEventuallyTarget`, `TailIsoBitsEventuallyTarget`,
-  `TailEquivalentBitsEventuallyTarget`, `TailEquivalentInjectiveTarget`: the recovery chain.
-  Stated; open.
+* `tailIsoRankEventuallyTarget`, `tailIsoBitsEventuallyTarget`,
+  `tailEquivalentBitsEventuallyTarget`, `tailEquivalentInjectiveTarget` (proved): the recovery
+  chain.
 * `CountableIioTarget`, `CardEqTarget`: cardinality facts.  Stated; open.
 * `ExistsUnboundedFibresOmegaOneTarget`, `OmegaOneSpectrumTarget`: at `I = J = ω₁`, `2 ^ ℵ₁`
   parameters with pairwise tail-inequivalent coded orders of cardinality `ℵ₁` all of whose proper
@@ -214,7 +218,7 @@ theorem blockSubsetOfRankLtTarget : BlockSubsetOfRankLtTarget.{u} := by
 every countable set is bounded above.  For bit sequences `b, c` on `I`, nonempty upper sets `U` of
 `CodedOrder b` and `V` of `CodedOrder c` and an order isomorphism `e : U ≃o V`, there is `γ` such
 that `e` preserves the rank of every point of rank at least `γ`.  Applied to `e.symm`, the same
-holds for the inverse.  Stated; open. -/
+holds for the inverse.  Proved (`CodedOrder.tailIsoRankEventuallyTarget`). -/
 def TailIsoRankEventuallyTarget : Prop :=
   ∀ ⦃I : Type u⦄ [LinearOrder I] [WellFoundedLT I], (∀ s : Set I, s.Countable → BddAbove s) →
     ∀ (b c : I → Bool) ⦃U : Set (CodedOrder b)⦄ ⦃V : Set (CodedOrder c)⦄, IsUpperSet U →
@@ -222,8 +226,8 @@ def TailIsoRankEventuallyTarget : Prop :=
         ∀ x : U, γ ≤ rank (x : CodedOrder b) → rank ((e x : V) : CodedOrder c) = rank x.1
 
 /-- **Target: a tail isomorphism determines the bits on a final segment.**  Under the hypotheses
-of `TailIsoRankEventuallyTarget`, there is `γ` with `b i = c i` for every `i > γ`.  Stated;
-open. -/
+of `TailIsoRankEventuallyTarget`, there is `γ` with `b i = c i` for every `i > γ`.  Proved
+(`CodedOrder.tailIsoBitsEventuallyTarget`). -/
 def TailIsoBitsEventuallyTarget : Prop :=
   ∀ ⦃I : Type u⦄ [LinearOrder I] [WellFoundedLT I], (∀ s : Set I, s.Countable → BddAbove s) →
     ∀ (b c : I → Bool) ⦃U : Set (CodedOrder b)⦄ ⦃V : Set (CodedOrder c)⦄, IsUpperSet U →
@@ -231,7 +235,8 @@ def TailIsoBitsEventuallyTarget : Prop :=
 
 /-- **Target: tail-equivalent coded orders have eventually equal bits.**  Over a well-order in
 which every countable set is bounded above, if `CodedOrder b` and `CodedOrder c` are
-tail-equivalent, then `b` and `c` agree on all indices above some `γ`.  Stated; open. -/
+tail-equivalent, then `b` and `c` agree on all indices above some `γ`.  Proved
+(`CodedOrder.tailEquivalentBitsEventuallyTarget`). -/
 def TailEquivalentBitsEventuallyTarget : Prop :=
   ∀ ⦃I : Type u⦄ [LinearOrder I] [WellFoundedLT I], (∀ s : Set I, s.Countable → BddAbove s) →
     ∀ (b c : I → Bool), Order.TailEquivalent (CodedOrder b) (CodedOrder c) →
@@ -244,12 +249,145 @@ def HasUnboundedFibres {I : Type u} {J : Type v} [LT I] (r : I → J) : Prop :=
 
 /-- **Target: recovery of the parameter.**  Over a well-order `I` in which every countable set is
 bounded above, along a repetition scheme `r : I → J`, two parameters `A, A' : J → Bool` whose
-coded orders are tail-equivalent are equal.  Stated; open. -/
+coded orders are tail-equivalent are equal.  Proved
+(`CodedOrder.tailEquivalentInjectiveTarget`). -/
 def TailEquivalentInjectiveTarget : Prop :=
   ∀ ⦃I : Type u⦄ ⦃J : Type v⦄ [LinearOrder I] [WellFoundedLT I],
     (∀ s : Set I, s.Countable → BddAbove s) → ∀ ⦃r : I → J⦄, HasUnboundedFibres r →
       ∀ A A' : J → Bool, Order.TailEquivalent (CodedOrder (A ∘ r)) (CodedOrder (A' ∘ r)) →
         A = A'
+
+/-- Finite-interval equivalence in a coded order is equality of ranks. -/
+theorem finiteInterval_iff_rank_eq {x y : CodedOrder b} :
+    Order.FiniteInterval x y ↔ rank x = rank y :=
+  finiteIntervalIffRankEqTarget b x y
+
+section TailIso
+
+variable {c : I → Bool} {U : Set (CodedOrder b)} {V : Set (CodedOrder c)}
+
+/-- An isomorphism of upper sets of coded orders preserves and reflects equality of ranks: ranks
+are finite-interval classes, intervals of an upper set are intervals of the coded order, and
+isomorphisms preserve finite-interval equivalence. -/
+theorem rank_eq_iff_of_orderIso (hU : IsUpperSet U) (hV : IsUpperSet V) (e : U ≃o V) (x y : U) :
+    rank ((e x : V) : CodedOrder c) = rank ((e y : V) : CodedOrder c) ↔
+      rank (x : CodedOrder b) = rank (y : CodedOrder b) := by
+  rw [← finiteInterval_iff_rank_eq, ← finiteInterval_iff_rank_eq,
+    ← Order.finiteInterval_subtype_iff hV.ordConnected,
+    ← Order.finiteInterval_subtype_iff hU.ordConnected, e.finiteInterval_iff]
+
+/-- The ranks of the points of a nonempty upper set form a final segment `Set.Ici a`. -/
+theorem exists_image_rank_eq_Ici [WellFoundedLT I] (hU : IsUpperSet U) (hne : U.Nonempty) :
+    ∃ a, rank '' U = Set.Ici a := by
+  obtain ⟨_, ⟨x, hx, rfl⟩, hmin⟩ := wellFounded_lt.has_min (rank '' U) (hne.image rank)
+  refine ⟨rank x, Set.Subset.antisymm ?_ fun i hi ↦ ?_⟩
+  · rintro _ ⟨y, hy, rfl⟩
+    exact not_lt.mp (hmin _ ⟨y, hy, rfl⟩)
+  · rcases (Set.mem_Ici.mp hi).eq_or_lt with h | h
+    · exact ⟨x, hx, h⟩
+    · exact ⟨mk i 0 fun _ ↦ le_rfl, blockSubsetOfRankLtTarget b hU hx h rfl, rfl⟩
+
+end TailIso
+
+/-- **A tail isomorphism eventually preserves ranks**, the target form.  The rank of `e x`
+depends only on the rank of `x` (`rank_eq_iff_of_orderIso`); the induced map of ranks is
+strictly monotone on the final segment of ranks of `U` with image the final segment of ranks of
+`V`, hence the identity on a final segment (`Order.exists_forall_ge_eq_of_strictMonoOn`). -/
+theorem tailIsoRankEventuallyTarget : TailIsoRankEventuallyTarget.{u} := by
+  intro I _ _ hbdd b c U V hU hV hne e
+  classical
+  obtain ⟨x₀, hx₀⟩ := hne
+  obtain ⟨a, ha⟩ := exists_image_rank_eq_Ici hU ⟨x₀, hx₀⟩
+  obtain ⟨a', ha'⟩ := exists_image_rank_eq_Ici hV ⟨_, (e ⟨x₀, hx₀⟩).2⟩
+  let f : I → I := fun i ↦
+    if h : ∃ x : U, rank (x : CodedOrder b) = i then rank ((e h.choose : V) : CodedOrder c) else i
+  have hf (x : U) : f (rank (x : CodedOrder b)) = rank ((e x : V) : CodedOrder c) := by
+    have h : ∃ y : U, rank (y : CodedOrder b) = rank (x : CodedOrder b) := ⟨x, rfl⟩
+    simp only [f, h, ↓reduceDIte]
+    exact (rank_eq_iff_of_orderIso hU hV e _ _).mpr h.choose_spec
+  have hrep (i : I) (hi : i ∈ Set.Ici a) : ∃ x : U, rank (x : CodedOrder b) = i := by
+    obtain ⟨x, hx, hxi⟩ := ha.symm ▸ hi
+    exact ⟨⟨x, hx⟩, hxi⟩
+  have hmono : StrictMonoOn f (Set.Ici a) := by
+    intro i hi j hj hij
+    obtain ⟨x, rfl⟩ := hrep i hi
+    obtain ⟨y, rfl⟩ := hrep j hj
+    rw [hf, hf]
+    have hxy : x < y := lt_of_rank_lt hij
+    rcases (rank_mono (show ((e x : V) : CodedOrder c) ≤ e y from
+      (e.strictMono hxy).le)).lt_or_eq with h | h
+    · exact h
+    · exact absurd ((rank_eq_iff_of_orderIso hU hV e x y).mp h) hij.ne
+  have himg : f '' Set.Ici a = Set.Ici a' := by
+    ext j
+    refine ⟨?_, fun hj ↦ ?_⟩
+    · rintro ⟨i, hi, rfl⟩
+      obtain ⟨x, rfl⟩ := hrep i hi
+      rw [hf, ← ha']
+      exact ⟨_, (e x).2, rfl⟩
+    · obtain ⟨y, hy, rfl⟩ := ha'.symm ▸ hj
+      refine ⟨rank ((e.symm ⟨y, hy⟩ : U) : CodedOrder b), ha ▸ ⟨_, (e.symm _).2, rfl⟩, ?_⟩
+      rw [hf, e.apply_symm_apply]
+  obtain ⟨γ, -, -, hγ⟩ := Order.exists_forall_ge_eq_of_strictMonoOn hbdd hmono himg
+  exact ⟨γ, fun x hx ↦ (hf x).symm.trans (hγ _ hx)⟩
+
+/-- Whole blocks of the same rank, on which a tail isomorphism and its inverse preserve ranks,
+have least points together (one direction). -/
+theorem exists_least_block_of_orderIso {c : I → Bool} {U : Set (CodedOrder b)}
+    {V : Set (CodedOrder c)} (e : U ≃o V) {i : I} (hBU : block b i ⊆ U) (hBV : block c i ⊆ V)
+    (he : ∀ x : U, rank (x : CodedOrder b) = i → rank ((e x : V) : CodedOrder c) = i)
+    (he' : ∀ y : V, rank (y : CodedOrder c) = i → rank ((e.symm y : U) : CodedOrder b) = i) :
+    (∃ x ∈ block b i, ∀ y ∈ block b i, x ≤ y) → (∃ x ∈ block c i, ∀ y ∈ block c i, x ≤ y) := by
+  rintro ⟨x, hx, hle⟩
+  refine ⟨(e ⟨x, hBU hx⟩ : CodedOrder c), he ⟨x, hBU hx⟩ hx, fun y hy ↦ ?_⟩
+  have h : (⟨x, hBU hx⟩ : U) ≤ e.symm ⟨y, hBV hy⟩ := hle _ (he' ⟨y, hBV hy⟩ hy)
+  have h' := e.monotone h
+  rw [e.apply_symm_apply] at h'
+  exact h'
+
+/-- **A tail isomorphism determines the bits on a final segment**, the target form.  Above the
+rank cutoffs of `e` and of `e.symm` and above the bottom ranks of both tails, blocks of either
+side are whole blocks inside the tails (a cut bottom block is never compared), each carried onto
+the block of the same rank; the least-point test then compares the bits. -/
+theorem tailIsoBitsEventuallyTarget : TailIsoBitsEventuallyTarget.{u} := by
+  intro I _ _ hbdd b c U V hU hV hne ⟨e⟩
+  have hVne : V.Nonempty := ⟨_, (e ⟨hne.some, hne.some_mem⟩).2⟩
+  obtain ⟨γ, hγ⟩ := tailIsoRankEventuallyTarget hbdd b c hU hV hne e
+  obtain ⟨γ', hγ'⟩ := tailIsoRankEventuallyTarget hbdd c b hV hU hVne e.symm
+  obtain ⟨a, ha⟩ := exists_image_rank_eq_Ici hU hne
+  obtain ⟨a', ha'⟩ := exists_image_rank_eq_Ici hV hVne
+  obtain ⟨x₀, hx₀, hx₀a⟩ : a ∈ rank '' U := ha ▸ Set.mem_Ici.mpr le_rfl
+  obtain ⟨y₀, hy₀, hy₀a⟩ : a' ∈ rank '' V := ha' ▸ Set.mem_Ici.mpr le_rfl
+  refine ⟨max (max γ γ') (max a a'), fun i hi ↦ ?_⟩
+  simp only [max_lt_iff] at hi
+  have hBU : block b i ⊆ U := blockSubsetOfRankLtTarget b hU hx₀ (hx₀a ▸ hi.2.1)
+  have hBV : block c i ⊆ V := blockSubsetOfRankLtTarget c hV hy₀ (hy₀a ▸ hi.2.2)
+  have he (x : U) (hx : rank (x : CodedOrder b) = i) : rank ((e x : V) : CodedOrder c) = i :=
+    (hγ x (hx ▸ hi.1.1.le)).trans hx
+  have he' (y : V) (hy : rank (y : CodedOrder c) = i) :
+      rank ((e.symm y : U) : CodedOrder b) = i :=
+    (hγ' y (hy ▸ hi.1.2.le)).trans hy
+  have h₁ : b i = false → c i = false := fun h ↦ (blockHasLeastIffTarget c i).mp
+    (exists_least_block_of_orderIso e hBU hBV he he' ((blockHasLeastIffTarget b i).mpr h))
+  have h₂ : c i = false → b i = false := fun h ↦ (blockHasLeastIffTarget b i).mp
+    (exists_least_block_of_orderIso e.symm hBV hBU he' (by simpa using he)
+      ((blockHasLeastIffTarget c i).mpr h))
+  revert h₁ h₂
+  cases b i <;> cases c i <;> simp
+
+/-- **Tail-equivalent coded orders have eventually equal bits**, the target form. -/
+theorem tailEquivalentBitsEventuallyTarget : TailEquivalentBitsEventuallyTarget.{u} := by
+  rintro I _ _ hbdd b c ⟨U, V, hU, hV, hne, -, he⟩
+  exact tailIsoBitsEventuallyTarget hbdd b c hU hV hne he
+
+/-- **Recovery of the parameter**, the target form: the bits agree above some `γ`, and every
+input index is the image of some block index above `γ`. -/
+theorem tailEquivalentInjectiveTarget : TailEquivalentInjectiveTarget.{u, v} := by
+  intro I J _ _ hbdd r hr A A' h
+  obtain ⟨γ, hγ⟩ := tailEquivalentBitsEventuallyTarget hbdd _ _ h
+  funext j
+  obtain ⟨k, hk, rfl⟩ := hr j γ
+  exact hγ k hk
 
 /-! ### Cardinality -/
 

@@ -25,12 +25,14 @@ tail equivalence also absorbs every change of a countable initial part.
 **Final segments of a well-order.**  `IciIsoEventuallyIdTarget`: in a well-order in which every
 countable set is bounded above (for example the countable ordinals), an order isomorphism between
 two final segments `Set.Ici a` and `Set.Ici b` is the identity on a whole final segment
-`Set.Ici γ`, not merely on a closed unbounded set.  An initial shift `a ≠ b` moves only countably
-many indices.
+`Set.Ici γ`, not merely on a closed unbounded set.  An initial shift `a ≠ b` moves only boundedly
+many indices; when the proper initial segments are countable, only countably many.
 
-**Results.**  `tailEquivalentSymmTarget` and `iciIsoEventuallyIdTarget` are proved (the latter
-through `exists_iciIso_eq_of_le`, the case `a ≤ b`).  `TailEquivalentTransTarget` is stated;
-open.
+**Results (all proved).**  `tailEquivalentSymmTarget`; `tailEquivalentTransTarget`, through
+`exists_orderIso_of_subset` (an isomorphism of upper sets restricts to a smaller nonempty upper set
+of its codomain); `iciIsoEventuallyIdTarget`, through `exists_iciIso_eq_of_le` (the case
+`a ≤ b`), and its form for a strictly monotone map onto a final segment,
+`exists_forall_ge_eq_of_strictMonoOn`.
 -/
 
 universe u v w
@@ -56,10 +58,51 @@ theorem tailEquivalentSymmTarget : TailEquivalentSymmTarget.{u, v} := by
 /-- **Target: tail equivalence is transitive.**  If a tail of `α` is isomorphic to a tail of `β`
 and a tail of `β` to a tail of `γ`, then a tail of `α` is isomorphic to a tail of `γ`: the two
 tails of `β` are comparable by inclusion, and the isomorphism of the larger carries the smaller to
-a tail.  Stated; open. -/
+a tail.  The two tails of `β` meet in a nonempty upper set because `β` is linearly ordered (upper
+sets are then comparable by inclusion); no cardinality hypothesis is used.  Proved
+(`Order.tailEquivalentTransTarget`). -/
 def TailEquivalentTransTarget : Prop :=
   ∀ ⦃α : Type u⦄ ⦃β : Type v⦄ ⦃γ : Type w⦄ [LinearOrder α] [LinearOrder β] [LinearOrder γ],
     TailEquivalent α β → TailEquivalent β γ → TailEquivalent α γ
+
+/-- **Restricting an isomorphism of upper sets.**  If `e : U ≃o V` with `U` an upper set and
+`V' ⊆ V` a nonempty upper set, then the points of `U` sent into `V'` form a nonempty upper set
+isomorphic to `V'`. -/
+theorem exists_orderIso_of_subset {α : Type u} {β : Type v} [LinearOrder α] [LinearOrder β]
+    {U : Set α} {V V' : Set β} (hU : IsUpperSet U) (e : U ≃o V) (hV' : IsUpperSet V')
+    (hV'V : V' ⊆ V) (hne : V'.Nonempty) :
+    ∃ U' : Set α, IsUpperSet U' ∧ U'.Nonempty ∧ Nonempty (U' ≃o V') := by
+  refine ⟨{a | ∃ h : a ∈ U, (e ⟨a, h⟩ : β) ∈ V'}, ?_, ?_, ⟨?_⟩⟩
+  · rintro a a' haa' ⟨h, hv⟩
+    exact ⟨hU haa' h, hV' (e.monotone (show (⟨a, h⟩ : U) ≤ ⟨a', hU haa' h⟩ from haa')) hv⟩
+  · obtain ⟨v, hv⟩ := hne
+    refine ⟨(e.symm ⟨v, hV'V hv⟩ : α), (e.symm ⟨v, hV'V hv⟩).2, ?_⟩
+    simpa using hv
+  · exact
+      { toFun := fun x ↦ ⟨e ⟨x, x.2.fst⟩, x.2.snd⟩
+        invFun := fun y ↦ ⟨e.symm ⟨y, hV'V y.2⟩, (e.symm _).2, by simp⟩
+        left_inv := fun x ↦ by ext; simp
+        right_inv := fun y ↦ by ext; simp
+        map_rel_iff' := fun {x y} ↦ by
+          change e _ ≤ e _ ↔ _
+          rw [e.le_iff_le]
+          rfl }
+
+/-- **Tail equivalence is transitive**, the target form: the two tails of the middle order meet in
+a nonempty upper set (they are comparable), to which both isomorphisms restrict. -/
+theorem tailEquivalentTransTarget : TailEquivalentTransTarget.{u, v, w} := by
+  rintro α β γ _ _ _ ⟨U₁, V₁, hU₁, hV₁, -, hV₁n, ⟨e₁⟩⟩ ⟨U₂, W, hU₂, hW, hU₂n, -, ⟨e₂⟩⟩
+  have hMn : (V₁ ∩ U₂).Nonempty := by
+    rcases hV₁.total hU₂ with h | h
+    · obtain ⟨y, hy⟩ := hV₁n
+      exact ⟨y, hy, h hy⟩
+    · obtain ⟨y, hy⟩ := hU₂n
+      exact ⟨y, h hy, hy⟩
+  obtain ⟨U', hU', hU'n, ⟨f₁⟩⟩ :=
+    exists_orderIso_of_subset hU₁ e₁ (hV₁.inter hU₂) Set.inter_subset_left hMn
+  obtain ⟨W', hW', hW'n, ⟨f₂⟩⟩ :=
+    exists_orderIso_of_subset hW e₂.symm (hV₁.inter hU₂) Set.inter_subset_right hMn
+  exact ⟨U', W', hU', hW', hU'n, hW'n, ⟨f₁.trans f₂.symm⟩⟩
 
 /-- **Target: isomorphisms of final segments of an `ω₁`-like well-order are eventually the
 identity.**  Let `I` be a well-order in which every countable set is bounded above.  Every order
@@ -135,5 +178,23 @@ theorem iciIsoEventuallyIdTarget : IciIsoEventuallyIdTarget.{u} := by
     have h := hγ δ (hba.trans hδ) hγδ
     have : φ.symm ⟨δ, hba.trans hδ⟩ = ⟨δ, hδ⟩ := Subtype.ext h
     rw [← this, φ.apply_symm_apply]
+
+/-- **A strictly monotone map of a final segment onto a final segment is eventually the
+identity.**  Let `I` be a well-order in which every countable set is bounded above, and let
+`f : I → I` be strictly monotone on `Set.Ici a` with image exactly `Set.Ici b` (surjectivity onto
+the final segment is a hypothesis; cofinality alone would not do).  Then `f` is the identity on a
+final segment: the corestriction is an order isomorphism `Set.Ici a ≃o Set.Ici b`, to which
+`iciIsoEventuallyIdTarget` applies. -/
+theorem exists_forall_ge_eq_of_strictMonoOn {I : Type u} [LinearOrder I] [WellFoundedLT I]
+    (hbdd : ∀ s : Set I, s.Countable → BddAbove s) {a b : I} {f : I → I}
+    (hf : StrictMonoOn f (Set.Ici a)) (himg : f '' Set.Ici a = Set.Ici b) :
+    ∃ γ, a ≤ γ ∧ b ≤ γ ∧ ∀ δ, γ ≤ δ → f δ = δ := by
+  let g : Set.Ici a → Set.Ici b := fun x ↦ ⟨f x, himg ▸ Set.mem_image_of_mem f x.2⟩
+  have hg : StrictMono g := fun x y h ↦ hf x.2 y.2 h
+  have hgs : Function.Surjective g := fun y ↦ by
+    obtain ⟨x, hx, hxy⟩ := (himg.symm ▸ y.2 : (y : I) ∈ f '' Set.Ici a)
+    exact ⟨⟨x, hx⟩, Subtype.ext hxy⟩
+  obtain ⟨γ, haγ, hbγ, hγ⟩ := iciIsoEventuallyIdTarget hbdd (hg.orderIsoOfSurjective g hgs)
+  exact ⟨γ, haγ, hbγ, fun δ hδ ↦ hγ δ (haγ.trans hδ) hδ⟩
 
 end VaughtConjecture.Order
