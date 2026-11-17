@@ -3,179 +3,105 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.AlephOne.OptionAttachment
+import VaughtConjecture.Realization.Model
 
 /-!
-# Realizations along embeddings of carriers
+# Extension of a realization along an embedding of carriers
 
-For an embedding `π : M ↪ X` of carriers:
+For an embedding `ι : Y ↪ X` and a realization `S` on `Y`, the **pushforward** `S.pushforward ι`
+is the realization on `X` that gives the image `u.trans ι` of a tuple `u` of `Y` the evaluation of
+`u` (`Realization.pushforward_eval_trans`) and leaves every tuple with a point outside the range
+of `ι` untyped (`Realization.pushforward_eval_of_not_forall`).  Along a bijection it is the
+transport `Realization.map` read through the inverse; along an inclusion of a subset it extends a
+realization of the subset by `none`.
 
-* the **pullback** `R.comap π` of a realization `R` on `X`: a tuple of `M` has the type of its
-  image (`Realization.comap`);
-* the **pushforward** `R.pushforward π` of a realization `R` on `M`: a tuple of `X` inside the range
-  of `π` has the type of its preimage, and every other tuple is untyped
-  (`Realization.pushforward`, with `Realization.pushforward_eval_trans`).
-
-Exact consistency, legal types and top-free types pass to both
-(`Realization.IsConsistent.comap`, `Realization.IsConsistent.pushforward` and the following
-theorems); the pushforward covers every tuple inside the range of `π` when `R` is covering
-(`Realization.pushforward_isCovering_of_range_subset`), and the pullback is covering when `R`
-covers the tuples inside the range and types no tuple leaving it
-(`Realization.comap_isCovering`).  For a bijection these are `Realization.map` up to the inverse.
-
-All statements are proved.
+Exact consistency, legal types and the covering of the tuples inside the range pass to the
+pushforward (`Realization.IsConsistent.pushforward`, `Realization.HasLegalTypes.pushforward`,
+`Realization.IsCovering.pushforward`).
 
 ## Placement
 
-This file belongs to Layer 0 of `roadmap/README.md`, beside
-`VaughtConjecture.Realization.Transport`; it is used by the conditions built by completed blocks
-(`VaughtConjecture.AlephOne.PhaseConditions`).
+This file belongs to Layer 2 of `roadmap/README.md` (realizations); it is used by the one-point
+extension of the `ℵ₁` companion construction (`VaughtConjecture.AlephOne.OnePointExtension`).
 -/
 
 universe u v w
 
 namespace VaughtConjecture.Realization
 
-variable {α : Ordinal.{u}} {M : Type v} {X : Type w} {n : ℕ}
+open Set
 
-/-! ### Pullback -/
+variable {α : Ordinal.{u}} {X : Type v} {Y : Type w} (ι : Y ↪ X) {n m : ℕ}
 
-section Comap
+/-- The tuple of `Y` whose image under `ι` is a given tuple of `X` inside the range of `ι`. -/
+noncomputable def pullbackTuple (t : Fin n ↪ X) (h : ∀ i, t i ∈ range ι) : Fin n ↪ Y :=
+  ⟨fun i ↦ (h i).choose, fun i j hij ↦ t.injective <| by
+    simp only at hij
+    rw [← (h i).choose_spec, ← (h j).choose_spec, hij]⟩
 
-variable (R : Realization.{u, w} α X) (π : M ↪ X)
-
-/-- The **pullback** of a realization along an embedding of carriers: a tuple has the type of its
-image. -/
-def comap : Realization.{u, v} α M where
-  eval t := R.eval (t.trans π)
-
-theorem comap_eval (t : Fin n ↪ M) : (R.comap π).eval t = R.eval (t.trans π) :=
-  rfl
-
-variable {R}
-
-/-- The pullback of an exactly consistent realization is exactly consistent. -/
-theorem IsConsistent.comap (hR : R.IsConsistent) : (R.comap π).IsConsistent :=
-  fun _ _ t p f h ↦ by
-    rw [comap_eval, Function.Embedding.trans_assoc]
-    exact hR _ _ f h
-
-/-- The pullback of a realization with legal types has legal types. -/
-theorem HasLegalTypes.comap (hL : R.HasLegalTypes) : (R.comap π).HasLegalTypes :=
-  fun _ t p h ↦ hL (t.trans π) p h
-
-/-- The pullback of a realization with top-free types has top-free types. -/
-theorem HasTopFreeTypes.comap (hT : R.HasTopFreeTypes) : (R.comap π).HasTopFreeTypes :=
-  fun _ t p h ↦ hT (t.trans π) p h
-
-/-- The pullback is covering when `R` covers every tuple inside the range of `π` and types no tuple
-leaving it. -/
-theorem comap_isCovering
-    (hnone : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), ¬ Set.range t ⊆ Set.range π → R.eval t = none)
-    (hcov : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), Set.range t ⊆ Set.range π →
-      ∃ (m : ℕ) (u : Fin m ↪ X) (f : Fin n ↪ Fin m), f.trans u = t ∧ (R.eval u).isSome) :
-    (R.comap π).IsCovering := fun n t ↦ by
-  obtain ⟨m, u, f, hfu, hu⟩ := hcov (t.trans π) (by rintro _ ⟨i, rfl⟩; exact ⟨t i, rfl⟩)
-  have hrange : Set.range u ⊆ Set.range π := by
-    by_contra h
-    rw [hnone u h] at hu
-    exact Bool.false_ne_true hu
-  choose v hv using fun i ↦ hrange ⟨i, rfl⟩
-  let u' : Fin m ↪ M := ⟨v, fun i j hij ↦ u.injective (by rw [← hv i, ← hv j, hij])⟩
-  have hu' : u'.trans π = u := Function.Embedding.ext fun i ↦ hv i
-  refine ⟨m, u', f, Function.Embedding.ext fun i ↦ π.injective ?_, ?_⟩
-  · have := DFunLike.congr_fun hfu i
-    simp only [Function.Embedding.trans_apply] at this ⊢
-    rw [← this, ← hv]
-    rfl
-  · rw [comap_eval, hu']
-    exact hu
-
-end Comap
-
-/-! ### Pushforward -/
-
-section Pushforward
-
-variable (π : M ↪ X)
-
-/-- The preimage of a tuple inside the range of an embedding. -/
-noncomputable def pullTuple (t : Fin n ↪ X) (h : ∀ i, t i ∈ Set.range π) : Fin n ↪ M :=
-  ⟨fun i ↦ (h i).choose, fun i j hij ↦
-    t.injective (by rw [← (h i).choose_spec, ← (h j).choose_spec]; exact congrArg π hij)⟩
-
-theorem pullTuple_trans (t : Fin n ↪ X) (h : ∀ i, t i ∈ Set.range π) :
-    (pullTuple π t h).trans π = t :=
+@[simp] theorem pullbackTuple_trans (t : Fin n ↪ X) (h : ∀ i, t i ∈ range ι) :
+    (pullbackTuple ι t h).trans ι = t :=
   Function.Embedding.ext fun i ↦ (h i).choose_spec
 
-theorem pullTuple_trans_self (u : Fin n ↪ M) (h : ∀ i, (u.trans π) i ∈ Set.range π) :
-    pullTuple π (u.trans π) h = u :=
-  Function.Embedding.ext fun i ↦ π.injective (h i).choose_spec
-
-variable (R : Realization.{u, v} α M)
+@[simp] theorem pullbackTuple_trans_self (s : Fin n ↪ Y) (h : ∀ i, (s.trans ι) i ∈ range ι) :
+    pullbackTuple ι (s.trans ι) h = s :=
+  Function.Embedding.ext fun i ↦ ι.injective (h i).choose_spec
 
 open Classical in
-/-- The **pushforward** of a realization along an embedding of carriers: a tuple inside the range
-has the type of its preimage, and every other tuple is untyped. -/
-noncomputable def pushforward : Realization.{u, w} α X where
-  eval t := if h : ∀ i, t i ∈ Set.range π then R.eval (pullTuple π t h) else none
+/-- The **pushforward** of a realization on `Y` along `ι : Y ↪ X`: the image of a tuple of `Y`
+has the evaluation of the tuple, and a tuple with a point outside the range of `ι` is untyped. -/
+noncomputable def pushforward (S : Realization.{u, w} α Y) : Realization.{u, v} α X where
+  eval t := if h : ∀ i, t i ∈ range ι then S.eval (pullbackTuple ι t h) else none
 
-/-- The pushforward gives the image of a tuple the type of the tuple. -/
-theorem pushforward_eval_trans (u : Fin n ↪ M) :
-    (R.pushforward π).eval (u.trans π) = R.eval u := by
-  have h : ∀ i, (u.trans π) i ∈ Set.range π := fun i ↦ ⟨u i, rfl⟩
-  simp only [pushforward, h, implies_true, dite_true, pullTuple_trans_self]
+variable {ι}
 
-/-- The pushforward types no tuple leaving the range. -/
-theorem pushforward_eval_of_not {t : Fin n ↪ X} (h : ¬ Set.range t ⊆ Set.range π) :
-    (R.pushforward π).eval t = none := by
-  have h' : ¬ ∀ i, t i ∈ Set.range π := fun h' ↦ h (Set.range_subset_iff.mpr h')
-  simp only [pushforward, h', dite_false]
+@[simp] theorem pushforward_eval_trans (S : Realization.{u, w} α Y) (s : Fin n ↪ Y) :
+    (S.pushforward ι).eval (s.trans ι) = S.eval s := by
+  simp [pushforward]
 
-/-- A typed tuple of the pushforward is the image of a tuple with the same type. -/
-theorem exists_trans_eq_of_pushforward_eval {t : Fin n ↪ X} {p : StageType.{u} α n}
-    (h : (R.pushforward π).eval t = some p) :
-    ∃ u : Fin n ↪ M, u.trans π = t ∧ R.eval u = some p := by
-  by_cases ht : Set.range t ⊆ Set.range π
-  · have ht' : ∀ i, t i ∈ Set.range π := fun i ↦ ht ⟨i, rfl⟩
-    refine ⟨pullTuple π t ht', pullTuple_trans π t ht', ?_⟩
-    rw [← pushforward_eval_trans π R, pullTuple_trans]
-    exact h
-  · rw [pushforward_eval_of_not π R ht] at h
-    exact absurd h (by simp)
+theorem pushforward_eval_of_not_forall (S : Realization.{u, w} α Y) {t : Fin n ↪ X}
+    (h : ¬ ∀ i, t i ∈ range ι) : (S.pushforward ι).eval t = none := by
+  simp only [pushforward]
+  exact dite_eq_right_of_eq_false (eq_false h)
 
-variable {R}
+/-- A tuple inside the range of `ι` is the image of a tuple of `Y`. -/
+theorem exists_pullback_trans_eq {t : Fin n ↪ X} (h : ∀ i, t i ∈ range ι) :
+    ∃ s : Fin n ↪ Y, s.trans ι = t :=
+  ⟨_, pullbackTuple_trans ι t h⟩
 
-/-- The pushforward of an exactly consistent realization is exactly consistent. -/
-theorem IsConsistent.pushforward (hR : R.IsConsistent) : (R.pushforward π).IsConsistent :=
-  fun _ _ t p f h ↦ by
-    obtain ⟨u, rfl, hu⟩ := exists_trans_eq_of_pushforward_eval π R h
-    rw [← Function.Embedding.trans_assoc, pushforward_eval_trans]
-    exact hR _ _ f hu
+/-- A typed tuple of the pushforward is the image of a tuple of `Y` with the same evaluation. -/
+theorem exists_of_pushforward_eval_eq_some {S : Realization.{u, w} α Y} {t : Fin n ↪ X}
+    {p : StageType.{u} α n} (ht : (S.pushforward ι).eval t = some p) :
+    ∃ s : Fin n ↪ Y, s.trans ι = t ∧ S.eval s = some p := by
+  by_cases h : ∀ i, t i ∈ range ι
+  · obtain ⟨s, rfl⟩ := exists_pullback_trans_eq h
+    exact ⟨s, rfl, by rwa [pushforward_eval_trans] at ht⟩
+  · rw [pushforward_eval_of_not_forall S h] at ht
+    exact absurd ht (Option.some_ne_none _).symm
 
-/-- The pushforward of a realization with legal types has legal types. -/
-theorem HasLegalTypes.pushforward (hL : R.HasLegalTypes) : (R.pushforward π).HasLegalTypes :=
-  fun _ _ p h ↦ by
-    obtain ⟨u, -, hu⟩ := exists_trans_eq_of_pushforward_eval π R h
-    exact hL u p hu
+/-- **Exact consistency passes to the pushforward.** -/
+theorem IsConsistent.pushforward {S : Realization.{u, w} α Y} (hS : S.IsConsistent) :
+    (S.pushforward ι).IsConsistent := by
+  intro m n t p f ht
+  obtain ⟨s, rfl, hs⟩ := exists_of_pushforward_eval_eq_some ht
+  rw [← Function.Embedding.trans_assoc, pushforward_eval_trans]
+  exact hS s p f hs
 
-/-- The pushforward of a realization with top-free types has top-free types. -/
-theorem HasTopFreeTypes.pushforward (hT : R.HasTopFreeTypes) :
-    (R.pushforward π).HasTopFreeTypes :=
-  fun _ _ p h ↦ by
-    obtain ⟨u, -, hu⟩ := exists_trans_eq_of_pushforward_eval π R h
-    exact hT u p hu
+/-- **Legal types pass to the pushforward.** -/
+theorem HasLegalTypes.pushforward {S : Realization.{u, w} α Y} (hS : S.HasLegalTypes) :
+    (S.pushforward ι).HasLegalTypes := by
+  intro n t p ht
+  obtain ⟨s, -, hs⟩ := exists_of_pushforward_eval_eq_some ht
+  exact hS s p hs
 
-/-- The pushforward of a covering realization covers every tuple inside the range. -/
-theorem pushforward_isCovering_of_range_subset (hc : R.IsCovering) {t : Fin n ↪ X}
-    (ht : Set.range t ⊆ Set.range π) :
-    ∃ (m : ℕ) (v : Fin m ↪ X) (f : Fin n ↪ Fin m), f.trans v = t ∧
-      ((R.pushforward π).eval v).isSome := by
-  have ht' : ∀ i, t i ∈ Set.range π := fun i ↦ ht ⟨i, rfl⟩
-  obtain ⟨m, v, f, hfv, hv⟩ := hc (pullTuple π t ht')
-  refine ⟨m, v.trans π, f, ?_, by rw [pushforward_eval_trans]; exact hv⟩
-  rw [← Function.Embedding.trans_assoc, hfv, pullTuple_trans]
-
-end Pushforward
+/-- **Covering of the tuples inside the range passes to the pushforward.** -/
+theorem IsCovering.pushforward {S : Realization.{u, w} α Y} (hS : S.IsCovering)
+    {t : Fin n ↪ X} (h : ∀ i, t i ∈ range ι) :
+    ∃ (m : ℕ) (u : Fin m ↪ X) (f : Fin n ↪ Fin m), f.trans u = t ∧
+      ((S.pushforward ι).eval u).isSome := by
+  obtain ⟨s, rfl⟩ := exists_pullback_trans_eq h
+  obtain ⟨m, w, f, hfw, hw⟩ := hS s
+  refine ⟨m, w.trans ι, f, ?_, by rwa [pushforward_eval_trans]⟩
+  rw [← Function.Embedding.trans_assoc, hfw]
 
 end VaughtConjecture.Realization

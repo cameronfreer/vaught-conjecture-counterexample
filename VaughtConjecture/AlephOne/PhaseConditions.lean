@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.AlephOne.IntegerBlock
-import VaughtConjecture.Realization.Pushforward
+import VaughtConjecture.Realization.Pullback
 import VaughtConjecture.Continuation.ExactAge
 
 /-!
@@ -684,10 +684,10 @@ theorem phaseConditionExtensionTarget : PhaseConditionExtensionTarget.{u, v, w} 
       disjoint_block := fun η hη ζ hζ hne ↦ ?_
       real := real'
       eval_eq_none := fun n t ht ↦ ?_
-      isConsistent := hS.isConsistent.pushforward π
+      isConsistent := hS.isConsistent.pushforward
       isCovering := fun n t ht ↦ ?_
-      hasLegalTypes := hS.hasLegalTypes.pushforward π
-      hasTopFreeTypes := hS.hasTopFreeTypes.pushforward π
+      hasLegalTypes := hS.hasLegalTypes.pushforward
+      hasTopFreeTypes := hS.hasTopFreeTypes.pushforward
       isSupportClosed_before := fun η hη ↦ ?_
       isSupportClosed_cut := fun η hη j ↦ ?_
       serves := fun η hη ↦ ?_ }, ⟨?_, fun η hη ↦ ?_, hag⟩, rfl, hdom'⟩
@@ -711,9 +711,9 @@ theorem phaseConditionExtensionTarget : PhaseConditionExtensionTarget.{u, v, w} 
       · rw [hblock_ne η h1, hblock_ne ζ h2]
         exact c.disjoint_block η (hlt η hη h1) ζ (hlt ζ hζ h2) hne
   · rw [hdom', ← hrangeπ] at ht
-    exact pushforward_eval_of_not π S ht
+    exact pushforward_eval_of_not_forall S fun h ↦ ht (Set.range_subset_iff.mpr h)
   · rw [hdom', ← hrangeπ] at ht
-    exact pushforward_isCovering_of_range_subset π hS.isCovering ht
+    exact hS.isCovering.pushforward fun i ↦ ht ⟨i, rfl⟩
   · rw [hpts η hη]
     by_cases h : η = ξ
     · subst h
@@ -748,7 +748,7 @@ theorem phaseConditionExtensionTarget : PhaseConditionExtensionTarget.{u, v, w} 
       have hS' := hserve ht ha' p (by rintro _ ⟨i, rfl⟩; exact ⟨u i, rfl⟩)
         (by
           change S.eval (u.trans ι) = some p
-          rw [← pushforward_eval_trans π S, hu]
+          rw [← pushforward_eval_trans (ι := π) S, hu]
           exact hp) hdc hdt
       have hsnoc : Fin.Embedding.snoc (req η).tuple ha =
           (Fin.Embedding.snoc (u.trans ι) ha').trans π := by
