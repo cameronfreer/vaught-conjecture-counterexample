@@ -1471,6 +1471,12 @@ statements.
   isomorphic to a nonempty upper set of another), each of cardinality `ℵ₁` with every proper
   initial segment countable.  It is the invariant planned for the family below; it asserts nothing
   about models of `Φ`.
+* **Every assignment of block shapes.**  `AlephOne.Phase.existsFullPhaseReceivingModelTarget`
+  (`AlephOne/PhaseModel`): every assignment of `ω` or `ℤ` to the phases is realized by a model of
+  `Φ` with the prescribed blocks.  The model is the base structure of a receiving model at stage
+  `ω₁` with top-free types, built by Zorn's lemma on conditions made of completed blocks
+  (`AlephOne/PhaseConditions`); the condition and its block enumeration are part of the
+  conclusion.
 
 **Not yet proved.**
 
@@ -1479,10 +1485,9 @@ statements.
   with top-free types whose exterior order above a countable closed root is, past a countable
   cut, the coded order of that code; base isomorphisms preserve the canonical closure, hence the
   exterior orders, so the tail of the order is an isomorphism invariant, and the order coding
-  recovers the code.  The construction of receiving models for every phase-shape assignment is in
-  progress (in review, not on `main`); the nonisomorphism of the resulting models is not yet
-  proved.  Until both are proved, no family of nonisomorphic uncountable models of `Φ` is asserted
-  to exist.
+  recovers the code.  It remains to show that the resulting models distinguish `2^ℵ₁` codes up to
+  isomorphism.  Until that is proved, no family of nonisomorphic uncountable models of `Φ` is
+  asserted to exist.
 
 ## Downstream: the direct cardinal ceiling
 
