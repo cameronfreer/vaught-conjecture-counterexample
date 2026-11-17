@@ -57,7 +57,7 @@ block over it support-closed, and serves the request of each phase at its design
 point over the union of the earlier blocks.  Phase conditions are preordered by extension
 (`Phase.PhaseCondition.Extends`).
 
-**The statements.**
+**The statements** (all proved).
 
 * `Phase.IsSupportClosedIffTarget` (given-realization): support-closed is closed.  Proved.
 * `Phase.ExistsCompletedPhaseTarget` (construction over a given countable realization): a
@@ -67,20 +67,23 @@ point over the union of the earlier blocks.  Phase conditions are preordered by 
   completed phase above an infinite part of the old carrier is the order of the index.  Proved.
 * `Phase.PhaseConditionExtensionTarget`: a phase condition whose completed phases are those below
   `ξ`, with countable domain, extends to one whose completed phases are those at most `ξ`, with
-  the new block on any prescribed countably infinite set of free points of the carrier.
+  the new block on any prescribed countably infinite set of free points of the carrier.  Proved:
+  the old realization on the domain (`Realization.comap`), a completed phase over it, carried into
+  the carrier (`Realization.pushforward`).
+* `Phase.PhaseInitialConditionTarget`: a phase condition with no completed phase.  Proved.
 * `Phase.PhaseChainUpperBoundTarget`: a nonempty chain of phase conditions has an upper bound whose
-  completed phases are the union.
+  completed phases are the union.  Proved by a direct union argument (the chain is indexed by an
+  arbitrary set, not by `ℕ`).
 * `Phase.ExistsFullPhaseConditionTarget`: at stage `ω₁`, on the carrier `ω₁.ToType` with phases
   indexed by `ω₁.ToType`, every choice of shapes and requests has a phase condition in which every
-  phase is completed and every point is a block point.  Intended route: maximality among the
-  phase conditions with the coverage invariant (`Phase.PhaseCondition.CoversPhases`: every
-  completed phase, read as a point of the carrier, is in the domain), which survives chain unions
-  and extensions whose prescribed new block contains `ξ` when `ξ` is still unused.
+  phase is completed and every point is a block point.  Proved by maximality among the phase
+  conditions with the coverage invariant (`Phase.PhaseCondition.CoversPhases`: every completed
+  phase, read as a point of the carrier, is in the domain), which survives chain unions and
+  extensions whose prescribed new block contains `ξ` when `ξ` is still unused.
 * `Phase.FullPhaseExactReceivingTarget`: for a request schedule that schedules every request at
   arbitrarily late phases, the realization of such a full phase condition has exact receiving
-  within the legal top-free stage types.
-
-The last four are stated, not proved.
+  within the legal top-free stage types.  Proved: each request is scheduled at a phase beyond all
+  phases containing the points of its tuple.
 
 ## Placement
 
@@ -996,9 +999,28 @@ theorem phaseChainUpperBoundTarget : PhaseChainUpperBoundTarget.{u, v, w} := by
   · exact Set.subset_biUnion_of_mem hc
   · exact fun n t ht ↦ hreal c hc t ht
 
+/-- The points of `ω₁.ToType` below a point are countably many. -/
+theorem countable_Iio_omegaOne (ξ : (ω₁ : Ordinal.{0}).ToType) : (Set.Iio ξ).Countable := by
+  have h : (typein (α := (ω₁ : Ordinal.{0}).ToType) (· < ·) ξ).card < Cardinal.aleph 1 :=
+    Cardinal.lt_omega_iff_card_lt.mp (typein_lt_self ξ)
+  rw [Ordinal.card_typein, ← Cardinal.succ_aleph0, Order.lt_succ_iff] at h
+  exact Cardinal.le_aleph0_iff_set_countable.mp h
+
+/-- `ω₁.ToType` is uncountable. -/
+theorem not_countable_omegaOne : ¬ Countable (ω₁ : Ordinal.{0}).ToType := fun h ↦ by
+  have h₁ := Cardinal.mk_le_aleph0_iff.mpr h
+  rw [Cardinal.mk_toType, Ordinal.card_omega] at h₁
+  exact absurd h₁ (not_le.mpr Cardinal.aleph0_lt_aleph_one)
+
+/-- `ω₁.ToType` has no largest point: `ω₁` is a limit. -/
+theorem noMaxOrder_omegaOne : NoMaxOrder (ω₁ : Ordinal.{0}).ToType := by
+  rw [← isSuccPrelimit_type_lt_iff, type_toType]
+  exact (Cardinal.isSuccLimit_omega 1).isSuccPrelimit
+
 /-- **Target: a full phase condition.**  At stage `ω₁`, on the carrier `ω₁.ToType` with phases
 indexed by `ω₁.ToType`, for every choice of shapes and requests some phase condition has every
-phase completed and every point of the carrier as a block point.  Stated. -/
+phase completed and every point of the carrier as a block point.  Proved
+(`Phase.existsFullPhaseConditionTarget`). -/
 def ExistsFullPhaseConditionTarget : Prop :=
   ∀ (shape : (ω₁ : Ordinal.{0}).ToType → BlockShape)
     (req : (ω₁ : Ordinal.{0}).ToType →
@@ -1006,10 +1028,102 @@ def ExistsFullPhaseConditionTarget : Prop :=
     ∃ c : PhaseCondition.{0, 0, 0} (ω₁ : Ordinal.{0}) (ω₁ : Ordinal.{0}).ToType
       (ω₁ : Ordinal.{0}).ToType shape req, c.phases = Set.univ ∧ c.dom = Set.univ
 
+/-- **A full phase condition**, the target form: Zorn's lemma among the phase conditions with the
+coverage invariant (`Phase.PhaseCondition.CoversPhases`), whose chains have upper bounds
+(`Phase.phaseInitialConditionTarget`, `Phase.phaseChainUpperBoundTarget`).  A maximal one has every
+phase completed: otherwise its completed phases are those below the least missing phase `ξ`, its
+domain is countable, and the extension through `ξ` (`Phase.phaseConditionExtensionTarget`) onto a
+countably infinite set of free points containing `ξ` when `ξ` is unused keeps the invariant.  With
+every phase completed, the invariant puts every point in the domain. -/
+theorem existsFullPhaseConditionTarget : ExistsFullPhaseConditionTarget := by
+  classical
+  intro shape req
+  let K := (ω₁ : Ordinal.{0}).ToType
+  have : Nonempty K := nonempty_toType_iff.mpr (Ordinal.omega_pos 1).ne'
+  have hα : Order.IsSuccLimit (ω₁ : Ordinal.{0}) := Cardinal.isSuccLimit_omega 1
+  let s : Set (PhaseCondition.{0, 0, 0} (ω₁ : Ordinal.{0}) K K shape req) :=
+    {c | c.CoversPhases}
+  obtain ⟨m, hm⟩ := zorn_le₀ s fun C hCs hC ↦ by
+    rcases C.eq_empty_or_nonempty with rfl | hne
+    · obtain ⟨c₀, hc₀⟩ := phaseInitialConditionTarget.{0, 0, 0} shape req
+      exact ⟨c₀, fun ξ hξ ↦ by rw [hc₀] at hξ; exact hξ.elim, fun _ h ↦ h.elim⟩
+    · obtain ⟨c', hc', hph'⟩ := phaseChainUpperBoundTarget.{0, 0, 0} shape req C hne hC
+      refine ⟨c', fun ξ hξ ↦ ?_, hc'⟩
+      rw [hph'] at hξ
+      obtain ⟨c, hc, hξc⟩ := Set.mem_iUnion₂.mp hξ
+      exact (hc' c hc).dom_subset (hCs hc ξ hξc)
+  have hcov : m.CoversPhases := hm.1
+  have hfull : m.phases = Set.univ := by
+    by_contra hne
+    obtain ⟨ξ, hξ, hmin⟩ := WellFounded.has_min wellFounded_lt m.phasesᶜ
+      ((Set.ne_univ_iff_exists_notMem _).mp hne)
+    have hph : m.phases = Set.Iio ξ := by
+      ext η
+      constructor
+      · intro hη
+        by_contra h
+        exact hξ (m.isLowerSet_phases (not_lt.mp h) hη)
+      · intro hη
+        by_contra h
+        exact hmin η h hη
+    have hcount : m.dom.Countable := by
+      rw [PhaseCondition.dom, phasePoints, hph]
+      exact (countable_Iio_omegaOne ξ).biUnion fun η _ ↦ Set.countable_range _
+    have hfree : (m.domᶜ \ {ξ}).Infinite := by
+      refine Set.Infinite.sdiff ?_ (Set.finite_singleton ξ)
+      intro hfin
+      exact not_countable_omegaOne (Set.countable_univ_iff.mp
+        (by rw [← Set.union_compl_self m.dom]; exact hcount.union hfin.countable))
+    let Y₀ : Set K := Set.range fun n ↦ (hfree.natEmbedding _ n : K)
+    have hY₀ : Y₀ ⊆ m.domᶜ \ {ξ} := by
+      rintro _ ⟨n, rfl⟩
+      exact (hfree.natEmbedding _ n).2
+    have hY₀i : Y₀.Infinite :=
+      Set.infinite_range_of_injective (Subtype.val_injective.comp (hfree.natEmbedding _).injective)
+    let Y : Set K := if ξ ∈ m.dom then Y₀ else insert ξ Y₀
+    have hY : Y ⊆ m.domᶜ := by
+      by_cases h : ξ ∈ m.dom
+      · simp only [Y, ite_eq_left h]
+        exact hY₀.trans Set.sdiff_subset
+      · simp only [Y, ite_eq_right h]
+        exact Set.insert_subset h (hY₀.trans Set.sdiff_subset)
+    have hYc : Y.Countable := by
+      by_cases h : ξ ∈ m.dom
+      · simp only [Y, ite_eq_left h]
+        exact Set.countable_range _
+      · simp only [Y, ite_eq_right h]
+        exact (Set.countable_range _).insert ξ
+    have hYi : Y.Infinite := by
+      by_cases h : ξ ∈ m.dom
+      · simp only [Y, ite_eq_left h]
+        exact hY₀i
+      · simp only [Y, ite_eq_right h]
+        exact hY₀i.mono (Set.subset_insert _ _)
+    obtain ⟨c', hmc', hph', hdom'⟩ := phaseConditionExtensionTarget.{0, 0, 0} shape req hα m ξ
+      hph hcount hY hYc hYi
+    have hc's : c' ∈ s := by
+      intro η hη
+      rw [hph'] at hη
+      rw [hdom']
+      rcases lt_or_eq_of_le (Set.mem_Iic.mp hη) with h | rfl
+      · exact Or.inl (hcov η (by rw [hph]; exact h))
+      · by_cases h : η ∈ m.dom
+        · exact Or.inl h
+        · refine Or.inr ?_
+          simp only [Y, ite_eq_right h]
+          exact Set.mem_insert η _
+    have hle := hm.2 hc's hmc'
+    have hξ' : ξ ∈ c'.phases := by rw [hph']; exact Set.mem_Iic.mpr le_rfl
+    have := hle.1 hξ'
+    rw [hph] at this
+    exact lt_irrefl ξ this
+  exact ⟨m, hfull, Set.eq_univ_of_forall fun x ↦ hcov x (by rw [hfull]; exact Set.mem_univ x)⟩
+
 /-- **Target: exact top-free receiving for a full phase condition.**  At stage `ω₁`, on the
 carrier `ω₁.ToType` with phases indexed by `ω₁.ToType`, if every request is scheduled at
 arbitrarily late phases, the realization of a phase condition with every phase completed and every
-point a block point has exact receiving within the legal top-free stage types.  Stated. -/
+point a block point has exact receiving within the legal top-free stage types.  Proved
+(`Phase.fullPhaseExactReceivingTarget`). -/
 def FullPhaseExactReceivingTarget : Prop :=
   ∀ (shape : (ω₁ : Ordinal.{0}).ToType → BlockShape)
     (req : (ω₁ : Ordinal.{0}).ToType →
@@ -1019,6 +1133,46 @@ def FullPhaseExactReceivingTarget : Prop :=
     ∀ c : PhaseCondition.{0, 0, 0} (ω₁ : Ordinal.{0}) (ω₁ : Ordinal.{0}).ToType
       (ω₁ : Ordinal.{0}).ToType shape req, c.phases = Set.univ → c.dom = Set.univ →
       c.real.ExactReceivingWithin fun _ ↦ {D | D.IsLegal ∧ D.IsTopFree}
+
+/-- **Exact top-free receiving for a full phase condition**, the target form.  The one-point
+form suffices (`Realization.ExactReceivingWithin.of_one_point`).  Over a cover `x` of `t`, every
+point of `x` lies in the block of some phase; the request `(x, D)` is scheduled at a phase `η`
+beyond all of them, where `x` lies in the points of the earlier phases and the serving point of `η`
+is not a point of `x`; the condition serves the request there. -/
+theorem fullPhaseExactReceivingTarget : FullPhaseExactReceivingTarget := by
+  classical
+  intro shape req hsched c hph hdom
+  have := noMaxOrder_omegaOne
+  have : Nonempty (ω₁ : Ordinal.{0}).ToType := nonempty_toType_iff.mpr (Ordinal.omega_pos 1).ne'
+  refine ExactReceivingWithin.of_one_point c.isConsistent
+    (fun _ _ _ f _ hD hp ↦ ⟨hD.1.restrictFace f hp, hD.2.restrictFace hp⟩) ?_
+  intro n t x hx D hD hDt
+  obtain ⟨hinj, hxt⟩ := hx
+  let xe : Fin n ↪ (ω₁ : Ordinal.{0}).ToType := ⟨x, hinj⟩
+  -- the phase of each point
+  have hpt : ∀ i, ∃ ζ, x i ∈ Set.range (c.block ζ) := fun i ↦ by
+    have hi : x i ∈ c.dom := by rw [hdom]; exact Set.mem_univ _
+    obtain ⟨ζ, -, hζ⟩ := Set.mem_iUnion₂.mp hi
+    exact ⟨ζ, hζ⟩
+  choose ζ hζ using hpt
+  obtain ⟨b, hb⟩ := Finset.exists_le (Finset.univ.image ζ)
+  obtain ⟨b', hbb'⟩ := exists_gt b
+  obtain ⟨η, hη, hreq⟩ := hsched ⟨n, xe, D⟩ b'
+  have hlt : ∀ i, ζ i < η := fun i ↦
+    ((hb _ (Finset.mem_image_of_mem ζ (Finset.mem_univ i))).trans_lt hbb').trans_le hη
+  have hηph : η ∈ c.phases := by rw [hph]; exact Set.mem_univ η
+  have hserv := c.serves η hηph
+  rw [hreq] at hserv
+  have hsub : Set.range xe ⊆ phasePoints (c.phases ∩ Set.Iio η) c.block := by
+    rintro _ ⟨i, rfl⟩
+    exact Set.mem_biUnion ⟨by rw [hph]; exact Set.mem_univ _, hlt i⟩ (hζ i)
+  have ha : c.block η (shape η).servingIndex ∉ Set.range xe := by
+    rintro ⟨i, hi⟩
+    have hdisj := c.disjoint_block η hηph (ζ i) (by rw [hph]; exact Set.mem_univ _)
+      (hlt i).ne'
+    exact Set.disjoint_left.mp hdisj ⟨_, rfl⟩ (by rw [← hi]; exact hζ i)
+  have heval := hserv ha t hsub hxt ⟨hD.1, hDt⟩ hD.2
+  exact ⟨_, covers_of_eval _ heval, funext fun i ↦ by simp [xe]⟩
 
 end Conditions
 
