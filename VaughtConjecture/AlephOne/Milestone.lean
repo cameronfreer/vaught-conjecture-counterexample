@@ -23,7 +23,8 @@ realization.
 ## Placement
 
 This file is the first milestone (one model of cardinality `ℵ₁` with Scott rank exactly `ω₁`) of
-the `ℵ₁` companion construction over the density sentence.  It imports both the existence theorem
+the `ℵ₁` companion construction over the density sentence, recorded in `roadmap/COMPANIONS.md`
+("The `ℵ₁` companion construction").  It imports both the existence theorem
 (`VaughtConjecture.AlephOne.Existence`) and the Scott analysis
 (`VaughtConjecture.AlephOne.ScottAnalysis`), neither of which imports the other.
 -/

@@ -19,6 +19,10 @@ not yet proved for the construction is progress on a target, not its completion.
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 
+**The `ℵ₁` companion construction.**  A further optional construction of uncountable models of
+`Φ`, outside the three milestones, is recorded in its own section below ("The `ℵ₁` companion
+construction"), with what is proved and what is not.
+
 **Status.** The targets A1, A2, A3, B2, and B3 are established results: their proofs are known, and
 are the arguments given with each below. They remain formalization targets here. C, in its two-point
 form, is a statement still to be proved here, with its argument given below. B4 is a statement still
@@ -189,8 +193,12 @@ the codes'; the finite case, excluded by hypothesis (a finite structure is not c
 a sentence with finite models the dichotomy can fail).
 
 **Non-claims.**  Case (S) gives infinitary agreement, not an isomorphism between differently
-sized models.  No uncountable model of `Φ` is asserted to exist, in either case.  No model of all
-of `T∞` is asserted to exist.  No uncountable categoricity, no statement about `L_{∞,ω}`.
+sized models.  The dichotomy asserts the existence of no uncountable model of `Φ`, in either case.
+One model of `Φ` of cardinality `ℵ₁`, with Scott rank `ω₁`, is proved separately by the `ℵ₁`
+companion construction (below, "The `ℵ₁` companion construction";
+`AlephOne.existsAlephOneModelScottRankOmegaOneTarget`), which does not use A3; no theorem here
+places that model in either case of the dichotomy.  No model of all of `T∞` is asserted to
+exist.  No uncountable categoricity, no statement about `L_{∞,ω}`.
 
 **Completion criterion (A).**  A1–A3 are proved for `Φ`, `Q`, `D_η`, and `w_η`, with the generic
 lemmas proved and the dichotomy proved on an arbitrary carrier in an arbitrary universe through
@@ -1433,6 +1441,48 @@ is compiled conditionally on block determination (below).  None is an input to t
   coface is received at every cutoff, showing that receiving alone does not classify terminal
   models: the terminal comparisons of layer 4 need
   the specialized decoding of (R2) and (R3), not receiving at a cutoff alone.
+
+## The `ℵ₁` companion construction
+
+An optional construction over `Φ`, in `VaughtConjecture/AlephOne/` (with general closure lemmas in
+`Realization/ClosureCardinality`).  It is not an input to the main theorem and no core layer
+depends on it.  Its models are receiving models at stage `ω₁` all of whose types are top-free;
+given-model statements (about every model in that class) are kept distinct from existence
+statements.
+
+**Proved.**
+
+* **One model of cardinality `ℵ₁` and Scott rank `ω₁`.**
+  `AlephOne.existsAlephOneModelScottRankOmegaOneTarget` (`AlephOne/Milestone`): some
+  structure of the base language on a carrier in `Type` satisfies `Φ`, has exactly `ℵ₁` points
+  and internal Scott rank `ω₁`, and its semantic Scott process of every length beyond `ω₁ + 1` has
+  rank `ω₁`.  The model is the base structure of a receiving model at stage `ω₁` with top-free
+  types on the carrier `ω₁.ToType` (`AlephOne.existsReceivingModelTarget`,
+  `AlephOne/Existence`, by Zorn's lemma on conditions); the ranks are the given-model
+  statement `AlephOne.realizationScottRankOmegaOneOfModelTarget` (`AlephOne/ScottAnalysis`),
+  and any two models in the class have one common Scott process
+  (`AlephOne.realizationsScottProcessEqOfModelTarget`).  The Scott analysis uses back-and-forth
+  equivalence at every level; it does not identify back-and-forth classes with automorphism
+  orbits.
+* **The order coding** (pure order theory; no models, closures or realizations).
+  `CodedOrder.omegaOneSpectrumTarget` (`Order/CodedOrder`): there are `2^ℵ₁` parameters
+  `ω₁ → Bool` whose coded orders (along one repetition scheme on `ω₁`; lexicographic sums over
+  `ω₁` of copies of `ℕ` and `ℤ`) are pairwise tail-inequivalent (no nonempty upper set of one is
+  isomorphic to a nonempty upper set of another), each of cardinality `ℵ₁` with every proper
+  initial segment countable.  It is the invariant planned for the family below; it asserts nothing
+  about models of `Φ`.
+
+**Not yet proved.**
+
+* **`2^ℵ₁` pairwise nonisomorphic models of `Φ` of cardinality `ℵ₁`** (prospective; Stage 5 of
+  the construction).  The intended argument, not yet compiled: for each code, a receiving model
+  with top-free types whose exterior order above a countable closed root is, past a countable
+  cut, the coded order of that code; base isomorphisms preserve the canonical closure, hence the
+  exterior orders, so the tail of the order is an isomorphism invariant, and the order coding
+  recovers the code.  The construction of receiving models for every phase-shape assignment is in
+  progress (in review, not on `main`); the nonisomorphism of the resulting models is not yet
+  proved.  Until both are proved, no family of nonisomorphic uncountable models of `Φ` is asserted
+  to exist.
 
 ## Downstream: the direct cardinal ceiling
 
