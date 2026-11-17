@@ -193,7 +193,7 @@ the codes'; the finite case, excluded by hypothesis (a finite structure is not c
 a sentence with finite models the dichotomy can fail).
 
 **Non-claims.**  Case (S) gives infinitary agreement, not an isomorphism between differently
-sized models.  The dichotomy asserts the existence of no uncountable model of `Φ`, in either case.
+sized models.  The dichotomy does not assert that an uncountable model of `Φ` exists.
 One model of `Φ` of cardinality `ℵ₁`, with Scott rank `ω₁`, is proved separately by the `ℵ₁`
 companion construction (below, "The `ℵ₁` companion construction";
 `AlephOne.existsAlephOneModelScottRankOmegaOneTarget`), which does not use A3; no theorem here
