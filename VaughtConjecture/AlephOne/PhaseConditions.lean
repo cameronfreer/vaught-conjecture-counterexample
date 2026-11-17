@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.AlephOne.IntegerBlock
+import VaughtConjecture.Realization.Pushforward
 import VaughtConjecture.Continuation.ExactAge
 
 /-!
@@ -114,6 +115,16 @@ instance BlockShape.instLinearOrderIndex : ∀ b : BlockShape, LinearOrder b.Ind
   | .ascending => inferInstanceAs (LinearOrder ℕ)
   | .integer => inferInstanceAs (LinearOrder ℤ)
 
+/-- The index orders are countable. -/
+instance BlockShape.instCountableIndex : ∀ b : BlockShape, Countable b.Index
+  | .ascending => inferInstanceAs (Countable ℕ)
+  | .integer => inferInstanceAs (Countable ℤ)
+
+/-- The index orders are infinite. -/
+instance BlockShape.instInfiniteIndex : ∀ b : BlockShape, Infinite b.Index
+  | .ascending => inferInstanceAs (Infinite ℕ)
+  | .integer => inferInstanceAs (Infinite ℤ)
+
 /-- The **designated serving index** of a block: the first ascending point `a_0`. -/
 def BlockShape.servingIndex : ∀ b : BlockShape, b.Index
   | .ascending => (0 : ℕ)
@@ -193,6 +204,53 @@ theorem isSupportClosedIffTarget : IsSupportClosedIffTarget.{u, v} := by
       have hi : x.tuple i ∈ R.finiteHull F := hx ▸ (Occurrence.mem_support _).mpr ⟨i, rfl⟩
       have hmem := (mem_closure_iff hR hc (A := C)).mpr ⟨F, hF, hi⟩
       rwa [h.closure_eq] at hmem
+
+/-- The points of a tuple followed by a point. -/
+theorem mem_range_snoc {n : ℕ} {t : Fin n ↪ X} {a : X} (ha : a ∉ Set.range t) {y : X} :
+    y ∈ Set.range (Fin.Embedding.snoc t ha) ↔ y = a ∨ y ∈ Set.range t := by
+  constructor
+  · rintro ⟨i, rfl⟩
+    induction i using Fin.lastCases with
+    | last => exact Or.inl Fin.Embedding.snoc_last
+    | cast i => exact Or.inr ⟨i, Fin.Embedding.snoc_castSucc.symm⟩
+  · rintro (rfl | ⟨i, rfl⟩)
+    · exact ⟨Fin.last n, Fin.Embedding.snoc_last⟩
+    · exact ⟨i.castSucc, Fin.Embedding.snoc_castSucc⟩
+
+/-- Support-closedness of a set inside `D` passes to a realization with the same evaluations on
+the tuples inside `D`. -/
+theorem IsSupportClosed.of_agree {R R' : Realization.{u, v} α X} {C D : Set X} (hCD : C ⊆ D)
+    (hag : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), Set.range t ⊆ D → R'.eval t = R.eval t)
+    (h : IsSupportClosed R C) : IsSupportClosed R' C := fun F hF ↦ by
+  obtain ⟨n, t, ht, hFt, htC⟩ := h F hF
+  exact ⟨n, t, by rw [hag t (htC.trans hCD)]; exact ht, hFt, htC⟩
+
+/-- Service over `D` at a point of `E ⊇ D` passes to a realization with the same evaluations on
+the tuples inside `E`. -/
+theorem ServesAt.of_agree {R R' : Realization.{u, v} α X} {r : PhaseRequest α X} {D E : Set X}
+    {a : X} (hDE : D ⊆ E) (haE : a ∈ E)
+    (hag : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), Set.range t ⊆ E → R'.eval t = R.eval t)
+    (h : ServesAt R r D a) : ServesAt R' r D a := fun ha p hsub hp hdc hdt ↦ by
+  rw [hag _ fun y hy ↦ ?_]
+  · exact h ha p hsub (by rw [← hag _ (hsub.trans hDE)]; exact hp) hdc hdt
+  · rcases (mem_range_snoc ha).mp hy with rfl | hy
+    · exact haE
+    · exact hDE (hsub hy)
+
+/-- Support-closedness passes to the pushforward along an embedding, onto the image. -/
+theorem IsSupportClosed.pushforward {N : Type w} {S : Realization.{u, w} α N} (π : N ↪ X)
+    {C : Set N} (h : IsSupportClosed S C) : IsSupportClosed (S.pushforward π) (π '' C) :=
+  fun F hF ↦ by
+    classical
+    obtain ⟨n, t, ht, hGt, htC⟩ := h (F.preimage π π.injective.injOn) fun y hy ↦ by
+      obtain ⟨y', hy'C, hy'⟩ := hF (Finset.mem_preimage.mp hy)
+      exact π.injective hy' ▸ hy'C
+    refine ⟨n, t.trans π, by rw [pushforward_eval_trans]; exact ht, fun x hx ↦ ?_, ?_⟩
+    · obtain ⟨y, -, rfl⟩ := hF hx
+      obtain ⟨i, hi⟩ := hGt (Finset.mem_preimage.mpr hx)
+      exact ⟨i, by simp [hi]⟩
+    · rintro _ ⟨i, rfl⟩
+      exact ⟨t i, htC ⟨i, rfl⟩, rfl⟩
 
 end Service
 
@@ -444,13 +502,48 @@ phase completed it gives a full domain. -/
 def CoversPhases {req : Φ → PhaseRequest α Φ} (c : PhaseCondition α Φ Φ shape req) : Prop :=
   ∀ ξ ∈ c.phases, ξ ∈ c.dom
 
+/-- Extension is reflexive. -/
+theorem Extends.refl {req : Φ → PhaseRequest α X} (c : PhaseCondition α X Φ shape req) :
+    c.Extends c :=
+  ⟨subset_rfl, fun _ _ ↦ rfl, fun _ _ _ ↦ rfl⟩
+
+/-- The domain grows along an extension. -/
+theorem Extends.dom_subset {req : Φ → PhaseRequest α X} {c c' : PhaseCondition α X Φ shape req}
+    (h : c.Extends c') : c.dom ⊆ c'.dom := fun x hx ↦ by
+  simp only [dom, phasePoints, Set.mem_iUnion, Set.mem_range, exists_prop] at hx ⊢
+  obtain ⟨ξ, hξ, i, rfl⟩ := hx
+  exact ⟨ξ, h.1 hξ, i, by rw [h.2.1 ξ hξ]⟩
+
+/-- Extension is transitive. -/
+theorem Extends.trans {req : Φ → PhaseRequest α X} {c₁ c₂ c₃ : PhaseCondition α X Φ shape req}
+    (h₁ : c₁.Extends c₂) (h₂ : c₂.Extends c₃) : c₁.Extends c₃ :=
+  ⟨h₁.1.trans h₂.1, fun ξ hξ ↦ (h₂.2.1 ξ (h₁.1 hξ)).trans (h₁.2.1 ξ hξ),
+    fun _ t ht ↦ (h₂.2.2 t (ht.trans h₁.dom_subset)).trans (h₁.2.2 t ht)⟩
+
+/-- Phase conditions are preordered by extension. -/
+instance {req : Φ → PhaseRequest α X} : Preorder (PhaseCondition α X Φ shape req) where
+  le := Extends
+  le_refl := Extends.refl
+  le_trans _ _ _ := Extends.trans
+
+/-- The block of a completed phase lies in the domain. -/
+theorem range_block_subset_dom {req : Φ → PhaseRequest α X} (c : PhaseCondition α X Φ shape req)
+    {ξ : Φ} (hξ : ξ ∈ c.phases) : Set.range (c.block ξ) ⊆ c.dom :=
+  fun _ hx ↦ Set.mem_biUnion hξ hx
+
 end PhaseCondition
+
+omit [LinearOrder Φ] in
+/-- The points of fewer phases are fewer. -/
+theorem phasePoints_mono {P P' : Set Φ} (h : P ⊆ P') (block : ∀ ξ, (shape ξ).Index → X) :
+    phasePoints P block ⊆ phasePoints P' block :=
+  Set.biUnion_subset_biUnion_left h
 
 /-- **Target: extension of a phase condition by one completed phase.**  At a limit stage, let `c`
 be a phase condition whose completed phases are those below `ξ` and whose domain is countable.
 For every countably infinite set `Y` of points outside the domain, `c` extends to a phase condition
 whose completed phases are those at most `ξ` and whose domain is the old domain together with `Y`
-(the block of phase `ξ` is `Y`).  Stated. -/
+(the block of phase `ξ` is `Y`).  Proved (`Phase.phaseConditionExtensionTarget`). -/
 def PhaseConditionExtensionTarget : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃X : Type v⦄ ⦃Φ : Type w⦄ [LinearOrder Φ] (shape : Φ → BlockShape)
     (req : Φ → PhaseRequest α X), Order.IsSuccLimit α →
@@ -459,15 +552,449 @@ def PhaseConditionExtensionTarget : Prop :=
         ∃ c' : PhaseCondition α X Φ shape req, c.Extends c' ∧ c'.phases = Set.Iic ξ ∧
           c'.dom = c.dom ∪ Y
 
+/-- **Extension of a phase condition by one completed phase**, the target form.  The old
+realization on the domain (`Realization.comap`) is exactly consistent and covering with legal
+top-free types; a completed phase of shape `shape ξ` over it serving the request of `ξ`
+(`Phase.existsCompletedPhaseTarget`, with the request read on the domain when its tuple lies
+there) is carried onto the old domain together with `Y` (`Realization.pushforward`), its old points
+going to themselves and its block onto `Y` along an enumeration of `Y` by the index.  The new
+realization agrees with the old one on the old domain, so the earlier phases keep their
+closedness and service (`Phase.IsSupportClosed.of_agree`, `Phase.ServesAt.of_agree`); the new
+phase is closed and served by transport (`Phase.IsSupportClosed.pushforward`). -/
+theorem phaseConditionExtensionTarget : PhaseConditionExtensionTarget.{u, v, w} := by
+  classical
+  intro α X Φ _ shape req hα c ξ hph hcount Y hY hYc hYi
+  have : Countable c.dom := hcount.to_subtype
+  -- the old realization on the domain
+  let π₀ : c.dom ↪ X := Function.Embedding.subtype _
+  have hrange₀ : Set.range π₀ = c.dom := Subtype.range_coe
+  let R₀ := c.real.comap π₀
+  have hR₀ : R₀.IsConsistent := c.isConsistent.comap π₀
+  have hc₀ : R₀.IsCovering := comap_isCovering π₀
+    (fun n t ht ↦ c.eval_eq_none t (by rwa [hrange₀] at ht))
+    (fun n t ht ↦ c.isCovering t (by rwa [hrange₀] at ht))
+  -- a completed phase over it, serving the request of `ξ` when its tuple lies in the domain
+  obtain ⟨N, _, S, ι, z, hS, hserve⟩ : ∃ (N : Type v) (_ : Countable N)
+      (S : Realization.{u, v} α N) (ι : c.dom ↪ N) (z : (shape ξ).Index → N),
+      IsCompletedPhase R₀ S ι (shape ξ) z ∧ ∀ ht : ∀ i, (req ξ).tuple i ∈ c.dom,
+        ServesAt S (PhaseRequest.map ι ⟨_, (req ξ).tuple.codRestrict c.dom ht, (req ξ).donor⟩)
+          (Set.range ι) (z (shape ξ).servingIndex) := by
+    by_cases ht : ∀ i, (req ξ).tuple i ∈ c.dom
+    · obtain ⟨N, hN, S, ι, z, h, hs⟩ := existsCompletedPhaseTarget hα R₀ hR₀ hc₀
+        (c.hasLegalTypes.comap π₀) (c.hasTopFreeTypes.comap π₀) (shape ξ)
+        ⟨_, (req ξ).tuple.codRestrict c.dom ht, (req ξ).donor⟩
+      exact ⟨N, hN, S, ι, z, h, fun _ ↦ hs⟩
+    · obtain ⟨N, hN, S, ι, z, h, -⟩ := existsCompletedPhaseTarget hα R₀ hR₀ hc₀
+        (c.hasLegalTypes.comap π₀) (c.hasTopFreeTypes.comap π₀) (shape ξ)
+        ⟨0, Function.Embedding.ofIsEmpty, StageType.onePointApex⟩
+      exact ⟨N, hN, S, ι, z, h, fun h' ↦ absurd h' ht⟩
+  -- an enumeration of `Y` by the index of the shape
+  have : Countable Y := hYc.to_subtype
+  have : Infinite Y := hYi.to_subtype
+  obtain ⟨hdY⟩ := nonempty_denumerable Y
+  obtain ⟨hdI⟩ := nonempty_denumerable (shape ξ).Index
+  let e : (shape ξ).Index ≃ Y := (Denumerable.eqv _).trans (Denumerable.eqv Y).symm
+  -- the map of the new carrier into `X`
+  have hbij : Function.Bijective (Sum.elim ι z) := by
+    refine ⟨ι.injective.sumElim hS.injective fun a i h ↦ hS.notMem_range i ⟨a, h⟩, fun y ↦ ?_⟩
+    rcases hS.mem_range_or y with ⟨a, rfl⟩ | ⟨i, rfl⟩
+    · exact ⟨Sum.inl a, rfl⟩
+    · exact ⟨Sum.inr i, rfl⟩
+  let σ : c.dom ⊕ (shape ξ).Index ↪ X :=
+    ⟨Sum.elim Subtype.val fun i ↦ (e i : X), Subtype.val_injective.sumElim
+      (Subtype.val_injective.comp e.injective) fun a i h ↦ hY (e i).2 (h ▸ a.2)⟩
+  let π : N ↪ X := (Equiv.ofBijective _ hbij).symm.toEmbedding.trans σ
+  have hπι : ∀ a, π (ι a) = a := fun a ↦ by
+    change σ ((Equiv.ofBijective _ hbij).symm (Sum.elim ι z (Sum.inl a))) = a
+    rw [Equiv.ofBijective_symm_apply_apply]
+    rfl
+  have hπz : ∀ i, π (z i) = e i := fun i ↦ by
+    change σ ((Equiv.ofBijective _ hbij).symm (Sum.elim ι z (Sum.inr i))) = e i
+    rw [Equiv.ofBijective_symm_apply_apply]
+    rfl
+  have hrangeπ : Set.range π = c.dom ∪ Y := by
+    ext x
+    constructor
+    · rintro ⟨y, rfl⟩
+      rcases hS.mem_range_or y with ⟨a, rfl⟩ | ⟨i, rfl⟩
+      · exact Or.inl (by rw [hπι]; exact a.2)
+      · exact Or.inr (by rw [hπz]; exact (e i).2)
+    · rintro (hx | hx)
+      · exact ⟨ι ⟨x, hx⟩, hπι _⟩
+      · exact ⟨z (e.symm ⟨x, hx⟩), by rw [hπz]; simp⟩
+  have hιπ : π '' Set.range ι = c.dom := by
+    ext x
+    constructor
+    · rintro ⟨_, ⟨a, rfl⟩, rfl⟩
+      rw [hπι]
+      exact a.2
+    · intro hx
+      exact ⟨ι ⟨x, hx⟩, ⟨_, rfl⟩, hπι _⟩
+  -- the new block
+  let block' : ∀ η, (shape η).Index → X := Function.update c.block ξ fun i ↦ (e i : X)
+  have hblock_ne : ∀ η, η ≠ ξ → block' η = c.block η := fun η h ↦ Function.update_of_ne h _ _
+  have hblock_ξ : block' ξ = fun i ↦ (e i : X) := Function.update_self _ _ _
+  have hdom' : phasePoints (Set.Iic ξ) block' = c.dom ∪ Y := by
+    ext x
+    simp only [phasePoints, PhaseCondition.dom, Set.mem_iUnion, Set.mem_union, Set.mem_Iic,
+      Set.mem_range, exists_prop, hph, Set.mem_Iio]
+    constructor
+    · rintro ⟨η, hη, i, rfl⟩
+      rcases lt_or_eq_of_le hη with h | rfl
+      · exact Or.inl ⟨η, h, i, by rw [hblock_ne η h.ne]⟩
+      · exact Or.inr (by rw [hblock_ξ]; exact (e i).2)
+    · rintro (⟨η, h, i, rfl⟩ | hx)
+      · exact ⟨η, h.le, i, by rw [hblock_ne η h.ne]⟩
+      · exact ⟨ξ, le_rfl, e.symm ⟨x, hx⟩, by rw [hblock_ξ]; simp⟩
+  have hpts : ∀ η ≤ ξ, phasePoints (Set.Iic ξ ∩ Set.Iio η) block' =
+      phasePoints (c.phases ∩ Set.Iio η) c.block := by
+    intro η hη
+    ext x
+    simp only [phasePoints, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_Iic, Set.mem_Iio,
+      Set.mem_range, exists_prop, hph]
+    constructor
+    · rintro ⟨ζ, ⟨-, hζ⟩, i, rfl⟩
+      exact ⟨ζ, ⟨hζ.trans_le hη, hζ⟩, i, by rw [hblock_ne ζ (hζ.trans_le hη).ne]⟩
+    · rintro ⟨ζ, ⟨h1, hζ⟩, i, rfl⟩
+      exact ⟨ζ, ⟨h1.le, hζ⟩, i, by rw [hblock_ne ζ h1.ne]⟩
+  have hD_eq : phasePoints (c.phases ∩ Set.Iio ξ) c.block = c.dom := by
+    rw [PhaseCondition.dom, hph, Set.inter_self]
+  have hbefore : ∀ η, phasePoints (c.phases ∩ Set.Iio η) c.block ⊆ c.dom := fun η ↦
+    phasePoints_mono Set.inter_subset_left _
+  -- the new realization agrees with the old one on the old domain
+  let real' := S.pushforward π
+  have hag : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), Set.range t ⊆ c.dom → real'.eval t = c.real.eval t := by
+    intro n t ht
+    have hu : ((t.codRestrict c.dom fun i ↦ ht ⟨i, rfl⟩).trans ι).trans π = t :=
+      Function.Embedding.ext fun i ↦ hπι _
+    conv_lhs => rw [← hu]
+    rw [pushforward_eval_trans, hS.eval_trans]
+    exact congrArg c.real.eval (Function.Embedding.ext fun i ↦ rfl)
+  have hlt : ∀ η ∈ Set.Iic ξ, η ≠ ξ → η ∈ c.phases := fun η hη h ↦ by
+    rw [hph]
+    exact lt_of_le_of_ne hη h
+  refine ⟨{
+      phases := Set.Iic ξ
+      isLowerSet_phases := isLowerSet_Iic ξ
+      block := block'
+      injective_block := fun η hη ↦ ?_
+      disjoint_block := fun η hη ζ hζ hne ↦ ?_
+      real := real'
+      eval_eq_none := fun n t ht ↦ ?_
+      isConsistent := hS.isConsistent.pushforward π
+      isCovering := fun n t ht ↦ ?_
+      hasLegalTypes := hS.hasLegalTypes.pushforward π
+      hasTopFreeTypes := hS.hasTopFreeTypes.pushforward π
+      isSupportClosed_before := fun η hη ↦ ?_
+      isSupportClosed_cut := fun η hη j ↦ ?_
+      serves := fun η hη ↦ ?_ }, ⟨?_, fun η hη ↦ ?_, hag⟩, rfl, hdom'⟩
+  · by_cases h : η = ξ
+    · subst h
+      rw [hblock_ξ]
+      exact Subtype.val_injective.comp e.injective
+    · rw [hblock_ne η h]
+      exact c.injective_block η (hlt η hη h)
+  · have hnew : ∀ η, η ≠ ξ → η ∈ Set.Iic ξ → Disjoint (Set.range (block' η))
+        (Set.range (block' ξ)) := fun η h hη ↦ by
+      rw [hblock_ne η h, hblock_ξ, Set.disjoint_iff]
+      rintro x ⟨hx, ⟨i, rfl⟩⟩
+      exact hY (e i).2 (c.range_block_subset_dom (hlt η hη h) hx)
+    by_cases h1 : η = ξ
+    · subst h1
+      exact (hnew ζ (Ne.symm hne) hζ).symm
+    · by_cases h2 : ζ = ξ
+      · subst h2
+        exact hnew η h1 hη
+      · rw [hblock_ne η h1, hblock_ne ζ h2]
+        exact c.disjoint_block η (hlt η hη h1) ζ (hlt ζ hζ h2) hne
+  · rw [hdom', ← hrangeπ] at ht
+    exact pushforward_eval_of_not π S ht
+  · rw [hdom', ← hrangeπ] at ht
+    exact pushforward_isCovering_of_range_subset π hS.isCovering ht
+  · rw [hpts η hη]
+    by_cases h : η = ξ
+    · subst h
+      rw [hD_eq, ← hιπ]
+      exact hS.isSupportClosed_range.pushforward π
+    · exact (c.isSupportClosed_before η (hlt η hη h)).of_agree (hbefore η) hag
+  · rw [hpts η hη]
+    by_cases h : η = ξ
+    · subst h
+      rw [hD_eq, hblock_ξ, ← hιπ]
+      have himg : (fun i ↦ (e i : X)) '' Set.Iic j = π '' (z '' Set.Iic j) := by
+        rw [Set.image_image]
+        simp only [hπz]
+      rw [himg, ← Set.image_union]
+      exact (hS.isSupportClosed_cut j).pushforward π
+    · rw [hblock_ne η h]
+      refine (c.isSupportClosed_cut η (hlt η hη h) j).of_agree
+        (Set.union_subset (hbefore η) ?_) hag
+      rintro _ ⟨i, -, rfl⟩
+      exact c.range_block_subset_dom (hlt η hη h) ⟨i, rfl⟩
+  · rw [hpts η hη]
+    by_cases h : η = ξ
+    · subst h
+      rw [hD_eq, hblock_ξ]
+      intro ha p hsub hp hdc hdt
+      have ht : ∀ i, (req η).tuple i ∈ c.dom := fun i ↦ hsub ⟨i, rfl⟩
+      let u := (req η).tuple.codRestrict c.dom ht
+      have hu : (u.trans ι).trans π = (req η).tuple := Function.Embedding.ext fun i ↦ hπι _
+      have ha' : z (shape η).servingIndex ∉ Set.range (u.trans ι) := by
+        rintro ⟨i, hi⟩
+        exact hS.notMem_range _ ⟨u i, hi⟩
+      have hS' := hserve ht ha' p (by rintro _ ⟨i, rfl⟩; exact ⟨u i, rfl⟩)
+        (by
+          change S.eval (u.trans ι) = some p
+          rw [← pushforward_eval_trans π S, hu]
+          exact hp) hdc hdt
+      have hsnoc : Fin.Embedding.snoc (req η).tuple ha =
+          (Fin.Embedding.snoc (u.trans ι) ha').trans π := by
+        refine Function.Embedding.ext fun i ↦ ?_
+        induction i using Fin.lastCases with
+        | last => simp [hπz]
+        | cast i => simp [hπι, u]
+      rw [hsnoc, pushforward_eval_trans]
+      exact hS'
+    · rw [hblock_ne η h]
+      exact (c.serves η (hlt η hη h)).of_agree (hbefore η)
+        (c.range_block_subset_dom (hlt η hη h) ⟨_, rfl⟩) hag
+  · intro η hη
+    have h : η < ξ := by rw [hph] at hη; exact hη
+    exact Set.mem_Iic.mpr h.le
+  · have h : η < ξ := by rw [hph] at hη; exact hη
+    exact hblock_ne η h.ne
+
+/-- The stage type on no points at a stage (there is only one, `StageType.eq_of_zero`): the empty
+face of the one-point apex type. -/
+noncomputable def emptyType (α : Ordinal.{u}) : StageType.{u} α 0 :=
+  (StageType.restrictFace Function.Embedding.ofIsEmpty (StageType.onePointApex (α := α))).get
+    (StageType.isSome_restrictFace_of_zero _ _)
+
+theorem isLegal_emptyType : (emptyType α).IsLegal :=
+  StageType.isLegal_onePointApex.restrictFace _ (Option.some_get _).symm
+
+/-- The realization typing only the empty tuple. -/
+noncomputable def emptyRealization (α : Ordinal.{u}) (X : Type v) : Realization.{u, v} α X where
+  eval {n} _ := match n with
+    | 0 => some (emptyType α)
+    | _ + 1 => none
+
+/-- **Target: the initial phase condition.**  On a nonempty carrier, for every choice of shapes and
+requests, some phase condition has no completed phase.  Proved
+(`Phase.phaseInitialConditionTarget`). -/
+def PhaseInitialConditionTarget : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃X : Type v⦄ [Nonempty X] ⦃Φ : Type w⦄ [LinearOrder Φ]
+    (shape : Φ → BlockShape) (req : Φ → PhaseRequest α X),
+      ∃ c : PhaseCondition α X Φ shape req, c.phases = ∅
+
+/-- **The initial phase condition**, the target form: no completed phase, arbitrary blocks, and the
+realization typing only the empty tuple (`Phase.emptyRealization`). -/
+theorem phaseInitialConditionTarget : PhaseInitialConditionTarget.{u, v, w} := by
+  intro α X _ Φ _ shape req
+  have hempty : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), Set.range t ⊆ phasePoints (∅ : Set Φ)
+      (fun _ _ ↦ Classical.arbitrary X : ∀ ξ, (shape ξ).Index → X) → n = 0 := by
+    intro n t ht
+    by_contra hn
+    obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn
+    have := ht ⟨0, rfl⟩
+    simp [phasePoints] at this
+  refine ⟨{
+      phases := ∅
+      isLowerSet_phases := isLowerSet_empty
+      block := fun _ _ ↦ Classical.arbitrary X
+      injective_block := fun _ h ↦ h.elim
+      disjoint_block := fun _ h ↦ h.elim
+      real := emptyRealization α X
+      eval_eq_none := fun n t ht ↦ ?_
+      isConsistent := fun m n t p f hp ↦ ?_
+      isCovering := fun n t ht ↦ ?_
+      hasLegalTypes := fun n t p hp ↦ ?_
+      hasTopFreeTypes := fun n t p hp ↦ ?_
+      isSupportClosed_before := fun _ h ↦ h.elim
+      isSupportClosed_cut := fun _ h ↦ h.elim
+      serves := fun _ h ↦ h.elim }, rfl⟩
+  · cases n with
+    | zero => exact absurd (fun x hx ↦ by obtain ⟨i, -⟩ := hx; exact i.elim0) ht
+    | succ k => rfl
+  · cases n with
+    | succ k => exact absurd hp (by simp [emptyRealization])
+    | zero =>
+      have hm : m = 0 := by simpa using Fintype.card_le_of_embedding f
+      subst hm
+      obtain ⟨q, hq⟩ := Option.isSome_iff_exists.mp (p.isSome_restrictFace_of_zero f)
+      rw [hq, StageType.eq_of_zero q (emptyType α)]
+      rfl
+  · obtain rfl := hempty t ht
+    exact ⟨0, t, Function.Embedding.refl _, rfl, rfl⟩
+  · cases n with
+    | succ k => exact absurd hp (by simp [emptyRealization])
+    | zero =>
+      obtain rfl : emptyType α = p := Option.some_injective _ hp
+      exact isLegal_emptyType
+  · cases n with
+    | succ k => exact absurd hp (by simp [emptyRealization])
+    | zero => exact StageType.isTopFree_of_zero p
+
 /-- **Target: upper bounds of chains of phase conditions.**  A nonempty chain of phase conditions
 for the extension preorder has an upper bound whose completed phases are the union of theirs.
-Stated. -/
+Proved (`Phase.phaseChainUpperBoundTarget`). -/
 def PhaseChainUpperBoundTarget : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃X : Type v⦄ ⦃Φ : Type w⦄ [LinearOrder Φ] (shape : Φ → BlockShape)
     (req : Φ → PhaseRequest α X) (C : Set (PhaseCondition α X Φ shape req)), C.Nonempty →
       IsChain PhaseCondition.Extends C →
         ∃ c' : PhaseCondition α X Φ shape req, (∀ c ∈ C, c.Extends c') ∧
           c'.phases = ⋃ c ∈ C, c.phases
+
+/-- **Upper bounds of chains of phase conditions**, the target form.  The union: its completed
+phases are the union, the block of a phase is its block in any member completing it, and a tuple
+inside the domain of some member has the evaluation in that member.  These do not depend on the
+member, the chain being a chain for extension; a finite set inside the union of the domains lies in
+one domain.  The earlier phases of a completed phase are completed in the same member, so the
+closedness and service of each phase come from one member (`Phase.IsSupportClosed.of_agree`,
+`Phase.ServesAt.of_agree`). -/
+theorem phaseChainUpperBoundTarget : PhaseChainUpperBoundTarget.{u, v, w} := by
+  classical
+  intro α X Φ _ shape req C hne hch
+  have hcomp : ∀ c₁ ∈ C, ∀ c₂ ∈ C, c₁.Extends c₂ ∨ c₂.Extends c₁ := fun c₁ h₁ c₂ h₂ ↦ by
+    by_cases h : c₁ = c₂
+    · subst h
+      exact Or.inl (PhaseCondition.Extends.refl c₁)
+    · exact hch h₁ h₂ h
+  -- finite sets inside the union of the domains lie in one domain
+  have hfin : ∀ F : Finset X, ↑F ⊆ ⋃ c ∈ C, c.dom → ∃ c ∈ C, ↑F ⊆ c.dom := by
+    intro F
+    induction F using Finset.induction_on with
+    | empty =>
+      obtain ⟨c, hc⟩ := hne
+      exact fun _ ↦ ⟨c, hc, by simp⟩
+    | insert a F _ ih =>
+      intro hF
+      obtain ⟨c₁, h₁, hF₁⟩ := ih (fun x hx ↦ hF (Finset.mem_insert_of_mem hx))
+      obtain ⟨c₂, h₂, ha₂⟩ := Set.mem_iUnion₂.mp (hF (Finset.mem_insert_self a F))
+      rcases hcomp c₁ h₁ c₂ h₂ with h | h
+      · refine ⟨c₂, h₂, ?_⟩
+        rw [Finset.coe_insert]
+        exact Set.insert_subset ha₂ (hF₁.trans h.dom_subset)
+      · refine ⟨c₁, h₁, ?_⟩
+        rw [Finset.coe_insert]
+        exact Set.insert_subset (h.dom_subset ha₂) hF₁
+  have htuple : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), Set.range t ⊆ ⋃ c ∈ C, c.dom →
+      ∃ c ∈ C, Set.range t ⊆ c.dom := fun n t ht ↦ by
+    obtain ⟨c, hc, h⟩ := hfin (Finset.univ.image t) (by simpa using ht)
+    exact ⟨c, hc, by simpa using h⟩
+  -- the blocks
+  let block' : ∀ ξ, (shape ξ).Index → X := fun ξ ↦
+    if h : ∃ c ∈ C, ξ ∈ c.phases then h.choose.block ξ else hne.some.block ξ
+  have hblock : ∀ c ∈ C, ∀ ξ ∈ c.phases, block' ξ = c.block ξ := fun c hc ξ hξ ↦ by
+    have h : ∃ c ∈ C, ξ ∈ c.phases := ⟨c, hc, hξ⟩
+    simp only [block', dite_eq_left h]
+    rcases hcomp _ h.choose_spec.1 c hc with h' | h'
+    · exact (h'.2.1 ξ h.choose_spec.2).symm
+    · exact h'.2.1 ξ hξ
+  -- the realization
+  let real' : Realization.{u, v} α X := ⟨fun {n} t ↦
+    if h : ∃ c ∈ C, Set.range t ⊆ c.dom then h.choose.real.eval t else none⟩
+  have hreal : ∀ c ∈ C, ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), Set.range t ⊆ c.dom →
+      real'.eval t = c.real.eval t := fun c hc n t ht ↦ by
+    have h : ∃ c ∈ C, Set.range t ⊆ c.dom := ⟨c, hc, ht⟩
+    change (if h : ∃ c ∈ C, Set.range t ⊆ c.dom then h.choose.real.eval t else none) = _
+    rw [dite_eq_left h]
+    rcases hcomp _ h.choose_spec.1 c hc with h' | h'
+    · exact (h'.2.2 t h.choose_spec.2).symm
+    · exact h'.2.2 t ht
+  have hreal_none : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), ¬ (∃ c ∈ C, Set.range t ⊆ c.dom) →
+      real'.eval t = none := fun n t h ↦ by
+    change (if h : ∃ c ∈ C, Set.range t ⊆ c.dom then h.choose.real.eval t else none) = _
+    rw [dite_eq_right h]
+  have htyped : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ X) (p : StageType.{u} α n), real'.eval t = some p →
+      ∃ c ∈ C, Set.range t ⊆ c.dom ∧ c.real.eval t = some p := fun n t p hp ↦ by
+    by_cases h : ∃ c ∈ C, Set.range t ⊆ c.dom
+    · obtain ⟨c, hc, ht⟩ := h
+      exact ⟨c, hc, ht, (hreal c hc t ht).symm.trans hp⟩
+    · rw [hreal_none t h] at hp
+      exact absurd hp (by simp)
+  have hdom : phasePoints (⋃ c ∈ C, c.phases) block' = ⋃ c ∈ C, c.dom := by
+    ext x
+    simp only [phasePoints, PhaseCondition.dom, Set.mem_iUnion, Set.mem_range, exists_prop]
+    constructor
+    · rintro ⟨ξ, ⟨c, hc, hξ⟩, i, rfl⟩
+      exact ⟨c, hc, ξ, hξ, i, by rw [hblock c hc ξ hξ]⟩
+    · rintro ⟨c, hc, ξ, hξ, i, rfl⟩
+      exact ⟨ξ, ⟨c, hc, hξ⟩, i, by rw [hblock c hc ξ hξ]⟩
+  -- the earlier phases of a completed phase are completed in one member
+  have hbefore : ∀ c ∈ C, ∀ ξ ∈ c.phases,
+      phasePoints ((⋃ c ∈ C, c.phases) ∩ Set.Iio ξ) block' =
+        phasePoints (c.phases ∩ Set.Iio ξ) c.block := fun c hc ξ hξ ↦ by
+    ext x
+    simp only [phasePoints, Set.mem_iUnion, Set.mem_inter_iff, Set.mem_Iio, Set.mem_range,
+      exists_prop]
+    constructor
+    · rintro ⟨η, ⟨-, hη⟩, i, rfl⟩
+      have hηc : η ∈ c.phases := c.isLowerSet_phases hη.le hξ
+      exact ⟨η, ⟨hηc, hη⟩, i, by rw [hblock c hc η hηc]⟩
+    · rintro ⟨η, ⟨hηc, hη⟩, i, rfl⟩
+      exact ⟨η, ⟨⟨c, hc, hηc⟩, hη⟩, i, by rw [hblock c hc η hηc]⟩
+  have hbsub : ∀ c ∈ C, ∀ ξ, phasePoints (c.phases ∩ Set.Iio ξ) c.block ⊆ c.dom :=
+    fun c _ ξ ↦ phasePoints_mono Set.inter_subset_left _
+  refine ⟨{
+      phases := ⋃ c ∈ C, c.phases
+      isLowerSet_phases := isLowerSet_iUnion₂ fun c _ ↦ c.isLowerSet_phases
+      block := block'
+      injective_block := fun ξ hξ ↦ ?_
+      disjoint_block := fun ξ hξ η hη hne ↦ ?_
+      real := real'
+      eval_eq_none := fun n t ht ↦ ?_
+      isConsistent := fun m n t p f hp ↦ ?_
+      isCovering := fun n t ht ↦ ?_
+      hasLegalTypes := fun n t p hp ↦ ?_
+      hasTopFreeTypes := fun n t p hp ↦ ?_
+      isSupportClosed_before := fun ξ hξ ↦ ?_
+      isSupportClosed_cut := fun ξ hξ j ↦ ?_
+      serves := fun ξ hξ ↦ ?_ }, fun c hc ↦ ⟨?_, fun ξ hξ ↦ hblock c hc ξ hξ, ?_⟩, rfl⟩
+  · obtain ⟨c, hc, hξc⟩ := Set.mem_iUnion₂.mp hξ
+    rw [hblock c hc ξ hξc]
+    exact c.injective_block ξ hξc
+  · obtain ⟨c₁, h₁, hξ₁⟩ := Set.mem_iUnion₂.mp hξ
+    obtain ⟨c₂, h₂, hη₂⟩ := Set.mem_iUnion₂.mp hη
+    have key : ∀ c ∈ C, ξ ∈ c.phases → η ∈ c.phases →
+        Disjoint (Set.range (block' ξ)) (Set.range (block' η)) := fun c hc h1 h2 ↦ by
+      rw [hblock c hc ξ h1, hblock c hc η h2]
+      exact c.disjoint_block ξ h1 η h2 hne
+    rcases hcomp c₁ h₁ c₂ h₂ with h | h
+    · exact key c₂ h₂ (h.1 hξ₁) hη₂
+    · exact key c₁ h₁ hξ₁ (h.1 hη₂)
+  · rw [hdom] at ht
+    exact hreal_none t fun ⟨c, hc, h⟩ ↦ ht (h.trans (Set.subset_biUnion_of_mem hc))
+  · obtain ⟨c, hc, ht, hp'⟩ := htyped t p hp
+    rw [hreal c hc _ ((Set.range_comp_subset_range f t).trans ht)]
+    exact c.isConsistent t p f hp'
+  · rw [hdom] at ht
+    obtain ⟨c, hc, htc⟩ := htuple t ht
+    obtain ⟨m, u, f, hfu, hu⟩ := c.isCovering t htc
+    have hrange : Set.range u ⊆ c.dom := by
+      by_contra h
+      rw [c.eval_eq_none u h] at hu
+      exact Bool.false_ne_true hu
+    exact ⟨m, u, f, hfu, by rw [hreal c hc u hrange]; exact hu⟩
+  · obtain ⟨c, hc, -, hp'⟩ := htyped t p hp
+    exact c.hasLegalTypes t p hp'
+  · obtain ⟨c, hc, -, hp'⟩ := htyped t p hp
+    exact c.hasTopFreeTypes t p hp'
+  · obtain ⟨c, hc, hξc⟩ := Set.mem_iUnion₂.mp hξ
+    rw [hbefore c hc ξ hξc]
+    exact (c.isSupportClosed_before ξ hξc).of_agree (hbsub c hc ξ) (hreal c hc)
+  · obtain ⟨c, hc, hξc⟩ := Set.mem_iUnion₂.mp hξ
+    rw [hbefore c hc ξ hξc, hblock c hc ξ hξc]
+    refine (c.isSupportClosed_cut ξ hξc j).of_agree
+      (Set.union_subset (hbsub c hc ξ) ?_) (hreal c hc)
+    rintro _ ⟨i, -, rfl⟩
+    exact c.range_block_subset_dom hξc ⟨i, rfl⟩
+  · obtain ⟨c, hc, hξc⟩ := Set.mem_iUnion₂.mp hξ
+    rw [hbefore c hc ξ hξc, hblock c hc ξ hξc]
+    exact (c.serves ξ hξc).of_agree (hbsub c hc ξ) (c.range_block_subset_dom hξc ⟨_, rfl⟩)
+      (hreal c hc)
+  · exact Set.subset_biUnion_of_mem hc
+  · exact fun n t ht ↦ hreal c hc t ht
 
 /-- **Target: a full phase condition.**  At stage `ω₁`, on the carrier `ω₁.ToType` with phases
 indexed by `ω₁.ToType`, for every choice of shapes and requests some phase condition has every
