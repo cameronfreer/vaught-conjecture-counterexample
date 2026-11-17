@@ -37,9 +37,10 @@ over a given occurrence (`Realization.AscendingBlockServiceTarget`), and the blo
 `ℤ` whose first ascending point does so over an occurrence of the descending part
 (`Realization.IntegerBlockServiceTarget`); one serving point per block.
 
-Proved: `Realization.AscendingBlockTarget`, `Realization.AscendingBlockOrderTarget`,
-`Realization.IntegerBlockTarget`, `Realization.IntegerBlockOrderTarget`.  Stated, not proved: the
-two service statements.  Countability is of the old carrier only; the stage is
+All statements are proved: `Realization.AscendingBlockTarget`,
+`Realization.AscendingBlockOrderTarget`, `Realization.AscendingBlockServiceTarget`,
+`Realization.IntegerBlockTarget`, `Realization.IntegerBlockOrderTarget`,
+`Realization.IntegerBlockServiceTarget`.  Countability is of the old carrier only; the stage is
 any limit ordinal.
 
 ## Placement
@@ -78,17 +79,23 @@ def AscendingBlockTarget : Prop :=
         (∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), S.eval (t.trans Function.Embedding.inl) = R.eval t) ∧
         ∀ n, (S.closure hS hSc).IsClosed (prefixCut n)
 
-/-- **The ascending block over a countable realization**, the target form.  An exhaustive chain
-of occurrences (`Realization.existsExhaustiveOccurrenceChainTarget`) carries coherent prefix charts
-(`Realization.exists_prefixCharts`), which cover `X ⊕ ℕ` and are realized by one exactly consistent
-covering realization (`Realization.chartChainRealizationTarget`).  Old evaluations are kept
-(`Realization.eval_trans_of_chartChain`), and a finite subset of a prefix cut lies in a prefix face
-of a late chart, a closed face inside the cut (`Realization.isClosed_of_chartChain`). -/
-theorem ascendingBlockTarget : AscendingBlockTarget.{u, v} := by
-  intro α X _ hα R hR hc hL hT
-  obtain ⟨x, -⟩ := hc.exists_subset_support ∅
-  obtain ⟨c, -, hmono, hex⟩ := existsExhaustiveOccurrenceChainTarget R hc x
-  obtain ⟨N, w, T, hch, hg⟩ := exists_prefixCharts hα R hR hL hT c hmono
+/-- **The ascending block from coherent prefix charts.**  Along a monotone sequence `c` of
+occurrences of an exactly consistent realization `R` exhausting `X`, coherent prefix charts cover
+`X ⊕ ℕ` and are realized by one exactly consistent covering realization `S`
+(`Realization.chartChainRealizationTarget`) with legal top-free types, giving each chart its type.
+Old evaluations are kept (`Realization.eval_trans_of_chartChain`), and a finite subset of a prefix
+cut lies in a prefix face of a late chart, a closed face inside the cut
+(`Realization.isClosed_of_chartChain`). -/
+theorem exists_ascending_of_prefixCharts {α : Ordinal.{u}} {R : Realization.{u, v} α X}
+    (hR : R.IsConsistent) {c : ℕ → R.Occurrence} (hmono : Monotone c)
+    (hex : ∀ a : X, ∃ k, a ∈ (c k).support) {N : ℕ → ℕ} {w : ∀ k, Fin (N k) ↪ X ⊕ ℕ}
+    {T : ∀ k, StageType.{u} α (N k)} (hch : ∀ k, R.IsPrefixChart (c k) k (w k) (T k))
+    (hg : ∀ k, ∃ g : Fin (N k) ↪ Fin (N (k + 1)), g.trans (w (k + 1)) = w k ∧
+      StageType.restrictFace g (T (k + 1)) = some (T k)) :
+    ∃ (S : Realization.{u, v} α (X ⊕ ℕ)) (hS : S.IsConsistent) (hSc : S.IsCovering),
+      S.HasLegalTypes ∧ S.HasTopFreeTypes ∧
+      (∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), S.eval (t.trans Function.Embedding.inl) = R.eval t) ∧
+      (∀ n, (S.closure hS hSc).IsClosed (prefixCut n)) ∧ ∀ k, S.eval (w k) = some (T k) := by
   have hpts : ∀ y : X ⊕ ℕ, ∃ k, y ∈ Set.range (w k) := by
     rintro (a | j)
     · obtain ⟨k, hk⟩ := hex a
@@ -103,7 +110,7 @@ theorem ascendingBlockTarget : AscendingBlockTarget.{u, v} := by
   choose o ho htow using fun k ↦ (hch k).exists_isTowerOver
   refine ⟨S, hS, hSc, fun n t p hp ↦ ?_, fun n t p hp ↦ ?_, fun n t ↦
     eval_trans_of_chartChain hR hmono hex hS hSw o ho (fun k ↦ (htow k).restrictFace_eq) t,
-    fun n ↦ ?_⟩
+    fun n ↦ ?_, hSw⟩
   · obtain ⟨k, f, -, hf⟩ := hSf t p hp
     exact (hch k).isLegal.restrictFace _ hf
   · obtain ⟨k, f, -, hf⟩ := hSf t p hp
@@ -124,6 +131,19 @@ theorem ascendingBlockTarget : AscendingBlockTarget.{u, v} := by
       rintro z (⟨a, -, rfl⟩ | ⟨j, hj, rfl⟩)
       · exact Or.inl ⟨a, rfl⟩
       · exact Or.inr ⟨j, hj, rfl⟩
+
+/-- **The ascending block over a countable realization**, the target form: coherent prefix charts
+(`Realization.exists_prefixCharts`) along an exhaustive chain of occurrences
+(`Realization.existsExhaustiveOccurrenceChainTarget`), realized by
+`Realization.exists_ascending_of_prefixCharts`. -/
+theorem ascendingBlockTarget : AscendingBlockTarget.{u, v} := by
+  intro α X _ hα R hR hc hL hT
+  obtain ⟨x, -⟩ := hc.exists_subset_support ∅
+  obtain ⟨c, -, hmono, hex⟩ := existsExhaustiveOccurrenceChainTarget R hc x
+  obtain ⟨N, w, T, hch, hg⟩ := exists_prefixCharts hα R hR hL hT c hmono
+  obtain ⟨S, hS, hSc, hSL, hST, hSev, hScut, -⟩ :=
+    exists_ascending_of_prefixCharts hR hmono hex hch hg
+  exact ⟨S, hS, hSc, hSL, hST, hSev, hScut⟩
 
 /-- **Target: the order of an ascending block** (given-realization).  Let `S` on `X ⊕ ℕ` be
 exactly consistent and covering with every prefix cut closed.  For every infinite `B ⊆ X`, the
@@ -173,10 +193,8 @@ def appendBlockPoint {n : ℕ} (t : Fin n ↪ X) (j : ℕ) : Fin (n + 1) ↪ X �
 `X`, `x` an occurrence of `R` and `d` a top-free coface of its type.  Some exactly consistent
 covering realization `S` with legal top-free types on `X ⊕ ℕ` gives every tuple of old points its
 evaluation in `R`, `none` included, has every prefix cut closed, and gives the tuple of `x`
-followed by the first block point `Sum.inr 0` the type `d`.  Intended proof: attach the first
-block point by `Realization.optionAttachmentTarget`, attach the remaining block points by
-`Realization.AscendingBlockTarget` over the result, and relabel `Option X ⊕ ℕ` as `X ⊕ ℕ` fixing
-the old points.  Construction over a given realization.  Stated. -/
+followed by the first block point `Sum.inr 0` the type `d`.  Construction over a given
+realization.  Proved (`Realization.ascendingBlockServiceTarget`). -/
 def AscendingBlockServiceTarget : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃X : Type v⦄ [Countable X], Order.IsSuccLimit α →
     ∀ (R : Realization.{u, v} α X), R.IsConsistent → R.IsCovering → R.HasLegalTypes →
@@ -186,6 +204,22 @@ def AscendingBlockServiceTarget : Prop :=
         (∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), S.eval (t.trans Function.Embedding.inl) = R.eval t) ∧
         (∀ n, (S.closure hS hSc).IsClosed (prefixCut n)) ∧
         S.eval (appendBlockPoint x.tuple 0) = some d
+
+/-- **The ascending block with a prescribed request served**, the target form: an exhaustive chain
+of occurrences beginning at `x` (`Realization.existsExhaustiveOccurrenceChainTarget`) carries
+coherent prefix charts whose first block point realizes `d` over `x`
+(`Realization.exists_prefixCharts_serving`), realized by
+`Realization.exists_ascending_of_prefixCharts`; the tuple of `x` followed by `Sum.inr 0` is a face
+of chart `1` with type `d`. -/
+theorem ascendingBlockServiceTarget : AscendingBlockServiceTarget.{u, v} := by
+  intro α X _ hα R hR hc hL hT x d hd hdt
+  obtain ⟨c, rfl, hmono, hex⟩ := existsExhaustiveOccurrenceChainTarget R hc x
+  obtain ⟨N, w, T, hch, hg, hserv⟩ := exists_prefixCharts_serving hα R hR hL hT c hmono hd hdt
+  obtain ⟨S, hS, hSc, hSL, hST, hSev, hScut, hSw⟩ :=
+    exists_ascending_of_prefixCharts hR hmono hex hch hg
+  obtain ⟨f, hf, hfd⟩ := hserv (appendBlockPoint (c 0).tuple 0) (Fin.Embedding.init_snoc _ _)
+    Fin.Embedding.snoc_last
+  exact ⟨S, hS, hSc, hSL, hST, hSev, hScut, by rw [← hf, hS _ _ _ (hSw 1), hfd]⟩
 
 end Ascending
 
@@ -280,17 +314,18 @@ def IntegerBlockTarget : Prop :=
           U.eval ((t.trans Function.Embedding.inl).trans Function.Embedding.inl) = R.eval t) ∧
         ∀ z, (U.closure hU hUc).IsClosed (integerCut z)
 
-/-- **The block of order type `ℤ` over a countable realization**, the target form: the ascending
-block (`Realization.ascendingBlockTarget`) over the descending block
-(`Realization.descendingBlockTarget`).  The integer cuts at `n ≥ 0` are prefix cuts of the
-ascending block; those at `-(j + 1)` are the images of the suffix cuts of the descending block,
-closed because the ascending block keeps the evaluations of the descending one
-(`Realization.imageClosureOfEvalEmbeddingTarget`). -/
-theorem integerBlockTarget : IntegerBlockTarget.{u, v} := by
-  intro α M _ hα R hR hc hL hT
-  obtain ⟨S, hS, hSc, hSL, hST, hSev, hScut⟩ := descendingBlockTarget hα R hR hc hL hT
-  obtain ⟨U, hU, hUc, hUL, hUT, hUev, hUcut⟩ := ascendingBlockTarget hα S hS hSc hSL hST
-  refine ⟨U, hU, hUc, hUL, hUT, fun n t ↦ by rw [hUev, hSev], fun z ↦ ?_⟩
+/-- **Integer cuts after a descending and an ascending block.**  Let `S` on `M ⊕ ℕ` be exactly
+consistent and covering with every suffix cut closed, and `U` on `(M ⊕ ℕ) ⊕ ℕ` exactly consistent
+and covering, giving every tuple of `M ⊕ ℕ` its evaluation in `S`, with every prefix cut closed.
+Then every integer cut is closed in `U`: those at `n ≥ 0` are prefix cuts, and those at `-(j + 1)`
+are the images of the suffix cuts of `S` (`Realization.imageClosureOfEvalEmbeddingTarget`). -/
+theorem isClosed_integerCut_of {α : Ordinal.{u}} {S : Realization.{u, v} α (M ⊕ ℕ)}
+    (hS : S.IsConsistent) (hSc : S.IsCovering)
+    (hScut : ∀ k, (S.closure hS hSc).IsClosed (suffixCut k))
+    {U : Realization.{u, v} α ((M ⊕ ℕ) ⊕ ℕ)} (hU : U.IsConsistent) (hUc : U.IsCovering)
+    (hUev : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M ⊕ ℕ), U.eval (t.trans Function.Embedding.inl) = S.eval t)
+    (hUcut : ∀ n, (U.closure hU hUc).IsClosed (prefixCut n)) (z : ℤ) :
+    (U.closure hU hUc).IsClosed (integerCut z) := by
   cases z with
   | ofNat n => rw [integerCut_ofNat]; exact hUcut (n + 1)
   | negSucc j =>
@@ -300,6 +335,17 @@ theorem integerBlockTarget : IntegerBlockTarget.{u, v} := by
     rw [integerCut_negSucc]
     exact (U.closure hU hUc).isClosed_iff.mpr himg.symm
 
+/-- **The block of order type `ℤ` over a countable realization**, the target form: the ascending
+block (`Realization.ascendingBlockTarget`) over the descending block
+(`Realization.descendingBlockTarget`), with the integer cuts closed by
+`Realization.isClosed_integerCut_of`. -/
+theorem integerBlockTarget : IntegerBlockTarget.{u, v} := by
+  intro α M _ hα R hR hc hL hT
+  obtain ⟨S, hS, hSc, hSL, hST, hSev, hScut⟩ := descendingBlockTarget hα R hR hc hL hT
+  obtain ⟨U, hU, hUc, hUL, hUT, hUev, hUcut⟩ := ascendingBlockTarget hα S hS hSc hSL hST
+  exact ⟨U, hU, hUc, hUL, hUT, fun n t ↦ by rw [hUev, hSev],
+    isClosed_integerCut_of hS hSc hScut hU hUc hUev hUcut⟩
+
 /-- **Target: the block of order type `ℤ` with a request served after the descending part.**  At a
 limit stage `α`, let `R` be an exactly consistent covering realization with legal top-free types on
 a countable carrier `M`.  Some exactly consistent covering realization `S` with legal top-free
@@ -308,10 +354,9 @@ types on `M ⊕ ℕ` (the descending part) gives every tuple of old points its e
 top-free coface `d` of its type, some exactly consistent covering realization `U` with legal
 top-free types on `(M ⊕ ℕ) ⊕ ℕ` gives every tuple of `M ⊕ ℕ` its evaluation in `S`, `none`
 included, has every integer cut closed, and gives the tuple of `x` followed by the first ascending
-point `Sum.inr 0` the type `d`.  The request may involve descending points.  Intended proof:
-`Realization.descendingBlockTarget`, then `Realization.AscendingBlockServiceTarget` over `S`; the
-suffix cuts of `S` stay closed by `Realization.imageClosureOfEvalEmbeddingTarget`.  Construction
-over a given realization.  Stated. -/
+point `Sum.inr 0` the type `d`.  The request may involve descending points; no descending point
+serves.  Construction over a given realization.  Proved (`Realization.integerBlockServiceTarget`).
+-/
 def IntegerBlockServiceTarget : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type v⦄ [Countable M], Order.IsSuccLimit α →
     ∀ (R : Realization.{u, v} α M), R.IsConsistent → R.IsCovering → R.HasLegalTypes →
@@ -327,6 +372,18 @@ def IntegerBlockServiceTarget : Prop :=
               U.eval (t.trans Function.Embedding.inl) = S.eval t) ∧
             (∀ z, (U.closure hU hUc).IsClosed (integerCut z)) ∧
             U.eval (appendBlockPoint x.tuple 0) = some d
+
+/-- **The block of order type `ℤ` with a request served after the descending part**, the target
+form: the descending block (`Realization.descendingBlockTarget`), then for each request the
+ascending block with that request served (`Realization.ascendingBlockServiceTarget`) over it; the
+integer cuts are closed by `Realization.isClosed_integerCut_of`. -/
+theorem integerBlockServiceTarget : IntegerBlockServiceTarget.{u, v} := by
+  intro α M _ hα R hR hc hL hT
+  obtain ⟨S, hS, hSc, hSL, hST, hSev, hScut⟩ := descendingBlockTarget hα R hR hc hL hT
+  refine ⟨S, hS, hSc, hSL, hST, hSev, hScut, fun x d hd hdt ↦ ?_⟩
+  obtain ⟨U, hU, hUc, hUL, hUT, hUev, hUcut, hUd⟩ :=
+    ascendingBlockServiceTarget hα S hS hSc hSL hST x d hd hdt
+  exact ⟨U, hU, hUc, hUL, hUT, hUev, isClosed_integerCut_of hS hSc hScut hU hUc hUev hUcut, hUd⟩
 
 /-- **Target: the order of a block of order type `ℤ`** (given-realization).  Let `U` on
 `(M ⊕ ℕ) ⊕ ℕ` be exactly consistent and covering with every integer cut closed.  For every

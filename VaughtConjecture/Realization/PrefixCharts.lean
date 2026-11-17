@@ -137,39 +137,39 @@ theorem zero (hL : R.HasLegalTypes) (hT : R.HasTopFreeTypes) (x : R.Occurrence) 
   exists_isTowerOver := ⟨Function.Embedding.refl _, rfl, StageType.IsTowerOver.refl⟩
   apply_block _ hs := absurd hs (by omega)
 
-/-- **The step of the prefix charts.**  At a limit stage, a prefix chart over `x` with `k` block
-points is the face, along a literal face map, of a prefix chart over any occurrence `y` having `x`
-as a face, with `k + 1` block points: the tower transfer
-(`StageType.exists_isTopFree_tower_transfer`) of the chart onto the type of `y`, followed by a
-top-free one-point coface (`StageType.exists_isTopFree_mem_cofaces`), whose new point is
-`Sum.inr k`. -/
-theorem exists_succ (hα : Order.IsSuccLimit α) (hL : R.HasLegalTypes) (hT : R.HasTopFreeTypes)
-    {y : R.Occurrence} {g : Fin x.arity ↪ Fin y.arity} (hgy : g.trans y.tuple = x.tuple)
-    (hgt : StageType.restrictFace g y.type = some x.type) (h : R.IsPrefixChart x k w T) :
+/-- **The step of the prefix charts, with a prescribed donor.**  At a limit stage, a prefix chart
+over `x` with `k` block points is the face, along a literal face map, of a prefix chart over any
+occurrence `y` having `x` as a face, with `k + 1` block points; moreover the new point `Sum.inr k`
+realizes a prescribed legal top-free donor `d` over a closed face `f₀` of the chart: every tuple `u`
+listing the points of `f₀` followed by `Sum.inr k` is a face of the new chart with type `d`.  The
+new chart is the tower transfer (`StageType.exists_isTopFree_tower_transfer`) of the chart onto the
+type of `y`, followed by the top-free pinned extension
+(`StageType.exists_isTopFree_pinned_extension`) along the image of `f₀` with donor `d`. -/
+theorem exists_succ_donor (hα : Order.IsSuccLimit α) (hL : R.HasLegalTypes)
+    (hT : R.HasTopFreeTypes) {y : R.Occurrence} {g : Fin x.arity ↪ Fin y.arity}
+    (hgy : g.trans y.tuple = x.tuple) (hgt : StageType.restrictFace g y.type = some x.type)
+    (h : R.IsPrefixChart x k w T) {m : ℕ} {f₀ : Fin m ↪ Fin N} {p : StageType.{u} α m}
+    (hp : StageType.restrictFace f₀ T = some p) {d : StageType.{u} α (m + 1)} (hd : d.IsLegal)
+    (hdt : d.IsTopFree) (hdp : StageType.restrictFace Fin.castSuccEmb d = some p) :
     ∃ (N' : ℕ) (w' : Fin N' ↪ M ⊕ ℕ) (T' : StageType.{u} α N'),
-      R.IsPrefixChart y (k + 1) w' T' ∧ ∃ G : Fin N ↪ Fin N', G.trans w' = w ∧
-        StageType.restrictFace G T' = some T := by
+      R.IsPrefixChart y (k + 1) w' T' ∧ (∃ G : Fin N ↪ Fin N', G.trans w' = w ∧
+        StageType.restrictFace G T' = some T) ∧
+      ∀ u : Fin (m + 1) ↪ M ⊕ ℕ, Fin.castSuccEmb.trans u = f₀.trans w →
+        u (Fin.last m) = Sum.inr k →
+          ∃ f : Fin (m + 1) ↪ Fin N', f.trans w' = u ∧ StageType.restrictFace f T' = some d := by
   obtain ⟨o, -, htow⟩ := h.exists_isTowerOver
   obtain ⟨n', Q, e', G, hQ, hQt, htowQ, hGQ, hcomm, -, -, hcard, hord⟩ :=
     StageType.exists_isTopFree_tower_transfer hα h.isLegal h.isTopFree htow
       (hL _ _ y.eval_tuple) (hT _ _ y.eval_tuple) hgt
-  obtain ⟨E, ⟨hE, hEQ⟩, hEt⟩ := StageType.exists_isTopFree_mem_cofaces hα hQ hQt
+  have hfQ : StageType.restrictFace (f₀.trans G) Q = some p := by
+    rw [← StageType.restrictFace_trans _ _ _ hGQ, hp]
+  obtain ⟨E, hE, hEt, hEQ, hEd⟩ :=
+    StageType.exists_isTopFree_pinned_extension hα hQ hQt hfQ hd hdt hdp
   have htow' := htowQ.snoc hEQ
   have hN := h.arity_eq
   have hn' : n' + 1 = y.arity + (k + 1) := by omega
-  refine ⟨n' + 1, prefixTuple y.tuple (n' + 1), E,
-    ⟨hE, hEt, hn', ⟨_, ?_, htow'⟩, fun s hs ↦ ?_⟩, G.trans Fin.castSuccEmb, ?_, ?_⟩
-  · refine Function.Embedding.ext fun i ↦ ?_
-    have hi : ((e'.trans Fin.castSuccEmb) i : ℕ) = i := htow'.val_apply i
-    simp only [Function.Embedding.trans_apply, Fin.coe_castSuccEmb, Fin.val_castSucc] at hi
-    simp only [Function.Embedding.trans_apply, Fin.coe_castSuccEmb, prefixTuple_apply,
-      Function.Embedding.inl_apply, Fin.val_castSucc]
-    split_ifs with hlt
-    · congr 2
-      exact Fin.ext hi
-    · exact absurd (hi.trans_lt i.isLt) hlt
-  · simp [prefixTuple_apply]
-  · refine Function.Embedding.ext fun j ↦ ?_
+  have hGw : (G.trans Fin.castSuccEmb).trans (prefixTuple y.tuple (n' + 1)) = w := by
+    refine Function.Embedding.ext fun j ↦ ?_
     rw [Function.Embedding.trans_apply, Function.Embedding.trans_apply, h.apply_eq,
       prefixTuple_apply]
     have hc : ((Fin.castSuccEmb (G j) : Fin (n' + 1)) : ℕ) = G j := rfl
@@ -194,7 +194,52 @@ theorem exists_succ (hα : Order.IsSuccLimit α) (hL : R.HasLegalTypes) (hT : R.
     · have := hord j (by omega)
       congr 1
       omega
+  refine ⟨n' + 1, prefixTuple y.tuple (n' + 1), E,
+    ⟨hE, hEt, hn', ⟨_, ?_, htow'⟩, fun s hs ↦ ?_⟩, ⟨G.trans Fin.castSuccEmb, hGw, ?_⟩,
+    fun u hu hul ↦ ⟨extendByLast (f₀.trans G), ?_, hEd⟩⟩
+  · refine Function.Embedding.ext fun i ↦ ?_
+    have hi : ((e'.trans Fin.castSuccEmb) i : ℕ) = i := htow'.val_apply i
+    simp only [Function.Embedding.trans_apply, Fin.coe_castSuccEmb, Fin.val_castSucc] at hi
+    simp only [Function.Embedding.trans_apply, Fin.coe_castSuccEmb, prefixTuple_apply,
+      Function.Embedding.inl_apply, Fin.val_castSucc]
+    split_ifs with hlt
+    · congr 2
+      exact Fin.ext hi
+    · exact absurd (hi.trans_lt i.isLt) hlt
+  · simp [prefixTuple_apply]
   · rw [← StageType.restrictFace_trans _ _ _ hEQ, hGQ]
+  · refine Function.Embedding.ext fun i ↦ ?_
+    induction i using Fin.lastCases with
+    | last =>
+      rw [Function.Embedding.trans_apply, extendByLast_last, hul, prefixTuple_apply]
+      split_ifs with hlt
+      · simp only [Fin.val_last] at hlt
+        omega
+      · simp only [Fin.val_last, Sum.inr.injEq]
+        omega
+    | cast i =>
+      rw [Function.Embedding.trans_apply, extendByLast_castSucc]
+      have h1 := DFunLike.congr_fun hGw (f₀ i)
+      have h2 := DFunLike.congr_fun hu i
+      simp only [Function.Embedding.trans_apply, Fin.coe_castSuccEmb] at h1 h2
+      exact h1.trans h2.symm
+
+/-- **The step of the prefix charts.**  At a limit stage, a prefix chart over `x` with `k` block
+points is the face, along a literal face map, of a prefix chart over any occurrence `y` having `x`
+as a face, with `k + 1` block points (`Realization.IsPrefixChart.exists_succ_donor` over the empty
+face, with a top-free one-point donor from `StageType.exists_isTopFree_mem_cofaces`). -/
+theorem exists_succ (hα : Order.IsSuccLimit α) (hL : R.HasLegalTypes) (hT : R.HasTopFreeTypes)
+    {y : R.Occurrence} {g : Fin x.arity ↪ Fin y.arity} (hgy : g.trans y.tuple = x.tuple)
+    (hgt : StageType.restrictFace g y.type = some x.type) (h : R.IsPrefixChart x k w T) :
+    ∃ (N' : ℕ) (w' : Fin N' ↪ M ⊕ ℕ) (T' : StageType.{u} α N'),
+      R.IsPrefixChart y (k + 1) w' T' ∧ ∃ G : Fin N ↪ Fin N', G.trans w' = w ∧
+        StageType.restrictFace G T' = some T := by
+  obtain ⟨p₀, hp₀⟩ := Option.isSome_iff_exists.mp
+    (T.isSome_restrictFace_of_zero Function.Embedding.ofIsEmpty)
+  obtain ⟨d, ⟨hd, hdp⟩, hdt⟩ := StageType.exists_isTopFree_mem_cofaces hα
+    (h.isLegal.restrictFace _ hp₀) (h.isTopFree.restrictFace hp₀)
+  obtain ⟨N', w', T', h', hG, -⟩ := h.exists_succ_donor hα hL hT hgy hgt hp₀ hd hdt hdp
+  exact ⟨N', w', T', h', hG⟩
 
 end IsPrefixChart
 
@@ -226,5 +271,46 @@ theorem exists_prefixCharts {α : Ordinal.{u}} {M : Type v} (hα : Order.IsSuccL
       IsPrefixChart.zero hL hT (c 0)⟩ step k
   exact ⟨fun k ↦ (s k).1.1, fun k ↦ (s k).1.2.1, fun k ↦ (s k).1.2.2, fun k ↦ (s k).2,
     fun k ↦ hstep k (s k)⟩
+
+/-- **Coherent prefix charts whose first block point realizes a prescribed donor.**  As
+`Realization.exists_prefixCharts`, and moreover, for a top-free coface `d` of the type of `c 0`,
+every tuple `u` listing the tuple of `c 0` followed by `Sum.inr 0` is a face of chart `1` with type
+`d`.  The step from chart `0` to chart `1` is `Realization.IsPrefixChart.exists_succ_donor` over the
+whole chart `0`; the later steps are `Realization.IsPrefixChart.exists_succ`. -/
+theorem exists_prefixCharts_serving {α : Ordinal.{u}} {M : Type v} (hα : Order.IsSuccLimit α)
+    (R : Realization.{u, v} α M) (hR : R.IsConsistent) (hL : R.HasLegalTypes)
+    (hT : R.HasTopFreeTypes) (c : ℕ → R.Occurrence) (hc : Monotone c)
+    {d : StageType.{u} α ((c 0).arity + 1)} (hd : d ∈ (c 0).type.cofaces) (hdt : d.IsTopFree) :
+    ∃ (N : ℕ → ℕ) (w : ∀ k, Fin (N k) ↪ M ⊕ ℕ) (T : ∀ k, StageType.{u} α (N k)),
+      (∀ k, R.IsPrefixChart (c k) k (w k) (T k)) ∧
+      (∀ k, ∃ g : Fin (N k) ↪ Fin (N (k + 1)), g.trans (w (k + 1)) = w k ∧
+        StageType.restrictFace g (T (k + 1)) = some (T k)) ∧
+      ∀ u : Fin ((c 0).arity + 1) ↪ M ⊕ ℕ,
+        Fin.castSuccEmb.trans u = (c 0).tuple.trans Function.Embedding.inl →
+        u (Fin.last _) = Sum.inr 0 →
+          ∃ f : Fin ((c 0).arity + 1) ↪ Fin (N 1), f.trans (w 1) = u ∧
+            StageType.restrictFace f (T 1) = some d := by
+  choose g hgc hgt using fun k : ℕ ↦ (Occurrence.le_iff_exists_restrictFace hR).mp
+    (hc (Nat.le_succ k))
+  let A : ℕ → Type _ := fun k ↦
+    {s : Σ N, (Fin N ↪ M ⊕ ℕ) × StageType.{u} α N // R.IsPrefixChart (c k) k s.2.1 s.2.2}
+  have hstep : ∀ k (s : A k), ∃ s' : A (k + 1), ∃ G : Fin s.1.1 ↪ Fin s'.1.1,
+      G.trans s'.1.2.1 = s.1.2.1 ∧ StageType.restrictFace G s'.1.2.2 = some s.1.2.2 :=
+    fun k s ↦ by
+      obtain ⟨N', w', T', h', G, hG, hGT⟩ := s.2.exists_succ hα hL hT (hgc k) (hgt k)
+      exact ⟨⟨⟨N', w', T'⟩, h'⟩, G, hG, hGT⟩
+  choose step hstep using hstep
+  have h₀ := IsPrefixChart.zero hL hT (c 0)
+  obtain ⟨N₁, w₁, T₁, h₁, ⟨G₀, hG₀w, hG₀T⟩, hserv⟩ := h₀.exists_succ_donor hα hL hT (hgc 0)
+    (hgt 0) (StageType.restrictFace_refl _) hd.1 hdt hd.2
+  let s₀ : A 0 := ⟨⟨_, (c 0).tuple.trans Function.Embedding.inl, (c 0).type⟩, h₀⟩
+  let t : ∀ k, A (k + 1) := fun k ↦
+    Nat.rec (motive := fun k ↦ A (k + 1)) ⟨⟨N₁, w₁, T₁⟩, h₁⟩ (fun k s ↦ step (k + 1) s) k
+  let s : ∀ k, A k := fun k ↦ Nat.casesOn (motive := A) k s₀ t
+  refine ⟨fun k ↦ (s k).1.1, fun k ↦ (s k).1.2.1, fun k ↦ (s k).1.2.2, fun k ↦ (s k).2,
+    fun k ↦ ?_, fun u hu hul ↦ hserv u (by simpa using hu) hul⟩
+  rcases k with _ | k
+  · exact ⟨G₀, hG₀w, hG₀T⟩
+  · exact hstep (k + 1) (s (k + 1))
 
 end VaughtConjecture.Realization
