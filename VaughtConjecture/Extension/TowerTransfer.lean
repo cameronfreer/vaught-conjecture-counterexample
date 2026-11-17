@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Extension.FamilyCofaces
 import VaughtConjecture.Extension.TopFreePinnedExtension
 
 /-!
@@ -32,6 +33,17 @@ The proof is an induction on the tower: each added point of `T` is re-attached o
 the previous stage by the top-free pinned extension (`StageType.exists_isTopFree_pinned_extension`)
 with the stage of `T` itself as the donor.  The new point is the last point, so it is outside the
 image of `P'`, which keeps the overlap exact.
+
+**Why the position formula.**  Every closed subface of `T` stays closed along `G`, by composition
+of restrictions (`StageType.restrictFace_trans`).  What is not automatic is that its union with the
+enlarged base `P'` is closed.  For the stages of the tower it is: by the point count and the
+position formula, for `m ≤ r ≤ n` the enlarged base together with the first `r` positions of `T`
+is the initial segment of `Q` of length `m' + (r - m)`, a stage of the tower `Q`, hence closed
+(`StageType.IsTowerOver.exists_restrictFace_castLEEmb`).
+
+**One-point cofaces.**  At a limit stage every legal top-free stage type has a top-free one-point
+coface (`StageType.exists_isTopFree_mem_cofaces`): the pinned extension along the empty face, with
+the one-point apex type capped below the stage as the donor.
 
 ## Placement
 
@@ -198,6 +210,27 @@ theorem exists_isTopFree_tower_transfer {α : Ordinal.{u}} {m m' n : ℕ}
       | cast j =>
         simp only [extendByLast_castSucc, Fin.val_castSucc] at hj ⊢
         exact hord j hj
+
+/-- **A top-free one-point coface at a limit stage.**  Every legal top-free stage type at a limit
+stage has a top-free one-point coface: the top-free pinned extension along the empty face
+(`StageType.exists_isTopFree_pinned_extension`), with donor the one-point apex type
+(`StageType.onePointApex`) capped at an ordinal below the stage, self-visible at `1`
+(`StageType.exists_cap`). -/
+theorem exists_isTopFree_mem_cofaces {α : Ordinal.{u}} {n : ℕ} (hα : Order.IsSuccLimit α)
+    {P : StageType.{u} α n} (hP : P.IsLegal) (hPt : P.IsTopFree) :
+    ∃ E ∈ P.cofaces, E.IsTopFree := by
+  obtain ⟨p₀, hp₀⟩ := Option.isSome_iff_exists.mp
+    (P.isSome_restrictFace_of_zero Function.Embedding.ofIsEmpty)
+  have hp₀t := hPt.restrictFace hp₀
+  obtain ⟨c, hcα, hc, -, -⟩ := exists_cap hα.isSuccPrelimit
+    (by simpa [Ordinal.bot_eq_zero] using hα.bot_lt) hp₀t hp₀t 1
+  obtain ⟨q, hq⟩ := Option.isSome_iff_exists.mp
+    (((onePointApex (α := α)).cap c hc hcα).isSome_restrictFace_of_zero
+      (Fin.castSuccEmb : Fin 0 ↪ Fin 1))
+  obtain rfl : q = p₀ := eq_of_zero q p₀
+  obtain ⟨Q, hQ, hQt, hQP, -⟩ := exists_isTopFree_pinned_extension hα hP hPt hp₀
+    (isLegal_cap.mpr isLegal_onePointApex) isTopFree_cap hq
+  exact ⟨Q, ⟨hQ, hQP⟩, hQt⟩
 
 /-- **Transfer of a tower to a larger base**, the target form
 (`StageType.exists_isTopFree_tower_transfer`). -/

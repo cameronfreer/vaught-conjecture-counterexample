@@ -31,6 +31,11 @@ exterior relation above any infinite `B ⊆ M` is the order of `ℤ`
 (`Realization.IntegerBlockOrderTarget`, given-realization; `Closure.closedCutOrderTarget` with
 index `ℤ`, and root change).  The exterior order of the block is `ω* + ω`.
 
+With a prescribed request: the ascending block whose first point realizes a given top-free donor
+over a given occurrence (`Realization.AscendingBlockServiceTarget`), and the block of order type
+`ℤ` whose first ascending point does so over an occurrence of the descending part
+(`Realization.IntegerBlockServiceTarget`); one serving point per block.
+
 All statements are stated, none proved.  Countability is of the old carrier only; the stage is
 any limit ordinal.
 
@@ -84,6 +89,29 @@ def AscendingBlockOrderTarget : Prop :=
       ∀ (a : X) (j : ℕ), Sum.inl a ∈ S.closure hS hSc (insert (Sum.inr j) (Sum.inl '' B)) ∧
         Sum.inr j ∉ S.closure hS hSc (insert (Sum.inl a) (Sum.inl '' B))
 
+/-- A tuple `t` of old points, read in `X ⊕ ℕ`, followed by the block point `Sum.inr j`. -/
+def appendBlockPoint {n : ℕ} (t : Fin n ↪ X) (j : ℕ) : Fin (n + 1) ↪ X ⊕ ℕ :=
+  Fin.Embedding.snoc (t.trans Function.Embedding.inl) (a := Sum.inr j) (by simp)
+
+/-- **Target: the ascending block with a prescribed request served.**  At a limit stage `α`, let
+`R` be an exactly consistent covering realization with legal top-free types on a countable carrier
+`X`, `x` an occurrence of `R` and `d` a top-free coface of its type.  Some exactly consistent
+covering realization `S` with legal top-free types on `X ⊕ ℕ` gives every tuple of old points its
+evaluation in `R`, `none` included, has every prefix cut closed, and gives the tuple of `x`
+followed by the first block point `Sum.inr 0` the type `d`.  Intended proof: attach the first
+block point by `Realization.optionAttachmentTarget`, attach the remaining block points by
+`Realization.AscendingBlockTarget` over the result, and relabel `Option X ⊕ ℕ` as `X ⊕ ℕ` fixing
+the old points.  Construction over a given realization.  Stated. -/
+def AscendingBlockServiceTarget : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃X : Type v⦄ [Countable X], Order.IsSuccLimit α →
+    ∀ (R : Realization.{u, v} α X), R.IsConsistent → R.IsCovering → R.HasLegalTypes →
+      R.HasTopFreeTypes → ∀ (x : R.Occurrence), ∀ d ∈ x.type.cofaces, d.IsTopFree →
+      ∃ (S : Realization.{u, v} α (X ⊕ ℕ)) (hS : S.IsConsistent) (hSc : S.IsCovering),
+        S.HasLegalTypes ∧ S.HasTopFreeTypes ∧
+        (∀ ⦃n : ℕ⦄ (t : Fin n ↪ X), S.eval (t.trans Function.Embedding.inl) = R.eval t) ∧
+        (∀ n, (S.closure hS hSc).IsClosed (prefixCut n)) ∧
+        S.eval (appendBlockPoint x.tuple 0) = some d
+
 end Ascending
 
 /-! ### The block of order type `ℤ` -/
@@ -122,6 +150,34 @@ def IntegerBlockTarget : Prop :=
         (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M),
           U.eval ((t.trans Function.Embedding.inl).trans Function.Embedding.inl) = R.eval t) ∧
         ∀ z, (U.closure hU hUc).IsClosed (integerCut z)
+
+/-- **Target: the block of order type `ℤ` with a request served after the descending part.**  At a
+limit stage `α`, let `R` be an exactly consistent covering realization with legal top-free types on
+a countable carrier `M`.  Some exactly consistent covering realization `S` with legal top-free
+types on `M ⊕ ℕ` (the descending part) gives every tuple of old points its evaluation in `R`,
+`none` included, and has every suffix cut closed; and for every occurrence `x` of `S` and every
+top-free coface `d` of its type, some exactly consistent covering realization `U` with legal
+top-free types on `(M ⊕ ℕ) ⊕ ℕ` gives every tuple of `M ⊕ ℕ` its evaluation in `S`, `none`
+included, has every integer cut closed, and gives the tuple of `x` followed by the first ascending
+point `Sum.inr 0` the type `d`.  The request may involve descending points.  Intended proof:
+`Realization.descendingBlockTarget`, then `Realization.AscendingBlockServiceTarget` over `S`; the
+suffix cuts of `S` stay closed by `Realization.imageClosureOfEvalEmbeddingTarget`.  Construction
+over a given realization.  Stated. -/
+def IntegerBlockServiceTarget : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type v⦄ [Countable M], Order.IsSuccLimit α →
+    ∀ (R : Realization.{u, v} α M), R.IsConsistent → R.IsCovering → R.HasLegalTypes →
+      R.HasTopFreeTypes →
+      ∃ (S : Realization.{u, v} α (M ⊕ ℕ)) (hS : S.IsConsistent) (hSc : S.IsCovering),
+        S.HasLegalTypes ∧ S.HasTopFreeTypes ∧
+        (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M), S.eval (t.trans Function.Embedding.inl) = R.eval t) ∧
+        (∀ k, (S.closure hS hSc).IsClosed (suffixCut k)) ∧
+        ∀ (x : S.Occurrence), ∀ d ∈ x.type.cofaces, d.IsTopFree →
+          ∃ (U : Realization.{u, v} α ((M ⊕ ℕ) ⊕ ℕ)) (hU : U.IsConsistent)
+            (hUc : U.IsCovering), U.HasLegalTypes ∧ U.HasTopFreeTypes ∧
+            (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M ⊕ ℕ),
+              U.eval (t.trans Function.Embedding.inl) = S.eval t) ∧
+            (∀ z, (U.closure hU hUc).IsClosed (integerCut z)) ∧
+            U.eval (appendBlockPoint x.tuple 0) = some d
 
 /-- **Target: the order of a block of order type `ℤ`** (given-realization).  Let `U` on
 `(M ⊕ ℕ) ⊕ ℕ` be exactly consistent and covering with every integer cut closed.  For every
