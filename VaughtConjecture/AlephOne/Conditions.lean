@@ -50,7 +50,7 @@ union (`AlephOne.Condition.union_dom_eq_univ`).
 ## Placement
 
 This file is Stage 3 (one model of cardinality `ℵ₁`) of the `ℵ₁` companion construction over the
-density sentence; that construction is not yet recorded in `roadmap/COMPANIONS.md`.  The
+density sentence, recorded in `roadmap/COMPANIONS.md` ("The `ℵ₁` companion construction").  The
 statements that use these conditions are in `VaughtConjecture.AlephOne.Construction`.
 -/
 

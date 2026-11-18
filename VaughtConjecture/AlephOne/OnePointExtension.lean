@@ -29,7 +29,7 @@ kept, and the request scheduled at `x` is served.
 ## Placement
 
 This file is Stage 3 (one model of cardinality `ℵ₁`) of the `ℵ₁` companion construction over the
-density sentence; that construction is not yet recorded in `roadmap/COMPANIONS.md`.
+density sentence, recorded in `roadmap/COMPANIONS.md` ("The `ℵ₁` companion construction").
 -/
 
 namespace VaughtConjecture.AlephOne
