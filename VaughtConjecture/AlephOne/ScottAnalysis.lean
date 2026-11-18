@@ -77,9 +77,9 @@ class (`ReceivingModelsScottProcessEqTarget`).
 * For a realization with its own base structure: `RealizationScottRankOmegaOneTarget` and
   `RealizationsScottProcessEqTarget` (proved), with `RealizationScottRankOmegaOneOfModelTarget`
   and `RealizationsScottProcessEqOfModelTarget` (proved).
-* `ExistsAlephOneModelScottRankOmegaOneTarget` (stated): the combined shape, an existence
-  statement, to be assembled from an existence theorem for the class and the given-model
-  statements here.
+* `ExistsAlephOneModelScottRankOmegaOneTarget` (proved, in `VaughtConjecture.AlephOne.Milestone`):
+  the combined shape, an existence statement, assembled from the existence theorem for the class
+  (`AlephOne.existsReceivingModelTarget`) and the given-model statements here.
 -/
 
 universe u w w'
@@ -461,8 +461,10 @@ theorem realizationsScottProcessEqOfModelTarget :
 /-- **Target: a model of the density sentence of cardinality `ℵ₁` and Scott rank `ω₁`.**  Some
 structure of the base language on a carrier in `Type` satisfies the density sentence, has
 cardinality `ℵ₁` and internal Scott rank `ω₁`, and its semantic Scott process of every length
-beyond `ω₁ + 1` has rank `ω₁`.  Existence statement, to be assembled from an existence theorem
-for the class and the given-model statements of this file.  Stated. -/
+beyond `ω₁ + 1` has rank `ω₁`.  Existence statement, assembled from an existence theorem for the
+class and the given-model statements of this file.  Proved
+(`AlephOne.existsAlephOneModelScottRankOmegaOneTarget`, in `VaughtConjecture.AlephOne.Milestone`).
+-/
 def ExistsAlephOneModelScottRankOmegaOneTarget : Prop :=
   ∃ (M : Type) (_ : baseLanguage.{0}.Structure M) (_ : Infinite M),
     Sentenceω.Realize baseLanguage.densitySentence.{0} M ∧ Cardinal.mk M = Cardinal.aleph 1 ∧
