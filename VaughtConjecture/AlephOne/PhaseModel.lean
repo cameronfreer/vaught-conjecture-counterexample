@@ -29,7 +29,7 @@ Both are proved.
 ## Placement
 
 This file belongs to the `ℵ₁` companion construction over the density sentence (Stage 3, by
-completed blocks); that construction is not yet recorded in `roadmap/COMPANIONS.md`.
+completed blocks), recorded in `roadmap/COMPANIONS.md` ("The `ℵ₁` companion construction").
 -/
 
 namespace VaughtConjecture.AlephOne.Phase

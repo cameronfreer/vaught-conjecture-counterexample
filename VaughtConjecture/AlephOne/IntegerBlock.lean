@@ -46,7 +46,7 @@ any limit ordinal.
 ## Placement
 
 This file belongs to the `ℵ₁` companion construction over the density sentence (block types of
-the construction); that construction is not yet recorded in `roadmap/COMPANIONS.md`.
+the construction), recorded in `roadmap/COMPANIONS.md` ("The `ℵ₁` companion construction").
 -/
 
 universe u v

@@ -1469,25 +1469,46 @@ statements.
   `ω₁ → Bool` whose coded orders (along one repetition scheme on `ω₁`; lexicographic sums over
   `ω₁` of copies of `ℕ` and `ℤ`) are pairwise tail-inequivalent (no nonempty upper set of one is
   isomorphic to a nonempty upper set of another), each of cardinality `ℵ₁` with every proper
-  initial segment countable.  It is the invariant planned for the family below; it asserts nothing
-  about models of `Φ`.
+  initial segment countable.  It is the invariant of the family below; by itself it asserts
+  nothing about models of `Φ`.
 * **Every assignment of block shapes.**  `AlephOne.Phase.existsFullPhaseReceivingModelTarget`
   (`AlephOne/PhaseModel`): every assignment of `ω` or `ℤ` to the phases is realized by a model of
   `Φ` with the prescribed blocks.  The model is the base structure of a receiving model at stage
   `ω₁` with top-free types, built by Zorn's lemma on conditions made of completed blocks
   (`AlephOne/PhaseConditions`); the condition and its block enumeration are part of the
   conclusion.
+* **The order reading and its invariance.**  `AlephOne.Phase.omegaOneOrderReadingTarget`
+  (`AlephOne/OrderReading`): in a full phase condition at stage `ω₁` (every phase completed, every
+  point a block point), the first block is a countably infinite closed root, and the exterior order
+  above it is the tail of the coded order of the shapes above the first phase.
+  `Realization.baseEquivExteriorTailEquivalentTarget` (`Realization/RootChange`): an isomorphism of
+  the base structures of two realizations on uncountable carriers preserves the canonical closure,
+  so above any countably infinite closed roots their exterior orders are tail-equivalent.
+* **`2^ℵ₁` pairwise nonisomorphic models of `Φ` of cardinality `ℵ₁`, in one Scott class.**
+  `AlephOne.existsAlephOneFamilyScottRankTarget` (`AlephOne/Family`): there is a family of
+  structures of the base language on carriers in `Type`, indexed by the `2^ℵ₁` maps `ω₁ → Bool`,
+  each satisfying `Φ`, of cardinality `ℵ₁` and internal Scott rank `ω₁`, with semantic Scott
+  process of rank `ω₁` at every length beyond `ω₁ + 1`; all members have the same semantic Scott
+  process of every positive length, and members at distinct indices are not isomorphic.
+  `AlephOne.existsAlephOneFamilyTarget` is the same family without the Scott conclusions.  The
+  member at a code `A` is the base structure of a full phase condition for the shapes read from
+  `A` along one repetition scheme on `ω₁`, with a schedule serving every request
+  (`AlephOne.Phase.existsFullPhaseReceivingModelTarget`).  Nonisomorphism is the given-condition
+  statement `AlephOne.Phase.codeEqOfBaseEquivTarget`: for any two full phase conditions realizing
+  codes `A` and `A'` along the same repetition scheme, with any schedules of requests, an
+  isomorphism of their base structures gives `A = A'`.  Its route is
+  `AlephOne.Phase.tailEquivalentOfBaseEquivTarget` (the coded orders of the two codes are
+  tail-equivalent, by the order reading and its invariance) and the order coding
+  (`CodedOrder.tailEquivalentInjectiveTarget`).  It is a statement about every such condition, not
+  only about the conditions chosen for the family.  The common Scott process is
+  `AlephOne.realizationsScottProcessEqOfModelTarget` applied to the members.
 
 **Not yet proved.**
 
-* **`2^ℵ₁` pairwise nonisomorphic models of `Φ` of cardinality `ℵ₁`** (prospective; Stage 5 of
-  the construction).  The intended argument, not yet compiled: for each code, a receiving model
-  with top-free types whose exterior order above a countable closed root is, past a countable
-  cut, the coded order of that code; base isomorphisms preserve the canonical closure, hence the
-  exterior orders, so the tail of the order is an isomorphism invariant, and the order coding
-  recovers the code.  It remains to show that the resulting models distinguish `2^ℵ₁` codes up to
-  isomorphism.  Until that is proved, no family of nonisomorphic uncountable models of `Φ` is
-  asserted to exist.
+* **The matching upper bound.**  The family gives at least `2^ℵ₁` isomorphism classes of models
+  of `Φ` of cardinality `ℵ₁`.  The matching upper bound, that the countable base language has at
+  most `2^ℵ₁` structures on a fixed carrier of cardinality `ℵ₁`, is not proved here; no theorem
+  here states that there are exactly `2^ℵ₁` such classes.
 
 ## Downstream: the direct cardinal ceiling
 
