@@ -21,30 +21,32 @@ isomorphism of their decoded structures; for a predicate `Q` on structures,
 `StructureCode.StructureClasses baseLanguage Q` is the quotient of the sigma type of a carrier in
 `Type` and a structure on it satisfying `Q` by isomorphism.
 
-**Statements** (stated; proofs are later work).
+**Statements** (status as marked).
 
-* `AlephOne.CodeCardLeTarget`: there are at most `2 ^ ℵ₁` codes.  Route: the general bound
+* `AlephOne.CodeCardLeTarget` (proved): there are at most `2 ^ ℵ₁` codes.  Route: the general bound
   `StructureCode.CardLeTarget` (countably many symbols, `ℵ₁` finite lists from the carrier, so at
   most `ℵ₁` queries) at the carrier.
-* `AlephOne.CodeClassesCardEqTarget` (the count): there is a family of codes indexed by the maps
-  `ω₁ → Bool` whose decoded structures have the conclusions of
+* `AlephOne.CodeClassesCardEqTarget` (proved; the count): there is a family of codes indexed by
+  the maps `ω₁ → Bool` whose decoded structures have the conclusions of
   `AlephOne.existsAlephOneFamilyScottRankTarget` (models of the density sentence, internal Scott
   rank `ω₁`, semantic Scott process of rank `ω₁` beyond `ω₁ + 1`, one common semantic Scott
   process at every positive length, pairwise nonisomorphic), such that **every** predicate on
   codes containing the family has exactly `2 ^ ℵ₁` isomorphism classes.  Route: the family theorem
   transported to the carrier along bijections (`StructureCode.ExistsIsoCodeTarget`); the upper
   bound passes to the quotient (`AlephOne.CodeCardLeTarget`); pairwise nonisomorphism makes the
-  map from `ω₁ → Bool` to the classes injective, and `#(ω₁ → Bool) = 2 ^ ℵ₁`.
-* `AlephOne.ModelClassesCardEqTarget` (first consequence): the models of the density sentence of
-  cardinality `ℵ₁` on carriers in `Type` fall into exactly `2 ^ ℵ₁` isomorphism classes.  Route:
-  each is isomorphic to the decoded structure of a code (`StructureCode.ExistsIsoCodeTarget`), so
-  the classes inject into the classes of the codes of models, which number `2 ^ ℵ₁` by the count;
-  the family gives the lower bound.
-* `AlephOne.ScottClassModelClassesCardEqTarget` (second consequence): there is a model `N` of the
-  density sentence of cardinality `ℵ₁` and internal Scott rank `ω₁` such that the models of the
-  density sentence of cardinality `ℵ₁` with the semantic Scott process of `N` at every positive
-  length already fall into exactly `2 ^ ℵ₁` isomorphism classes.  Route: as for the first
-  consequence, with `N` a member of the coded family.
+  map from `ω₁ → Bool` to the classes injective, and `#(ω₁ → Bool) = 2 ^ ℵ₁`
+  (`AlephOne.mk_classes_eq_of_family`).  The semantic Scott process passes along isomorphisms
+  (`AlephOne.scottProcessOf_eq_of_equiv`).
+* `AlephOne.ModelClassesCardEqTarget` (stated; first consequence): the models of the density
+  sentence of cardinality `ℵ₁` on carriers in `Type` fall into exactly `2 ^ ℵ₁` isomorphism
+  classes.  Route: a class is sent to the class, among all codes, of a code for any of its members
+  (`StructureCode.lift_mk_structureClasses_le`), which is injective, so there are at most
+  `2 ^ ℵ₁` classes; the decoded members of the coded family give the lower bound.
+* `AlephOne.ScottClassModelClassesCardEqTarget` (stated; second consequence): there is a model
+  `N` of the density sentence of cardinality `ℵ₁` and internal Scott rank `ω₁` such that the
+  models of the density sentence of cardinality `ℵ₁` with the semantic Scott process of `N` at
+  every positive length already fall into exactly `2 ^ ℵ₁` isomorphism classes.  Route: the same
+  count, with `N` the decoded member of the coded family at the constant map `false`.
 
 The count is about all codes satisfying the predicate, not only about the family: the family enters
 only through the lower bound.
@@ -56,6 +58,8 @@ This file belongs to the `ℵ₁` companion construction over the density senten
 -/
 
 namespace VaughtConjecture.AlephOne
+
+universe u v w w'
 
 open Ordinal FirstOrder Language InfinitaryLogic.ScottProcess.Semantic StructureCode
 
@@ -81,13 +85,13 @@ noncomputable instance (c : Code) : baseLanguage.{0}.Structure c.Decoded :=
 instance (c : Code) : Infinite c.Decoded :=
   inferInstanceAs (Infinite Carrier)
 
-/-- **Target: at most `2 ^ ℵ₁` codes** (stated).  The structure codes of the base language on the
+/-- **Target: at most `2 ^ ℵ₁` codes** (proved).  The structure codes of the base language on the
 carrier `ω₁.ToType` number at most `2 ^ ℵ₁`. -/
 def CodeCardLeTarget : Prop :=
   Cardinal.mk Code ≤ 2 ^ Cardinal.aleph 1
 
 /-- **Target: every predicate on codes containing the coded family has exactly `2 ^ ℵ₁`
-isomorphism classes** (stated; existence of the family, then a statement about every predicate).
+isomorphism classes** (proved; existence of the family, then a statement about every predicate).
 There is a family `F` of codes on the carrier `ω₁.ToType`, indexed by the maps `ω₁ → Bool`, whose
 decoded structures satisfy the density sentence, have internal Scott rank `ω₁` and semantic Scott
 process of rank `ω₁` at every length beyond `ω₁ + 1`, all have the same semantic Scott process of
@@ -137,5 +141,69 @@ def ScottClassModelClassesCardEqTarget : Prop :=
           ∃ _ : Infinite M, ∀ ⦃δ : Ordinal.{0}⦄ (hδ : 0 < δ),
             scottProcessOf baseLanguage.{0} M δ hδ = scottProcessOf baseLanguage.{0} N δ hδ) =
       2 ^ Cardinal.aleph 1
+
+/-! ### Proofs -/
+
+/-- **Isomorphic structures have the same semantic Scott process** of every positive length, for
+a relational language and infinite carriers in any two universes: an isomorphism and its inverse
+carry the injective tuples of each structure to injective tuples of the other with the same
+semantic entry (`sf_trans_equiv`). -/
+theorem scottProcessOf_eq_of_equiv {L : Language.{u, v}} [L.IsRelational] {M : Type w}
+    {N : Type w'} [L.Structure M] [L.Structure N] [Infinite M] [Infinite N] (f : M ≃[L] N)
+    {δ : Ordinal.{0}} (hδ : 0 < δ) : scottProcessOf L M δ hδ = scottProcessOf L N δ hδ := by
+  ext α hα n x
+  simp only [scottProcessOf_Φ, Set.mem_range]
+  constructor
+  · rintro ⟨a, rfl⟩
+    exact ⟨a.trans f.toEquiv.toEmbedding, sf_trans_equiv f α a⟩
+  · rintro ⟨b, rfl⟩
+    exact ⟨b.trans f.symm.toEquiv.toEmbedding, sf_trans_equiv f.symm α b⟩
+
+/-- **At most `2 ^ ℵ₁` codes**, the target form: `StructureCode.cardLeTarget` at the carrier, of
+cardinality `ℵ₁` (`AlephOne.mk_carrier`). -/
+theorem codeCardLeTarget : CodeCardLeTarget := by
+  have h := StructureCode.cardLeTarget (L := baseLanguage.{0}) (α := Carrier)
+  have h₁ : Cardinal.lift.{1} (Cardinal.mk Carrier) = Cardinal.aleph 1 := by simp
+  rw [h₁] at h
+  exact h
+
+/-- **A pairwise nonisomorphic family of codes indexed by `ω₁ → Bool` gives exactly `2 ^ ℵ₁`
+classes** to every predicate containing it: at most the number of codes
+(`AlephOne.codeCardLeTarget`), and at least the number of indices, since the class of `F A`
+determines `A` (`StructureCode.injective_mk_classes`). -/
+theorem mk_classes_eq_of_family (F : (Carrier → Bool) → Code)
+    (hF : ∀ A A', A ≠ A' → IsEmpty ((F A).Decoded ≃[baseLanguage.{0}] (F A').Decoded))
+    (P : Code → Prop) (hP : ∀ A, P (F A)) :
+    Cardinal.mk (Classes baseLanguage.{0} Carrier P) = 2 ^ Cardinal.aleph 1 := by
+  refine le_antisymm ((mk_classes_le P).trans codeCardLeTarget) ?_
+  have h := Cardinal.lift_mk_le_lift_mk_of_injective (injective_mk_classes F hP
+    fun A A' ⟨e⟩ ↦ by_contra fun hne ↦ (hF A A' hne).false e)
+  have h₁ : Cardinal.lift.{1} (Cardinal.mk (Carrier → Bool)) = 2 ^ Cardinal.aleph 1 := by
+    simp
+  rw [h₁, Cardinal.lift_uzero] at h
+  exact h
+
+/-- **Every predicate on codes containing the coded family has exactly `2 ^ ℵ₁` isomorphism
+classes**, the target form.  The family of `AlephOne.existsAlephOneFamilyScottRankTarget` is
+transported to the carrier along bijections (`StructureCode.existsIsoCodeTarget`); sentences, the
+internal Scott rank (`internalScottRank_map_equiv`) and the semantic Scott process
+(`AlephOne.scottProcessOf_eq_of_equiv`) pass along the isomorphisms, and so does
+nonisomorphism; the count is `AlephOne.mk_classes_eq_of_family`. -/
+theorem codeClassesCardEqTarget : CodeClassesCardEqTarget := by
+  obtain ⟨M, _, _, hM, hproc, hne, -⟩ := existsAlephOneFamilyScottRankTarget
+  have hiso : ∀ A, ∃ c : Code, Nonempty (M A ≃[baseLanguage.{0}] c.Decoded) := fun A ↦
+    StructureCode.existsIsoCodeTarget (L := baseLanguage.{0}) (M := M A) (α := Carrier)
+      (by simp [(hM A).2.1])
+  choose F e using hiso
+  have hF : ∀ A A', A ≠ A' → IsEmpty ((F A).Decoded ≃[baseLanguage.{0}] (F A').Decoded) :=
+    fun A A' h ↦ ⟨fun g ↦ (hne A A' h).false (((e A').some.symm.comp g).comp (e A).some)⟩
+  refine ⟨F, fun A ↦ ⟨?_, ?_, fun δ hδ ↦ ?_⟩, fun A A' δ hδ ↦ ?_, hF,
+    mk_classes_eq_of_family F hF⟩
+  · exact (LomegaEquiv.of_equiv (e A).some _).mp (hM A).1
+  · exact (internalScottRank_map_equiv (e A).some).trans (hM A).2.2.1
+  · rw [← scottProcessOf_eq_of_equiv (e A).some]
+    exact (hM A).2.2.2 hδ
+  · rw [← scottProcessOf_eq_of_equiv (e A).some, ← scottProcessOf_eq_of_equiv (e A').some]
+    exact hproc A A' hδ
 
 end VaughtConjecture.AlephOne
