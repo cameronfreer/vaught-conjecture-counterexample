@@ -1445,7 +1445,8 @@ is compiled conditionally on block determination (below).  None is an input to t
 ## The `ℵ₁` companion construction
 
 An optional construction over `Φ`, in `VaughtConjecture/AlephOne/` (with general closure lemmas in
-`Realization/ClosureCardinality`).  It is not an input to the main theorem and no core layer
+`Realization/ClosureCardinality` and the counting of coded structures in
+`Counting/StructureCodes`).  It is not an input to the main theorem and no core layer
 depends on it.  Its models are receiving models at stage `ω₁` all of whose types are top-free;
 given-model statements (about every model in that class) are kept distinct from existence
 statements.
@@ -1503,12 +1504,31 @@ statements.
   only about the conditions chosen for the family.  The common Scott process is
   `AlephOne.realizationsScottProcessEqOfModelTarget` applied to the members.
 
-**Not yet proved.**
-
-* **The matching upper bound.**  The family gives at least `2^ℵ₁` isomorphism classes of models
-  of `Φ` of cardinality `ℵ₁`.  The matching upper bound, that the countable base language has at
-  most `2^ℵ₁` structures on a fixed carrier of cardinality `ℵ₁`, is not proved here; no theorem
-  here states that there are exactly `2^ℵ₁` such classes.
+* **Exactly `2^ℵ₁` isomorphism classes of models of `Φ` of cardinality `ℵ₁`, already in one Scott
+  class.**  `AlephOne.modelClassesCardEqTarget` (`AlephOne/Count`): the quotient by isomorphism of
+  the sigma type of a carrier `M` in `Type` and a structure of the base language on `M` satisfying
+  `Φ`, with `#M = ℵ₁`, has cardinality `2^ℵ₁`.  `AlephOne.scottClassModelClassesCardEqTarget`:
+  there is such a model `N`, of internal Scott rank `ω₁` and with semantic Scott process of rank
+  `ω₁` at every length beyond `ω₁ + 1`, such that the models of `Φ` of cardinality `ℵ₁` on
+  carriers in `Type` with the semantic Scott process of `N` at every positive length already fall
+  into exactly `2^ℵ₁` isomorphism classes; `N` is the decoded member at the constant map `false` of
+  the coded family below.  What is counted is isomorphism classes of structures on carriers in
+  `Type`, not structures on a fixed carrier and not codes; carriers in higher universes are reached
+  only through the representation lemma below, and no count over them is stated.  Both theorems
+  come from one count on codes, `AlephOne.codeClassesCardEqTarget`: there is a family of structure
+  codes on the carrier `ω₁.ToType`, indexed by the maps `ω₁ → Bool`, whose decoded structures have
+  the conclusions of `AlephOne.existsAlephOneFamilyScottRankTarget`, such that every predicate on
+  codes containing the family has exactly `2^ℵ₁` classes under isomorphism of the decoded
+  structures (the predicate need not be invariant under isomorphism).  The upper bound is
+  `StructureCode.cardLeTarget` (`Counting/StructureCodes`): a relational language with countably
+  many relation symbols has at most `2^#α` structure codes on an infinite carrier `α`, hence at most
+  `2^ℵ₁` on `ω₁.ToType` (`AlephOne.codeCardLeTarget`).  The representation lemma
+  `StructureCode.existsIsoCodeTarget`, across universes: a structure on a carrier `M` with
+  `#M = #α` (lifted to a common universe) is isomorphic to the decoded structure of a code on `α`.
+  A class of structures is sent to the class, among all codes, of such a code for any of its
+  members, injectively (`StructureCode.lift_mk_structureClasses_le`).  The family is transported
+  along these isomorphisms, the semantic Scott process passing along isomorphisms
+  (`AlephOne.scottProcessOf_eq_of_equiv`).
 
 ## Downstream: the direct cardinal ceiling
 
