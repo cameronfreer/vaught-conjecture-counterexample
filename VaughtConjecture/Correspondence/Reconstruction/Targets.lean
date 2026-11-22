@@ -17,9 +17,18 @@ This file states the targets of Reconstruction [AFK26, Proposition 4.34] as prop
 premise visible.  None is proved here.  Correspondence with the printed definitions.
 
 * **B.T9, projection** (`ProjectionTarget β ξ M`): for `ξ ≤ β < ω₁` on a countable carrier,
-  `τ_ξ` sends `K_β[L]` into `K_ξ[L]` (the countable-stage projection result; the unrestricted
-  statement is not stated here).  The base reduct is unchanged by `τ_ξ`
-  (`baseReduct_projectStructure`, proved).
+  `τ_ξ` sends `K_β[L]` into `K_ξ[L]` (the countable-stage projection result).  The base reduct is
+  unchanged by `τ_ξ` (`baseReduct_projectStructure`, proved).
+* **Projection on arbitrary carriers** (`ProjectionArbitraryCarrierTarget β ξ M`): the printed
+  inclusion `τ_ξ(K_β[L]) ⊆ K_ξ[L]` of [AFK26, Theorem 4.23], the statement of `ProjectionTarget`
+  without `Countable M`.  `ProjectionTarget` is its specialization to countable carriers
+  (`projectionTarget_of_projectionArbitraryCarrierTarget`).
+* **The lifting step of projection** (`ProjectionLiftTarget β ξ M`): one instance of `D[δ]`,
+  `δ < λ_ξ`, in `τ_ξ(G)` for `G ∈ K_β[L]` on an arbitrary carrier: for one lower request over a
+  realized root `x` and every higher root `t*` of `x` in `G`, a donor `w` over `t*`, its
+  occurrence `G ⊨ Q_w(x y)`, the same occurrence `τ_ξ(G) ⊨ Q_{τ_ξ(w)}(x y)`, and agreement of
+  `τ_ξ(w)` with the requested class at the cutoff `δ`.  With the projection of compatibility and
+  `τ_ξ ∘ τ_ξ = τ_ξ` it gives the density clause of `ProjectionArbitraryCarrierTarget`.
 * **Base case** (`BaseCaseTarget β M`): for `β < ω₁`, two structures of `K_β[L]` with equal base
   reducts have equal projections to level zero: `τ_0(G) = τ_0(H)`.
 * **Successor** (`SuccessorTarget β ξ M`): for `ξ + 1 ≤ β < ω₁` on a countable carrier, two
@@ -52,6 +61,68 @@ statement without them is not this target.  Correspondence with the printed defi
 def ProjectionTarget (β ξ : Ordinal.{u}) (M : Type v) : Prop :=
   Countable M → β < ω₁ → ξ ≤ β →
     ∀ G ∈ templateStageClass M β, projectStructure ξ G ∈ templateStageClass M ξ
+
+/-- **Target: projection on arbitrary carriers** ([AFK26, Theorem 4.23], the inclusion
+`τ_ξ(K_β[L]) ⊆ K_ξ[L]`): for `ξ ≤ β < ω₁` and any carrier `M`, the projection `τ_ξ` sends
+`K_β[L]` into `K_ξ[L]` on the same carrier.  The premises are those of `ProjectionTarget` without
+`Countable M`: `β < ω₁` is the printed range `β ∈ ω₁`, and `ξ ≤ β` includes the case `ξ = β`, where
+`τ_β(G) = G`.  `ProjectionTarget β ξ M` is its specialization to countable carriers
+(`projectionTarget_of_projectionArbitraryCarrierTarget`).  Stated.
+Correspondence with the printed definitions. -/
+def ProjectionArbitraryCarrierTarget (β ξ : Ordinal.{u}) (M : Type v) : Prop :=
+  β < ω₁ → ξ ≤ β →
+    ∀ G ∈ templateStageClass M β, projectStructure ξ G ∈ templateStageClass M ξ
+
+open Correspondence in
+/-- **Target: the lifting step of projection** (the density clause in the proof of
+[AFK26, Theorem 4.23], one lower request at a time): for `ξ ≤ β < ω₁`, a structure `G` of
+`K_β[L]` on an arbitrary carrier `M`, and `δ < λ_ξ = ω + ω · ξ`, one request of `D[δ]`
+[AFK26, Definition 4.20] in `τ_ξ(G)` is met by projecting an occurrence in `G` over the actual
+higher root.  The premises are exactly those of `SatisfiesDensityAt δ (projectStructure ξ G)`,
+one quantifier for each printed one:
+
+* "`(Q_u(xy), Q_t(x)) ∈ ID[T]` with `u, t ∈ T`": legal classes `t` on `n ≥ 1` points and `u` on
+  `n + m` points with the pair `(Q_u(x y), Q_t(x))` in `ID[L]`;
+* the root: a tuple `x : Fin n → M` with `τ_ξ(G) ⊨ Q_t(x)`, an actual finite root of `τ_ξ(G)`.
+
+The conclusion is stated for every higher root of `x`: every legal class `t*` with
+`τ_ξ(t*) = t` and `G ⊨ Q_{t*}(x)` (by the definition of `τ_ξ(G)` there is one).  There are
+`y : Fin m → M` and a legal class `w` on `n + m` points such that
+
+* `w` lies over `t*` on the first `n` places (`w↾castAdd = t*`): the donor is over the actual
+  higher root;
+* `G ⊨ Q_w(x y)`: the occurrence in `G` extends the root occurrence `x` itself;
+* `τ_ξ(G) ⊨ Q_{τ_ξ(w)}(x y)`: the same occurrence survives projection, over the same `x`;
+* `trunc_δ(τ_ξ(w)) ≅_ren trunc_δ(u)`: the agreement that the lower request requires at its cutoff
+  `δ`.
+
+The last two conjuncts with `s := τ_ξ(w)` are the conclusion of the lower request.  Intended route
+(the printed one): clause (g) [AFK26, Definition 4.11 (g)] at `ξ`, in its class form
+(`legalClassTruncRepairTarget`), restores `t*` under `u`: a legal class `v` with `v↾castAdd = t*`
+and `trunc_δ(v) ≅_ren trunc_δ(u)`; `D[δ]` in `G` (`δ < λ_ξ ≤ λ_β`) for the pair `(Q_v, Q_{t*})`
+at `x` gives `y` and `w` with `G ⊨ Q_w(x y)` and `trunc_δ(w) ≅_ren trunc_δ(v)`; compatibility of
+`G` with `ID[L]` gives `w↾castAdd = t*`; and `trunc_δ(τ_ξ(w)) = trunc_δ(w)`
+(`TemplateClass.truncEquiv_project_iff`).  The premise `β < ω₁` (a countable stage) is kept; no
+countability of the carrier is assumed, and no presentation is used.
+Stated.  Correspondence with the printed definitions. -/
+def ProjectionLiftTarget (β ξ : Ordinal.{u}) (M : Type v) : Prop :=
+  β < ω₁ → ξ ≤ β → ∀ G ∈ templateStageClass M β, ∀ δ < blockStage ξ,
+    ∀ ⦃n m : ℕ⦄ (hn : 0 < n) (t : LegalClass.{u} n) (u : LegalClass.{u} (n + m)),
+      (⟨n + m, TemplateSymbol.invariant u (Nat.lt_add_right m hn),
+        atom (L := templateLanguage) (TemplateSymbol.invariant t hn) (Fin.castAdd m)⟩ :
+          DiagramPair templateLanguage.{u}) ∈ templateDiagramPairs →
+      ∀ x : Fin n → M,
+        RelMap (L := templateLanguage.{u}) (self := projectStructure ξ G)
+          (TemplateSymbol.invariant t hn) x →
+        ∀ t' : LegalClass.{u} n, t'.project ξ = t →
+          RelMap (L := templateLanguage.{u}) (self := G) (TemplateSymbol.invariant t' hn) x →
+          ∃ (y : Fin m → M) (w : LegalClass.{u} (n + m)),
+            w.1.restrictFace (Fin.castAddEmb m) = some t'.1 ∧
+            RelMap (L := templateLanguage.{u}) (self := G)
+              (TemplateSymbol.invariant w (Nat.lt_add_right m hn)) (Fin.append x y) ∧
+            RelMap (L := templateLanguage.{u}) (self := projectStructure ξ G)
+              (TemplateSymbol.invariant (w.project ξ) (Nat.lt_add_right m hn)) (Fin.append x y) ∧
+            (w.project ξ).1.TruncEquiv δ u.1
 
 /-- **Target: the base case of Reconstruction**: for `β < ω₁`, two structures of `K_β[L]` on the
 same carrier with equal base reducts `G↾L_c[L] = H↾L_c[L]` have equal projections to level zero

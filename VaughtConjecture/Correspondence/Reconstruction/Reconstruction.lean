@@ -24,7 +24,11 @@ Write `λ_ξ = blockStage ξ`; level `ξ` is the label stage `λ_ξ`, and level 
 * **Reconstruction** (`reconstructionTarget`, B.T10).  By transfinite induction on `ξ ≤ β`:
   `τ_ξ(G) = τ_ξ(H)` at level zero by the base case, at successors by the successor step, at limits
   by separation; at `ξ = β` this is `G = H`, literal equality on the carrier.
-* **Projection** (`projectionTarget`, B.T9, at countable stages on countable carriers).
+* **Projection** (`projectionTarget`, B.T9, at countable stages on countable carriers).  The
+  countable statement is the specialization of the arbitrary-carrier statement
+  (`projectionTarget_of_projectionArbitraryCarrierTarget`); the arbitrary-carrier statement
+  (`ProjectionArbitraryCarrierTarget`) and its lifting step (`ProjectionLiftTarget`) are stated,
+  not proved.
 -/
 
 universe u v
@@ -211,6 +215,13 @@ theorem projectionTarget (β ξ : Ordinal.{u}) (M : Type v) : ProjectionTarget �
     exact hred.isTemplateCompatible
   · rw [hτ, decode_toStructure hξ₁ hred]
     exact hdred
+
+/-- **The countable projection statement is a specialization of the arbitrary-carrier one**:
+`ProjectionArbitraryCarrierTarget β ξ M` gives `ProjectionTarget β ξ M`, the premise
+`Countable M` being unused.  Correspondence with the printed definitions. -/
+theorem projectionTarget_of_projectionArbitraryCarrierTarget {β ξ : Ordinal.{u}} {M : Type v}
+    (h : ProjectionArbitraryCarrierTarget β ξ M) : ProjectionTarget β ξ M :=
+  fun _ ↦ h
 
 end
 
