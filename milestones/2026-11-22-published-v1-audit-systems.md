@@ -103,8 +103,7 @@ structures will be countable with non-empty domains."
 templates `L`, and in the following form; for no other template system.
 
 1. `templateWeakSystemTarget`: `K[L]`, with the classes `K_β[L] = templateStageClass M β`, on
-   carriers in any universe, is a weak system (`WeakSystem`, the form of Definition 2.17 in which
-   countability is a premise of each membership assertion) for the diagram `templateDiagram` and
+   carriers in any universe, is a weak system (`WeakSystem`) for the diagram `templateDiagram` and
    the invariant system `templateInvariantSystem`.  Its closure under isomorphism and under
    projection (Claim 4.24, `projectionTarget`) is asserted for countable carriers only.
 2. `templateBaseModelsTarget`: on every countable nonempty carrier, a structure of `L_c[L]` is the
