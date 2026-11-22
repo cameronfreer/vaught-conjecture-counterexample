@@ -27,8 +27,8 @@ Write `λ_ξ = blockStage ξ`; level `ξ` is the label stage `λ_ξ`, and level 
 * **Projection** (`projectionTarget`, B.T9, at countable stages on countable carriers).  The
   countable statement is the specialization of the arbitrary-carrier statement
   (`projectionTarget_of_projectionArbitraryCarrierTarget`); the arbitrary-carrier statement
-  (`ProjectionArbitraryCarrierTarget`) and its lifting step (`ProjectionLiftTarget`) are stated,
-  not proved.
+  (`ProjectionArbitraryCarrierTarget`) and its lifting step (`ProjectionLiftTarget`) are proved in
+  `VaughtConjecture.Correspondence.TemplateSystem.Projection`, downstream of clause (g).
 -/
 
 universe u v
