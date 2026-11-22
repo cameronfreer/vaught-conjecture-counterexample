@@ -67,7 +67,8 @@ def ProjectionTarget (β ξ : Ordinal.{u}) (M : Type v) : Prop :=
 `K_β[L]` into `K_ξ[L]` on the same carrier.  The premises are those of `ProjectionTarget` without
 `Countable M`: `β < ω₁` is the printed range `β ∈ ω₁`, and `ξ ≤ β` includes the case `ξ = β`, where
 `τ_β(G) = G`.  `ProjectionTarget β ξ M` is its specialization to countable carriers
-(`projectionTarget_of_projectionArbitraryCarrierTarget`).  Stated.
+(`projectionTarget_of_projectionArbitraryCarrierTarget`).  Proved by
+`projectionArbitraryCarrierTarget` in `Correspondence/TemplateSystem/Projection`.
 Correspondence with the printed definitions. -/
 def ProjectionArbitraryCarrierTarget (β ξ : Ordinal.{u}) (M : Type v) : Prop :=
   β < ω₁ → ξ ≤ β →
@@ -104,7 +105,8 @@ at `x` gives `y` and `w` with `G ⊨ Q_w(x y)` and `trunc_δ(w) ≅_ren trunc_δ
 `G` with `ID[L]` gives `w↾castAdd = t*`; and `trunc_δ(τ_ξ(w)) = trunc_δ(w)`
 (`TemplateClass.truncEquiv_project_iff`).  The premise `β < ω₁` (a countable stage) is kept; no
 countability of the carrier is assumed, and no presentation is used.
-Stated.  Correspondence with the printed definitions. -/
+Proved by `projectionLiftTarget` in `Correspondence/TemplateSystem/Projection`.  Correspondence
+with the printed definitions. -/
 def ProjectionLiftTarget (β ξ : Ordinal.{u}) (M : Type v) : Prop :=
   β < ω₁ → ξ ≤ β → ∀ G ∈ templateStageClass M β, ∀ δ < blockStage ξ,
     ∀ ⦃n m : ℕ⦄ (hn : 0 < n) (t : LegalClass.{u} n) (u : LegalClass.{u} (n + m)),
