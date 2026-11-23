@@ -26,7 +26,12 @@ the chart in the library: the relations of the structure on `T.TemplateChart`, w
   truncation at `ω = ω + ω · 0` of that face (`StageType.project` at `blockStage 0`).
   `BaseClauseTarget`: for a chosen template `t` whose class is fixed by the truncation at `ω`, the
   printed test is the chart's reading of `TemplateSymbol.base` at the legal class of `t`.
-  **Stated.**
+  **Proved** (`baseClauseTarget`).
+* **The witness `Q_{t⁺}`** (`BaseClauseWitnessTarget`): when `T` is strongly coded legal, the
+  printed test for `R_t` holds of `xs` exactly when some chosen `Q_u` holds of `xs` in the printed
+  chart of `T` (`StageType.PrintedHolds`) and the truncation of `u` at `ω` is a cell renaming of
+  `t` ([AFK26, Definition 4.18], `t⁻ ≃_ren trunc_ω(t⁺)` with `u = t⁺`, `t = t⁻`).  **Proved**
+  (`baseClauseWitnessTarget`).
 
 **Non-injective index maps.**  Both printed tests require `xs` to be injective, and so does
 `StageType.Holds`; for a non-injective `xs` both sides of each comparison are false.  The two
@@ -103,7 +108,8 @@ theorem closedClauseTarget : ClosedClauseTarget.{u} := by
 /-- **Target: the clause for `R_t`.**  For a chosen template `t` on `[k]` whose class is fixed by
 the truncation at `ω` (the printed condition `τ₀(Q_t) = Q_t`), and every `xs : Fin k → Fin n`,
 injective or not, the printed test for `R_t` on `xs` is the reading of `TemplateSymbol.base` of
-the legal class of `t` on `xs` in the chart `T.TemplateChart` of `T`.  Stated.
+the legal class of `t` on `xs` in the chart `T.TemplateChart` of `T`.  Proved
+(`baseClauseTarget`).
 Correspondence with the printed definitions. -/
 def BaseClauseTarget : Prop :=
   ∀ ⦃n k : ℕ⦄ (T : StageType.{u} ω₁ n) (t : ChosenSymbol.{u} k)
@@ -112,6 +118,63 @@ def BaseClauseTarget : Prop :=
       T.PrintedBaseHolds t.1 xs ↔
         RelMap (L := templateLanguage.{u}) (M := T.TemplateChart)
           (TemplateSymbol.base t.toLegalClass h0 t.pos) xs
+
+/-- **The clause for `R_t`, proved**: at `ω₁` the class at `ω₁` of a face is its class, the
+truncation commutes with classes (`TemplateClass.project_toClass`), and a chosen representative
+`r(X)` is `t` exactly when `X` is the class of `t` (`toClass_chosenTemplateRepresentative`,
+`chosenSymbolOf_toLegalClass`). -/
+theorem baseClauseTarget : BaseClauseTarget.{u} := by
+  intro n k T t h0 xs
+  change _ ↔ T.Holds _ xs
+  refine exists_congr fun h ↦ exists_congr fun s ↦ and_congr_right fun _ ↦ ?_
+  have hg : s.globalClass = s.toClass := by
+    rw [globalClass, reduce_eq_castLE _ _ le_rfl, castLE_refl]
+  change _ ↔ s.globalClass.project (isSuccPrelimit_blockStage 0) = t.1.toClass
+  rw [hg, TemplateClass.project_toClass]
+  constructor
+  · intro e
+    rw [← e, toClass_chosenTemplateRepresentative]
+  · intro e
+    rw [e]
+    exact congrArg Subtype.val (chosenSymbolOf_toLegalClass t)
+
+/-- **Target: the clause for `R_t` with its witness `Q_{t⁺}`.**  For a strongly coded legal `T` at
+`ω₁`, a chosen template `t` on `[k]` whose class is fixed by the truncation at `ω`, and every
+`xs : Fin k → Fin n`, the printed test for `R_t` holds of `xs` exactly when some chosen `Q_u`
+holds of `xs` in the printed chart of `T` and the truncation of `u` at `ω` is a cell renaming of
+`t` ([AFK26, Definition 4.18], third clause: `u = t⁺` and `t⁻ ≃_ren trunc_ω(t⁺)`, read with
+`StageType.IsCellRenaming`).  Proved (`baseClauseWitnessTarget`).
+Correspondence with the printed definitions. -/
+def BaseClauseWitnessTarget : Prop :=
+  ∀ ⦃n k : ℕ⦄ (T : StageType.{u} ω₁ n), T.IsStronglyCodedLegal → ∀ (t : ChosenSymbol.{u} k),
+    t.toLegalClass.1.project (isSuccPrelimit_blockStage 0) = t.toLegalClass.1 →
+      ∀ xs : Fin k → Fin n, T.PrintedBaseHolds t.1 xs ↔
+        ∃ u : ChosenSymbol.{u} k, T.PrintedHolds u.1 xs ∧
+          (u.1.project (isSuccPrelimit_blockStage 0)).IsCellRenaming t.1
+
+/-- **The clause for `R_t` with its witness `Q_{t⁺}`, proved**: forward, `u` is the chosen
+representative of the face of `T` along `xs`, legal by `StageType.IsLegal.restrictFace` and
+`StageType.isStronglyCoded_of_restrictFace`; backward, the reading of `Q_u` identifies the face
+with `u` up to renaming, and the chosen representative of the class of `t` is `t`. -/
+theorem baseClauseWitnessTarget : BaseClauseWitnessTarget.{u} := by
+  intro n k T hT t _ xs
+  constructor
+  · rintro ⟨h, s, hs, e⟩
+    have hsL : s.IsStronglyCodedLegal :=
+      ⟨hT.1.restrictFace ⟨xs, h⟩ hs, isStronglyCoded_of_restrictFace hs hT.2⟩
+    refine ⟨chosenSymbolOf ⟨s.toClass, hsL⟩ t.pos, ⟨h, s, hs, ?_⟩, ?_⟩
+    · exact toClass_eq_toClass_iff.mp (toClass_chosenTemplateRepresentative s.toClass).symm
+    · apply toClass_eq_toClass_iff.mp
+      rw [← e, toClass_chosenTemplateRepresentative]
+      exact congrArg (TemplateClass.project (isSuccPrelimit_blockStage 0))
+        (toClass_chosenTemplateRepresentative s.toClass)
+  · rintro ⟨u, ⟨h, s, hs, hsu⟩, hut⟩
+    refine ⟨h, s, hs, ?_⟩
+    have hc : (s.project (isSuccPrelimit_blockStage 0)).toClass = t.1.toClass :=
+      (congrArg (TemplateClass.project (isSuccPrelimit_blockStage 0))
+        (toClass_eq_toClass_iff.mpr hsu)).trans (toClass_eq_toClass_iff.mpr hut)
+    rw [hc]
+    exact congrArg Subtype.val (chosenSymbolOf_toLegalClass t)
 
 /-! ### Arity zero -/
 
