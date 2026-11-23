@@ -30,14 +30,15 @@ work.
 **Arity zero.**  Both families are empty at arity `0`: chosen legal templates have positive arity
 (`chosenLegalTemplates`), and every symbol of `templateLanguage` has positive arity
 (`TemplateSymbol.pos`).  This is `ArityZeroTarget`, proved; the equivalence of
-`ChosenSymbolEquivTarget` is stated at every arity, including `0`.
+`ChosenSymbolEquivTarget` is proved at every arity, including `0`.
 
 **Structures.**  A structure `G` of `templateLanguage` on `M` gives a structure of
 `chosenLanguage` on the same carrier by transport along the symbol map, the reduct
 `chosenReduct G` (`LHom.reduct` of `chosenSymbolMap`): `Q_{r(d)}` is read as `Q_d`.  So
 corresponding symbols read the same on every tuple of `M` by definition of the reduct
 (`SameReadingTarget`, proved).  Every structure of `chosenLanguage` is such a reduct
-(`ChosenReductSurjectiveTarget`, stated); the reduct forgets `P_k` and `R_t`.
+(`ChosenReductSurjectiveTarget`, proved, with `P_k` and `R_t` read as false in the extension
+`chosenExtension`); the reduct forgets `P_k` and `R_t`.
 
 **Charts.**  The all-template reading `StageType.PrintedHolds` of
 `VaughtConjecture.Correspondence.TemplateSystem.RepresentativeDictionary` is kept for literal
@@ -51,11 +52,11 @@ faces, whose templates need not be chosen.  On chosen templates it is the chosen
   **Proved.**
 * `RealizesChosenChartReductTarget` — `x` realizes the chosen chart of `T` in `chosenReduct G`
   exactly when every class symbol `Q_d` holds of `x ∘ xs` in `G` exactly when it holds of `xs` in
-  the chart `StageType.Holds` of `T`.  **Stated.**
+  the chart `StageType.Holds` of `T`.  **Proved.**
 
-**Status.**  Proved: `ArityZeroTarget`, `SameReadingTarget`, `ChosenChartReductTarget`,
-`RealizesPrintedChartRestrictTarget`.  Stated: `ChosenSymbolEquivTarget`,
-`ChosenReductSurjectiveTarget`, `RealizesChosenChartReductTarget`.
+**Status.**  Proved: `ChosenSymbolEquivTarget`, `ArityZeroTarget`, `SameReadingTarget`,
+`ChosenReductSurjectiveTarget`, `ChosenChartReductTarget`, `RealizesPrintedChartRestrictTarget`,
+`RealizesChosenChartReductTarget`.
 -/
 
 universe u v
@@ -129,6 +130,20 @@ def chosenSymbolOf {n : ℕ} (c : LegalClass.{u} n) (hn : 0 < n) : ChosenSymbol.
     Subtype.ext (toClass_chosenTemplateRepresentative c.1)
   rw [ChosenSymbol.toTemplateSymbol, hc]
 
+/-- The chosen section at the legal class of a chosen symbol is the symbol. -/
+@[simp] theorem chosenSymbolOf_toLegalClass {n : ℕ} (t : ChosenSymbol.{u} n) :
+    chosenSymbolOf t.toLegalClass t.pos = t := by
+  obtain ⟨t, -, c, rfl⟩ := t
+  refine Subtype.ext ?_
+  change chosenTemplateRepresentative (chosenTemplateRepresentative c.1).toClass = _
+  rw [toClass_chosenTemplateRepresentative]
+
+/-- **The chosen symbol of a class symbol**: `Q_d ↦ Q_{r(d)}`, the chosen section. -/
+def InvariantSymbol.toChosenSymbol {n : ℕ} : InvariantSymbol.{u} n → ChosenSymbol.{u} n
+  | ⟨.invariant c hn, _⟩ => chosenSymbolOf c hn
+  | ⟨.closed _, h⟩ => False.elim h
+  | ⟨.base _ _ _, h⟩ => False.elim h
+
 /-- **The symbol map `L_b[L] → templateLanguage`**: `Q_{r(d)} ↦ Q_d`.
 Correspondence with the printed definitions. -/
 def chosenSymbolMap : chosenLanguage.{u} →ᴸ templateLanguage.{u} where
@@ -140,12 +155,27 @@ def chosenSymbolMap : chosenLanguage.{u} →ᴸ templateLanguage.{u} where
 /-- **Target: the chosen symbols are the class symbols, arity by arity.**  At every arity `n`
 there is an equivalence between the chosen symbols and the class symbols that sends `Q_{r(d)}` to
 `Q_d` and whose inverse is the chosen section `Q_d ↦ Q_{r(d)}`.  At `n = 0` both sides are empty
-(`ArityZeroTarget`).  Stated.  Correspondence with the printed definitions. -/
+(`ArityZeroTarget`).  Proved (`chosenSymbolEquivTarget`).
+Correspondence with the printed definitions. -/
 def ChosenSymbolEquivTarget : Prop :=
   ∀ n : ℕ, ∃ e : ChosenSymbol.{u} n ≃ InvariantSymbol.{u} n,
     (∀ t : ChosenSymbol.{u} n, (e t).1 = t.toTemplateSymbol) ∧
       ∀ (c : LegalClass.{u} n) (hn : 0 < n),
         e.symm ⟨TemplateSymbol.invariant c hn, trivial⟩ = chosenSymbolOf c hn
+
+/-- **The chosen symbols are the class symbols, arity by arity, proved**: the forward map is
+`ChosenSymbol.toTemplateSymbol`, the inverse `InvariantSymbol.toChosenSymbol`, and the two are
+inverse by `chosenSymbolOf_toLegalClass` and `toTemplateSymbol_chosenSymbolOf`. -/
+theorem chosenSymbolEquivTarget : ChosenSymbolEquivTarget.{u} := by
+  intro n
+  refine ⟨{ toFun := fun t ↦ ⟨t.toTemplateSymbol, trivial⟩
+            invFun := InvariantSymbol.toChosenSymbol
+            left_inv := fun t ↦ chosenSymbolOf_toLegalClass t
+            right_inv := ?_ }, fun _ ↦ rfl, fun _ _ ↦ rfl⟩
+  rintro ⟨_ | ⟨c, hn⟩ | _, h⟩
+  · exact False.elim h
+  · exact Subtype.ext (toTemplateSymbol_chosenSymbolOf c hn)
+  · exact False.elim h
 
 /-- **Target: at arity zero both families of `Q`-symbols are empty.**
 Correspondence with the printed definitions. -/
@@ -177,6 +207,36 @@ Correspondence with the printed definitions. -/
       RelMap (L := templateLanguage.{u}) (self := G) t.toTemplateSymbol x :=
   Iff.rfl
 
+/-- Two structures of `chosenLanguage` on `M` are equal when they have the same relations.
+Native construction. -/
+theorem chosenStructure_ext {H H' : chosenLanguage.{u}.Structure M}
+    (h : ∀ {k : ℕ} (t : ChosenSymbol.{u} k) (xs : Fin k → M),
+      RelMap (L := chosenLanguage.{u}) (self := H) t xs ↔
+        RelMap (L := chosenLanguage.{u}) (self := H') t xs) : H = H' := by
+  obtain ⟨f, R⟩ := H
+  obtain ⟨f', R'⟩ := H'
+  have hf : @f = @f' := funext fun _ ↦ funext fun g ↦ Empty.elim g
+  subst hf
+  congr
+  funext k t xs
+  exact propext (h t xs)
+
+/-- The relations of `chosenExtension H`: `Q_d` as the chosen symbol `Q_{r(d)}` of `H`, and the
+symbols `P_k` and `R_t`, which `chosenLanguage` does not have, as false. -/
+def chosenExtensionRel (H : chosenLanguage.{u}.Structure M) :
+    ∀ {k : ℕ}, TemplateSymbol.{u} k → (Fin k → M) → Prop
+  | _, .invariant c hn, xs =>
+    RelMap (L := chosenLanguage.{u}) (self := H) (chosenSymbolOf c hn) xs
+  | _, .closed _, _ => False
+  | _, .base _ _ _, _ => False
+
+/-- **An extension of a chosen-symbol structure to `templateLanguage`**, on the same carrier:
+`Q_d` is read as `Q_{r(d)}`, and `P_k` and `R_t` are read as false.  Native construction. -/
+@[instance_reducible] def chosenExtension (H : chosenLanguage.{u}.Structure M) :
+    templateLanguage.{u}.Structure M where
+  funMap f := Empty.elim f
+  RelMap r xs := chosenExtensionRel H r xs
+
 end Structures
 
 /-- **Target: corresponding symbols read the same on the same tuple.**  For a structure `G` of
@@ -196,11 +256,20 @@ theorem sameReadingTarget : SameReadingTarget.{u, v} := by
   rw [relMap_chosenReduct, toTemplateSymbol_chosenSymbolOf]
 
 /-- **Target: every chosen-symbol structure is a reduct.**  Every structure of `chosenLanguage`
-on `M` is `chosenReduct G` for some structure `G` of `templateLanguage` on `M`.  Stated.
+on `M` is `chosenReduct G` for some structure `G` of `templateLanguage` on `M`.  Proved
+(`chosenReductSurjectiveTarget`).
 Correspondence with the printed definitions. -/
 def ChosenReductSurjectiveTarget : Prop :=
   ∀ (M : Type v) (H : chosenLanguage.{u}.Structure M),
     ∃ G : templateLanguage.{u}.Structure M, chosenReduct G = H
+
+/-- **Every chosen-symbol structure is a reduct, proved**: the reduct of `chosenExtension H` is
+`H`, by `chosenSymbolOf_toLegalClass`. -/
+theorem chosenReductSurjectiveTarget : ChosenReductSurjectiveTarget.{u, v} := by
+  intro M H
+  refine ⟨chosenExtension H, chosenStructure_ext fun t xs ↦ ?_⟩
+  change RelMap (L := chosenLanguage.{u}) (self := H) (chosenSymbolOf t.toLegalClass t.pos) xs ↔ _
+  rw [chosenSymbolOf_toLegalClass]
 
 /-! ### Charts on the chosen symbols -/
 
@@ -252,7 +321,8 @@ theorem realizesPrintedChartRestrictTarget : RealizesPrintedChartRestrictTarget.
 structure `G` of `templateLanguage` on `M`, a tuple `x : Fin n → M` and `T` at stage `ω₁`, `x`
 realizes the printed chart of `T` on the chosen symbols in `chosenReduct G` exactly when, for
 every legal class `d` on `[k]`, `k > 0`, and every `xs : Fin k → Fin n`, `Q_d` holds of `x ∘ xs`
-in `G` exactly when it holds of `xs` in the chart `StageType.Holds` of `T`.  Stated.
+in `G` exactly when it holds of `xs` in the chart `StageType.Holds` of `T`.  Proved
+(`realizesChosenChartReductTarget`).
 Correspondence with the printed definitions. -/
 def RealizesChosenChartReductTarget : Prop :=
   ∀ (M : Type v) (G : templateLanguage.{u}.Structure M) ⦃n : ℕ⦄ (x : Fin n → M)
@@ -261,6 +331,21 @@ def RealizesChosenChartReductTarget : Prop :=
         ∀ ⦃k : ℕ⦄ (c : LegalClass.{u} k) (hk : 0 < k) (xs : Fin k → Fin n),
           RelMap (L := templateLanguage.{u}) (self := G) (TemplateSymbol.invariant c hk)
               (x ∘ xs) ↔ T.Holds (TemplateSymbol.invariant c hk) xs
+
+/-- **The chosen chart in a reduct is the class chart on the symbols `Q_d`, proved**: by
+`sameReadingTarget`, `printedClassReadingTarget` and the chosen section, at every index map `xs`,
+injective or not. -/
+theorem realizesChosenChartReductTarget : RealizesChosenChartReductTarget.{u, v} := by
+  intro M G n x T
+  have hT {k : ℕ} (t : ChosenSymbol.{u} k) (xs : Fin k → Fin n) :
+      T.PrintedHolds t.1 xs ↔ T.Holds t.toTemplateSymbol xs :=
+    printedClassReadingTarget T t.1 t.isStronglyCodedLegal_toClass t.pos xs
+  refine ⟨fun h k c hk xs ↦ ?_, fun h k t xs ↦ ?_⟩
+  · have e := hT (chosenSymbolOf c hk) xs
+    rw [toTemplateSymbol_chosenSymbolOf] at e
+    exact ((sameReadingTarget M G c hk (x ∘ xs)).symm.trans (h _ xs)).trans e
+  · exact (relMap_chosenReduct G t (x ∘ xs)).trans
+      ((h t.toLegalClass t.pos xs).trans (hT t xs).symm)
 
 end
 
