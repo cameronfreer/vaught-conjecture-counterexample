@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.AlephOne.Schedule
 import VaughtConjecture.Continuation.ExactAge
 import VaughtConjecture.ProcessRank.BoundedAge
+import VaughtConjecture.ProcessRank.RankUpper
 import VaughtConjecture.Realization.ReceivingLimit
 
 /-!
@@ -21,8 +22,8 @@ legal types of top grade at most `K`), beside the existing files, which are not 
 **Top grades of a realization.**  A realization has top grades at most `K`
 (`ProcessRank.Bounded.HasTopGradeLe`) when every type it assigns has top grade at most `K`; at
 `K = 0` this is `Realization.HasTopFreeTypes` (`ProcessRank.Bounded.hasTopGradeLe_zero_iff`,
-proved).  The **realized age** of a realization (`ProcessRank.Bounded.realizedAge`) is the family
-of the stage types it covers.
+proved).  The **realized age** of a realization (`ProcessRank.realizedAge`, in
+`VaughtConjecture.ProcessRank.RankUpper`) is the family of the stage types it covers.
 
 **The construction** (proved in `VaughtConjecture.ProcessRank.BoundedExistence`).  Requests and
 the unbounded schedule are those of the `ℵ₁` companion construction (`AlephOne.Request`,
@@ -88,10 +89,6 @@ theorem hasTopGradeLe_zero_iff {R : Realization.{u, v} α M} :
     HasTopGradeLe R 0 ↔ R.HasTopFreeTypes := by
   simp only [HasTopGradeLe, HasTopFreeTypes, Nat.le_zero, StageType.topGrade_eq_zero_iff]
 
-/-- The **realized age** of a realization: the stage types it covers. -/
-def realizedAge (R : Realization.{u, v} α M) (m : ℕ) : Set (StageType.{u} α m) :=
-  {D | ∃ u : Fin m → M, R.Covers D u}
-
 /-- **The realized age is exactly the bounded age** (given-model): a model with top grades at most
 `K` and exact receiving within `A_K` covers a stage type exactly when it lies in `A_K`.  A covered
 type is legal and of top grade at most `K`; a member of `A_K` is received over the empty cover,
@@ -100,6 +97,7 @@ theorem realizedAge_eq_boundedAge {R : Realization.{u, v} α M} (hR : R.IsModel)
     (hK : HasTopGradeLe R K) (hrec : R.ExactReceivingWithin (boundedAge K)) (m : ℕ) :
     realizedAge R m = boundedAge K m := by
   ext D
+  rw [mem_realizedAge_iff]
   constructor
   · rintro ⟨u, hinj, hu⟩
     exact ⟨hR.isLegal _ D hu, hK _ D hu⟩

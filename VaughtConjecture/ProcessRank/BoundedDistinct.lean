@@ -5,8 +5,10 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.AlephOne.Count
 import VaughtConjecture.AlephOne.ScottAnalysis
-import VaughtConjecture.ProcessRank.BoundedConstruction
+import VaughtConjecture.ProcessRank.BoundedExistence
 import VaughtConjecture.ProcessRank.CoverTransfer
+import VaughtConjecture.ProcessRank.RankConventions
+import VaughtConjecture.ProcessRank.RankTopLabel
 
 /-!
 # Distinct Scott classes of the bounded receiving models: the statements
@@ -15,8 +17,8 @@ For each bound `K`, the receiving model `M_K` of `VaughtConjecture.ProcessRank.B
 realizes exactly the bounded age `A_K` (the legal stage types at `ω₁` of top grade at most `K`).
 This file states that the models `M_K` lie in pairwise distinct Scott classes (classes up to
 potential isomorphism of the base structures, equivalently up to `L_{∞ω}`-equivalence; not
-isomorphism classes), and that their process rank is `ω₁`, conditionally on a named hypothesis
-for the upper bound on orbit ranks.
+isomorphism classes), and that their process rank is `ω₁`, conditionally on a named premise for
+the upper bound on orbit ranks.
 
 **The realized age is an invariant of the base structure** (`RealizedAgeInvariantTarget`, proved,
 `realizedAgeInvariantTarget`, given-model).  For receiving model expansions `R` of `M` and `S` of
@@ -51,34 +53,34 @@ So `K ↦` the Scott class of `M_K` is injective (`BoundedNotPotentiallyIsoTarge
 and in no top-free age, so `M_1` is not potentially isomorphic to any top-free receiving model
 (`BoundedOneNotTopFreeTarget`, proved, `boundedOneNotTopFreeTarget`).
 
-**Ranks** (conditional; the hypotheses are named premises).
+**Ranks** (conditional on one named premise).
 
-* `OrbitRankLeOmegaOneHypothesis` (a hypothesis, stated, not proved here): in a receiving model
-  expansion to `ω₁` with exact receiving within its own realized age, every orbit rank is at most
-  `ω₁`.  This is the upper half of the rank lemma of the programme; the lower half, unbounded
-  orbit ranks below `ω₁`, is proved for every receiving model (`AlephOne.existsOrbitRankGtTarget`).
-* `TopOrbitRankGeOmegaOneHypothesis` (a hypothesis, stated, not proved here): in a receiving model
-  expansion to `ω₁`, a cover of a type with a cell labelled `⊤` has orbit rank at least `ω₁`.
-* `BoundedProcessRankTarget`: under the first hypothesis, the process rank of `M_K` is `ω₁`.
-* `BoundedInternalScottRankTarget`: under both hypotheses, for `K ≥ 1` the internal Scott rank is
-  `ω₁ + 1` (some orbit rank is exactly `ω₁`; InfinitaryLogic's
-  `isRank_iff_lift_add_one_eq_internalScottRank_of_not_isSuccLimit`).
-* `BoundedOneRankTarget`: the case `K = 1` of both.
+* The upper bound on orbit ranks is the premise
+  `ProcessRank.OrbitRankLeOmegaOneOfExactReceivingTarget` (in
+  `VaughtConjecture.ProcessRank.RankUpper`, open): in a receiving model expansion to `ω₁` with
+  exact receiving within its own realized age, every orbit rank is at most `ω₁`.  The lower bound,
+  unbounded orbit ranks below `ω₁`, holds in every receiving model
+  (`ProcessRank.lift_omegaOne_le_iSup_orbitRank`).  A cover of a type with a cell labelled `⊤` has
+  orbit rank at least `ω₁` (`ProcessRank.orbitRankGeOmegaOneOfCoversTarget`, proved).
+* `BoundedProcessRankTarget` (proved, conditional): the process rank of `M_K` is `ω₁`.
+* `BoundedInternalScottRankTarget` (proved, conditional): for `K ≥ 1` the internal Scott rank is
+  `ω₁ + 1`.
+* `BoundedOneRankTarget` (proved, conditional): the case `K = 1` of both.
 
-**Existence** (stated).
+**Existence** (proved, with the construction of `VaughtConjecture.ProcessRank.BoundedExistence`).
 
-* `ExistsBoundedOneModelTarget`: a receiving model `M_1` on the carrier, realizing the one-point
-  apex type, whose base structure is not potentially isomorphic to the base structure of any
-  top-free receiving model, on a carrier in any universe.
-* `BoundedOneMilestoneTarget` (conditional on both hypotheses): the same model, satisfying the
+* `ExistsBoundedOneModelTarget` (unconditional): a receiving model `M_1` on the carrier, realizing
+  the one-point apex type, whose base structure is not potentially isomorphic to the base
+  structure of any top-free receiving model, on a carrier in any universe.
+* `BoundedOneMilestoneTarget` (conditional on the upper bound): the same model, satisfying the
   density sentence, of process rank `ω₁` and internal Scott rank `ω₁ + 1`.
-* `ExistsBoundedFamilyTarget`: receiving models `M_K` on the carrier for all `K`, each realizing a
-  legal witness of top grade exactly `K`, with pairwise not potentially isomorphic base
-  structures.
-* `InfinitelyManyRankOmegaOneScottClassesTarget` (conditional on the first hypothesis): countably
+* `ExistsBoundedFamilyTarget` (unconditional): receiving models `M_K` on the carrier for all `K`,
+  each realizing a legal type of top grade exactly `K`, with pairwise not potentially isomorphic
+  base structures.
+* `InfinitelyManyRankOmegaOneScottClassesTarget` (conditional on the upper bound): countably
   infinitely many pairwise not potentially isomorphic models of the density sentence on the
   carrier, each of process rank `ω₁`.
-* `InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget` (conditional on both hypotheses):
+* `InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget` (conditional on the upper bound):
   the same with internal Scott rank `ω₁ + 1`.
 
 ## Placement
@@ -115,6 +117,7 @@ ages**: `ProcessRank.exists_covers_iff_of_potentialIso`. -/
 theorem realizedAgeInvariantTarget : RealizedAgeInvariantTarget.{w, w'} := by
   intro M N _ _ R S hR hS ⟨P⟩ m
   ext D
+  rw [mem_realizedAge_iff, mem_realizedAge_iff]
   exact exists_covers_iff_of_potentialIso P hR hS D
 
 /-! ### Detection of the witnesses -/
@@ -246,54 +249,74 @@ theorem boundedOneNotTopFreeTarget : BoundedOneNotTopFreeTarget.{w, w'} :=
 
 /-! ### Ranks -/
 
-/-- **Hypothesis: orbit ranks at most `ω₁`.**  In a receiving model expansion `R` of `M` to `ω₁`
-with exact receiving within its own realized age, every tuple has orbit rank at most `ω₁`, lifted
-to the carrier universe.  A named hypothesis of the rank results below; stated, not proved
-here. -/
-def OrbitRankLeOmegaOneHypothesis : Prop :=
-  ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁), R.1.IsReceivingModel →
-    R.1.ExactReceivingWithin (realizedAge R.1) → ∀ ⦃n : ℕ⦄ (a : Fin n → M),
-      orbitRank (L := baseLanguage.{0}) a ≤ Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0})
-
-/-- **Hypothesis: covers of top-bearing types have orbit rank at least `ω₁`.**  In a receiving model
-expansion `R` of `M` to `ω₁`, a cover of a stage type with a cell labelled `⊤` has orbit rank at
-least `ω₁`, lifted to the carrier universe.  A named hypothesis of the internal-rank results
-below; stated, not proved here. -/
-def TopOrbitRankGeOmegaOneHypothesis : Prop :=
-  ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁), R.1.IsReceivingModel →
-    ∀ ⦃k : ℕ⦄ (p : StageType.{0} (ω₁ : Ordinal.{0}) k) (x : Fin k → M), R.1.Covers p x →
-      ¬ p.IsTopFree → Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0}) ≤ orbitRank (L := baseLanguage.{0}) x
+/-- **Exact receiving within the realized age**: a model with top grades at most `K` and exact
+receiving within `A_K` has realized age `A_K` (`ProcessRank.Bounded.realizedAge_eq_boundedAge`). -/
+theorem exactReceivingWithin_realizedAge {M : Type w} {R : Realization.{0, w} ω₁ M}
+    (hR : R.IsModel) {K : ℕ} (hK : HasTopGradeLe R K)
+    (hrec : R.ExactReceivingWithin (boundedAge K)) : R.ExactReceivingWithin (realizedAge R) := by
+  rwa [show realizedAge R = boundedAge K from funext (realizedAge_eq_boundedAge hR hK hrec)]
 
 /-- **Target: process rank `ω₁` for the bounded receiving models, under the orbit-rank
-hypothesis** (given-model statement).  Given `OrbitRankLeOmegaOneHypothesis`, for a receiving
-model expansion `R` of `M` to `ω₁` with top grades at most `K` and exact receiving within `A_K`,
-the semantic Scott process of the base structure of every length `δ > ω₁ + 1` has rank `ω₁`.
-Stated. -/
+hypothesis** (given-model statement).  Given `OrbitRankLeOmegaOneOfExactReceivingTarget`, for a
+receiving model expansion `R` of `M` to `ω₁` with top grades at most `K` and exact receiving
+within `A_K`, the semantic Scott process of the base structure of every length `δ > ω₁ + 1` has
+rank `ω₁` (`R(M) = sup_a orbitRank a = ω₁`).  Proved (`boundedProcessRankTarget`). -/
 def BoundedProcessRankTarget : Prop :=
-  OrbitRankLeOmegaOneHypothesis.{w} →
+  OrbitRankLeOmegaOneOfExactReceivingTarget.{w} →
     ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁) ⦃K : ℕ⦄
       (hR : R.1.IsReceivingModel), HasTopGradeLe R.1 K → R.1.ExactReceivingWithin (boundedAge K) →
         ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
           letI : Infinite M := hR.1.infinite (Ordinal.omega_pos 1)
           (scottProcessOf baseLanguage.{0} M δ (zero_le.trans_lt hδ)).IsRank ω₁
 
-/-- **Target: internal Scott rank `ω₁ + 1` for the bounded receiving models with a top, under both
-hypotheses** (given-model statement).  Given `OrbitRankLeOmegaOneHypothesis` and
-`TopOrbitRankGeOmegaOneHypothesis`, for `K ≥ 1` and a receiving model expansion `R` of `M` to
-`ω₁` with top grades at most `K` and exact receiving within `A_K`, the internal Scott rank of the
-base structure is `ω₁ + 1`, lifted to the carrier universe: the one-point apex type is realized,
-and its covers have orbit rank exactly `ω₁`.  Stated. -/
+/-- **Process rank `ω₁` for the bounded receiving models**, under the orbit-rank hypothesis: the
+realized age is `A_K`, so the hypothesis applies, and the supremum of the orbit ranks is `ω₁`
+(`ProcessRank.iSup_orbitRank_eq_omegaOne_of_exactReceiving`, `ProcessRank.isRank_omegaOne_iff`). -/
+theorem boundedProcessRankTarget : BoundedProcessRankTarget.{w} := by
+  intro hup M _ R K hR hK hrec δ hδ
+  let : Infinite M := hR.1.infinite (Ordinal.omega_pos 1)
+  exact (isRank_omegaOne_iff hδ).2 (iSup_orbitRank_eq_omegaOne_of_exactReceiving hup R hR
+    (exactReceivingWithin_realizedAge hR.1 hK hrec))
+
+/-- **Target: internal Scott rank `ω₁ + 1` for the bounded receiving models with a top, under the
+orbit-rank hypothesis** (given-model statement).  Given
+`OrbitRankLeOmegaOneOfExactReceivingTarget`, for `K ≥ 1` and a receiving model expansion `R` of
+`M` to `ω₁` with top grades at most `K` and exact receiving within `A_K`, the internal Scott rank
+of the base structure is `ω₁ + 1` (`S(M) = sup_a (orbitRank a + 1)`), lifted to the carrier
+universe: the one-point apex type is realized, and its covers have orbit rank exactly `ω₁` (at
+least `ω₁` by `ProcessRank.orbitRankGeOmegaOneOfCoversTarget`).  Proved
+(`boundedInternalScottRankTarget`). -/
 def BoundedInternalScottRankTarget : Prop :=
-  OrbitRankLeOmegaOneHypothesis.{w} → TopOrbitRankGeOmegaOneHypothesis.{w} →
+  OrbitRankLeOmegaOneOfExactReceivingTarget.{w} →
     ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁) ⦃K : ℕ⦄, 1 ≤ K →
       R.1.IsReceivingModel → HasTopGradeLe R.1 K → R.1.ExactReceivingWithin (boundedAge K) →
         internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0}) + 1
 
-/-- **Target: the ranks of the model of top grades at most `1`, under both hypotheses**
-(given-model statement): process rank `ω₁` and internal Scott rank `ω₁ + 1`.  The case `K = 1`
-of `BoundedProcessRankTarget` and `BoundedInternalScottRankTarget`.  Stated. -/
+/-- **Internal Scott rank `ω₁ + 1` for the bounded receiving models with a top**, under the
+orbit-rank hypothesis: the supremum of the orbit ranks is `ω₁`, and a cover of the one-point apex
+type (realized since `1 ≤ K`) has orbit rank exactly `ω₁`
+(`ProcessRank.internalScottRank_eq_add_one_iff_of_isSuccLimit`). -/
+theorem boundedInternalScottRankTarget : BoundedInternalScottRankTarget.{w} := by
+  intro hup M _ R K hK1 hR hK hrec
+  have hex := exactReceivingWithin_realizedAge hR.1 hK hrec
+  have hlim : Order.IsSuccLimit (Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0})) :=
+    Ordinal.isSuccLimit_lift.2 (Cardinal.isSuccLimit_omega 1)
+  obtain ⟨a, ha⟩ : ∃ a : Fin 1 → M, R.1.Covers StageType.onePointApex a := by
+    rw [← mem_realizedAge_iff, realizedAge_eq_boundedAge hR.1 hK hrec]
+    exact onePointApex_mem_boundedAge_iff.mpr hK1
+  have h0 : 0 < (StageType.onePointApex (α := (ω₁ : Ordinal.{0}))).card := by simp
+  have hnt : ¬ (StageType.onePointApex (α := (ω₁ : Ordinal.{0}))).IsTopFree :=
+    fun h ↦ h ⟨0, h0⟩ (StageType.onePointApex_label _)
+  refine (internalScottRank_eq_add_one_iff_of_isSuccLimit hlim).2
+    ⟨iSup_orbitRank_eq_omegaOne_of_exactReceiving hup R hR hex, 1, a,
+      le_antisymm (hup R hR hex a) (orbitRankGeOmegaOneOfCoversTarget R hR _ a ha hnt)⟩
+
+/-- **Target: the ranks of the model of top grades at most `1`, under the orbit-rank
+hypothesis** (given-model statement): process rank `ω₁` and internal Scott rank `ω₁ + 1`.  The
+case `K = 1` of `BoundedProcessRankTarget` and `BoundedInternalScottRankTarget`.  Proved
+(`boundedOneRankTarget`). -/
 def BoundedOneRankTarget : Prop :=
-  OrbitRankLeOmegaOneHypothesis.{w} → TopOrbitRankGeOmegaOneHypothesis.{w} →
+  OrbitRankLeOmegaOneOfExactReceivingTarget.{w} →
     ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M ω₁)
       (hR : R.1.IsReceivingModel), HasTopGradeLe R.1 1 → R.1.ExactReceivingWithin (boundedAge 1) →
         internalScottRank (L := baseLanguage.{0}) M = Ordinal.lift.{w, 0} (ω₁ : Ordinal.{0}) + 1 ∧
@@ -301,13 +324,25 @@ def BoundedOneRankTarget : Prop :=
           letI : Infinite M := hR.1.infinite (Ordinal.omega_pos 1)
           (scottProcessOf baseLanguage.{0} M δ (zero_le.trans_lt hδ)).IsRank ω₁
 
+/-- **The ranks of the model of top grades at most `1`**, under the orbit-rank hypothesis. -/
+theorem boundedOneRankTarget : BoundedOneRankTarget.{w} := fun hup _ _ R hR hK hrec ↦
+  ⟨boundedInternalScottRankTarget hup R le_rfl hR hK hrec,
+    boundedProcessRankTarget hup R hR hK hrec⟩
+
 /-! ### Existence -/
+
+/-- The receiving model on the carrier as a model expansion of its own base structure. -/
+abbrev toModelExpansion (R : Realization.{0, 0} (ω₁ : Ordinal.{0}) Carrier)
+    (hR : R.IsReceivingModel) :
+    @ModelExpansion Carrier (baseStructure R) (ω₁ : Ordinal.{0}) :=
+  letI := baseStructure R
+  ⟨R, hR.1, rfl⟩
 
 /-- **Target: one model outside the top-free Scott class.**  Some receiving model `R` at `ω₁` on
 the carrier `ω₁.ToType`, with top grades at most `1` and exact receiving within `A_1`, realizes
 the one-point apex type, and its base structure is not potentially isomorphic to the base
 structure of any receiving model expansion to `ω₁` all of whose types are top-free, on a carrier
-in any universe.  Existence statement.  Stated. -/
+in any universe.  Existence statement.  Proved (`existsBoundedOneModelTarget`). -/
 def ExistsBoundedOneModelTarget : Prop :=
   ∃ R : Realization.{0, 0} (ω₁ : Ordinal.{0}) Carrier, R.IsReceivingModel ∧ HasTopGradeLe R 1 ∧
     R.ExactReceivingWithin (boundedAge 1) ∧ (∃ u, R.Covers StageType.onePointApex u) ∧
@@ -315,18 +350,29 @@ def ExistsBoundedOneModelTarget : Prop :=
       S.1.IsReceivingModel → S.1.HasTopFreeTypes →
         IsEmpty (@PotentialIso baseLanguage.{0} _ Carrier N (baseStructure R) _)
 
-/-- **Target: the first milestone, the bounded model of top grades at most `1`, under both
-hypotheses.**  Given `OrbitRankLeOmegaOneHypothesis` and `TopOrbitRankGeOmegaOneHypothesis`, some
-receiving model `R` at `ω₁` on the carrier `ω₁.ToType`, with top grades at most `1` and exact
-receiving within `A_1`, realizes the one-point apex type (a chart with a cell labelled `⊤`), and
-its base structure satisfies the density sentence, has process rank `ω₁` (the semantic Scott
-process of every length beyond `ω₁ + 1` has rank `ω₁`; `R(M) = sup_a orbitRank a`) and internal
-Scott rank `ω₁ + 1` (`S(M) = sup_a (orbitRank a + 1)`), and is not potentially isomorphic to the
-base structure of any receiving model expansion to `ω₁` all of whose types are top-free (in
-particular, to the top-free model of `AlephOne.existsReceivingModelTarget`).  Existence
-statement, conditional.  Stated. -/
+/-- **One model outside the top-free Scott class**: the receiving model of
+`existsBoundedReceivingModelTarget` at `K = 1` realizes the one-point apex type (it lies in
+`A_1`), and `boundedOneNotTopFreeTarget` separates it from every top-free receiving model. -/
+theorem existsBoundedOneModelTarget : ExistsBoundedOneModelTarget.{w'} := by
+  obtain ⟨R, hR, hK, hrec⟩ := existsBoundedReceivingModelTarget 1
+  refine ⟨R, hR, hK, hrec, ?_, fun N _ S hS hSt ↦ ?_⟩
+  · rw [← mem_realizedAge_iff, realizedAge_eq_boundedAge hR.1 hK hrec]
+    exact onePointApex_mem_boundedAge_iff.mpr le_rfl
+  · let := baseStructure R
+    exact boundedOneNotTopFreeTarget (toModelExpansion R hR) S hR hK hrec hS hSt
+
+/-- **Target: the first milestone, the bounded model of top grades at most `1`, under the
+orbit-rank hypothesis.**  Given `OrbitRankLeOmegaOneOfExactReceivingTarget`, some receiving model
+`R` at `ω₁` on the carrier `ω₁.ToType`, with top grades at most `1` and exact receiving within
+`A_1`, realizes the one-point apex type (a chart with a cell labelled `⊤`), and its base structure
+satisfies the density sentence, has process rank `ω₁` (the semantic Scott process of every
+length beyond `ω₁ + 1` has rank `ω₁`; `R(M) = sup_a orbitRank a`) and internal Scott rank
+`ω₁ + 1` (`S(M) = sup_a (orbitRank a + 1)`), and is not potentially isomorphic to the base
+structure of any receiving model expansion to `ω₁` all of whose types are top-free (in particular,
+to the top-free model of `AlephOne.existsReceivingModelTarget`).  Existence statement,
+conditional.  Proved (`boundedOneMilestoneTarget`). -/
 def BoundedOneMilestoneTarget : Prop :=
-  OrbitRankLeOmegaOneHypothesis.{0} → TopOrbitRankGeOmegaOneHypothesis.{0} →
+  OrbitRankLeOmegaOneOfExactReceivingTarget.{0} →
     ∃ R : Realization.{0, 0} (ω₁ : Ordinal.{0}) Carrier, R.IsReceivingModel ∧
       HasTopGradeLe R 1 ∧ R.ExactReceivingWithin (boundedAge 1) ∧
       (∃ u, R.Covers StageType.onePointApex u) ∧
@@ -339,10 +385,22 @@ def BoundedOneMilestoneTarget : Prop :=
         S.1.IsReceivingModel → S.1.HasTopFreeTypes →
           IsEmpty (@PotentialIso baseLanguage.{0} _ Carrier N (baseStructure R) _)
 
+/-- **The first milestone**, under the orbit-rank hypothesis: the model of
+`existsBoundedOneModelTarget`, with the density sentence (`AlephOne.realizeDensitySentenceTarget`)
+and the ranks (`boundedOneRankTarget`). -/
+theorem boundedOneMilestoneTarget : BoundedOneMilestoneTarget.{w'} := by
+  intro hup
+  obtain ⟨R, hR, hK, hrec, hcov, hsep⟩ := existsBoundedOneModelTarget.{w'}
+  let := baseStructure R
+  obtain ⟨hint, hproc⟩ := boundedOneRankTarget hup (toModelExpansion R hR) hR hK hrec
+  refine ⟨R, hR, hK, hrec, hcov, ⟨realizeDensitySentenceTarget R hR, ?_, fun δ hδ ↦ ?_⟩, hsep⟩
+  · simpa using hint
+  · exact hproc hδ
+
 /-- **Target: the family of bounded receiving models.**  Some receiving models `R K` at `ω₁` on
 the carrier `ω₁.ToType`, for all `K`, have top grades at most `K`, exact receiving within `A_K`,
 and realize a legal stage type of top grade exactly `K`; their base structures are pairwise not
-potentially isomorphic.  Existence statement.  Stated. -/
+potentially isomorphic.  Existence statement.  Proved (`existsBoundedFamilyTarget`). -/
 def ExistsBoundedFamilyTarget : Prop :=
   ∃ R : ℕ → Realization.{0, 0} (ω₁ : Ordinal.{0}) Carrier,
     (∀ K, (R K).IsReceivingModel ∧ HasTopGradeLe (R K) K ∧
@@ -353,13 +411,38 @@ def ExistsBoundedFamilyTarget : Prop :=
       IsEmpty (@PotentialIso baseLanguage.{0} _ Carrier Carrier (baseStructure (R K))
         (baseStructure (R L)))
 
+/-- **A legal stage type of top grade exactly `K`**, for every `K`: the stage type on no points
+for `K = 0`, the witness of `topGradeWitnessTarget` otherwise. -/
+theorem exists_isLegal_topGrade_eq (K : ℕ) :
+    ∃ t : StageType.{0} (ω₁ : Ordinal.{0}) K, t.IsLegal ∧ t.topGrade = K := by
+  rcases Nat.eq_zero_or_pos K with rfl | hK
+  · exact ⟨Condition.emptyType, Condition.isLegal_emptyType,
+      StageType.topGrade_eq_zero_iff.mpr (StageType.isTopFree_of_zero _)⟩
+  · exact topGradeWitnessTarget (Cardinal.isSuccLimit_omega 1).isSuccPrelimit K hK
+
+/-- **The family of bounded receiving models**: for each `K` the receiving model of
+`existsBoundedReceivingModelTarget`; it realizes a legal type of top grade `K`, which lies in
+`A_K`; distinct bounds are separated by `boundedNotPotentiallyIsoTarget`. -/
+theorem existsBoundedFamilyTarget : ExistsBoundedFamilyTarget := by
+  choose R hR hK hrec using existsBoundedReceivingModelTarget
+  refine ⟨R, fun K ↦ ⟨hR K, hK K, hrec K, ?_⟩, fun K L hKL ↦ ?_⟩
+  · obtain ⟨t, ht, htK⟩ := exists_isLegal_topGrade_eq K
+    refine ⟨t, ht, htK, ?_⟩
+    rw [← mem_realizedAge_iff, realizedAge_eq_boundedAge (hR K).1 (hK K) (hrec K)]
+    exact (mem_boundedAge_iff_of_topGrade_eq ht htK).mpr le_rfl
+  · let := baseStructure (R K)
+    exact @boundedNotPotentiallyIsoTarget Carrier Carrier (baseStructure (R K))
+      (baseStructure (R L)) (toModelExpansion (R K) (hR K)) (toModelExpansion (R L) (hR L)) K L
+      hKL (hR K) (hK K) (hrec K) (hR L) (hK L) (hrec L)
+
 /-- **Target: countably infinitely many Scott classes of process rank `ω₁`, under the orbit-rank
-hypothesis.**  Given `OrbitRankLeOmegaOneHypothesis`, some structures `S K` of the base language
-on the carrier `ω₁.ToType`, for all `K`, satisfy the density sentence, have semantic Scott process
-of rank `ω₁` at every length beyond `ω₁ + 1`, and are pairwise not potentially isomorphic.
-Existence statement, conditional.  Stated. -/
+hypothesis.**  Given `OrbitRankLeOmegaOneOfExactReceivingTarget`, some structures `S K` of the
+base language on the carrier `ω₁.ToType`, for all `K`, satisfy the density sentence, have
+semantic Scott process of rank `ω₁` at every length beyond `ω₁ + 1`, and are pairwise not
+potentially isomorphic.  Existence statement, conditional.  Proved
+(`infinitelyManyRankOmegaOneScottClassesTarget`). -/
 def InfinitelyManyRankOmegaOneScottClassesTarget : Prop :=
-  OrbitRankLeOmegaOneHypothesis.{0} →
+  OrbitRankLeOmegaOneOfExactReceivingTarget.{0} →
     ∃ S : ℕ → baseLanguage.{0}.Structure Carrier,
       (∀ K, letI := S K;
         Sentenceω.Realize baseLanguage.densitySentence.{0} Carrier ∧
@@ -367,14 +450,26 @@ def InfinitelyManyRankOmegaOneScottClassesTarget : Prop :=
             (scottProcessOf baseLanguage.{0} Carrier δ (zero_le.trans_lt hδ)).IsRank ω₁) ∧
       ∀ K L, K ≠ L → IsEmpty (@PotentialIso baseLanguage.{0} _ Carrier Carrier (S K) (S L))
 
-/-- **Target: countably infinitely many Scott classes of internal Scott rank `ω₁ + 1`, under both
-hypotheses.**  Given `OrbitRankLeOmegaOneHypothesis` and `TopOrbitRankGeOmegaOneHypothesis`, some
-structures `S K` of the base language on the carrier `ω₁.ToType`, for all `K`, satisfy the
-density sentence, have semantic Scott process of rank `ω₁` at every length beyond `ω₁ + 1` and
-internal Scott rank `ω₁ + 1`, and are pairwise not potentially isomorphic.  Existence statement,
-conditional.  Stated. -/
+/-- **Countably infinitely many Scott classes of process rank `ω₁`**, under the orbit-rank
+hypothesis: the base structures of the family of `existsBoundedFamilyTarget`. -/
+theorem infinitelyManyRankOmegaOneScottClassesTarget :
+    InfinitelyManyRankOmegaOneScottClassesTarget := by
+  intro hup
+  obtain ⟨R, hR, hsep⟩ := existsBoundedFamilyTarget
+  refine ⟨fun K ↦ baseStructure (R K), fun K ↦ ?_, hsep⟩
+  let := baseStructure (R K)
+  obtain ⟨hRK, hK, hrec, -⟩ := hR K
+  exact ⟨realizeDensitySentenceTarget (R K) hRK, fun δ hδ ↦
+    boundedProcessRankTarget hup (toModelExpansion (R K) hRK) hRK hK hrec hδ⟩
+
+/-- **Target: countably infinitely many Scott classes of internal Scott rank `ω₁ + 1`, under the
+orbit-rank hypothesis.**  Given `OrbitRankLeOmegaOneOfExactReceivingTarget`, some structures
+`S K` of the base language on the carrier `ω₁.ToType`, for all `K`, satisfy the density sentence,
+have semantic Scott process of rank `ω₁` at every length beyond `ω₁ + 1` and internal Scott rank
+`ω₁ + 1`, and are pairwise not potentially isomorphic.  Existence statement, conditional.  Proved
+(`infinitelyManyInternalRankOmegaOneAddOneScottClassesTarget`). -/
 def InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget : Prop :=
-  OrbitRankLeOmegaOneHypothesis.{0} → TopOrbitRankGeOmegaOneHypothesis.{0} →
+  OrbitRankLeOmegaOneOfExactReceivingTarget.{0} →
     ∃ S : ℕ → baseLanguage.{0}.Structure Carrier,
       (∀ K, letI := S K;
         Sentenceω.Realize baseLanguage.densitySentence.{0} Carrier ∧
@@ -382,5 +477,21 @@ def InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget : Prop :=
           ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
             (scottProcessOf baseLanguage.{0} Carrier δ (zero_le.trans_lt hδ)).IsRank ω₁) ∧
       ∀ K L, K ≠ L → IsEmpty (@PotentialIso baseLanguage.{0} _ Carrier Carrier (S K) (S L))
+
+/-- **Countably infinitely many Scott classes of internal Scott rank `ω₁ + 1`**, under the
+orbit-rank hypothesis: the base structures of the members `K + 1` of the family of
+`existsBoundedFamilyTarget`. -/
+theorem infinitelyManyInternalRankOmegaOneAddOneScottClassesTarget :
+    InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget := by
+  intro hup
+  obtain ⟨R, hR, hsep⟩ := existsBoundedFamilyTarget
+  refine ⟨fun K ↦ baseStructure (R (K + 1)), fun K ↦ ?_,
+    fun K L hKL ↦ hsep (K + 1) (L + 1) (by omega)⟩
+  let := baseStructure (R (K + 1))
+  obtain ⟨hRK, hK, hrec, -⟩ := hR (K + 1)
+  refine ⟨realizeDensitySentenceTarget (R (K + 1)) hRK, ?_, fun δ hδ ↦
+    boundedProcessRankTarget hup (toModelExpansion (R (K + 1)) hRK) hRK hK hrec hδ⟩
+  simpa using boundedInternalScottRankTarget hup (toModelExpansion (R (K + 1)) hRK)
+    (Nat.le_add_left 1 K) hRK hK hrec
 
 end VaughtConjecture.ProcessRank.Bounded
