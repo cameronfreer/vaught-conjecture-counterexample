@@ -18,9 +18,9 @@ a given-model statement; all are proved, in
 `VaughtConjecture.ProcessRank.SuccessorDetection`
 (step 4) and `VaughtConjecture.ProcessRank.SuccessorRank` (steps 5–6).
 
-Throughout, `Ω = ω₁` and `λ_Ω = blockStage ω₁` (as an ordinal equal to `ω₁`; the equation is not
-used).  The hypothesis "receiving successor at `Ω + ω`" is written with the repository's names in
-two equivalent forms:
+Throughout, `Ω = ω₁` and `λ_Ω = blockStage ω₁`, an ordinal equal to `ω₁` (`blockStage_omegaOne`,
+used in the proofs of step 4).  The hypothesis "receiving successor at `Ω + ω`" is written with the
+repository's names in two equivalent forms:
 
 * a model expansion `e : ModelExpansion M (blockStage (ω₁ + 1))` with
   `e.1.HasFiniteCutReceiving` (so `e.1.IsReceivingModel`);
