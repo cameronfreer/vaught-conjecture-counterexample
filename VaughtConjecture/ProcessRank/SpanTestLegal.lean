@@ -245,7 +245,7 @@ theorem isWitness_classMap {a b : Label.{u}} (ha : IsSelfVisible 1 a) (hb : IsSe
     · rw [ite_eq_right hy2]
       split_ifs
       exacts [hab, le_rfl]
-  visibilityReplace_comm x k hguard i hi := by
+  visibilityReplace_comm x k hbound i hi := by
     rw [classMap_visibilityReplace]
     have hsv : IsSelfVisible 1 (classMap a b x) := by
       unfold classMap
@@ -253,8 +253,8 @@ theorem isWitness_classMap {a b : Label.{u}} (ha : IsSelfVisible 1 a) (hb : IsSe
       exacts [isSelfVisible_bot 1, ha, hb]
     by_cases hk : k ≤ 1
     · exact ((hsv.mono hk).visibilityReplace_eq i).symm
-    · rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff] at hguard
-      rw [hguard, visibilityReplace_bot]
+    · rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff] at hbound
+      rw [hbound, visibilityReplace_bot]
 
 theorem classMap_testRow (a b : Label.{u}) (d : Fin 4) :
     classMap a b (testRow d) = if (d : ℕ) = 1 then a else b := by
