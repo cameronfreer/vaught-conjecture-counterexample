@@ -46,7 +46,8 @@ open Finset Label
 
 /-- **Target: grafting a high tail.**  For a scheme `S`, two labellings `x` and `y` of its cells
 lawful below `X` with the same high set below `X` at a cap `c` self-visible at the grade of `X`
-give a labelling lawful below `X`: `y` at the high cells and `x` at the others.  Stated. -/
+give a labelling lawful below `X`: `y` at the high cells and `x` at the others.  Proved
+(`Scheme.graftHighTail`). -/
 def GraftHighTailTarget : Prop :=
   ∀ ⦃n : ℕ⦄ (S : Scheme.{u} n) (X : Finset (Fin n) × ℕ) (x y : Fin S.card → Label.{u})
     (c : Label.{u}), S.rows.IsLawfulBelow X (fun d ↦ x d) → S.rows.IsLawfulBelow X (fun d ↦ y d) →

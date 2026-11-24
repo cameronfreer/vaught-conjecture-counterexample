@@ -69,7 +69,8 @@ cells of grade at most `K`, a state `P` lawful and admitted at the grade `k` wit
 self-visible at the grade one, a cap `c` self-visible at `k`, and a labelling `r` lawful below a
 graded face `X ≤ (univ, k)` agreeing capped at `c` with the side `b` of `P`, some state lawful and
 admitted at `k`, with every value self-visible at the grade one, is `r` on the side `b` below `X`
-and agrees with `P` capped at `c` at every field.  Stated. -/
+and agrees with `P` capped at `c` at every field.  Proved (`ProcessRank.oneSidedStateLift`); the
+premise bounding the grades of `T` by `K` is not used. -/
 def OneSidedStateLiftTarget : Prop :=
   ∀ ⦃n : ℕ⦄ (S : Scheme.{u} n), S.IsLegal → ∀ (T : Set (Fin S.card)) (K k : ℕ),
     (∀ d ∈ T, S.toCellScheme.grade d ≤ K) → ∀ (b : Bool) (X : Finset (Fin n) × ℕ),

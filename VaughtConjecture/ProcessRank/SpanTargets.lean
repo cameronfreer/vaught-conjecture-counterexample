@@ -36,7 +36,8 @@ for the rooted comparison (`VaughtConjecture.ProcessRank.SpanComparison`).
   inclusion-minimal admissible top support containing the top cells of the first face is a legal
   type on the scheme of `D` with the same two faces, in which both cores are rigid: an admissible
   top support of the witness is one of `D` (its non-top labels are those of `D`, the tops it drops
-  stay proper), so minimality makes the first core rigid, and mutual forcing the second.  Stated.
+  stay proper), so minimality makes the first core rigid, and mutual forcing the second.  Proved
+  (`StageType.pruneTarget`, in `VaughtConjecture.ProcessRank.SpanPrune`).
 * `StageType.mutualRigidSpanTarget_of_prune`: the two targets give the first.  Proved.
 * `StageType.exists_mutualRigidSpan_zero`: the case `n = 0`.  Proved.
 * `StageType.exists_isMutualRigidSpan_of_isTopFree`: the case without top cells, along embeddings
@@ -118,7 +119,7 @@ top cells of each other, a witness of an inclusion-minimal admissible top suppor
 top cells visible through `i` is a legal stage type on the scheme of `D`, with the same faces along
 `i` and `j`, in which both cores are rigid.  Only the definition of an admissible top support
 (`StageType.IsAdmissibleTopSupport`) enters: an admissible top support of the witness is one of
-`D`.  Stated. -/
+`D`.  Proved (`StageType.pruneTarget`). -/
 def PruneTarget : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n m : ℕ⦄ (D : StageType.{u} α m) (i j : Fin n ↪ Fin m), D.IsLegal →
     D.ForcesTopsOf i j → D.ForcesTopsOf j i →
