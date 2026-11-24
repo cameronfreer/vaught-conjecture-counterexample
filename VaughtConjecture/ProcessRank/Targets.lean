@@ -65,8 +65,9 @@ universe.  No model is identified with a code except through these isomorphisms.
 1. Among models admitting a receiving expansion at `ω₁`
    (`ReceivingInternalRankOmegaOnePotentialIsoTarget`): two receiving model expansions at `ω₁`,
    on carriers in any two universes, whose base structures have `S = ω₁`, have potentially
-   isomorphic base structures.  Proved from the top-label obstruction alone
-   (`receivingInternalRankOmegaOnePotentialIsoTarget_of_orbitRankGe`): `S(M) = ω₁` makes every
+   isomorphic base structures.  Proved (`receivingInternalRankOmegaOnePotentialIsoTarget`), from
+   the top-label obstruction (`receivingInternalRankOmegaOnePotentialIsoTarget_of_orbitRankGe`,
+   with `orbitRankGeOmegaOneOfCoversTarget`): `S(M) = ω₁` makes every
    `r(a) < ω₁`, so every chart is top-free (`isTopFree_of_internalScottRank_eq_omegaOne`), and the
    top-free comparison applies (`AlephOne.receivingModelsPotentialIsoTarget`).
 2. Among all models of the density sentence (`InternalRankOmegaOnePotentialIsoTarget`): proved
@@ -83,8 +84,9 @@ Existence of a model with `S = ω₁` on a carrier in `Type` is
 * `isTopFree_of_internalScottRank_eq_omegaOne`,
   `receivingInternalRankOmegaOnePotentialIsoTarget_of_orbitRankGe`,
   `internalRankOmegaOnePotentialIsoTarget_of` (proved, conditional on the named targets).
-* The count targets, `ScottClassesCodeTransportTarget`,
-  `ReceivingInternalRankOmegaOnePotentialIsoTarget`, `InternalRankOmegaOnePotentialIsoTarget`
+* `ReceivingInternalRankOmegaOnePotentialIsoTarget` (milestone 1, proved:
+  `receivingInternalRankOmegaOnePotentialIsoTarget`).
+* The count targets, `ScottClassesCodeTransportTarget`, `InternalRankOmegaOnePotentialIsoTarget`
   (stated).
 -/
 
@@ -259,8 +261,8 @@ theorem isTopFree_of_internalScottRank_eq_omegaOne (h : OrbitRankGeOmegaOneOfCov
 /-- **Target (milestone 1): one class of internal Scott rank `ω₁` among the models admitting a
 receiving expansion at `ω₁`.**  For receiving model expansions `R` of `M` and `S` of `N` to `ω₁`,
 on carriers in any two universes, with `S(M)` and `S(N)` the lift of `ω₁`, there is a potential
-isomorphism between `M` and `N`.  Given-model statement.  Stated; proved from the top-label
-obstruction by `receivingInternalRankOmegaOnePotentialIsoTarget_of_orbitRankGe`. -/
+isomorphism between `M` and `N`.  Given-model statement.  Proved
+(`receivingInternalRankOmegaOnePotentialIsoTarget`). -/
 def ReceivingInternalRankOmegaOnePotentialIsoTarget : Prop :=
   ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
     (R : ModelExpansion M ω₁) (S : ModelExpansion N ω₁), R.1.IsReceivingModel →
@@ -280,6 +282,14 @@ theorem receivingInternalRankOmegaOnePotentialIsoTarget_of_orbitRankGe
     (isTopFree_of_internalScottRank_eq_omegaOne h R hR hM) hS
     (isTopFree_of_internalScottRank_eq_omegaOne h' S hS hN)
   exact ⟨P⟩
+
+/-- **Milestone 1**, the target form:
+`receivingInternalRankOmegaOnePotentialIsoTarget_of_orbitRankGe` with the top-label obstruction
+`orbitRankGeOmegaOneOfCoversTarget` in both universes. -/
+theorem receivingInternalRankOmegaOnePotentialIsoTarget :
+    ReceivingInternalRankOmegaOnePotentialIsoTarget.{w, w'} :=
+  receivingInternalRankOmegaOnePotentialIsoTarget_of_orbitRankGe orbitRankGeOmegaOneOfCoversTarget
+    orbitRankGeOmegaOneOfCoversTarget
 
 /-- **Target (milestone 2): one class of internal Scott rank `ω₁` among all models.**  Any two
 models of the density sentence, on carriers in any two universes, with `S(M)` and `S(N)` the lift

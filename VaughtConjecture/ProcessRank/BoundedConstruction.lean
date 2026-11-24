@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.AlephOne.Schedule
 import VaughtConjecture.Continuation.ExactAge
 import VaughtConjecture.ProcessRank.BoundedAge
+import VaughtConjecture.ProcessRank.RankUpper
 import VaughtConjecture.Realization.ReceivingLimit
 
 /-!
@@ -21,12 +22,12 @@ legal types of top grade at most `K`), beside the existing files, which are not 
 **Top grades of a realization.**  A realization has top grades at most `K`
 (`ProcessRank.Bounded.HasTopGradeLe`) when every type it assigns has top grade at most `K`; at
 `K = 0` this is `Realization.HasTopFreeTypes` (`ProcessRank.Bounded.hasTopGradeLe_zero_iff`,
-proved).  The **realized age** of a realization (`ProcessRank.Bounded.realizedAge`) is the family
-of the stage types it covers.
+proved).  The **realized age** of a realization (`ProcessRank.realizedAge`, in
+`VaughtConjecture.ProcessRank.RankUpper`) is the family of the stage types it covers.
 
-**The construction** (stated).  Requests and the unbounded schedule are those of the `ℵ₁`
-companion construction (`AlephOne.Request`, `AlephOne.existsUnboundedScheduleTarget`); only the
-service and the invariant change.
+**The construction** (proved in `VaughtConjecture.ProcessRank.BoundedExistence`).  Requests and
+the unbounded schedule are those of the `ℵ₁` companion construction (`AlephOne.Request`,
+`AlephOne.existsUnboundedScheduleTarget`); only the service and the invariant change.
 
 * `ProcessRank.Bounded.BoundedServesAt`: the service of a request whose donor has top grade at
   most `K` (in place of top-free).
@@ -88,10 +89,6 @@ theorem hasTopGradeLe_zero_iff {R : Realization.{u, v} α M} :
     HasTopGradeLe R 0 ↔ R.HasTopFreeTypes := by
   simp only [HasTopGradeLe, HasTopFreeTypes, Nat.le_zero, StageType.topGrade_eq_zero_iff]
 
-/-- The **realized age** of a realization: the stage types it covers. -/
-def realizedAge (R : Realization.{u, v} α M) (m : ℕ) : Set (StageType.{u} α m) :=
-  {D | ∃ u : Fin m → M, R.Covers D u}
-
 /-- **The realized age is exactly the bounded age** (given-model): a model with top grades at most
 `K` and exact receiving within `A_K` covers a stage type exactly when it lies in `A_K`.  A covered
 type is legal and of top grade at most `K`; a member of `A_K` is received over the empty cover,
@@ -100,6 +97,7 @@ theorem realizedAge_eq_boundedAge {R : Realization.{u, v} α M} (hR : R.IsModel)
     (hK : HasTopGradeLe R K) (hrec : R.ExactReceivingWithin (boundedAge K)) (m : ℕ) :
     realizedAge R m = boundedAge K m := by
   ext D
+  rw [mem_realizedAge_iff]
   constructor
   · rintro ⟨u, hinj, hu⟩
     exact ⟨hR.isLegal _ D hu, hK _ D hu⟩
@@ -119,7 +117,8 @@ most `K` on a countable carrier `M`, `x` an occurrence of `R`, and `d` a coface 
 of top grade at most `K`.  Some exactly consistent covering realization `S` with legal types of
 top grades at most `K` on `Option M` gives every tuple of old points its evaluation in `R`
 (`none` included) and gives the tuple of `x` followed by the new point the type `d`.
-Construction over a given realization.  Stated. -/
+Construction over a given realization.  Proved (`boundedOptionAttachmentTarget`, in
+`VaughtConjecture.ProcessRank.BoundedExistence`). -/
 def BoundedOptionAttachmentTarget : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type v⦄ [Countable M], Order.IsSuccLimit α → ∀ (K : ℕ)
     (R : Realization.{u, v} α M), R.IsConsistent → R.IsCovering → R.HasLegalTypes →
@@ -184,7 +183,8 @@ end BoundedCondition
 
 /-- **Target: upper bounds of chains of bounded conditions.**  Every chain of bounded conditions,
 of any length, has an upper bound; a nonempty chain has one whose domain is the union of the
-domains.  Stated. -/
+domains.  Proved (`boundedChainUnionTarget`, in
+`VaughtConjecture.ProcessRank.BoundedExistence`). -/
 def BoundedChainUnionTarget (K : ℕ) : Prop :=
   ∀ (s : Carrier → Request) (C : Set (BoundedCondition K s)), IsChain (· ≤ ·) C →
     (∃ ub : BoundedCondition K s, ∀ c ∈ C, c ≤ ub) ∧
@@ -194,21 +194,24 @@ def BoundedChainUnionTarget (K : ℕ) : Prop :=
 domain extends to one whose domain is the old domain with one more point: the least point `x`
 outside the domain, attached by `ProcessRank.Bounded.BoundedOptionAttachmentTarget` over the
 tuple of the request scheduled at `x` when it is eligible, and over the empty tuple with the
-bottom one-point type otherwise.  Stated. -/
+bottom one-point type otherwise.  Proved (`boundedOnePointExtensionTarget`, in
+`VaughtConjecture.ProcessRank.BoundedExistence`). -/
 def BoundedOnePointExtensionTarget (K : ℕ) : Prop :=
   ∀ (s : Carrier → Request) (c : BoundedCondition K s), c.dom.Countable →
     ∃ c' : BoundedCondition K s, c ≤ c' ∧ ∃ x ∉ c.dom, c'.dom = insert x c.dom
 
 /-- **Target: a bounded condition of full domain exists**, for every schedule (Zorn's lemma, with
-the one-point extension).  Stated. -/
+the one-point extension).  Proved (`boundedExistsFullHeightConditionTarget`, in
+`VaughtConjecture.ProcessRank.BoundedExistence`). -/
 def BoundedExistsFullHeightConditionTarget (K : ℕ) : Prop :=
   ∀ s : Carrier → Request, ∃ c : BoundedCondition K s, c.dom = Set.univ
 
-/-- **Target: exact receiving within `A_K` from the served requests.**  For an unbounded schedule,
-the realization of a bounded condition of full domain has exact receiving within `A_K`: over a
-cover, a one-point coface in `A_K` is a request scheduled above the cover, where it is served;
-the one-point form gives every arity (`Realization.ExactReceivingWithin.of_one_point`, `A_K` being
-face closed, `ProcessRank.Bounded.mem_boundedAge_of_restrictFace`).  Stated. -/
+/-- **Target: exact receiving within `A_K` from the served requests.**  For an unbounded
+schedule, the realization of a bounded condition of full domain has exact receiving within `A_K`:
+over a cover, a one-point coface in `A_K` is a request scheduled above the cover, where it is
+served; the one-point form gives every arity (`Realization.ExactReceivingWithin.of_one_point`,
+`A_K` being face closed, `ProcessRank.Bounded.mem_boundedAge_of_restrictFace`).  Proved
+(`boundedFullHeightExactReceivingTarget`, in `VaughtConjecture.ProcessRank.BoundedExistence`). -/
 def BoundedFullHeightExactReceivingTarget (K : ℕ) : Prop :=
   ∀ s : Carrier → Request, IsUnboundedSchedule s → ∀ c : BoundedCondition K s, c.dom = Set.univ →
     c.real.ExactReceivingWithin (boundedAge K)
@@ -218,15 +221,18 @@ def BoundedFullHeightExactReceivingTarget (K : ℕ) : Prop :=
 /-- **Target: finite-cut receiving from exact receiving within `A_K`** (given-model statement).
 At a limit stage, a realization with top grades at most `K` and exact receiving within `A_K` has
 finite-cut receiving: each coface is capped above the grade `K` (`StageType.capAbove`) at an
-ordinal above the cutoff and above every label of the coface other than `⊤`.  Stated. -/
+ordinal above the cutoff and above every label of the coface other than `⊤`.  Proved
+(`boundedFiniteCutReceivingTarget`, in `VaughtConjecture.ProcessRank.BoundedExistence`). -/
 def BoundedFiniteCutReceivingTarget : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type v⦄, Order.IsSuccLimit α → ∀ (K : ℕ)
     (R : Realization.{u, v} α M), HasTopGradeLe R K → R.ExactReceivingWithin (boundedAge K) →
       R.HasFiniteCutReceiving
 
-/-- **Target: exact receiving within `A_K` makes a receiving model** (given-model statement).  At a
-limit stage, an exactly consistent covering realization on a nonempty carrier with legal types
-of top grades at most `K` and exact receiving within `A_K` is a receiving model.  Stated. -/
+/-- **Target: exact receiving within `A_K` makes a receiving model** (given-model statement).  At
+a limit stage, an exactly consistent covering realization on a nonempty carrier with legal types
+of top grades at most `K` and exact receiving within `A_K` is a receiving model.  Proved
+(`boundedIsReceivingModelOfExactReceivingTarget`, in
+`VaughtConjecture.ProcessRank.BoundedExistence`). -/
 def BoundedIsReceivingModelOfExactReceivingTarget : Prop :=
   ∀ ⦃α : Ordinal.{0}⦄ ⦃M : Type v⦄, Order.IsSuccLimit α → ∀ (K : ℕ) (R : Realization.{0, v} α M),
     Nonempty M → R.IsConsistent → R.IsCovering → R.HasLegalTypes → HasTopGradeLe R K →
@@ -235,7 +241,8 @@ def BoundedIsReceivingModelOfExactReceivingTarget : Prop :=
 /-- **Target: a receiving model for every bounded age, on the carrier.**  For every `K`, some
 realization at stage `ω₁` on the carrier `ω₁.ToType` (of cardinality `ℵ₁`) is a receiving model
 with top grades at most `K` and exact receiving within `A_K`; its realized age is then exactly
-`A_K` (`ProcessRank.Bounded.realizedAge_eq_boundedAge`).  Existence statement.  Stated. -/
+`A_K` (`ProcessRank.Bounded.realizedAge_eq_boundedAge`).  Existence statement.  Proved
+(`existsBoundedReceivingModelTarget`, in `VaughtConjecture.ProcessRank.BoundedExistence`). -/
 def ExistsBoundedReceivingModelTarget (K : ℕ) : Prop :=
   ∃ R : Realization.{0, 0} (ω₁ : Ordinal.{0}) Carrier, R.IsReceivingModel ∧ HasTopGradeLe R K ∧
     R.ExactReceivingWithin (boundedAge K)
