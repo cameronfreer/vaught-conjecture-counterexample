@@ -42,8 +42,8 @@ directly and has no bound.
 * `ReceivingContinuationAtTarget` (proved, `receivingContinuationAtTarget`): the stable candidate
   of a receiving model at `λ_ξ`, not cover-hollow, with top-grade supremum `⊤`, is a receiving
   model, for every `ξ : Ordinal.{0}`.
-* `OmegaOneNotReceivingTerminalTarget` (stated): at `ξ = ω₁`, such a model is not
-  receiving-terminal.
+* `OmegaOneNotReceivingTerminalTarget` (proved, `omegaOneNotReceivingTerminalTarget`): at
+  `ξ = ω₁`, such a model is not receiving-terminal.
 * `UnboundedNotHollowOrbitRankGtTarget` (stated): a receiving model expansion at `λ_{ω₁}`, not
   cover-hollow, with top-grade supremum `⊤`, has an orbit rank above `ω₁`; the composition of the
   previous target with `ReceivingNotTerminalOrbitRankGtTarget`.
@@ -96,10 +96,17 @@ theorem receivingContinuationAtTarget : ReceivingContinuationAtTarget.{w} := by
 /-- **Target: at `ω₁`, unbounded growth without cover-hollowness is not receiving-terminal.**  A
 receiving model `R` at `λ_{ω₁}` that is not cover-hollow and has top-grade supremum `⊤` is not
 receiving-terminal at `ω₁`: its stable candidate is a receiving model at `λ_{ω₁ + 1}` reducing to
-it.  Given-model statement.  Stated. -/
+it.  Given-model statement.  Proved (`omegaOneNotReceivingTerminalTarget`). -/
 def OmegaOneNotReceivingTerminalTarget : Prop :=
   ∀ ⦃M : Type w⦄ (R : Realization.{0, w} (blockStage ω₁) M), R.IsReceivingModel →
     ¬ R.IsCoverHollow → R.topGradeSup = ⊤ → ¬ R.IsReceivingTerminalAt ω₁
+
+/-- At `ω₁`, unbounded growth without cover-hollowness is not receiving-terminal: the stable
+candidate is a receiving model (`receivingContinuationAtTarget`) reducing to the given one
+(`Realization.stableCandidate_reduce`). -/
+theorem omegaOneNotReceivingTerminalTarget : OmegaOneNotReceivingTerminalTarget.{w} :=
+  fun _ R hR hnh hgrow ht ↦
+    ht _ (receivingContinuationAtTarget R hR hnh hgrow) stableCandidate_reduce
 
 /-- **Target: unbounded growth without cover-hollowness at `ω₁` gives an orbit rank above `ω₁`.**
 A receiving model expansion `R` of `M` at `λ_{ω₁}` that is not cover-hollow and has top-grade
