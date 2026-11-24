@@ -44,7 +44,8 @@ directly and has no bound.
   model, for every `ξ : Ordinal.{0}`.
 * `OmegaOneNotReceivingTerminalTarget` (proved, `omegaOneNotReceivingTerminalTarget`): at
   `ξ = ω₁`, such a model is not receiving-terminal.
-* `UnboundedNotHollowOrbitRankGtTarget` (stated): a receiving model expansion at `λ_{ω₁}`, not
+* `UnboundedNotHollowOrbitRankGtTarget` (proved, `unboundedNotHollowOrbitRankGtTarget` in
+  `VaughtConjecture.ProcessRank.SuccessorRank`): a receiving model expansion at `λ_{ω₁}`, not
   cover-hollow, with top-grade supremum `⊤`, has an orbit rank above `ω₁`; the composition of the
   previous target with `ReceivingNotTerminalOrbitRankGtTarget`.
 
@@ -111,7 +112,8 @@ theorem omegaOneNotReceivingTerminalTarget : OmegaOneNotReceivingTerminalTarget.
 /-- **Target: unbounded growth without cover-hollowness at `ω₁` gives an orbit rank above `ω₁`.**
 A receiving model expansion `R` of `M` at `λ_{ω₁}` that is not cover-hollow and has top-grade
 supremum `⊤` has a tuple of orbit rank above `ω₁`, lifted to the carrier universe; so such `M`
-does not have process rank `ω₁`.  Given-model statement.  Stated. -/
+does not have process rank `ω₁`.  Given-model statement.
+Proved (`unboundedNotHollowOrbitRankGtTarget`). -/
 def UnboundedNotHollowOrbitRankGtTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage ω₁)),
     R.1.IsReceivingModel → ¬ R.1.IsCoverHollow → R.1.topGradeSup = ⊤ →

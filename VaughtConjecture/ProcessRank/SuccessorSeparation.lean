@@ -13,7 +13,10 @@ import VaughtConjecture.Expansion.ReceivingModels
 Companion programme over the density sentence: the process rank `R(M) = sup_a orbitRank(a)` of a
 base structure `M` with a receiving model expansion at the block stage `λ_{ω₁ + 1} = λ_{ω₁} + ω`
 (a **receiving successor** of its reduction to `λ_{ω₁}`) exceeds `ω₁`.  Every statement here is
-a given-model statement; all are **stated**, none is proved.
+a given-model statement; all are proved, in
+`VaughtConjecture.ProcessRank.SuccessorPair` (steps 1–3),
+`VaughtConjecture.ProcessRank.SuccessorDetection`
+(step 4) and `VaughtConjecture.ProcessRank.SuccessorRank` (steps 5–6).
 
 Throughout, `Ω = ω₁` and `λ_Ω = blockStage ω₁` (as an ordinal equal to `ω₁`; the equation is not
 used).  The hypothesis "receiving successor at `Ω + ω`" is written with the repository's names in
@@ -24,7 +27,7 @@ two equivalent forms:
 * a model expansion `R : ModelExpansion M (blockStage ω₁)` with
   `¬ R.1.IsReceivingTerminalAt ω₁`: some receiving model at `λ_{ω₁ + 1}` reduces to `R.1`.
 
-**The argument (plan, not yet compiled).**
+**The argument.**
 
 1. *The pair* (`SuccessorOnePointPairTarget`).  At every block index `ξ`, in a receiving model at
    `λ_{ξ+1}`, the one-point apex type capped at `λ_ξ + i` and at `λ_ξ + j`, `0 < i < j`, are legal
@@ -77,7 +80,7 @@ open Ordinal Order FirstOrder Language InfinitaryLogic.ScottProcess.Semantic
 /-- **Target: a one-point pair in the next block.**  In a receiving model at `λ_{ξ+1}`, for
 `0 < i < j`, two legal top-free stage types on one point with one scheme, labelled `λ_ξ + i` and
 `λ_ξ + j`, with equal reductions to `λ_ξ`, are the types of points `a₁` and `a₂`.  No bound on
-`ξ`.  Given-model statement.  Stated. -/
+`ξ`.  Given-model statement.  Proved (`successorOnePointPairTarget`). -/
 def SuccessorOnePointPairTarget : Prop :=
   ∀ ⦃ξ : Ordinal.{u}⦄ ⦃M : Type v⦄ (R : Realization.{u, v} (blockStage (ξ + 1)) M),
     R.IsReceivingModel → ∀ ⦃i j : ℕ⦄, 0 < i → i < j →
@@ -92,7 +95,8 @@ def SuccessorOnePointPairTarget : Prop :=
 
 /-- **Target: agreement through `ω₁`.**  In a receiving model expansion `e` at `λ_{ω₁ + 1}`,
 covers `c₁` and `c₂` of two stage types with equal reductions to `λ_{ω₁}` are back-and-forth
-equivalent at level `ω₁` in the base language.  Given-model statement.  Stated. -/
+equivalent at level `ω₁` in the base language.  Given-model statement.
+Proved (`successorPairAgreementTarget`). -/
 def SuccessorPairAgreementTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (e : ModelExpansion M (blockStage (ω₁ + 1))),
     e.1.HasFiniteCutReceiving → ∀ ⦃k : ℕ⦄ ⦃t₁ t₂ : StageType.{0} (blockStage (ω₁ + 1)) k⦄
@@ -109,7 +113,7 @@ def SuccessorPairAgreementTarget : Prop :=
 below `λ_ξ + n` and the label at `d₂` is at least `λ_ξ + n`, then some rooted cover forcing `n`
 at `d₁` over the common root `t₁↓λ_ξ` extends `c₂` in `R↓λ_ξ`, and none extends `c₁`.  The
 predicate separating `c₂` from `c₁` reads `R` only through `R↓λ_ξ`.  No bound on `ξ`.
-Given-model statement.  Stated. -/
+Given-model statement.  Proved (`successorThresholdSeparationTarget`). -/
 def SuccessorThresholdSeparationTarget : Prop :=
   ∀ ⦃ξ : Ordinal.{u}⦄ ⦃M : Type v⦄ (R : Realization.{u, v} (blockStage (ξ + 1)) M),
     R.IsReceivingModel → ∀ ⦃k : ℕ⦄ ⦃t₁ t₂ : StageType.{u} (blockStage (ξ + 1)) k⦄
@@ -133,7 +137,7 @@ def SuccessorThresholdSeparationTarget : Prop :=
 /-- **Target: the charts at `λ_{ω₁}` are the conjunctions of the countable block formulas.**  In a
 receiving model expansion `R` at `λ_{ω₁}`, a tuple `c` covers a stage type `t` exactly when, at
 every `η < ω₁`, it satisfies the block formula of the forcing thresholds of the reduction of `t`
-to `λ_η`.  Given-model statement.  Stated. -/
+to `λ_η`.  Given-model statement.  Proved (`stageOmegaOneCoversDefinableTarget`). -/
 def StageOmegaOneCoversDefinableTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage ω₁)),
     R.1.IsReceivingModel → ∀ ⦃k : ℕ⦄ (t : StageType.{0} (blockStage ω₁) k) (c : Fin k → M),
@@ -142,7 +146,7 @@ def StageOmegaOneCoversDefinableTarget : Prop :=
 
 /-- **Target: covers at `λ_{ω₁}` are invariant under equivalence at `ω₁`.**  In a receiving model
 expansion `R` at `λ_{ω₁}`, a tuple back-and-forth equivalent at level `ω₁` in the base language to
-a cover of `t` covers `t`.  Given-model statement.  Stated. -/
+a cover of `t` covers `t`.  Given-model statement.  Proved (`stageOmegaOneCoversBFEquivTarget`). -/
 def StageOmegaOneCoversBFEquivTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage ω₁)),
     R.1.IsReceivingModel → ∀ ⦃k : ℕ⦄ (t : StageType.{0} (blockStage ω₁) k) (c c' : Fin k → M),
@@ -151,7 +155,8 @@ def StageOmegaOneCoversBFEquivTarget : Prop :=
 /-- **Target: rooted covers at `λ_{ω₁}` are invariant under equivalence at `ω₁ + m`.**  In a
 receiving model expansion `R` at `λ_{ω₁}`, if `c` extends to a cover of a triple `(m, q, f)` and
 `c'` is back-and-forth equivalent to `c` at level `ω₁ + m` in the base language, then `c'`
-extends to a cover of the same triple.  Given-model statement.  Stated. -/
+extends to a cover of the same triple.  Given-model statement.
+Proved (`stageOmegaOneExtendsToCoverBFEquivTarget`). -/
 def StageOmegaOneExtendsToCoverBFEquivTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage ω₁)),
     R.1.IsReceivingModel → ∀ ⦃k : ℕ⦄
@@ -164,7 +169,7 @@ def StageOmegaOneExtendsToCoverBFEquivTarget : Prop :=
 /-- **Target: a receiving successor at `ω₁` separates two points after `ω₁`.**  If the base
 structure `M` has a receiving model expansion `e` at `λ_{ω₁ + 1}`, some two points of `M` are
 back-and-forth equivalent at level `ω₁` and not at some level `ω₁ + m`, `m : ℕ`, both in the base
-language.  Given-model statement.  Stated. -/
+language.  Given-model statement.  Proved (`successorSeparatedPairTarget`). -/
 def SuccessorSeparatedPairTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (e : ModelExpansion M (blockStage (ω₁ + 1))),
     e.1.HasFiniteCutReceiving → ∃ a₁ a₂ : M,
@@ -173,7 +178,7 @@ def SuccessorSeparatedPairTarget : Prop :=
 
 /-- **Target: a receiving successor at `ω₁` gives an orbit rank above `ω₁`.**  If `M` has a
 receiving model expansion at `λ_{ω₁ + 1}`, some tuple of `M` has orbit rank above `ω₁`, lifted
-to the carrier universe.  Given-model statement.  Stated. -/
+to the carrier universe.  Given-model statement.  Proved (`successorOrbitRankGtTarget`). -/
 def SuccessorOrbitRankGtTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (e : ModelExpansion M (blockStage (ω₁ + 1))),
     e.1.HasFiniteCutReceiving → ∃ (n : ℕ) (a : Fin n → M),
@@ -182,7 +187,7 @@ def SuccessorOrbitRankGtTarget : Prop :=
 /-- **Target: a model expansion at `λ_{ω₁}` that is not receiving-terminal gives an orbit rank
 above `ω₁`.**  For a model expansion `R` of `M` at `λ_{ω₁}` such that some receiving model at
 `λ_{ω₁ + 1}` reduces to `R.1` (`¬ R.1.IsReceivingTerminalAt ω₁`), some tuple of `M` has orbit
-rank above `ω₁`.  Given-model statement.  Stated. -/
+rank above `ω₁`.  Given-model statement.  Proved (`receivingNotTerminalOrbitRankGtTarget`). -/
 def ReceivingNotTerminalOrbitRankGtTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage ω₁)),
     ¬ R.1.IsReceivingTerminalAt ω₁ → ∃ (n : ℕ) (a : Fin n → M),
@@ -191,7 +196,7 @@ def ReceivingNotTerminalOrbitRankGtTarget : Prop :=
 /-- **Target: a receiving successor at `ω₁` gives process rank above `ω₁`.**  If an infinite `M`
 has a receiving model expansion at `λ_{ω₁ + 1}`, no initial segment of the semantic Scott process
 of `M` has rank at most `ω₁` (the rank, lifted, is `sup_a orbitRank(a)` when it exists).
-Given-model statement.  Stated. -/
+Given-model statement.  Proved (`successorProcessRankGtTarget`). -/
 def SuccessorProcessRankGtTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] [Infinite M]
     (e : ModelExpansion M (blockStage (ω₁ + 1))), e.1.HasFiniteCutReceiving →
