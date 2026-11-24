@@ -41,7 +41,9 @@ fields, including those of grade above `k`, and involves no cutoff coordinate.
   undesignated values of `Q` are those of `P`, and its designated values are above `m(P)`.  So an
   agreement height of a separated and an inactive state is at most `m(P)`; for rank vectors, the
   cut of a separated vector `a` and an inactive vector `b` is at most `m(a)`
-  (`rankCut_le_undesignatedMax`).  No visibility replacement is used.
+  (`rankCut_le_undesignatedMax`).  No visibility replacement is used.  Conversely, a state with
+  the capped observation of an inactive state at a cap above its `m` is inactive
+  (`not_isSeparated_of_min_eq`).
 -/
 
 namespace VaughtConjecture.ProcessRank
@@ -154,6 +156,32 @@ theorem IsSeparated.of_min_eq [Fintype ι] (hP : IsSeparated T P) {Q : ι ⊕ ι
     exact lt_min (hP.undesignatedMax_lt hx) hh
   have hQx : undesignatedMax T P < Q x := hmx.trans_le (min_le_left _ _)
   exact ⟨bot_le.trans_lt hQx, fun y hy ↦ (hund hy).symm ▸ (le_undesignatedMax hy).trans_lt hQx⟩
+
+omit [OrderBot β] in
+/-- A value below a cap is recovered from its capped observation. -/
+theorem eq_of_min_eq_of_lt {a a' h : β} (he : min a' h = min a h) (ha : a < h) : a' = a := by
+  rw [min_eq_left ha.le] at he
+  rcases le_total a' h with h' | h'
+  · rwa [min_eq_left h'] at he
+  · rw [min_eq_right h'] at he
+    exact absurd he.symm ha.ne
+
+/-- **Inactivity is kept by a cap above `m(P)`**: a state with the capped observation of an
+inactive state `P` at a cap above `m(P)` is inactive. -/
+theorem not_isSeparated_of_min_eq [Fintype ι] (hP : ¬ IsSeparated T P) {Q : ι ⊕ ι → β} {h : β}
+    (hh : undesignatedMax T P < h) (hPQ : ∀ x, min (Q x) h = min (P x) h) :
+    ¬ IsSeparated T Q := by
+  classical
+  intro hQ
+  have hund {y : ι ⊕ ι} (hy : ¬ IsDesignated T y) : Q y = P y :=
+    eq_of_min_eq_of_lt (hPQ y) ((le_undesignatedMax hy).trans_lt hh)
+  have hmQ : undesignatedMax T Q < h := by
+    refine lt_of_le_of_lt ?_ hh
+    unfold undesignatedMax
+    refine Finset.sup_le fun y hy ↦ ?_
+    rw [hund (mem_filter.mp hy).2]
+    exact le_undesignatedMax (mem_filter.mp hy).2
+  exact hP (hQ.of_min_eq hmQ hPQ)
 
 end Order
 
