@@ -8,6 +8,7 @@ import InfinitaryLogic.Scott.OrbitRank
 import VaughtConjecture.MainTheorem.GrowthLevelRoute
 import VaughtConjecture.MainTheorem.ReceivingDomains
 import VaughtConjecture.MainTheorem.ReceivingRoute
+import VaughtConjecture.ProcessRank.RankUpper
 
 /-!
 # Receiving expansions at `ω₁` of the models of uncountable process rank
@@ -51,12 +52,13 @@ is refuted in the repository and is not used.
    (`ModelExpansion.exists_hasFiniteCutReceiving_of_forall_lt_of_le`, proved; the limit
    existence lemma of `VaughtConjecture.MainTheorem.ReceivingDomains` with `δ ≤ ω₁` in place of
    `δ < ω₁`), with next-block uniqueness of receiving models from forcing
-   donors (compiled), and `λ_{ω₁} = ω₁` (`blockStage_omegaOne`, proved).  Step 3 gives the goal
+   donors (compiled), and `λ_{ω₁} = ω₁` (`blockStage_omegaOne`, proved in
+   `VaughtConjecture.ProcessRank.RankUpper`).  Step 3 gives the goal
    (`existsReceivingExpansionOfProcessRankTarget_of_block`, proved).
 
 **Results.**
 
-* `blockStage_omegaOne`, `ModelExpansion.exists_hasFiniteCutReceiving_of_forall_lt_of_le`,
+* `ModelExpansion.exists_hasFiniteCutReceiving_of_forall_lt_of_le`,
   `exists_isReceivingModel_of_forall_blockStage`, `receivingExpansionDomain_compl_countable`
   (proved).
 * `ProcessRankLtOfCountableExceptionsTarget` (proved, `processRankLtOfCountableExceptionsTarget`
@@ -74,13 +76,6 @@ namespace VaughtConjecture.ProcessRank
 open Ordinal _root_.Order FirstOrder Language Expansion
 
 /-! ### Gluing at `ω₁` itself -/
-
-/-- The block stage of index `ω₁` is `ω₁`: `ω` and `ω₁` are below `ω₁`, which is closed under
-ordinal multiplication and addition. -/
-theorem blockStage_omegaOne : blockStage (ω₁ : Ordinal.{u}) = ω₁ := by
-  have hω : ω < (ω₁ : Ordinal.{u}) := omega0_lt_omega_one
-  rw [blockStage, isPrincipal_mul_iff_mul_left_eq.1 (isPrincipal_mul_omega 1) ω omega0_pos hω,
-    isPrincipal_add_iff_add_left_eq_self.1 (isPrincipal_add_omega 1) ω hω]
 
 variable {M : Type w} [baseLanguage.{0}.Structure M]
 
