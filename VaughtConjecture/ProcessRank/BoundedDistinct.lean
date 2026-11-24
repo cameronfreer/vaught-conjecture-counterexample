@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.AlephOne.Count
 import VaughtConjecture.AlephOne.ScottAnalysis
 import VaughtConjecture.ProcessRank.BoundedConstruction
+import VaughtConjecture.ProcessRank.CoverTransfer
 
 /-!
 # Distinct Scott classes of the bounded receiving models: the statements
@@ -17,20 +18,21 @@ potential isomorphism of the base structures, equivalently up to `L_{∞ω}`-equ
 isomorphism classes), and that their process rank is `ω₁`, conditionally on a named hypothesis
 for the upper bound on orbit ranks.
 
-**The realized age is an invariant of the base structure** (`RealizedAgeInvariantTarget`,
-stated, given-model).  For receiving model expansions `R` of `M` and `S` of `N` to `ω₁`, a
-potential isomorphism of the base structures `M` and `N` gives equal realized ages.  It concerns
-the base structures, not the expansions: two receiving expansions of one base structure have the
-same realized age (the identity potential isomorphism).  The intended proof: a cover `y` of `D`
-in `S` is matched by the back steps of the potential isomorphism with a tuple `x` of `M`
-back-and-forth equivalent to it at every level (`PotentialIso.family_bfEquiv`); at every countable
-block stage `λ_η`, `y` covers the reduction of `D` in the reduction of `S`, so it satisfies the
-block formula of that reduction, a formula of countable rank
-(`Realization.IsReceivingModel.realize_blockFormula_iff`, valid for every stage type, top-bearing
-included), and so does `x`; so the type `p` of `x` in `R` has the reductions of `D` at every
-countable block stage, and `p = D` (`StageType.eq_of_forall_reduce_eq_of_isSuccLimit`).  No
-formula of uncountable rank is built: the back-and-forth equivalence at every countable level of
-the two covers suffices.
+**The realized age is an invariant of the base structure** (`RealizedAgeInvariantTarget`, proved,
+`realizedAgeInvariantTarget`, given-model).  For receiving model expansions `R` of `M` and `S` of
+`N` to `ω₁`, a potential isomorphism of the base structures `M` and `N` gives equal realized
+ages.  It concerns the base structures, not the expansions: two receiving expansions of one base
+structure have the same realized age (the identity potential isomorphism).  The proof
+(`ProcessRank.exists_covers_iff_of_potentialIso`, in
+`VaughtConjecture.ProcessRank.CoverTransfer`): a cover `y` of `D` in `S` is matched by the back
+steps of the potential isomorphism with a tuple `x` of `M` back-and-forth equivalent to it at
+every level (`PotentialIso.family_bfEquiv`); at every countable block stage `λ_η`, `y` covers the
+reduction of `D` in the reduction of `S`, so it satisfies the block formula of that reduction, a
+formula of countable rank (`Realization.IsReceivingModel.realize_blockFormula_iff`, valid for
+every stage type, top-bearing included), and so does `x`; so the type `p` of `x` in `R` has the
+reductions of `D` at every countable block stage, and `p = D`
+(`StageType.eq_of_forall_reduce_blockStage_eq_omega_one`).  No formula of uncountable rank is
+built: the back-and-forth equivalence at every countable level of the two covers suffices.
 
 **What gives infinitely many classes.**  Three inputs:
 1. witnesses: for every `n ≥ 1` a legal stage type `t_n` of top grade exactly `n`
@@ -39,16 +41,15 @@ the two covers suffices.
 2. detection: a receiving model with top grades at most `K` and exact receiving within `A_K`
    covers `t_n` exactly when `n ≤ K` (`covers_iff_le_of_topGrade_eq`, proved);
 3. invariance: detection depends only on the Scott class of the base structure, not on the
-   receiving expansion (`WitnessDetectionTarget`, proved from `RealizedAgeInvariantTarget`,
-   `witnessDetectionTarget_of`).
-So `K ↦` the Scott class of `M_K` is injective (`BoundedNotPotentiallyIsoTarget`, proved from the
-invariance and the witnesses, `boundedNotPotentiallyIsoTarget_of`): for `K < L`, the witness
+   receiving expansion (`WitnessDetectionTarget`, proved, `witnessDetectionTarget`, from
+   `realizedAgeInvariantTarget`).
+So `K ↦` the Scott class of `M_K` is injective (`BoundedNotPotentiallyIsoTarget`, proved,
+`boundedNotPotentiallyIsoTarget`): for `K < L`, the witness
 `t_L` lies in `A_L` and not in `A_K`.
 
 **The case `K = 1`** (first milestone).  The one-point apex type (top grade `1`) lies in `A_1`
 and in no top-free age, so `M_1` is not potentially isomorphic to any top-free receiving model
-(`BoundedOneNotTopFreeTarget`, proved from the invariance alone,
-`boundedOneNotTopFreeTarget_of`).
+(`BoundedOneNotTopFreeTarget`, proved, `boundedOneNotTopFreeTarget`).
 
 **Ranks** (conditional; the hypotheses are named premises).
 
@@ -102,12 +103,19 @@ noncomputable abbrev baseStructure {M : Type w} (R : Realization.{0, w} (ω₁ :
 /-- **Target: potentially isomorphic base structures have receiving expansions with equal realized
 ages** (given-model statement).  For receiving model expansions `R` of `M` and `S` of `N` to
 `ω₁`, on carriers in any two universes, a potential isomorphism of the base structures gives
-equal realized ages at every arity.  Stated. -/
+equal realized ages at every arity.  Proved (`realizedAgeInvariantTarget`). -/
 def RealizedAgeInvariantTarget : Prop :=
   ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
     (R : ModelExpansion M ω₁) (S : ModelExpansion N ω₁), R.1.IsReceivingModel →
       S.1.IsReceivingModel → Nonempty (PotentialIso baseLanguage.{0} M N) →
         ∀ m : ℕ, realizedAge R.1 m = realizedAge S.1 m
+
+/-- **Potentially isomorphic base structures have receiving expansions with equal realized
+ages**: `ProcessRank.exists_covers_iff_of_potentialIso`. -/
+theorem realizedAgeInvariantTarget : RealizedAgeInvariantTarget.{w, w'} := by
+  intro M N _ _ R S hR hS ⟨P⟩ m
+  ext D
+  exact exists_covers_iff_of_potentialIso P hR hS D
 
 /-! ### Detection of the witnesses -/
 
@@ -129,7 +137,7 @@ top grades at most `K` and exact receiving within `A_K`, and `t` a legal stage t
 receiving model expansion `S` of `N` to `ω₁`, `S` covers `t` exactly when `n ≤ K`.  So whether
 `n ≤ K` is read off the Scott class of the base structure of `R`, whatever its receiving
 expansion.  Proved from the invariance of the realized age
-(`witnessDetectionTarget_of`). -/
+(`witnessDetectionTarget_of`, `witnessDetectionTarget`). -/
 def WitnessDetectionTarget : Prop :=
   ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
     (R : ModelExpansion M ω₁) (S : ModelExpansion N ω₁) ⦃K n m : ℕ⦄
@@ -153,7 +161,7 @@ theorem witnessDetectionTarget_of (hinv : RealizedAgeInvariantTarget.{w, w'}) :
 model expansions `R` of `M` and `S` of `N` to `ω₁` with top grades at most `K` and `L` and exact
 receiving within `A_K` and `A_L`, and `K ≠ L`, the base structures are not potentially
 isomorphic.  Proved from the invariance of the realized age, with the witnesses
-(`boundedNotPotentiallyIsoTarget_of`). -/
+(`boundedNotPotentiallyIsoTarget_of`, `boundedNotPotentiallyIsoTarget`). -/
 def BoundedNotPotentiallyIsoTarget : Prop :=
   ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
     (R : ModelExpansion M ω₁) (S : ModelExpansion N ω₁) ⦃K L : ℕ⦄, K ≠ L →
@@ -197,7 +205,7 @@ theorem boundedNotPotentiallyIsoTarget_of (hinv : RealizedAgeInvariantTarget.{w,
 (given-model statement).  For a receiving model expansion `R` of `M` to `ω₁` with top grades at
 most `1` and exact receiving within `A_1`, and a receiving model expansion `S` of `N` to `ω₁` all
 of whose types are top-free, the base structures are not potentially isomorphic.  Proved from the
-invariance (`boundedOneNotTopFreeTarget_of`). -/
+invariance (`boundedOneNotTopFreeTarget_of`, `boundedOneNotTopFreeTarget`). -/
 def BoundedOneNotTopFreeTarget : Prop :=
   ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
     (R : ModelExpansion M ω₁) (S : ModelExpansion N ω₁),
@@ -220,6 +228,21 @@ theorem boundedOneNotTopFreeTarget_of (hinv : RealizedAgeInvariantTarget.{w, w'}
   obtain ⟨u, hinj, hu⟩ := hmem
   have h0 : 0 < (StageType.onePointApex (α := (ω₁ : Ordinal.{0}))).card := by simp
   exact hSt _ _ hu ⟨0, h0⟩ (StageType.onePointApex_label _)
+
+/-- **Detection of the witnesses is invariant under potential isomorphism of the base
+structures** (`witnessDetectionTarget_of`, `realizedAgeInvariantTarget`). -/
+theorem witnessDetectionTarget : WitnessDetectionTarget.{w, w'} :=
+  witnessDetectionTarget_of realizedAgeInvariantTarget
+
+/-- **Distinct bounds give distinct Scott classes** (`boundedNotPotentiallyIsoTarget_of`,
+`realizedAgeInvariantTarget`). -/
+theorem boundedNotPotentiallyIsoTarget : BoundedNotPotentiallyIsoTarget.{w, w'} :=
+  boundedNotPotentiallyIsoTarget_of realizedAgeInvariantTarget
+
+/-- **The model of top grades at most `1` is outside the top-free Scott class**
+(`boundedOneNotTopFreeTarget_of`, `realizedAgeInvariantTarget`). -/
+theorem boundedOneNotTopFreeTarget : BoundedOneNotTopFreeTarget.{w, w'} :=
+  boundedOneNotTopFreeTarget_of realizedAgeInvariantTarget
 
 /-! ### Ranks -/
 
