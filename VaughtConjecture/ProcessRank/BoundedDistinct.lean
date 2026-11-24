@@ -77,9 +77,10 @@ and in no top-free age, so `M_1` is not potentially isomorphic to any top-free r
 * `ExistsBoundedFamilyTarget` (unconditional): receiving models `M_K` on the carrier for all `K`,
   each realizing a legal type of top grade exactly `K`, with pairwise not potentially isomorphic
   base structures.
-* `InfinitelyManyRankOmegaOneScottClassesTarget` (conditional on the upper bound): countably
-  infinitely many pairwise not potentially isomorphic models of the density sentence on the
-  carrier, each of process rank `ω₁`.
+* `InfinitelyManyRankOmegaOneScottClassesTarget` (conditional on the upper bound): at least `ℵ₀`
+  Scott classes of process rank `ω₁`, that is, pairwise not potentially isomorphic models of the
+  density sentence on the carrier, each of process rank `ω₁`.  The exact count needs the upper
+  bound of the classification.
 * `InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget` (conditional on the upper bound):
   the same with internal Scott rank `ω₁ + 1`.
 
@@ -435,12 +436,12 @@ theorem existsBoundedFamilyTarget : ExistsBoundedFamilyTarget := by
       (baseStructure (R L)) (toModelExpansion (R K) (hR K)) (toModelExpansion (R L) (hR L)) K L
       hKL (hR K) (hK K) (hrec K) (hR L) (hK L) (hrec L)
 
-/-- **Target: countably infinitely many Scott classes of process rank `ω₁`, under the orbit-rank
+/-- **Target: at least `ℵ₀` Scott classes of process rank `ω₁`, under the orbit-rank
 hypothesis.**  Given `OrbitRankLeOmegaOneOfExactReceivingTarget`, some structures `S K` of the
 base language on the carrier `ω₁.ToType`, for all `K`, satisfy the density sentence, have
 semantic Scott process of rank `ω₁` at every length beyond `ω₁ + 1`, and are pairwise not
-potentially isomorphic.  Existence statement, conditional.  Proved
-(`infinitelyManyRankOmegaOneScottClassesTarget`). -/
+potentially isomorphic.  The exact count needs the upper bound of the classification.  Existence
+statement, conditional.  Proved (`infinitelyManyRankOmegaOneScottClassesTarget`). -/
 def InfinitelyManyRankOmegaOneScottClassesTarget : Prop :=
   OrbitRankLeOmegaOneOfExactReceivingTarget.{0} →
     ∃ S : ℕ → baseLanguage.{0}.Structure Carrier,
@@ -450,7 +451,7 @@ def InfinitelyManyRankOmegaOneScottClassesTarget : Prop :=
             (scottProcessOf baseLanguage.{0} Carrier δ (zero_le.trans_lt hδ)).IsRank ω₁) ∧
       ∀ K L, K ≠ L → IsEmpty (@PotentialIso baseLanguage.{0} _ Carrier Carrier (S K) (S L))
 
-/-- **Countably infinitely many Scott classes of process rank `ω₁`**, under the orbit-rank
+/-- **At least `ℵ₀` Scott classes of process rank `ω₁`**, under the orbit-rank
 hypothesis: the base structures of the family of `existsBoundedFamilyTarget`. -/
 theorem infinitelyManyRankOmegaOneScottClassesTarget :
     InfinitelyManyRankOmegaOneScottClassesTarget := by
@@ -462,11 +463,12 @@ theorem infinitelyManyRankOmegaOneScottClassesTarget :
   exact ⟨realizeDensitySentenceTarget (R K) hRK, fun δ hδ ↦
     boundedProcessRankTarget hup (toModelExpansion (R K) hRK) hRK hK hrec hδ⟩
 
-/-- **Target: countably infinitely many Scott classes of internal Scott rank `ω₁ + 1`, under the
+/-- **Target: at least `ℵ₀` Scott classes of internal Scott rank `ω₁ + 1`, under the
 orbit-rank hypothesis.**  Given `OrbitRankLeOmegaOneOfExactReceivingTarget`, some structures
 `S K` of the base language on the carrier `ω₁.ToType`, for all `K`, satisfy the density sentence,
 have semantic Scott process of rank `ω₁` at every length beyond `ω₁ + 1` and internal Scott rank
-`ω₁ + 1`, and are pairwise not potentially isomorphic.  Existence statement, conditional.  Proved
+`ω₁ + 1`, and are pairwise not potentially isomorphic.  The exact count needs the upper bound of
+the classification.  Existence statement, conditional.  Proved
 (`infinitelyManyInternalRankOmegaOneAddOneScottClassesTarget`). -/
 def InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget : Prop :=
   OrbitRankLeOmegaOneOfExactReceivingTarget.{0} →
@@ -478,7 +480,7 @@ def InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget : Prop :=
             (scottProcessOf baseLanguage.{0} Carrier δ (zero_le.trans_lt hδ)).IsRank ω₁) ∧
       ∀ K L, K ≠ L → IsEmpty (@PotentialIso baseLanguage.{0} _ Carrier Carrier (S K) (S L))
 
-/-- **Countably infinitely many Scott classes of internal Scott rank `ω₁ + 1`**, under the
+/-- **At least `ℵ₀` Scott classes of internal Scott rank `ω₁ + 1`**, under the
 orbit-rank hypothesis: the base structures of the members `K + 1` of the family of
 `existsBoundedFamilyTarget`. -/
 theorem infinitelyManyInternalRankOmegaOneAddOneScottClassesTarget :
