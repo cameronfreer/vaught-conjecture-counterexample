@@ -30,14 +30,16 @@ is refuted in the repository and is not used.
    (`receivingExpansionDomain_compl_countable`, proved from compiled inputs): all but countably
    many isomorphism classes of models coded on `ℕ` have a receiving expansion to each countable
    block stage `λ_η`.
-2. Countable exceptions (`ProcessRankLtOfCountableExceptionsTarget`, stated): if a sentence of
+2. Countable exceptions (`ProcessRankLtOfCountableExceptionsTarget`, proved in
+   `VaughtConjecture.ProcessRank.ReconstructionExceptions`): if a sentence of
    `L_{ω₁,ω}` fails in only countably many classes of countable models of the density sentence,
    it holds in every model of uncountable process rank.  The input is that a model satisfying the
    Scott sentence of a countable model is potentially isomorphic to it
-   (`PotentialIsoOfRealizeCanonicalScottSentenceTarget`, stated; InfinitaryLogic's
-   `canonicalScottSentence_iff_potentialIso` assumes the second structure countable), and that
-   potential isomorphism keeps `R(M)` (`ProcessRank.RanksLiftEqOfPotentialIsoTarget`, a target,
-   stated, not yet proved).
+   (`PotentialIsoOfRealizeCanonicalScottSentenceTarget`, stated; proved for carriers in one
+   universe, `nonempty_potentialIso_of_realize_canonicalScottSentence`, through InfinitaryLogic's
+   arbitrary-target stabilization, while `canonicalScottSentence_iff_potentialIso` assumes the
+   second structure countable), and that potential isomorphism with a countable structure makes
+   `R(M)` countable (`iSup_orbitRank_lt_omegaOne_of_potentialIso`, proved).
 3. At each countable `η` (`ExistsReceivingBlockExpansionOfProcessRankTarget`, stated): a model
    of uncountable process rank has a receiving expansion to `λ_η`.  Either through one sentence of
    `L_{ω₁,ω}` asserting that the chart readings of the block formulas form a receiving model at
@@ -57,8 +59,11 @@ is refuted in the repository and is not used.
 * `blockStage_omegaOne`, `ModelExpansion.exists_hasFiniteCutReceiving_of_forall_lt_of_le`,
   `exists_isReceivingModel_of_forall_blockStage`, `receivingExpansionDomain_compl_countable`
   (proved).
-* `PotentialIsoOfRealizeCanonicalScottSentenceTarget`, `ProcessRankLtOfCountableExceptionsTarget`,
-  `ExistsReceivingBlockExpansionOfProcessRankTarget`, `ExistsReceivingExpansionOfProcessRankTarget`
+* `ProcessRankLtOfCountableExceptionsTarget` (proved, `processRankLtOfCountableExceptionsTarget`
+  in `VaughtConjecture.ProcessRank.ReconstructionExceptions`).
+* `PotentialIsoOfRealizeCanonicalScottSentenceTarget` (stated; the case of carriers in one
+  universe is proved there).
+* `ExistsReceivingBlockExpansionOfProcessRankTarget`, `ExistsReceivingExpansionOfProcessRankTarget`
   (stated), with `existsReceivingExpansionOfProcessRankTarget_of_block` (proved from step 3).
 -/
 
@@ -140,7 +145,9 @@ a countable structure `C` and a structure `N` of any cardinality, on carriers in
 universes: if `N` satisfies the canonical Scott sentence of `C`, there is a potential isomorphism
 between `C` and `N`.  InfinitaryLogic's `canonicalScottSentence_iff_potentialIso` assumes `N`
 countable; the route for arbitrary `N` passes to countable substructures of `N` elementary for a
-countable fragment containing the Scott formulas of the tuples of `C`.  Stated. -/
+countable fragment containing the Scott formulas of the tuples of `C`.  Stated; the case of
+carriers in one universe is proved (`nonempty_potentialIso_of_realize_canonicalScottSentence`, in
+`VaughtConjecture.ProcessRank.ReconstructionExceptions`). -/
 def PotentialIsoOfRealizeCanonicalScottSentenceTarget : Prop :=
   ∀ ⦃L : Language.{u, v}⦄ [L.IsRelational] [Countable (Σ l, L.Relations l)] ⦃C : Type w⦄
     [L.Structure C] [Countable C] ⦃N : Type w'⦄ [L.Structure N],
@@ -154,7 +161,8 @@ substructure, elementary for a countable fragment containing the density sentenc
 Scott sentences of the exceptional classes, which is isomorphic to an exceptional model; so the
 model satisfies the Scott sentence of a countable model, is potentially isomorphic to it
 (`PotentialIsoOfRealizeCanonicalScottSentenceTarget`), and has countable process rank.
-Given-model statement.  Stated. -/
+Given-model statement.  Proved (`processRankLtOfCountableExceptionsTarget`, in
+`VaughtConjecture.ProcessRank.ReconstructionExceptions`). -/
 def ProcessRankLtOfCountableExceptionsTarget : Prop :=
   ∀ ψ : baseLanguage.{0}.Sentenceω,
     (Quotient.mk (isoSetoid baseLanguage.densitySentence.{0}) ''
