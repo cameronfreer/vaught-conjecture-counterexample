@@ -35,7 +35,7 @@ side by three cases (for `k ≥ K`; below `K` the other side is kept):
    inactivity and every low field are fixed by the cap agreement;
 3. `m(P) < c` and `P` separated: both sides have the same high set (all designated fields
    matched in `P`, all undesignated fields low), and the high tail of the prescribed side is
-   grafted onto the other side (`CellScheme.Rows.GraftHighTailTarget`); designated fields above the
+   grafted onto the other side (`Scheme.GraftHighTailTarget`); designated fields above the
    grade `k` do not occur since `k ≥ K`.
 
 No prescription is made on both sides at once.  Only the statement is given here.

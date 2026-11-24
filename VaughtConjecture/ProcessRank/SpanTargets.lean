@@ -43,9 +43,8 @@ for the rooted comparison (`VaughtConjecture.ProcessRank.SpanComparison`).
   whose ranges need not be disjoint, on some number of points: the top-free amalgam over the empty
   face (`StageType.exists_isTopFree_amalgam`, from the compiled coatom extension property).  Proved.
   The disjoint form on `n + n` points is `StageType.MutualRigidSpanTopFreeTarget`.  Stated.
-* `StageType.MixedGradeExamplePairTarget` and `StageType.MixedGradeSpanExampleTarget`: the first
-  example to be compiled before the general theorem, two legal types on two points with a top cell
-  of grade one, a top cell of grade two and different proper labels.  Stated.
+
+The first concrete tests of the construction are in `VaughtConjecture.ProcessRank.SpanTests`.
 -/
 
 universe u
@@ -182,34 +181,6 @@ def MutualRigidSpanTopFreeTarget : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄, Order.IsSuccLimit α → ∀ ⦃n : ℕ⦄ ⦃p q : StageType.{u} α n⦄,
     p.IsLegal → q.IsLegal → SameSchemeTopPattern p q → p.IsTopFree →
       ∃ (D : StageType.{u} α (n + n)) (i j : Fin n ↪ Fin (n + n)),
-        Disjoint (Set.range i) (Set.range j) ∧ IsMutualRigidSpan p q D i j
-
-/-! ### The first example -/
-
-/-- **The mixed-grade example pair**: legal stage types `p` and `q` on two points with the same
-scheme and top pattern, a top cell of grade one, a top cell of grade two, and a cell at which both
-labels are proper and different. -/
-def IsMixedGradeExamplePair (p q : StageType.{u} α 2) : Prop :=
-  p.IsLegal ∧ q.IsLegal ∧ SameSchemeTopPattern p q ∧
-    (∃ d, p.toCellScheme.grade d = 1 ∧ p.label d = ⊤) ∧
-    (∃ d, p.toCellScheme.grade d = 2 ∧ p.label d = ⊤) ∧
-    ∃ (i : Fin p.card) (j : Fin q.card), (i : ℕ) = j ∧ (p.label i).IsProper ∧
-      (q.label j).IsProper ∧ p.label i ≠ q.label j
-
-/-- **Target: the mixed-grade example pair exists**, at the limit stage `ω ^ 2`.  The intended pair
-has the cells `({0}, 1)`, `({1}, 1)`, `({0, 1}, 1)` and `({0, 1}, 2)`, labelled `⊤`, `λ`, `⊤`, `⊤`
-(availability from `({0}, 1)` forces `⊤` at `({0, 1}, 1)`), with `λ = ω + 1` in `p` and
-`λ = ω * 2 + 1` in `q` (both self-visible at the grade one), on one scheme.  Stated. -/
-def MixedGradeExamplePairTarget : Prop :=
-  ∃ p q : StageType.{u} (Ordinal.omega0 ^ 2) 2, IsMixedGradeExamplePair p q
-
-/-- **Target: the span of the mixed-grade example**: every mixed-grade example pair at a limit
-stage has a span of mutual rigidity on four points along embeddings with disjoint ranges.  It is to
-be compiled through the generic mirrored master before the general theorem.  Stated. -/
-def MixedGradeSpanExampleTarget : Prop :=
-  ∀ ⦃α : Ordinal.{u}⦄, Order.IsSuccLimit α → ∀ ⦃p q : StageType.{u} α 2⦄,
-    IsMixedGradeExamplePair p q →
-      ∃ (D : StageType.{u} α (2 + 2)) (i j : Fin 2 ↪ Fin (2 + 2)),
         Disjoint (Set.range i) (Set.range j) ∧ IsMutualRigidSpan p q D i j
 
 end StageType

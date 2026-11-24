@@ -3,17 +3,20 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Scheme.Row
+import VaughtConjecture.Extension.CappedDecoder
 
 /-!
 # Grafting a high tail onto a lawful labelling
 
 Process rank `ω₁`, the finite span of mutual rigidity: a local lemma on lawful labellings.
 
-**The graft.**  Let `x` and `y` be lawful below a pair `X`, let `c` be a cap self-visible at the
-grade of `X`, and let `x` and `y` have the same **high set** `{d | c ≤ x d} = {d | c ≤ y d}`.  The
-graft `z` equal to `x` at the low cells and to `y` at the high cells is lawful below `X`
-(`CellScheme.Rows.GraftHighTailTarget`, to be proved as `Rows.IsLawfulBelow.graftHighTail`).  At
+**The graft.**  Let `S` be a scheme (finitely many cells, indexed by `Fin S.card`), let `x` and
+`y` be labellings of its cells lawful below a pair `X`, let `c` be a cap self-visible at the grade
+of `X`, and let `x` and `y` have the same **high set** below `X`: `c ≤ x d ↔ c ≤ y d` for every
+cell `d` below `X`.  The graft `z` equal to `x` at the low cells and to `y` at the high cells is
+lawful below `X` (`Scheme.GraftHighTailTarget`).  The statement is for schemes, whose cells are
+finite in number: the proof takes the largest of finitely many low readings and uses the capped
+decoder of a scheme (`Scheme.exists_cappedDecoder_below`).  At
 the cap `⊥` every cell is high and `z = y`.  The intended proof:
 
 * order and availability: a low availability witness of `x` stays low or becomes high, and a high
@@ -31,19 +34,19 @@ the cap `⊥` every cell is high and `z = y`.  The intended proof:
 Only the statement is given here.
 -/
 
-universe u a b
+universe u
 
-namespace VaughtConjecture.CellScheme.Rows
+namespace VaughtConjecture.Scheme
 
 open Label
 
-/-- **Target: grafting a high tail.**  Two labellings `x` and `y` lawful below `X` with the same
-high set at a cap `c` self-visible at the grade of `X` give a lawful labelling below `X`: `y` at
-the high cells and `x` at the others.  Stated. -/
+/-- **Target: grafting a high tail.**  For a scheme `S`, two labellings `x` and `y` of its cells
+lawful below `X` with the same high set below `X` at a cap `c` self-visible at the grade of `X`
+give a labelling lawful below `X`: `y` at the high cells and `x` at the others.  Stated. -/
 def GraftHighTailTarget : Prop :=
-  ∀ ⦃ι : Type a⦄ ⦃κ : Type b⦄ ⦃D : CellScheme ι κ⦄ (R : D.Rows.{u}) (X : Finset κ × ℕ)
-    (x y : D.below X → Label.{u}) (c : Label.{u}), R.IsLawfulBelow X x → R.IsLawfulBelow X y →
-    IsSelfVisible X.2 c → (∀ d, c ≤ x d ↔ c ≤ y d) →
-      R.IsLawfulBelow X fun d ↦ if c ≤ x d then y d else x d
+  ∀ ⦃n : ℕ⦄ (S : Scheme.{u} n) (X : Finset (Fin n) × ℕ) (x y : Fin S.card → Label.{u})
+    (c : Label.{u}), S.rows.IsLawfulBelow X (fun d ↦ x d) → S.rows.IsLawfulBelow X (fun d ↦ y d) →
+    IsSelfVisible X.2 c → (∀ d ∈ S.toCellScheme.below X, c ≤ x d ↔ c ≤ y d) →
+      S.rows.IsLawfulBelow X fun d ↦ if c ≤ x d then y d else x d
 
-end VaughtConjecture.CellScheme.Rows
+end VaughtConjecture.Scheme
