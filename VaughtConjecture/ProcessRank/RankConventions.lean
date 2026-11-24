@@ -16,8 +16,11 @@ allowed), write
 * `r(a) = orbitRank a`, InfinitaryLogic's orbit rank (a back-and-forth rank; no automorphism
   orbit is meant);
 * `R(M) = sup_a (r(a))`, the **process rank**: the rank of every long enough initial segment of
-  the semantic Scott process of `M` (InfinitaryLogic's `isRank_iff_lift_eq_iSup_orbitRank`), kept
-  as the explicit supremum `⨆ x, orbitRank x.2`, as in `ScottProcess/RankComparison.lean`;
+  the semantic Scott process of `M`.  The formal definition is the rank of InfinitaryLogic's
+  semantic Scott process, and the identification with the supremum is the theorem
+  `isRank_iff_lift_eq_iSup_orbitRank` of the module `InfinitaryLogic.ScottProcess.RankComparison`
+  (whose module documentation gives the literature reference).  The supremum is kept explicit,
+  `⨆ x, orbitRank x.2`, as in that module;
 * `S(M) = sup_a (r(a) + 1) = internalScottRank M`.
 
 Both suprema live in `Ordinal.{w}`.  Always `R(M) ≤ S(M) ≤ R(M) + 1`.  At a limit `λ` (for the

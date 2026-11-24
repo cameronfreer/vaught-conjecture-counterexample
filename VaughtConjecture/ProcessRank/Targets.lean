@@ -30,29 +30,32 @@ theorem), not isomorphism classes.  Three predicates on a structure `M : Type w`
 
 At the limit `ω₁`, `R(M) = ω₁` iff `S(M) = ω₁` (no tuple attains the supremum) or `S(M) = ω₁ + 1`
 (some tuple attains it) (`ProcessRank.iSup_orbitRank_eq_iff_of_isSuccLimit`), so the third class
-set is the second removed from the first.  All three predicates are invariant under potential
-isomorphism, across universes (`ProcessRank.RealizeIffOfPotentialIsoTarget`,
-`ProcessRank.RanksLiftEqOfPotentialIsoTarget`), so a class meets a predicate exactly when all its
-members do.
+set is the second removed from the first.  The invariance of all three predicates under potential
+isomorphism, across universes, is stated as two targets, not yet proved
+(`ProcessRank.RealizeIffOfPotentialIsoTarget`, `ProcessRank.RanksLiftEqOfPotentialIsoTarget`); once
+proved, a class meets a predicate exactly when all its members do.
 
-**Two presentations.**
+**Two presentations, one count.**  The count is to be made once, on codes over the carrier
+`ω₁.ToType`, and transported to the carriers of every universe.
 
+* Codes on the carrier `ω₁.ToType` (`AlephOne.Code`, in `Type`): `CodeScottClasses P` is the
+  quotient of the codes satisfying `P` by potential isomorphism of their decoded structures.  The
+  count targets `CodeProcessRankOmegaOneCardTarget`, `CodeInternalRankOmegaOneCardTarget` and
+  `CodeInternalRankOmegaOneAddOneCardTarget`; this is where the counting proof is to be made.
 * All carriers in one universe: `ScottClasses L Q` is the quotient of the sigma type of a carrier
   `M : Type w` and a structure on it satisfying `Q` by potential isomorphism
   (`potentialIsoSetoid`).  The count targets `ProcessRankOmegaOneScottClassesCardTarget`,
   `InternalRankOmegaOneScottClassesCardTarget` and
-  `InternalRankOmegaOneAddOneScottClassesCardTarget` are stated for every universe `w`.
-* Codes on the carrier `ω₁.ToType` (`AlephOne.Code`, in `Type`): `CodeScottClasses P` is the
-  quotient of the codes satisfying `P` by potential isomorphism of their decoded structures.  The
-  count targets `CodeProcessRankOmegaOneCardTarget`, `CodeInternalRankOmegaOneCardTarget` and
-  `CodeInternalRankOmegaOneAddOneCardTarget`.
+  `InternalRankOmegaOneAddOneScottClassesCardTarget` are stated for every universe `w`; they are
+  to follow from the code counts by the transport below, not by a second count.
 
-**Scope and transport.**  Every model `M` of the density sentence with `R(M) ≥ ω₁` has exactly
-`ℵ₁` points (`mk_eq_aleph_one_of_lift_omegaOne_le`, proved: at most `ℵ₁` for every model,
-`Realization.mkLeAlephOneOfRealizeDensitySentenceTarget`; a countable structure has countable
-`R(M)`, `ProcessRank.iSup_orbitRank_lt_omegaOne_of_countable`).  So each such model, on a carrier
-in any universe, is isomorphic to a decoded code (`StructureCode.existsIsoCodeTarget`), and each
-decoded code has an isomorphic copy on a carrier in any universe.  The transport
+**Scope and transport: why the carrier `ω₁.ToType` suffices.**  Every model `M` of the density
+sentence with `R(M) ≥ ω₁` has exactly `ℵ₁` points (`mk_eq_aleph_one_of_lift_omegaOne_le`, proved:
+at most `ℵ₁` for every model, `Realization.mkLeAlephOneOfRealizeDensitySentenceTarget`; a
+countable structure has countable `R(M)`, `ProcessRank.iSup_orbitRank_lt_omegaOne_of_countable`).
+So each such model, on a carrier in any universe, is isomorphic to a decoded code
+(`StructureCode.existsIsoCodeTarget`), and each decoded code has an isomorphic copy on a carrier
+in any universe.  The transport
 (`ScottClassesCodeTransportTarget`, stated) turns such a two-sided correspondence into equal
 lifted cardinalities of the classes; so the code counts give the counts on all carriers in every
 universe.  No model is identified with a code except through these isomorphisms.

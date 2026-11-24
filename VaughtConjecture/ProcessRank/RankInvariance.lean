@@ -16,8 +16,8 @@ Companion programme over the density sentence, process rank `ω₁`.  Convention
 
 The counts of `VaughtConjecture.ProcessRank.Targets` are counts of classes under potential
 isomorphism.  The conditions counted are a sentence of `L_{ω₁,ω}` (the density sentence) and a
-value of `R(M)` or `S(M)`.  Both are invariant under potential isomorphism, for structures on
-carriers in any two universes:
+value of `R(M)` or `S(M)`.  Their invariance under potential isomorphism, for structures on
+carriers in any two universes, is stated here as two targets, not yet proved:
 
 * `RealizeIffOfPotentialIsoTarget` (stated): potentially isomorphic structures satisfy the same
   sentences of `L_{ω₁,ω}`.  Route: a potential isomorphism gives back-and-forth equivalence of the
@@ -30,8 +30,8 @@ carriers in any two universes:
   matched tuples), so `r(a)` and `r(a')` agree after lifting, and the suprema are over the same
   values.
 
-So the classes are well defined on each predicate: a class meets the predicate exactly when all
-its members satisfy it.
+Once both targets are proved, the classes are well defined on each predicate: a class meets the
+predicate exactly when all its members satisfy it.
 -/
 
 universe u v w w'

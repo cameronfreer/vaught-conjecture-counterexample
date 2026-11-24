@@ -36,7 +36,8 @@ is refuted in the repository and is not used.
    Scott sentence of a countable model is potentially isomorphic to it
    (`PotentialIsoOfRealizeCanonicalScottSentenceTarget`, stated; InfinitaryLogic's
    `canonicalScottSentence_iff_potentialIso` assumes the second structure countable), and that
-   potential isomorphism keeps `R(M)` (`ProcessRank.RanksLiftEqOfPotentialIsoTarget`).
+   potential isomorphism keeps `R(M)` (`ProcessRank.RanksLiftEqOfPotentialIsoTarget`, a target,
+   stated, not yet proved).
 3. At each countable `η` (`ExistsReceivingBlockExpansionOfProcessRankTarget`, stated): a model
    of uncountable process rank has a receiving expansion to `λ_η`.  Either through one sentence of
    `L_{ω₁,ω}` asserting that the chart readings of the block formulas form a receiving model at
