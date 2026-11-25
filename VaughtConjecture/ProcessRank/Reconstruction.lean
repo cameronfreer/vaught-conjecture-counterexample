@@ -8,13 +8,15 @@ import InfinitaryLogic.Scott.OrbitRank
 import VaughtConjecture.MainTheorem.GrowthLevelRoute
 import VaughtConjecture.MainTheorem.ReceivingDomains
 import VaughtConjecture.MainTheorem.ReceivingRoute
+import VaughtConjecture.ProcessRank.RankUpper
 
 /-!
 # Receiving expansions at `ω₁` of the models of uncountable process rank
 
 Companion programme over the density sentence, process rank `ω₁`.  Conventions as in
 `VaughtConjecture.ProcessRank.RankConventions`: `r(a) = orbitRank a`,
-`R(M) = sup_a (r(a))`.  The goal (`ExistsReceivingExpansionOfProcessRankTarget`, stated): every
+`R(M) = sup_a (r(a))`.  The goal (`ExistsReceivingExpansionOfProcessRankTarget`, proved in
+`VaughtConjecture.ProcessRank.ReconstructionBlock`): every
 model `M` of the density sentence, on a carrier in any universe, with `R(M)` at least the lift of
 `ω₁`, has a model expansion to `ω₁` that is a receiving model.
 
@@ -40,7 +42,8 @@ is refuted in the repository and is not used.
    arbitrary-target stabilization, while `canonicalScottSentence_iff_potentialIso` assumes the
    second structure countable), and that potential isomorphism with a countable structure makes
    `R(M)` countable (`iSup_orbitRank_lt_omegaOne_of_potentialIso`, proved).
-3. At each countable `η` (`ExistsReceivingBlockExpansionOfProcessRankTarget`, stated): a model
+3. At each countable `η` (`ExistsReceivingBlockExpansionOfProcessRankTarget`, proved in
+   `VaughtConjecture.ProcessRank.ReconstructionBlock`, by the second route below): a model
    of uncountable process rank has a receiving expansion to `λ_η`.  Either through one sentence of
    `L_{ω₁,ω}` asserting that the chart readings of the block formulas form a receiving model at
    `λ_η`, or through countable substructures elementary for a countable fragment containing the
@@ -51,12 +54,13 @@ is refuted in the repository and is not used.
    (`ModelExpansion.exists_hasFiniteCutReceiving_of_forall_lt_of_le`, proved; the limit
    existence lemma of `VaughtConjecture.MainTheorem.ReceivingDomains` with `δ ≤ ω₁` in place of
    `δ < ω₁`), with next-block uniqueness of receiving models from forcing
-   donors (compiled), and `λ_{ω₁} = ω₁` (`blockStage_omegaOne`, proved).  Step 3 gives the goal
+   donors (compiled), and `λ_{ω₁} = ω₁` (`blockStage_omegaOne`, proved in
+   `VaughtConjecture.ProcessRank.RankUpper`).  Step 3 gives the goal
    (`existsReceivingExpansionOfProcessRankTarget_of_block`, proved).
 
 **Results.**
 
-* `blockStage_omegaOne`, `ModelExpansion.exists_hasFiniteCutReceiving_of_forall_lt_of_le`,
+* `ModelExpansion.exists_hasFiniteCutReceiving_of_forall_lt_of_le`,
   `exists_isReceivingModel_of_forall_blockStage`, `receivingExpansionDomain_compl_countable`
   (proved).
 * `ProcessRankLtOfCountableExceptionsTarget` (proved, `processRankLtOfCountableExceptionsTarget`
@@ -64,7 +68,10 @@ is refuted in the repository and is not used.
 * `PotentialIsoOfRealizeCanonicalScottSentenceTarget` (stated; the case of carriers in one
   universe is proved there).
 * `ExistsReceivingBlockExpansionOfProcessRankTarget`, `ExistsReceivingExpansionOfProcessRankTarget`
-  (stated), with `existsReceivingExpansionOfProcessRankTarget_of_block` (proved from step 3).
+  (proved, `existsReceivingBlockExpansionOfProcessRankTarget` and
+  `existsReceivingExpansionOfProcessRankTarget` in
+  `VaughtConjecture.ProcessRank.ReconstructionBlock`), through
+  `existsReceivingExpansionOfProcessRankTarget_of_block` (step 4).
 -/
 
 universe u v w w'
@@ -74,13 +81,6 @@ namespace VaughtConjecture.ProcessRank
 open Ordinal _root_.Order FirstOrder Language Expansion
 
 /-! ### Gluing at `ω₁` itself -/
-
-/-- The block stage of index `ω₁` is `ω₁`: `ω` and `ω₁` are below `ω₁`, which is closed under
-ordinal multiplication and addition. -/
-theorem blockStage_omegaOne : blockStage (ω₁ : Ordinal.{u}) = ω₁ := by
-  have hω : ω < (ω₁ : Ordinal.{u}) := omega0_lt_omega_one
-  rw [blockStage, isPrincipal_mul_iff_mul_left_eq.1 (isPrincipal_mul_omega 1) ω omega0_pos hω,
-    isPrincipal_add_iff_add_left_eq_self.1 (isPrincipal_add_omega 1) ω hω]
 
 variable {M : Type w} [baseLanguage.{0}.Structure M]
 
@@ -178,7 +178,8 @@ def ProcessRankLtOfCountableExceptionsTarget : Prop :=
 /-- **Target: receiving expansions to the countable block stages.**  A model of the density
 sentence, on a carrier in any universe, with `R(M) = sup_a (r(a))` at least the lift of `ω₁`,
 has, at every countable block index `η`, a model expansion to `λ_η` with the finite-cut receiving
-property.  Given-model statement.  Stated. -/
+property.  Given-model statement.  Proved (`existsReceivingBlockExpansionOfProcessRankTarget`, in
+`VaughtConjecture.ProcessRank.ReconstructionBlock`). -/
 def ExistsReceivingBlockExpansionOfProcessRankTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M],
     Sentenceω.Realize baseLanguage.densitySentence.{0} M →
@@ -189,7 +190,9 @@ def ExistsReceivingBlockExpansionOfProcessRankTarget : Prop :=
 
 /-- **Target: the reconstruction.**  A model of the density sentence, on a carrier in any
 universe, with `R(M) = sup_a (r(a))` at least the lift of `ω₁`, has a model expansion to `ω₁`
-that is a receiving model.  Given-model statement.  Stated. -/
+that is a receiving model.  Given-model statement.  Proved
+(`existsReceivingExpansionOfProcessRankTarget`, in
+`VaughtConjecture.ProcessRank.ReconstructionBlock`). -/
 def ExistsReceivingExpansionOfProcessRankTarget : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M],
     Sentenceω.Realize baseLanguage.densitySentence.{0} M →
