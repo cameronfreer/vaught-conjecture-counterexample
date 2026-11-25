@@ -53,19 +53,20 @@ So `K ↦` the Scott class of `M_K` is injective (`BoundedNotPotentiallyIsoTarge
 and in no top-free age, so `M_1` is not potentially isomorphic to any top-free receiving model
 (`BoundedOneNotTopFreeTarget`, proved, `boundedOneNotTopFreeTarget`).
 
-**Ranks** (conditional on one named premise).
+**Ranks** (stated with one named premise, now proved).
 
 * The upper bound on orbit ranks is the premise
   `ProcessRank.OrbitRankLeOmegaOneOfExactReceivingTarget` (in
-  `VaughtConjecture.ProcessRank.RankUpper`, open): in a receiving model expansion to `ω₁` with
-  exact receiving within its own realized age, every orbit rank is at most `ω₁`.  The lower bound,
-  unbounded orbit ranks below `ω₁`, holds in every receiving model
+  `VaughtConjecture.ProcessRank.RankUpper`, proved there,
+  `ProcessRank.orbitRankLeOmegaOneOfExactReceivingTarget`): in a receiving model expansion to `ω₁`
+  with exact receiving within its own realized age, every orbit rank is at most `ω₁`.  The lower
+  bound, unbounded orbit ranks below `ω₁`, holds in every receiving model
   (`ProcessRank.lift_omegaOne_le_iSup_orbitRank`).  A cover of a type with a cell labelled `⊤` has
   orbit rank at least `ω₁` (`ProcessRank.orbitRankGeOmegaOneOfCoversTarget`, proved).
-* `BoundedProcessRankTarget` (proved, conditional): the process rank of `M_K` is `ω₁`.
-* `BoundedInternalScottRankTarget` (proved, conditional): for `K ≥ 1` the internal Scott rank is
-  `ω₁ + 1`.
-* `BoundedOneRankTarget` (proved, conditional): the case `K = 1` of both.
+* The given-model rank theorems below are still stated with that premise as a hypothesis:
+  `BoundedProcessRankTarget` (proved): the process rank of `M_K` is `ω₁`;
+  `BoundedInternalScottRankTarget` (proved): for `K ≥ 1` the internal Scott rank is `ω₁ + 1`;
+  `BoundedOneRankTarget` (proved): the case `K = 1` of both.
 
 **Existence** (proved, with the construction of `VaughtConjecture.ProcessRank.BoundedExistence`).
 
@@ -83,6 +84,11 @@ and in no top-free age, so `M_1` is not potentially isomorphic to any top-free r
   bound of the classification.
 * `InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget` (conditional on the upper bound):
   the same with internal Scott rank `ω₁ + 1`.
+* **The lower bounds are unconditional**: `infinitelyManyRankOmegaOneScottClasses` and
+  `infinitelyManyInternalRankOmegaOneAddOneScottClasses` (proved) apply the two conditional
+  theorems to `ProcessRank.orbitRankLeOmegaOneOfExactReceivingTarget`.  They give at least `ℵ₀`
+  Scott classes of process rank `ω₁`, and at least `ℵ₀` of internal Scott rank `ω₁ + 1`; the
+  matching upper bounds (the exact count `ℵ₀`) remain open.
 
 ## Placement
 
@@ -495,5 +501,40 @@ theorem infinitelyManyInternalRankOmegaOneAddOneScottClassesTarget :
     boundedProcessRankTarget hup (toModelExpansion (R (K + 1)) hRK) hRK hK hrec hδ⟩
   simpa using boundedInternalScottRankTarget hup (toModelExpansion (R (K + 1)) hRK)
     (Nat.le_add_left 1 K) hRK hK hrec
+
+/-! ### The unconditional lower bounds -/
+
+/-- **At least `ℵ₀` Scott classes of process rank `ω₁`**, unconditionally: some structures `S K`
+of the base language on the carrier `ω₁.ToType`, for all `K`, satisfy the density sentence, have
+semantic Scott process of rank `ω₁` at every length beyond `ω₁ + 1`, and are pairwise not
+potentially isomorphic.  The conclusion of `InfinitelyManyRankOmegaOneScottClassesTarget`, with
+its premise proved (`ProcessRank.orbitRankLeOmegaOneOfExactReceivingTarget`).  The matching
+upper bound, hence the exact count `ℵ₀`, remains open. -/
+theorem infinitelyManyRankOmegaOneScottClasses :
+    ∃ S : ℕ → baseLanguage.{0}.Structure Carrier,
+      (∀ K, letI := S K;
+        Sentenceω.Realize baseLanguage.densitySentence.{0} Carrier ∧
+          ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
+            (scottProcessOf baseLanguage.{0} Carrier δ (zero_le.trans_lt hδ)).IsRank ω₁) ∧
+      ∀ K L, K ≠ L → IsEmpty (@PotentialIso baseLanguage.{0} _ Carrier Carrier (S K) (S L)) :=
+  infinitelyManyRankOmegaOneScottClassesTarget orbitRankLeOmegaOneOfExactReceivingTarget
+
+/-- **At least `ℵ₀` Scott classes of internal Scott rank `ω₁ + 1`**, unconditionally: some
+structures `S K` of the base language on the carrier `ω₁.ToType`, for all `K`, satisfy the
+density sentence, have semantic Scott process of rank `ω₁` at every length beyond `ω₁ + 1` and
+internal Scott rank `ω₁ + 1`, and are pairwise not potentially isomorphic.  The conclusion of
+`InfinitelyManyInternalRankOmegaOneAddOneScottClassesTarget`, with its premise proved
+(`ProcessRank.orbitRankLeOmegaOneOfExactReceivingTarget`).  The matching upper bound, hence the
+exact count `ℵ₀`, remains open. -/
+theorem infinitelyManyInternalRankOmegaOneAddOneScottClasses :
+    ∃ S : ℕ → baseLanguage.{0}.Structure Carrier,
+      (∀ K, letI := S K;
+        Sentenceω.Realize baseLanguage.densitySentence.{0} Carrier ∧
+          internalScottRank (L := baseLanguage.{0}) Carrier = (ω₁ : Ordinal.{0}) + 1 ∧
+          ∀ ⦃δ : Ordinal.{0}⦄ (hδ : (ω₁ : Ordinal.{0}) + 1 < δ),
+            (scottProcessOf baseLanguage.{0} Carrier δ (zero_le.trans_lt hδ)).IsRank ω₁) ∧
+      ∀ K L, K ≠ L → IsEmpty (@PotentialIso baseLanguage.{0} _ Carrier Carrier (S K) (S L)) :=
+  infinitelyManyInternalRankOmegaOneAddOneScottClassesTarget
+    orbitRankLeOmegaOneOfExactReceivingTarget
 
 end VaughtConjecture.ProcessRank.Bounded
