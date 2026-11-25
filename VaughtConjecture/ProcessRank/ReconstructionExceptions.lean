@@ -48,6 +48,11 @@ is isomorphic to `classCarrier q`.  So `M₀` satisfies the closed Scott formula
 does `M`; `M` is potentially isomorphic to the countable `classCarrier q`, and `R(M)` is
 countable, a contradiction.
 
+The core of the argument is `iSup_orbitRank_lt_omegaOne_of_aElementary`: a countable
+substructure, elementary for a fragment containing the closed Scott formula of its own class,
+forces `R(M)` to be countable.  It serves also the reconstruction at the countable block stages
+(`VaughtConjecture.ProcessRank.ReconstructionBlock`).
+
 **Results.**  All proved.
 -/
 
@@ -146,6 +151,49 @@ noncomputable def closedScottOfClass (q : Quotient (isoSetoid baseLanguage.densi
     (scottHeight (L := baseLanguage.{0}) (classCarrier.{w} q))).relabel
       (Sum.inr : Fin 0 → Empty ⊕ Fin 0)⟩
 
+/-- **An exceptional countable piece forces countable process rank**: if a countable
+substructure `M₀` of `M`, elementary for a fragment containing the closed Scott formula of the
+class `q`, is isomorphic to a code of `q`, then `R(M)` is countable.  `M₀` is isomorphic to
+`classCarrier q`, so it satisfies that formula; so does `M`, which is therefore potentially
+isomorphic to the countable `classCarrier q` (`nonempty_potentialIso_of_bfEquiv_scottHeight`). -/
+theorem iSup_orbitRank_lt_omegaOne_of_aElementary {M : Type w} [baseLanguage.{0}.Structure M]
+    {A : Fragment baseLanguage.{0}} {M₀ : baseLanguage.{0}.Substructure M}
+    (hAe : AElementary A M₀.subtype) {c : StructureSpace baseLanguage.{0}}
+    (hc : c ∈ ModelsOf baseLanguage.densitySentence.{0})
+    (e : @Language.Equiv baseLanguage.{0} M₀ ℕ _ c.toStructure)
+    (hq : closedScottOfClass.{w}
+      (Quotient.mk (isoSetoid baseLanguage.densitySentence.{0}) ⟨c, hc⟩) ∈ A.toSet) :
+    (⨆ x : (Σ n : ℕ, Fin n → M), orbitRank (L := baseLanguage.{0}) x.2) <
+      Ordinal.lift.{w} (ω₁ : Ordinal.{0}) := by
+  set q := Quotient.mk (isoSetoid baseLanguage.densitySentence.{0}) ⟨c, hc⟩ with hqdef
+  have hcomp : (⇑M₀.subtype ∘ (Fin.elim0 : Fin 0 → M₀)) = Fin.elim0 := funext fun i ↦ i.elim0
+  -- `M₀` is isomorphic to `classCarrier q`
+  obtain ⟨e''⟩ : Nonempty (@Language.Equiv baseLanguage.{0} ℕ ℕ q.out.1.toStructure
+      c.toStructure) :=
+    Quotient.mk_out (s := isoSetoid _) (⟨c, hc⟩ : ModelsOf baseLanguage.densitySentence.{0})
+  let e' := @Language.Equiv.symm baseLanguage.{0} ℕ ℕ q.out.1.toStructure c.toStructure e''
+  let f : M₀ ≃[baseLanguage.{0}] classCarrier.{w} q :=
+    @Language.Equiv.comp baseLanguage.{0} M₀ ℕ _ c.toStructure (classCarrier.{w} q) _
+      (@Language.Equiv.comp baseLanguage.{0} ℕ ℕ c.toStructure q.out.1.toStructure
+        (classCarrier.{w} q) _ (classCarrierEquiv.{w} q) e') e
+  -- `M` satisfies the closed Scott formula of `q`
+  have hα := scottHeight_lt_omega1 (L := baseLanguage.{0}) (classCarrier.{w} q)
+  have h₀ : BFEquiv (L := baseLanguage.{0}) (scottHeight (L := baseLanguage.{0})
+      (classCarrier.{w} q)) 0 (Fin.elim0 : Fin 0 → classCarrier.{w} q)
+      (Fin.elim0 : Fin 0 → M₀) := by
+    have h := equiv_implies_BFEquiv f.symm (scottHeight (L := baseLanguage.{0})
+      (classCarrier.{w} q)) 0 (Fin.elim0 : Fin 0 → classCarrier.{w} q)
+    rwa [show (⇑f.symm ∘ (Fin.elim0 : Fin 0 → classCarrier.{w} q)) = Fin.elim0 from
+      funext fun i ↦ i.elim0] at h
+  have hM : BFEquiv (L := baseLanguage.{0}) (scottHeight (L := baseLanguage.{0})
+      (classCarrier.{w} q)) 0 (Fin.elim0 : Fin 0 → classCarrier.{w} q) (Fin.elim0 : Fin 0 → M) := by
+    have h := hAe _ hq Fin.elim0
+    rw [hcomp] at h
+    rw [← realize_scottFormula_iff_BFEquiv _ _ _ hα, ← realize_closedScott_iff _ _ _] at h₀ ⊢
+    exact h.2 h₀
+  obtain ⟨P⟩ := nonempty_potentialIso_of_bfEquiv_scottHeight hM
+  exact iSup_orbitRank_lt_omegaOne_of_potentialIso P
+
 /-- **Countable exceptions**, the target form (see the module documentation). -/
 theorem processRankLtOfCountableExceptionsTarget :
     ProcessRankLtOfCountableExceptionsTarget.{w} := by
@@ -180,33 +228,7 @@ theorem processRankLtOfCountableExceptionsTarget :
     let := c.toStructure
     exact (MainTheorem.realize_sentenceω_equiv e ψ).2 ((mem_modelsOf_iff_realize c ψ).1 hmem)),
     rfl⟩
-  -- `M₀` is isomorphic to `classCarrier q`
-  obtain ⟨e''⟩ : Nonempty (@Language.Equiv baseLanguage.{0} ℕ ℕ q.out.1.toStructure
-      c.toStructure) :=
-    Quotient.mk_out (s := isoSetoid _) (⟨c, hc⟩ : ModelsOf baseLanguage.densitySentence.{0})
-  let e' := @Language.Equiv.symm baseLanguage.{0} ℕ ℕ q.out.1.toStructure c.toStructure e''
-  let f : M₀ ≃[baseLanguage.{0}] classCarrier.{w} q :=
-    @Language.Equiv.comp baseLanguage.{0} M₀ ℕ _ c.toStructure (classCarrier.{w} q) _
-      (@Language.Equiv.comp baseLanguage.{0} ℕ ℕ c.toStructure q.out.1.toStructure
-        (classCarrier.{w} q) _ (classCarrierEquiv.{w} q) e') e
-  -- `M` satisfies the closed Scott formula of `q`
-  have hα := scottHeight_lt_omega1 (L := baseLanguage.{0}) (classCarrier.{w} q)
-  have h₀ : BFEquiv (L := baseLanguage.{0}) (scottHeight (L := baseLanguage.{0})
-      (classCarrier.{w} q)) 0 (Fin.elim0 : Fin 0 → classCarrier.{w} q)
-      (Fin.elim0 : Fin 0 → M₀) := by
-    have h := equiv_implies_BFEquiv f.symm (scottHeight (L := baseLanguage.{0})
-      (classCarrier.{w} q)) 0 (Fin.elim0 : Fin 0 → classCarrier.{w} q)
-    rwa [show (⇑f.symm ∘ (Fin.elim0 : Fin 0 → classCarrier.{w} q)) = Fin.elim0 from
-      funext fun i ↦ i.elim0] at h
-  have hM : BFEquiv (L := baseLanguage.{0}) (scottHeight (L := baseLanguage.{0})
-      (classCarrier.{w} q)) 0 (Fin.elim0 : Fin 0 → classCarrier.{w} q) (Fin.elim0 : Fin 0 → M) := by
-    have hmem : closedScottOfClass.{w} q ∈ (Fragment.generated S).toSet :=
-      Fragment.subset_generated S (Set.mem_union_right _ ⟨q, hq, rfl⟩)
-    have h := hAe _ hmem Fin.elim0
-    rw [hcomp] at h
-    rw [← realize_scottFormula_iff_BFEquiv _ _ _ hα, ← realize_closedScott_iff _ _ _] at h₀ ⊢
-    exact h.2 h₀
-  obtain ⟨P⟩ := nonempty_potentialIso_of_bfEquiv_scottHeight hM
-  exact (iSup_orbitRank_lt_omegaOne_of_potentialIso P).not_ge hR
+  exact (iSup_orbitRank_lt_omegaOne_of_aElementary hAe hc e
+    (Fragment.subset_generated S (Set.mem_union_right _ ⟨q, hq, rfl⟩))).not_ge hR
 
 end VaughtConjecture.ProcessRank

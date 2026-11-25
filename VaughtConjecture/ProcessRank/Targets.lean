@@ -7,7 +7,7 @@ import VaughtConjecture.AlephOne.Count
 import VaughtConjecture.ProcessRank.RankConventions
 import VaughtConjecture.ProcessRank.RankInvariance
 import VaughtConjecture.ProcessRank.RankTopLabel
-import VaughtConjecture.ProcessRank.Reconstruction
+import VaughtConjecture.ProcessRank.ReconstructionBlock
 import VaughtConjecture.Realization.ClosureCardinality
 
 /-!
@@ -71,8 +71,9 @@ universe.  No model is identified with a code except through these isomorphisms.
    `r(a) < ω₁`, so every chart is top-free (`isTopFree_of_internalScottRank_eq_omegaOne`), and the
    top-free comparison applies (`AlephOne.receivingModelsPotentialIsoTarget`).
 2. Among all models of the density sentence (`InternalRankOmegaOnePotentialIsoTarget`): proved
-   from milestone 1 and the reconstruction (`internalRankOmegaOnePotentialIsoTarget_of`), since
-   `S(M) = ω₁` gives `R(M) = ω₁`.
+   (`internalRankOmegaOnePotentialIsoTarget`) from milestone 1 and the reconstruction
+   (`internalRankOmegaOnePotentialIsoTarget_of`, with
+   `existsReceivingExpansionOfProcessRankTarget`), since `S(M) = ω₁` gives `R(M) = ω₁`.
 
 Existence of a model with `S = ω₁` on a carrier in `Type` is
 `AlephOne.existsAlephOneModelScottRankOmegaOneTarget` (proved).
@@ -86,8 +87,9 @@ Existence of a model with `S = ω₁` on a carrier in `Type` is
   `internalRankOmegaOnePotentialIsoTarget_of` (proved, conditional on the named targets).
 * `ReceivingInternalRankOmegaOnePotentialIsoTarget` (milestone 1, proved:
   `receivingInternalRankOmegaOnePotentialIsoTarget`).
-* The count targets, `ScottClassesCodeTransportTarget`, `InternalRankOmegaOnePotentialIsoTarget`
-  (stated).
+* `InternalRankOmegaOnePotentialIsoTarget` (milestone 2, proved:
+  `internalRankOmegaOnePotentialIsoTarget`).
+* The count targets, `ScottClassesCodeTransportTarget` (stated).
 -/
 
 universe u v w w'
@@ -293,8 +295,8 @@ theorem receivingInternalRankOmegaOnePotentialIsoTarget :
 
 /-- **Target (milestone 2): one class of internal Scott rank `ω₁` among all models.**  Any two
 models of the density sentence, on carriers in any two universes, with `S(M)` and `S(N)` the lift
-of `ω₁`, are potentially isomorphic.  Given-model statement.  Stated; proved from milestone 1 and
-the reconstruction by `internalRankOmegaOnePotentialIsoTarget_of`. -/
+of `ω₁`, are potentially isomorphic.  Given-model statement.  Proved
+(`internalRankOmegaOnePotentialIsoTarget`). -/
 def InternalRankOmegaOnePotentialIsoTarget : Prop :=
   ∀ ⦃M : Type w⦄ ⦃N : Type w'⦄ [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N],
     IsInternalRankOmegaOneModel M → IsInternalRankOmegaOneModel N →
@@ -315,5 +317,12 @@ theorem internalRankOmegaOnePotentialIsoTarget_of
   obtain ⟨S, hS⟩ := hrec' hΦ'
     ((internalScottRank_eq_iff_of_isSuccLimit (Ordinal.isSuccLimit_lift.2 hω)).1 hN).1.ge
   exact h R S hR hS hM hN
+
+/-- **Milestone 2**, the target form: `internalRankOmegaOnePotentialIsoTarget_of` with the
+reconstruction `existsReceivingExpansionOfProcessRankTarget` in both universes and milestone 1
+`receivingInternalRankOmegaOnePotentialIsoTarget`. -/
+theorem internalRankOmegaOnePotentialIsoTarget : InternalRankOmegaOnePotentialIsoTarget.{w, w'} :=
+  internalRankOmegaOnePotentialIsoTarget_of existsReceivingExpansionOfProcessRankTarget
+    existsReceivingExpansionOfProcessRankTarget receivingInternalRankOmegaOnePotentialIsoTarget
 
 end VaughtConjecture.ProcessRank
