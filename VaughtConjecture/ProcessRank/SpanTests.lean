@@ -40,11 +40,12 @@ new right values densely from `3` gives the ranks `(4, 1, 4, 2)` on the right
 admitted** (`ProcessRank.not_isAdmitted_k1NaiveRanks`, proved).  The target asks for the
 conclusion of the restricted rank glue at this instance.
 
-Stated: the existence and legality of the two pairs, and their spans of mutual rigidity on four
-points along embeddings with disjoint ranges.  Proved: the ambient ranks are admitted, the
-kept-side ranks are not; the test scheme is well formed and the test row is a lawful section of
-it (`ProcessRank.isLawful_testRow`, by the identity witness); the ambient ranks are a member of the
-restricted catalogue (`ProcessRank.isSpanRankMember_k1Ranks`, lawful tables by order
+Stated: the spans of mutual rigidity of the two pairs on four points along embeddings with
+disjoint ranges.  Proved: the existence and legality of the two pairs (`ProcessRank.k2Pair` and
+`ProcessRank.k1Pair`, in `VaughtConjecture.ProcessRank.SpanTestLegal`); the ambient ranks are
+admitted, the kept-side ranks are not; the test scheme is well formed and the test row is a lawful
+section of it (`ProcessRank.isLawful_testRow`, by the identity witness); the ambient ranks are a
+member of the restricted catalogue (`ProcessRank.isSpanRankMember_k1Ranks`, lawful tables by order
 interpolation against the test row); and the grade-one test (`ProcessRank.k1RankGlueTest`): the
 ambient ranks themselves, with the table kept below the rank `3` and equal to the prescribed
 `ω * 3 + 1` from the rank `3` on, meet the conclusion of the restricted rank glue.
@@ -101,13 +102,13 @@ def TestSpanTarget (ℓp ℓq : Fin 4 → Label.{u}) : Prop :=
     ∃ (D : StageType.{u} (ω ^ 2) (2 + 2)) (i j : Fin 2 ↪ Fin (2 + 2)),
       Disjoint (Set.range i) (Set.range j) ∧ StageType.IsMutualRigidSpan p q D i j
 
-/-- **Target: the pair with `K = 2` exists and is legal.**  Stated. -/
+/-- **Target: the pair with `K = 2` exists and is legal.**  Proved (`ProcessRank.k2Pair`). -/
 def K2PairTarget : Prop := TestPairTarget.{u} k2Left k2Right
 
 /-- **Target: the span of the pair with `K = 2`.**  Stated. -/
 def K2SpanTarget : Prop := TestSpanTarget.{u} k2Left k2Right
 
-/-- **Target: the pair with `K = 1` exists and is legal.**  Stated. -/
+/-- **Target: the pair with `K = 1` exists and is legal.**  Proved (`ProcessRank.k1Pair`). -/
 def K1PairTarget : Prop := TestPairTarget.{u} k1Left k1Right
 
 /-- **Target: the span of the pair with `K = 1`.**  Stated. -/
@@ -144,7 +145,7 @@ noncomputable def k1Prescription : testScheme.{u}.toCellScheme.below k1Face → 
 the restricted catalogue over the test scheme (top cells `{c₀, c₀₁}`, `K = 1`, `H = 8`), and some
 member and positive table keep the ranks and the table below `3`, agree with the table capped at
 the cap, agree with the ambient state capped at the cap at every field, and read the prescription
-on the right side.  Stated. -/
+on the right side.  Proved (`ProcessRank.k1RankGlueTest`). -/
 def K1RankGlueTestTarget : Prop :=
   IsSpanRankMember testScheme.{u} 8 k1Tops 1 k1Ranks ∧
     ∃ (a' : Fin 4 ⊕ Fin 4 → ℕ) (F' : ℕ → Label.{u}),
