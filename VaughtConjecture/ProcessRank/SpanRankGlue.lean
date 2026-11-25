@@ -62,7 +62,8 @@ def IsPositiveTable (H : ℕ) (F : ℕ → Label.{u}) : Prop :=
 cap `c` self-visible at the grade one with first rank `ℓ` reaching it, and a labelling `r` lawful
 below a graded face of grade one agreeing capped at `c` with the side `b` of `F ∘ a`, some member
 `a'` and positive table `F'` keep the ranks and the table below `ℓ`, agree with `F` capped at `c`
-up to `H` and with `F ∘ a` capped at `c` at every field, and read `r` on the side `b`.  Stated. -/
+up to `H` and with `F ∘ a` capped at `c` at every field, and read `r` on the side `b`.  Proved
+(`ProcessRank.restrictedRankGlue`). -/
 def RestrictedRankGlueTarget : Prop :=
   ∀ ⦃n : ℕ⦄ (S : Scheme.{u} n), S.IsLegal → ∀ (T : Set (Fin S.card)) (K H : ℕ),
     (∀ d ∈ T, S.toCellScheme.grade d ≤ K) → 2 * S.card ≤ H → 0 < H →
