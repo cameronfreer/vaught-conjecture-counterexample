@@ -12,7 +12,7 @@ import VaughtConjecture.ProcessRank.SpanMirrorLift
 Process rank `ω₁`, the finite span of mutual rigidity: the lift of a mirrored scheme over the
 attachment of a seed (`Seed.cappedLift_mirror_mixed_face`) is the instance of the lift over a pure
 attachment (`ProcessRank.MirrorAttachment.cappedLift_mirror_mixed`) at the attachment of the seed,
-its two coatom faces (the context face and the face of the donor), its mixed faces, and the rank
+its two pure faces (the context face and the face of the donor), its mixed faces, and the rank
 members with their rank vectors (`Seed.cappedLift_mirror_mixed_face_of_attachment`, with the
 statement of the seed theorem).  The seed theorem keeps its own statement and proof.
 -/
