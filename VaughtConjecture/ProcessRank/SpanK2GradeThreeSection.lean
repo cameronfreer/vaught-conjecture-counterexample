@@ -18,6 +18,9 @@ cells with values in `codeGrid 3 16`, lawful below `(univ, 3)`, with values self
 grade one, canonical for the orbit code at the grade three (`orbitCode 3 P = P`), and admitted at
 the grade three for the top cells `{c₀, c₀₁, a}` with `K = 2` (`IsAdmitted k2Tops 2 3`), as the
 grade-two catalogue `ProcessRank.k2Cat2` one grade up.  Compiled here (theorem named):
+* the code at the grade three of the attachment labels lies in the catalogue
+  (`ProcessRank.k2Code3_mem`): the concrete grade-three state of this attachment, to which the
+  results below apply;
 * the orbit code `C = orbitCode 2 P` of such a state lies in the grade-two catalogue
   (`ProcessRank.orbitCode_mem_k2Cat2`);
 * the **section** of `P` (`ProcessRank.k2Sec3`) is the upper decoder of `P`, at the grade two with
@@ -88,6 +91,29 @@ theorem orbitCode_mem_k2Cat2 {P : Fin k2AttachmentBase.{u}.S.card → Label.{u}}
     orbitCode_orbitCode, ?_⟩
   exact (isAdmitted_iff_of_le_iff (fun _ _ ↦ orbitCode_le_iff) fun _ ↦ orbitCode_eq_bot_iff).mpr
     (hA.mono (by decide))
+
+/-- The labels of the attachment at the fields, at the grade three: the two copies of each top
+cell read `⊤`. -/
+theorem isAdmitted_three_k2AttLabel :
+    IsAdmitted k2Tops 2 3 fun x ↦ k2AttLabel.{u} (attField x) := by
+  intro _ _ d hd
+  rcases hd with rfl | rfl | rfl <;> rfl
+
+/-- The **code at the grade three of the attachment labels**. -/
+noncomputable def k2Code3 : Fin k2AttachmentBase.{u}.S.card → Label.{u} :=
+  orbitCode 3 fun e ↦ k2AttLabel e
+
+/-- **The code at the grade three of the attachment labels lies in the grade-three catalogue**:
+the concrete grade-three state of this attachment, so the results on sections below apply to it. -/
+theorem k2Code3_mem : k2Code3.{u} ∈ k2Cat3 := by
+  have hl : k2AttachmentBase.{u}.S.rows.IsLawful fun e ↦ k2AttLabel e := isLawful_k2AttLabel
+  refine mem_k2Cat3.mpr ⟨fun e ↦ orbitMap_mem_codeGrid (by decide) _, ?_, fun e ↦ ?_,
+    orbitCode_orbitCode, ?_⟩
+  · exact (hl.isLawfulBelow _).orbitCode fun d ↦ d.2.2
+  · exact isSelfVisible_one_orbitCode (by decide) (k2AttachmentBase.isSelfVisible_one_of_isLawful
+      hl e)
+  · exact (isAdmitted_iff_of_le_iff (fun _ _ ↦ orbitCode_le_iff) fun _ ↦ orbitCode_eq_bot_iff).mpr
+      isAdmitted_three_k2AttLabel
 
 /-! ### The section -/
 
