@@ -14,8 +14,9 @@ attachment, extended to the grade-two scheme `ProcessRank.k2Grade2`.
 
 Let `P` be the labels of the attachment (`ProcessRank.k2AttLabel`) and `C` their orbit code at the
 grade two (`ProcessRank.k2Code`).  Compiled here (theorem named):
-* `C` is a state of the grade-two catalogue (`ProcessRank.k2Code_mem`); its two copies of each top
-  cell read `⊤` (`ProcessRank.isAdmitted_k2AttLabel`).
+* `C` is a state of the grade-two catalogue (`ProcessRank.k2Code_mem`).  The prescribed labels `P`
+  on both copies of each designated cell are `⊤` (`ProcessRank.isAdmitted_k2AttLabel`); their orbit
+  code `C` takes values in the finite code grid, and decoding restores the tops.
 * The labels on the grade-two scheme are the upper decoder of `P`, at the grade two with cap grade
   three and block bound `16`, applied to the row of `C` (`ProcessRank.k2Grade2Label`).  They are
   lawful (`ProcessRank.isLawful_k2Grade2Label`): the row is lawful and the upper decoder is a
